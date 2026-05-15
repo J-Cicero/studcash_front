@@ -16,6 +16,8 @@ export class LoginWebComponent implements OnInit {
     password: 'password123'
   };
 
+  showPassword = false;
+
   constructor(private router: Router, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
@@ -24,6 +26,10 @@ export class LoginWebComponent implements OnInit {
     if (skip === 'true') {
       this.router.navigate(['/ul/dashboard']);
     }
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
   }
 
   onLogin() {
