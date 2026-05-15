@@ -32,6 +32,7 @@ interface Transaction {
 export class PaymentHistoryComponent {
   isCalculating = false;
   showTotal = false;
+  showConfirmModal = false;
   
   transactions: Transaction[] = [
     { id: 1, reference: 'TX-UL-001', nom: 'Koffi Jude', filiere: 'Informatique (FDS)', mode: 'Portefeuille', montant: 50000, date: '2026-05-24', status: 'Payé' },
@@ -52,15 +53,74 @@ export class PaymentHistoryComponent {
       .reduce((sum, tx) => sum + tx.montant, 0);
   }
 
+  get totalCount(): number {
+    return this.transactions.filter(tx => tx.status === 'Payé').length;
+  }
+
+  // Étape 1: Déclencher le calcul et ouvrir la modale
   calculateTotal() {
     this.isCalculating = true;
-    this.showTotal = false;
-    
-    // Simulation d'une récupération de données (1.5s)
     setTimeout(() => {
       this.isCalculating = false;
-      this.showTotal = true;
-    }, 1500);
+      this.showConfirmModal = true;
+    }, 1000);
+  }
+
+  // Étape 2: Validation finale et export du document de preuve
+  confirmAndExportReport() {
+    this.showConfirmModal = false;
+    this.showTotal = true;
+    this.generateSummaryPDF();
+  }
+
+  generateSummaryPDF() {
+    const docDefinition = {
+      content: [
+        { text: 'UNIVERSITÉ DE LOMÉ', style: 'header', alignment: 'center' },
+        { text: 'DIRECTION DES SERVICES FINANCIERS', style: 'subheader', alignment: 'center' },
+        { text: 'BORDEREAU RÉCAPITULATIF DES ENCAISSEMENTS', style: 'title', alignment: 'center', margin: [0, 20, 0, 10] },
+        { text: `Date du rapport: ${new Date().toLocaleDateString('fr-FR')}`, alignment: 'right', italics: true },
+        
+        { text: '\n\n' },
+        {
+          table: {
+            widths: ['*', 'auto'],
+            body: [
+              [{ text: 'Désignation', bold: true, fillColor: '#f1f5f9' }, { text: 'Valeur', bold: true, fillColor: '#f1f5f9' }],
+              ['Nombre total de transactions validées', this.totalCount.toString()],
+              ['Montant total encaissé', `${this.totalAmount.toLocaleString()} FCFA`],
+              ['Période concernée', 'Journée en cours']
+            ]
+          }
+        },
+        
+        { text: '\n\nCertification:', bold: true },
+        { text: 'Je soussigné, Agent Comptable de l\'Université de Lomé, certifie que le montant total susmentionné a été dûment encaissé et enregistré dans le système studCash.', margin: [0, 5, 0, 20] },
+        
+        {
+          columns: [
+            { width: '*', text: '' },
+            {
+              width: 200,
+              stack: [
+                { text: 'Cachet et Signature Numérique', alignment: 'center', bold: true },
+                { text: '\n' },
+                { canvas: [{ type: 'rect', x: 0, y: 0, w: 180, h: 60, r: 5, lineColor: '#14532d', lineWidth: 2 }] },
+                { text: 'SIGNATURE ÉLECTRONIQUE VALIDE', color: '#14532d', fontSize: 8, alignment: 'center', margin: [0, -40, 0, 0] },
+                { text: `ID AGENT: UL-042`, fontSize: 7, alignment: 'center' }
+              ]
+            }
+          ]
+        }
+      ],
+      styles: {
+        header: { fontSize: 18, bold: true, color: '#14532d' },
+        subheader: { fontSize: 12, color: '#64748b' },
+        title: { fontSize: 14, bold: true, decoration: 'underline' }
+      }
+    };
+
+    pdfMakeConfig.createPdf(docDefinition as any).download(`rapport_cloture_${new Date().getTime()}.pdf`);
   }
 
   generatePDF(transaction: Transaction) {
