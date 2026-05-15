@@ -1,0 +1,82 @@
+<div class="dashboard-frame">
+  
+  <!-- Sidebar Unique (100% Français, Zéro doublon) -->
+  <app-sidebar [currentTab]="currentTab" (tabChange)="switchTab($event)"></app-sidebar>
+
+  <!-- Zone de Contenu Canvas -->
+  <main class="content-body">
+    
+    <!-- Topbar Unique (Zéro texte superflu) -->
+    <app-topbar [title]="currentTab"></app-topbar>
+
+    <div class="view-content" *ngIf="currentTab === 'Tableau de bord'">
+      
+      <!-- KPI Grille Forcée (Alignement 1 ligne) -->
+      <div class="kpi-row">
+        
+        <div class="kpi-card">
+          <p class="tag">Transactions</p>
+          <p class="value">1,284</p>
+        </div>
+
+        <div class="kpi-card">
+          <p class="tag">Encaissements</p>
+          <p class="value">12.5M <span class="currency">FCFA</span></p>
+        </div>
+
+        <div class="kpi-card special">
+          <p class="tag text-light-50">Inscriptions</p>
+          <p class="value text-white">45,000</p>
+        </div>
+      </div>
+
+      <!-- Tableau Minimaliste -->
+      <div class="data-container">
+        <div class="section-header">
+          <h3>Dernières activités</h3>
+          <button class="action-btn">Exporter CSV</button>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Étudiant</th>
+                <th>Montant</th>
+                <th>Statut</th>
+                <th style="text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>24 Mai 2026</td>
+                <td class="bold dark">Koffi Jude</td>
+                <td class="bold">50,000 FCFA</td>
+                <td><span class="pill-success">Payé</span></td>
+                <td style="text-align: right;">
+                  <button class="pdf-icon" title="Télécharger" type="button" aria-label="Télécharger">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px;fill:currentColor"><path d="M5 20h14v-2H5v2zM11 4v8.17L7.41 8.59 6 10l6 6 6-6-1.41-1.41L13 12.17V4h-2z"/></svg>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>24 Mai 2026</td>
+                <td class="bold dark">Amah Ayélé</td>
+                <td class="bold">125,000 FCFA</td>
+                <td><span class="pill-success">Payé</span></td>
+                <td style="text-align: right;">
+                  <button class="pdf-icon" type="button" aria-label="Télécharger">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px;fill:currentColor"><path d="M5 20h14v-2H5v2zM11 4v8.17L7.41 8.59 6 10l6 6 6-6-1.41-1.41L13 12.17V4h-2z"/></svg>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+</div>
