@@ -1,0 +1,82 @@
+<div class="space-y-8 animate-in fade-in duration-500">
+  <div>
+    <h1 class="text-3xl font-black text-slate-800 tracking-tight uppercase leading-none">Gestion des Portefeuilles</h1>
+    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mt-3">Supervision des flux financiers studCash</p>
+  </div>
+
+  <div class="bg-white rounded-[3rem] shadow-sm border border-slate-100 overflow-hidden">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-slate-50/50 border-b border-slate-100">
+          <th class="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Propriétaire</th>
+          <th class="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Type</th>
+          <th class="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Soldes (R/H)</th>
+          <th class="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-50">
+        <tr *ngFor="let w of wallets" class="hover:bg-slate-50/50 transition-colors group">
+          <td class="px-10 py-8">
+            <p class="text-sm font-black text-slate-800 tracking-tight uppercase">{{ w.ownerName }}</p>
+            <p class="text-[9px] text-slate-300 font-bold uppercase tracking-widest mt-1">ID: {{ w.id }}</p>
+          </td>
+          <td class="px-10 py-8">
+            <span [ngClass]="w.ownerType === 'ETUDIANT' ? 'bg-blue-50 text-blue-600' : 'bg-purple-50 text-purple-600'" 
+                  class="px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border border-current opacity-70">
+              {{ w.ownerType }}
+            </span>
+          </td>
+          <td class="px-10 py-8">
+            <div class="flex flex-col gap-1">
+              <span class="text-sm font-black text-slate-700">{{ w.soldeRelais.toLocaleString() }} <span class="text-[9px] text-slate-300">RELAIS</span></span>
+              <span class="text-sm font-black text-[#1e3a8a]">{{ w.soldeHorizon.toLocaleString() }} <span class="text-[9px] opacity-40">HORIZON</span></span>
+            </div>
+          </td>
+          <td class="px-10 py-8 text-right">
+            <button (click)="openTopupModal(w)" 
+                    class="bg-[#1e3a8a] text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-900 transition-all shadow-lg shadow-blue-900/10">
+              Effectuer Versement
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TOPUP MODAL -->
+  <div *ngIf="selectedWallet" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-xl animate-in fade-in duration-300">
+    <div class="bg-white rounded-[3rem] shadow-2xl max-w-md w-full p-10 animate-in zoom-in-95 duration-500">
+      <h3 class="text-2xl font-black text-slate-800 tracking-tighter uppercase mb-2">Nouveau Versement</h3>
+      <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-10">Destination: {{ selectedWallet.ownerName }}</p>
+      
+      <div class="space-y-6">
+        <div>
+          <label class="block text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] mb-3 ml-2">Type de Compte</label>
+          <div class="grid grid-cols-2 gap-4">
+            <button (click)="topupType = 'RELAIS'" 
+                    [class.bg-[#1e3a8a]]="topupType === 'RELAIS'"
+                    [class.text-white]="topupType === 'RELAIS'"
+                    class="py-4 rounded-2xl border border-slate-100 text-xs font-black uppercase transition-all">RELAIS</button>
+            <button (click)="topupType = 'HORIZON'" 
+                    [class.bg-[#1e3a8a]]="topupType === 'HORIZON'"
+                    [class.text-white]="topupType === 'HORIZON'"
+                    class="py-4 rounded-2xl border border-slate-100 text-xs font-black uppercase transition-all">HORIZON</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] mb-3 ml-2">Montant (FCFA)</label>
+          <input type="number" 
+                 [(ngModel)]="topupAmount"
+                 placeholder="0"
+                 class="w-full bg-slate-50 border-none rounded-2xl py-5 px-6 text-xl font-black text-slate-800 outline-none focus:bg-white focus:ring-4 focus:ring-blue-900/5 transition-all">
+        </div>
+
+        <div class="flex gap-4 pt-6">
+          <button (click)="selectedWallet = null" class="flex-1 py-5 rounded-3xl font-black text-[10px] uppercase tracking-widest text-slate-400 hover:bg-slate-50 transition-all">Annuler</button>
+          <button (click)="processTopup()" class="flex-[2] bg-[#1e3a8a] text-white py-5 rounded-3xl font-black text-[10px] uppercase tracking-[0.2em] shadow-2xl shadow-blue-900/40 hover:scale-[1.05] active:scale-95 transition-all">Confirmer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

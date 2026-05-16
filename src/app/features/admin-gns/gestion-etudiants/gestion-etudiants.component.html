@@ -1,0 +1,74 @@
+<div class="space-y-6 animate-in fade-in duration-500">
+  
+  <!-- Page Header -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-black text-slate-800 tracking-tight">Gestion Étudiants</h1>
+      <p class="text-slate-500 font-medium">Répertoire complet des comptes étudiants validés.</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="relative group">
+        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#1e3a8a] transition-colors">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        </span>
+        <input type="text" 
+               [(ngModel)]="searchQuery"
+               placeholder="Nom ou Matricule..." 
+               class="w-64 bg-white border border-slate-200 rounded-2xl py-3 pl-12 pr-4 outline-none focus:border-[#1e3a8a] focus:ring-4 focus:ring-[#1e3a8a]/5 transition-all text-sm font-medium">
+      </div>
+      <button class="bg-[#1e3a8a] text-white px-6 py-3 rounded-2xl font-bold text-sm hover:bg-blue-900 transition-all shadow-lg shadow-blue-900/10">
+        Ajouter Étudiant
+      </button>
+    </div>
+  </div>
+
+  <!-- Students Table -->
+  <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-slate-50/50 border-b border-slate-100">
+            <th class="px-8 py-5 text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">Étudiant</th>
+            <th class="px-8 py-5 text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">Solde Relais</th>
+            <th class="px-8 py-5 text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">Solde Horizon</th>
+            <th class="px-8 py-5 text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">Statut</th>
+            <th class="px-8 py-5 text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em] text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-50">
+          <tr *ngFor="let s of filteredStudents" class="hover:bg-slate-50/50 transition-colors group">
+            <td class="px-8 py-6">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs">
+                  {{ s.name.charAt(0) }}
+                </div>
+                <div>
+                  <p class="text-sm font-bold text-slate-800">{{ s.name }}</p>
+                  <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{ s.matricule }}</p>
+                </div>
+              </div>
+            </td>
+            <td class="px-8 py-6">
+              <span class="text-sm font-black text-slate-700">{{ s.soldeRelais.toLocaleString() }} <span class="text-[10px] opacity-40">FCFA</span></span>
+            </td>
+            <td class="px-8 py-6">
+              <span class="text-sm font-black text-[#1e3a8a]">{{ s.soldeHorizon.toLocaleString() }} <span class="text-[10px] opacity-40">FCFA</span></span>
+            </td>
+            <td class="px-8 py-6">
+              <span [ngClass]="s.status === 'Actif' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-red-50 text-red-600 border-red-100'" 
+                    class="px-3 py-1 border rounded-full text-[10px] font-black uppercase tracking-widest">
+                {{ s.status }}
+              </span>
+            </td>
+            <td class="px-8 py-6 text-right">
+              <button class="text-[#1e3a8a] bg-[#1e3a8a]/5 hover:bg-[#1e3a8a] hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-all">
+                Détails
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

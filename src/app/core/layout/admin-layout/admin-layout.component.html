@@ -1,0 +1,96 @@
+<div class="flex h-screen bg-[#f8fafc] font-sans text-slate-900 overflow-hidden">
+  <!-- Sidebar GNS (Bleu Profond) -->
+  <aside class="w-64 h-screen bg-[#1e3a8a] flex flex-col fixed left-0 top-0 z-50 shadow-xl">
+    <!-- Brand -->
+    <div class="p-8 flex items-center gap-3">
+      <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
+        <span class="text-[#1e3a8a] font-black italic text-xl">gC</span>
+      </div>
+      <div class="flex flex-col">
+        <span class="text-white font-black text-lg tracking-tight leading-none">GNS ADMIN</span>
+        <span class="text-white/40 text-[8px] uppercase tracking-widest font-black mt-1">Management Hub</span>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 px-4 mt-4 space-y-1 overflow-y-auto custom-scrollbar">
+      <p class="px-4 text-[9px] font-black text-white/30 uppercase tracking-[0.2em] mb-2 mt-4">Menu Principal</p>
+      
+      <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-item">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        <span>Dashboard</span>
+      </a>
+
+      <a routerLink="/admin/kyc" routerLinkActive="active" class="nav-item">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        <span>Validation KYC</span>
+      </a>
+
+      <p class="px-4 text-[9px] font-black text-white/30 uppercase tracking-[0.2em] mb-2 mt-6">Utilisateurs & Shops</p>
+      
+      <a routerLink="/admin/etudiants" routerLinkActive="active" class="nav-item">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        <span>Étudiants</span>
+      </a>
+
+      <a routerLink="/admin/boutiques" routerLinkActive="active" class="nav-item">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+        <span>Boutiques</span>
+      </a>
+
+      <a routerLink="/admin/carte" routerLinkActive="active" class="nav-item">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+        <span>Carte interactive</span>
+      </a>
+
+      <p class="px-4 text-[9px] font-black text-white/30 uppercase tracking-[0.2em] mb-2 mt-6">Finances</p>
+
+      <a routerLink="/admin/wallet" routerLinkActive="active" class="nav-item">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span>Transactions GNS</span>
+      </a>
+
+      <p class="px-4 text-[9px] font-black text-white/30 uppercase tracking-[0.2em] mb-2 mt-6">Système</p>
+
+      <a routerLink="/admin/parametres" routerLinkActive="active" class="nav-item">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        <span>Paramètres</span>
+      </a>
+    </nav>
+
+    <!-- Logout -->
+    <div class="p-4 border-t border-white/5 bg-black/10">
+      <button (click)="onLogout()" 
+              class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-200 hover:bg-red-500 hover:text-white transition-all duration-200">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        <span class="font-bold text-xs uppercase tracking-widest">Déconnexion</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="flex-1 ml-64 flex flex-col min-h-screen">
+    <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-40">
+      <div class="flex items-center gap-6 flex-1">
+        <div class="relative max-w-sm w-full">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" placeholder="Recherche rapide..." class="w-full bg-slate-50 border-none rounded-lg py-2 pl-10 pr-4 text-xs font-medium focus:ring-2 focus:ring-[#1e3a8a]/10 outline-none transition-all">
+        </div>
+      </div>
+      
+      <div class="flex items-center gap-4">
+        <div class="text-right hidden sm:block">
+          <p class="text-xs font-black text-slate-800 leading-none">{{ adminName }}</p>
+          <p class="text-[9px] font-bold text-[#1e3a8a] uppercase tracking-widest mt-1">{{ adminRole }}</p>
+        </div>
+        <div class="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center text-[#1e3a8a] border border-slate-200">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        </div>
+      </div>
+    </header>
+
+    <main class="p-8 flex-1 overflow-y-auto">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

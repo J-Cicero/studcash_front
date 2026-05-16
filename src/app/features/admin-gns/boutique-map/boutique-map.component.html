@@ -1,0 +1,36 @@
+<div class="space-y-6 h-full flex flex-col animate-in fade-in duration-500">
+  <div>
+    <h1 class="text-2xl font-black text-slate-800 tracking-tight leading-none uppercase">Carte des Partenaires</h1>
+    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mt-3">Localisation GPS des boutiques affiliées au réseau GNS</p>
+  </div>
+
+  <div class="flex-1 bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden relative">
+    <!-- Overlay de Simulation de Carte -->
+    <div class="absolute inset-0 bg-slate-50/50 backdrop-blur-[2px] flex items-center justify-center z-10">
+      <div class="text-center space-y-8 max-w-md px-10">
+        <div class="w-24 h-24 bg-blue-50 rounded-[2rem] flex items-center justify-center mx-auto text-[#1e3a8a] shadow-xl shadow-blue-900/10 animate-bounce">
+          <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </div>
+        <div>
+          <p class="text-xs font-black text-slate-800 uppercase tracking-[0.3em]">Initialisation du module GPS...</p>
+          <p class="text-[10px] text-slate-400 mt-3 font-bold uppercase leading-relaxed">Récupération des coordonnées depuis le cluster GNS HQ</p>
+        </div>
+        <div class="grid grid-cols-1 gap-3">
+          <div *ngFor="let shop of shops" class="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100 shadow-sm group hover:border-[#1e3a8a]/20 transition-all">
+            <div class="flex items-center gap-3">
+              <div class="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
+              <span class="text-[10px] font-black text-slate-600 uppercase tracking-widest">{{ shop.name }}</span>
+            </div>
+            <span class="text-[9px] font-black text-slate-300">[{{ shop.lat }}, {{ shop.lng }}]</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Le vrai conteneur de carte Leaflet serait ici -->
+    <div id="map" class="w-full h-full bg-slate-100/50"></div>
+  </div>
+</div>

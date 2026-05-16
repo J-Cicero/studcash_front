@@ -1,0 +1,60 @@
+<div class="min-h-screen w-full flex items-center justify-center bg-[#0f172a] p-8 relative overflow-hidden font-sans">
+  <!-- Dynamic Background -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-blue-900/20 rounded-full blur-[120px]"></div>
+    <div class="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-[#1e3a8a]/10 rounded-full blur-[100px]"></div>
+  </div>
+
+  <!-- Admin Login Card -->
+  <div class="relative w-full max-w-md animate-in slide-in-from-bottom-8 duration-700">
+    <div class="bg-white/5 backdrop-blur-2xl rounded-[3rem] p-12 border border-white/10 shadow-2xl shadow-black/40">
+      
+      <!-- Brand Logo -->
+      <div class="flex flex-col items-center mb-12">
+        <div class="w-20 h-20 bg-white rounded-[2rem] flex items-center justify-center shadow-2xl shadow-blue-500/20 mb-6">
+          <span class="text-[#1e3a8a] font-black italic text-4xl">gC</span>
+        </div>
+        <h1 class="text-white text-3xl font-black tracking-tighter uppercase mb-2">GNS Admin</h1>
+        <div class="h-1.5 w-12 bg-blue-500 rounded-full"></div>
+      </div>
+
+      <!-- Form -->
+      <form (ngSubmit)="onLogin()" #loginForm="ngForm" class="space-y-6">
+        <div>
+          <label class="block text-[10px] font-black text-blue-300/50 uppercase tracking-[0.3em] mb-3 ml-2">Identifiant HQ</label>
+          <input 
+            type="email" 
+            name="email"
+            [(ngModel)]="loginData.email"
+            placeholder="admin@gns-global.com"
+            class="w-full bg-white/5 border border-white/10 rounded-2xl py-5 px-6 text-white text-sm font-bold focus:bg-white/10 focus:border-blue-500 transition-all outline-none"
+            required>
+        </div>
+
+        <div class="relative">
+          <label class="block text-[10px] font-black text-blue-300/50 uppercase tracking-[0.3em] mb-3 ml-2">Clef de Sécurité</label>
+          <input 
+            [type]="showPassword ? 'text' : 'password'" 
+            name="password"
+            [(ngModel)]="loginData.password"
+            placeholder="••••••••••••"
+            class="w-full bg-white/5 border border-white/10 rounded-2xl py-5 px-6 text-white text-sm font-bold focus:bg-white/10 focus:border-blue-500 transition-all outline-none"
+            required>
+          <button type="button" (click)="showPassword = !showPassword" class="absolute right-6 top-[52px] text-white/30 hover:text-white transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          </button>
+        </div>
+
+        <button 
+          type="submit" 
+          class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-5 rounded-2xl shadow-xl shadow-blue-900/20 transform active:scale-95 transition-all text-xs uppercase tracking-[0.3em] mt-8">
+          Accès Système
+        </button>
+      </form>
+
+      <p class="mt-12 text-center text-[10px] text-white/20 font-black uppercase tracking-[0.4em]">
+        Secured by GNS Intelligence
+      </p>
+    </div>
+  </div>
+</div>
