@@ -24,7 +24,7 @@
                 [ngClass]="activeTab() === 'gestion-admins' ? 'border-primary bg-surface-container-low text-primary font-bold' : 'border-transparent text-on-surface-variant'"
                 (click)="switchTab('gestion-admins')">
                 <i class="pi pi-users text-inherit"></i>
-                <span class="font-body-md text-body-md">Gestion des admins</span>
+                <span class="font-body-md text-body-md">Utilisateurs &amp; Rôles</span>
             </button>
             <button class="group flex items-center gap-3 px-panel-padding py-3 text-left transition-all hover:bg-surface-container-low border-l-4" 
                 [ngClass]="activeTab() === 'plateforme' ? 'border-primary bg-surface-container-low text-primary font-bold' : 'border-transparent text-on-surface-variant'"
@@ -187,36 +187,54 @@
 
         <!-- Section 3: Gestion Admins -->
         <div class="flex flex-col h-full overflow-hidden" [class.hidden]="activeTab() !== 'gestion-admins'">
-            <div class="p-panel-padding flex items-center justify-between border-b border-outline-variant">
-                <div>
-                    <h3 class="font-headline-sm text-headline-sm text-on-surface">Comptes Administrateurs</h3>
-                    <p class="text-label-sm text-on-surface-variant">Gérez les privilèges et les accès de l'équipe GNS</p>
+            <div class="p-panel-padding flex flex-col gap-4 border-b border-outline-variant">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="font-headline-sm text-headline-sm text-on-surface">Gestion des Utilisateurs</h3>
+                        <p class="text-label-sm text-on-surface-variant">La Tour de Contrôle : gérez les accès de toutes les entités (GNS, Banques, DBS, Universités).</p>
+                    </div>
+                    <button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-lg font-label-md hover:bg-primary/90 transition-colors">
+                        <i class="pi pi-user-plus text-[16px]"></i>
+                        Nouvel Utilisateur
+                    </button>
                 </div>
-                <button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-lg font-label-md">
-                    <i class="pi pi-user-plus text-[16px]"></i>
-                    Nouvel Admin
-                </button>
+                
+                <!-- Filters -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <button class="px-4 py-1.5 rounded-full text-label-sm font-bold bg-primary text-on-primary border border-primary">Tous</button>
+                    <button class="px-4 py-1.5 rounded-full text-label-sm font-bold bg-surface text-on-surface-variant border border-outline-variant hover:bg-surface-container-low transition-colors">Équipe GNS</button>
+                    <button class="px-4 py-1.5 rounded-full text-label-sm font-bold bg-surface text-on-surface-variant border border-outline-variant hover:bg-surface-container-low transition-colors">Banques</button>
+                    <button class="px-4 py-1.5 rounded-full text-label-sm font-bold bg-surface text-on-surface-variant border border-outline-variant hover:bg-surface-container-low transition-colors">DBS</button>
+                    <button class="px-4 py-1.5 rounded-full text-label-sm font-bold bg-surface text-on-surface-variant border border-outline-variant hover:bg-surface-container-low transition-colors">Universités</button>
+                </div>
             </div>
             <div class="flex-1 overflow-y-auto">
                 <table class="w-full text-left">
-                    <thead class="bg-surface-container-low sticky top-0 border-b border-outline-variant">
+                    <thead class="bg-surface-container-low sticky top-0 border-b border-outline-variant z-10">
                         <tr>
                             <th class="px-gutter py-3 font-label-md text-label-md text-on-surface-variant uppercase">Utilisateur</th>
+                            <th class="px-gutter py-3 font-label-md text-label-md text-on-surface-variant uppercase">Entité</th>
                             <th class="px-gutter py-3 font-label-md text-label-md text-on-surface-variant uppercase">Rôle</th>
                             <th class="px-gutter py-3 font-label-md text-label-md text-on-surface-variant uppercase">Statut</th>
                             <th class="px-gutter py-3 font-label-md text-label-md text-on-surface-variant uppercase text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-outline-variant">
+                        <!-- GNS Admin -->
                         <tr class="hover:bg-surface-container-low transition-colors">
                             <td class="px-gutter py-4">
                                 <div class="flex items-center gap-3">
                                     <div class="w-8 h-8 rounded-full bg-error-container text-on-error-container flex items-center justify-center font-bold text-xs">MA</div>
                                     <div>
                                         <p class="font-body-md font-bold text-on-surface">Moussa AW</p>
-                                        <p class="text-label-sm text-on-surface-variant">moussa.aw@gns.sn</p>
+                                        <p class="text-label-sm text-on-surface-variant">moussa.aw&#64;gns.sn</p>
                                     </div>
                                 </div>
+                            </td>
+                            <td class="px-gutter py-4">
+                                <span class="flex items-center gap-1.5 text-on-surface font-label-md">
+                                    <i class="pi pi-shield text-primary"></i> GNS Admin
+                                </span>
                             </td>
                             <td class="px-gutter py-4">
                                 <span class="px-2 py-1 bg-error/10 text-error text-[10px] font-bold rounded">SUPER ADMIN</span>
@@ -230,18 +248,25 @@
                                 <button class="text-on-surface-variant hover:text-primary transition-colors"><i class="pi pi-ellipsis-v"></i></button>
                             </td>
                         </tr>
+                        
+                        <!-- Bank Manager -->
                         <tr class="hover:bg-surface-container-low transition-colors">
                             <td class="px-gutter py-4">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-xs">FD</div>
+                                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs">JB</div>
                                     <div>
-                                        <p class="font-body-md font-bold text-on-surface">Fatou DIOP</p>
-                                        <p class="text-label-sm text-on-surface-variant">fatou.diop@gns.sn</p>
+                                        <p class="font-body-md font-bold text-on-surface">Jean BADO</p>
+                                        <p class="text-label-sm text-on-surface-variant">j.bado&#64;utb.tg</p>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-gutter py-4">
-                                <span class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded">ADMIN GNS</span>
+                                <span class="flex items-center gap-1.5 text-on-surface font-label-md">
+                                    <i class="pi pi-building text-blue-600"></i> Banque (UTB)
+                                </span>
+                            </td>
+                            <td class="px-gutter py-4">
+                                <span class="px-2 py-1 bg-blue-100 text-blue-700 text-[10px] font-bold rounded">MANAGER BANQUE</span>
                             </td>
                             <td class="px-gutter py-4">
                                 <span class="flex items-center gap-1.5 text-green-600 font-label-md">
@@ -252,18 +277,54 @@
                                 <button class="text-on-surface-variant hover:text-primary transition-colors"><i class="pi pi-ellipsis-v"></i></button>
                             </td>
                         </tr>
+                        
+                        <!-- DBS Agent -->
                         <tr class="hover:bg-surface-container-low transition-colors">
                             <td class="px-gutter py-4">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center font-bold text-xs">KS</div>
+                                    <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-xs">AT</div>
                                     <div>
-                                        <p class="font-body-md font-bold text-on-surface">Khalil SARR</p>
-                                        <p class="text-label-sm text-on-surface-variant">khalil.sarr@gns.sn</p>
+                                        <p class="font-body-md font-bold text-on-surface">Aminata TRAORÉ</p>
+                                        <p class="text-label-sm text-on-surface-variant">aminata.t&#64;dbs.sn</p>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-gutter py-4">
-                                <span class="px-2 py-1 bg-on-surface-variant/10 text-on-surface-variant text-[10px] font-bold rounded">OPÉRATEUR</span>
+                                <span class="flex items-center gap-1.5 text-on-surface font-label-md">
+                                    <i class="pi pi-briefcase text-purple-600"></i> DBS
+                                </span>
+                            </td>
+                            <td class="px-gutter py-4">
+                                <span class="px-2 py-1 bg-purple-100 text-purple-700 text-[10px] font-bold rounded">CHEF DBS</span>
+                            </td>
+                            <td class="px-gutter py-4">
+                                <span class="flex items-center gap-1.5 text-green-600 font-label-md">
+                                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Actif
+                                </span>
+                            </td>
+                            <td class="px-gutter py-4 text-right">
+                                <button class="text-on-surface-variant hover:text-primary transition-colors"><i class="pi pi-ellipsis-v"></i></button>
+                            </td>
+                        </tr>
+                        
+                        <!-- Univ Agent -->
+                        <tr class="hover:bg-surface-container-low transition-colors">
+                            <td class="px-gutter py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs">RD</div>
+                                    <div>
+                                        <p class="font-body-md font-bold text-on-surface">Registrariat UCAD</p>
+                                        <p class="text-label-sm text-on-surface-variant">inscription&#64;ucad.sn</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-gutter py-4">
+                                <span class="flex items-center gap-1.5 text-on-surface font-label-md">
+                                    <i class="pi pi-graduation-cap text-amber-600"></i> Univ (UCAD)
+                                </span>
+                            </td>
+                            <td class="px-gutter py-4">
+                                <span class="px-2 py-1 bg-amber-100 text-amber-700 text-[10px] font-bold rounded">LECTURE SEULE</span>
                             </td>
                             <td class="px-gutter py-4">
                                 <span class="flex items-center gap-1.5 text-on-surface-variant opacity-60 font-label-md">

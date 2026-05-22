@@ -1,0 +1,93 @@
+<div class="animate-fade-in-up">
+    <!-- Header Section -->
+    <header class="mb-6">
+        <h1 class="font-bold text-3xl text-gray-900 mb-1">Historique des Transactions</h1>
+        <p class="font-normal text-base text-gray-600">Consultez et filtrez l'intégralité des flux financiers de l'établissement.</p>
+    </header>
+
+    <!-- Filter Bar Card -->
+    <section class="bg-white border border-gray-200 rounded-xl p-4 mb-6 shadow-sm flex flex-wrap items-end gap-4">
+        <div class="flex-1 min-w-[240px]">
+            <label class="block font-semibold text-sm text-gray-600 mb-1">Rechercher</label>
+            <div class="relative">
+                <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                <input class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg font-normal text-sm focus:ring-2 focus:ring-blue-900 focus:border-transparent outline-none transition-shadow" placeholder="ID, Description ou Étudiant..." type="text"/>
+            </div>
+        </div>
+        <div class="w-48">
+            <label class="block font-semibold text-sm text-gray-600 mb-1">Type</label>
+            <select class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg font-normal text-sm focus:ring-2 focus:ring-blue-900 outline-none">
+                <option>Tous les types</option>
+                <option>SCOLARITE_UNIVERSITY</option>
+                <option>ADJUSTMENT</option>
+                <option>ENTRANT</option>
+                <option>SORTANT</option>
+            </select>
+        </div>
+        <div class="w-48">
+            <label class="block font-semibold text-sm text-gray-600 mb-1">Date</label>
+            <div class="relative">
+                <input class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg font-normal text-sm focus:ring-2 focus:ring-blue-900 outline-none" type="date"/>
+            </div>
+        </div>
+        <button class="px-6 py-2 bg-blue-900 text-white font-semibold text-sm rounded-lg hover:opacity-90 transition-opacity active:scale-95 duration-150 h-[42px]">
+            Filtrer
+        </button>
+    </section>
+
+    <!-- Transactions Table Card -->
+    <section class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-gray-200 bg-gray-50">
+                        <th class="px-6 py-4 font-semibold text-sm text-gray-500 uppercase tracking-wider">ID</th>
+                        <th class="px-6 py-4 font-semibold text-sm text-gray-500 uppercase tracking-wider">Type</th>
+                        <th class="px-6 py-4 font-semibold text-sm text-gray-500 uppercase tracking-wider">Description</th>
+                        <th class="px-6 py-4 font-semibold text-sm text-gray-500 uppercase tracking-wider">Étudiant</th>
+                        <th class="px-6 py-4 font-semibold text-sm text-gray-500 uppercase tracking-wider text-right">Montant</th>
+                        <th class="px-6 py-4 font-semibold text-sm text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-4 font-semibold text-sm text-gray-500 uppercase tracking-wider">Statut</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    @for (trx of transactions(); track trx.id; let even = $even) {
+                        <tr class="hover:bg-blue-50 transition-colors group cursor-pointer" [ngClass]="{'bg-gray-50/50': even}">
+                            <td class="px-6 py-4 font-normal text-sm text-gray-900">{{ trx.id }}</td>
+                            <td class="px-6 py-4">
+                                <span class="px-2 py-1 rounded-full font-semibold text-xs whitespace-nowrap" [ngClass]="trx.typeClass">{{ trx.type }}</span>
+                            </td>
+                            <td class="px-6 py-4 font-normal text-sm text-gray-600">{{ trx.desc }}</td>
+                            <td class="px-6 py-4 font-normal text-sm text-gray-900 font-semibold">{{ trx.student }}</td>
+                            <td class="px-6 py-4 font-normal text-base text-gray-900 font-bold text-right whitespace-nowrap">{{ trx.amount }}</td>
+                            <td class="px-6 py-4 font-normal text-sm text-gray-600 whitespace-nowrap">{{ trx.date }}</td>
+                            <td class="px-6 py-4">
+                                <span class="flex items-center gap-1 font-semibold text-xs text-green-600">
+                                    <i class="pi pi-check-circle text-[16px]"></i>
+                                    Succès
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <!-- Pagination -->
+        <footer class="px-6 py-4 bg-gray-50 flex justify-between items-center border-t border-gray-200">
+            <p class="font-normal text-sm text-gray-600">Affichage de <span class="font-bold">1-12</span> sur <span class="font-bold">1,240</span> transactions</p>
+            <div class="flex gap-2">
+                <button class="p-2 border border-gray-200 rounded hover:bg-white transition-colors disabled:opacity-50" disabled>
+                    <i class="pi pi-chevron-left"></i>
+                </button>
+                <button class="px-3 py-1 bg-blue-900 text-white font-semibold text-xs rounded">1</button>
+                <button class="px-3 py-1 border border-gray-200 hover:bg-white text-gray-900 font-semibold text-xs rounded transition-colors">2</button>
+                <button class="px-3 py-1 border border-gray-200 hover:bg-white text-gray-900 font-semibold text-xs rounded transition-colors">3</button>
+                <span class="px-2">...</span>
+                <button class="px-3 py-1 border border-gray-200 hover:bg-white text-gray-900 font-semibold text-xs rounded transition-colors">83</button>
+                <button class="p-2 border border-gray-200 rounded hover:bg-white transition-colors">
+                    <i class="pi pi-chevron-right"></i>
+                </button>
+            </div>
+        </footer>
+    </section>
+</div>

@@ -72,6 +72,41 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'univ',
+    loadComponent: () => import('./features/univ-portal/layout/univ-layout/univ-layout.component').then(m => m.UnivLayoutComponent),
+    children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/univ-portal/pages/univ-dashboard/univ-dashboard.component').then(m => m.UnivDashboardComponent)
+      },
+      {
+        path: 'transactions',
+        loadComponent: () => import('./features/univ-portal/pages/univ-transactions/univ-transactions.component').then(m => m.UnivTransactionsComponent)
+      },
+      {
+        path: 'portfolio',
+        loadComponent: () => import('./features/univ-portal/pages/univ-portfolio/univ-portfolio.component').then(m => m.UnivPortfolioComponent)
+      },
+      {
+        path: 'registrations',
+        loadComponent: () => import('./features/univ-portal/pages/univ-registrations/univ-registrations.component').then(m => m.UnivRegistrationsComponent)
+      },
+      {
+        path: 'students',
+        loadComponent: () => import('./features/univ-portal/pages/univ-students/univ-students.component').then(m => m.UnivStudentsComponent)
+      },
+      {
+        path: 'settings',
+        loadComponent: () => import('./features/univ-portal/pages/univ-settings/univ-settings.component').then(m => m.UnivSettingsComponent)
+      }
+    ]
+  },
+  {
     path: 'bank',
     loadComponent: () => import('./features/bank-portal/layout/bank-layout/bank-layout.component').then(m => m.BankLayoutComponent),
     children: [
@@ -101,5 +136,18 @@ export const routes: Routes = [
         loadComponent: () => import('./features/bank-portal/pages/bank-settings/bank-settings.component').then(m => m.BankSettingsComponent)
       }
     ]
+  },
+  {
+    path: 'login',
+    loadComponent: () => import('./features/auth/pages/login/login.component').then(m => m.LoginComponent)
+  },
+  {
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full'
+  },
+  {
+    path: '**',
+    redirectTo: 'login'
   }
 ];

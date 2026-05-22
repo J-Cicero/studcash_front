@@ -1,0 +1,223 @@
+<div class="animate-fade-in-up">
+    <div class="mb-8">
+        <h1 class="font-bold text-3xl text-gray-900 mb-2">Portefeuille Institutionnel</h1>
+        <p class="font-normal text-base text-gray-600">Gérez et consultez les flux financiers de l'Université de Lomé.</p>
+    </div>
+
+    <!-- Bento Grid Layout -->
+    <div class="grid grid-cols-12 gap-6 mb-6">
+        <!-- Hero Balance Card (Blue Gradient) -->
+        <div class="col-span-12 lg:col-span-8 bg-blue-900 rounded-xl p-8 flex flex-col justify-between relative overflow-hidden shadow-lg border border-blue-900">
+            <!-- Abstract Background Pattern -->
+            <div class="absolute inset-0 opacity-10 pointer-events-none">
+                <svg height="100%" preserveAspectRatio="none" viewBox="0 0 100 100" width="100%">
+                    <path d="M0 100 C 20 0 50 0 100 100 Z" fill="white"></path>
+                </svg>
+            </div>
+            
+            <div class="relative z-10">
+                <span class="font-semibold text-sm text-blue-200 opacity-80 uppercase tracking-widest">Solde Disponible</span>
+                <div class="mt-4 flex items-baseline gap-2">
+                    <h2 class="font-bold text-[48px] text-white leading-none">48.750.000</h2>
+                    <span class="font-bold text-2xl text-blue-200">FCFA</span>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+                <div class="flex items-center gap-4">
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-xs text-blue-200 opacity-70">Dernière mise à jour</span>
+                        <span class="font-normal text-sm text-white font-medium">Aujourd'hui, 14:32</span>
+                    </div>
+                </div>
+                <button class="bg-white/10 border border-white/20 text-white font-semibold text-sm px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-white/20 transition-all cursor-not-allowed opacity-80" disabled>
+                    <i class="pi pi-building text-[20px]"></i>
+                    Demander un virement
+                </button>
+            </div>
+        </div>
+
+        <!-- Side Metric Card -->
+        <div class="col-span-12 lg:col-span-4 bg-white rounded-xl p-6 border border-gray-200 shadow-sm flex flex-col justify-center">
+            <div class="mb-4">
+                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                    <i class="pi pi-calendar text-blue-900 text-xl"></i>
+                </div>
+                <span class="font-semibold text-sm text-gray-600 block mb-1">Prochain virement</span>
+                <h3 class="font-bold text-2xl text-gray-900">15 Octobre 2023</h3>
+            </div>
+            <div class="pt-4 border-t border-gray-200">
+                <div class="flex justify-between items-center font-normal text-sm mb-1">
+                    <span class="text-gray-500">Progression cycle</span>
+                    <span class="font-semibold text-green-600">75%</span>
+                </div>
+                <div class="w-full bg-gray-50 h-2 rounded-full overflow-hidden">
+                    <div class="bg-green-600 h-full" style="width: 75%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards Row -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <div class="flex items-start justify-between mb-2">
+                <span class="font-semibold text-sm text-gray-600 uppercase">Reçu ce mois</span>
+                <i class="pi pi-arrow-up-right text-green-600"></i>
+            </div>
+            <div class="flex items-baseline gap-1">
+                <span class="font-bold text-2xl text-gray-900">12.4M</span>
+                <span class="font-semibold text-xs text-gray-500">FCFA</span>
+            </div>
+            <div class="mt-4 font-normal text-sm text-green-600 font-medium">+14.2% vs mois dernier</div>
+        </div>
+        
+        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <div class="flex items-start justify-between mb-2">
+                <span class="font-semibold text-sm text-gray-600 uppercase">Reçu depuis début</span>
+                <i class="pi pi-chart-line text-blue-900"></i>
+            </div>
+            <div class="flex items-baseline gap-1">
+                <span class="font-bold text-2xl text-gray-900">142.8M</span>
+                <span class="font-semibold text-xs text-gray-500">FCFA</span>
+            </div>
+            <div class="mt-4 font-normal text-sm text-gray-600 font-medium">Année académique 23-24</div>
+        </div>
+        
+        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <div class="flex items-start justify-between mb-2">
+                <span class="font-semibold text-sm text-gray-600 uppercase">Taux d'encaissement</span>
+                <i class="pi pi-bolt text-blue-900"></i>
+            </div>
+            <div class="flex items-baseline gap-1">
+                <span class="font-bold text-2xl text-gray-900">94.2%</span>
+            </div>
+            <div class="mt-4 font-normal text-sm text-gray-600 font-medium">Cible: 95.0%</div>
+        </div>
+    </div>
+
+    <!-- Charts and Table Section -->
+    <div class="grid grid-cols-12 gap-6">
+        <!-- Balance Evolution Area Chart -->
+        <div class="col-span-12 lg:col-span-12 bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h3 class="font-bold text-2xl text-gray-900">Évolution du Solde</h3>
+                    <p class="font-normal text-sm text-gray-500">Flux financiers des 6 derniers mois</p>
+                </div>
+                <div class="flex gap-2">
+                    <button class="px-4 py-2 bg-gray-50 font-semibold text-sm text-gray-900 rounded-lg">6 Mois</button>
+                    <button class="px-4 py-2 font-semibold text-sm text-gray-500 hover:bg-gray-50 rounded-lg transition-colors">1 An</button>
+                </div>
+            </div>
+            
+            <div class="h-[300px] w-full flex items-end justify-between gap-4 px-2">
+                <!-- Placeholder Chart Visualization -->
+                <div class="flex-1 bg-blue-100 rounded-t-lg relative group transition-all hover:bg-blue-200" style="height: 40%">
+                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs px-2 py-1 rounded">28M</div>
+                </div>
+                <div class="flex-1 bg-blue-100 rounded-t-lg relative group transition-all hover:bg-blue-200" style="height: 55%">
+                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs px-2 py-1 rounded">34M</div>
+                </div>
+                <div class="flex-1 bg-blue-200 rounded-t-lg relative group transition-all hover:bg-blue-300" style="height: 45%">
+                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs px-2 py-1 rounded">30M</div>
+                </div>
+                <div class="flex-1 bg-blue-300 rounded-t-lg relative group transition-all hover:bg-blue-400" style="height: 70%">
+                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs px-2 py-1 rounded">42M</div>
+                </div>
+                <div class="flex-1 bg-blue-400 rounded-t-lg relative group transition-all hover:bg-blue-500" style="height: 65%">
+                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs px-2 py-1 rounded">39M</div>
+                </div>
+                <div class="flex-1 bg-blue-900 rounded-t-lg relative group transition-transform hover:-translate-y-1" style="height: 85%">
+                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-blue-900 text-white text-xs px-2 py-1 rounded">48.7M</div>
+                </div>
+            </div>
+            <div class="flex justify-between mt-4 px-2 font-semibold text-xs text-gray-500 uppercase tracking-wider">
+                <span>Avr</span>
+                <span>Mai</span>
+                <span>Jun</span>
+                <span>Jul</span>
+                <span>Août</span>
+                <span>Sep</span>
+            </div>
+        </div>
+
+        <!-- Recent Movements Table -->
+        <div class="col-span-12 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="font-bold text-2xl text-gray-900">Mouvements Récents</h3>
+                <div class="flex items-center gap-2 text-blue-900 font-semibold text-sm cursor-pointer hover:underline" routerLink="/univ/transactions">
+                    <span>Tout voir</span>
+                    <i class="pi pi-chevron-right text-[12px]"></i>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="px-6 py-4 font-semibold text-sm text-gray-600 uppercase tracking-wider">DATE</th>
+                            <th class="px-6 py-4 font-semibold text-sm text-gray-600 uppercase tracking-wider">DESCRIPTION</th>
+                            <th class="px-6 py-4 font-semibold text-sm text-gray-600 uppercase tracking-wider">TYPE</th>
+                            <th class="px-6 py-4 font-semibold text-sm text-gray-600 uppercase tracking-wider text-right">MONTANT</th>
+                            <th class="px-6 py-4 font-semibold text-sm text-gray-600 uppercase tracking-wider">STATUT</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 font-normal text-sm text-gray-900">12 Sep 2023</td>
+                            <td class="px-6 py-4 font-semibold text-gray-900">Droits d'inscription - FDS</td>
+                            <td class="px-6 py-4">
+                                <span class="flex items-center gap-1.5 text-green-600 font-semibold text-sm">
+                                    <i class="pi pi-arrow-down text-[12px]"></i> Entrant
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right font-bold text-gray-900">+ 450,000 FCFA</td>
+                            <td class="px-6 py-4">
+                                <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full font-semibold text-xs">Payé</span>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 font-normal text-sm text-gray-900">10 Sep 2023</td>
+                            <td class="px-6 py-4 font-semibold text-gray-900">Virement vers Trésorerie Centrale</td>
+                            <td class="px-6 py-4">
+                                <span class="flex items-center gap-1.5 text-blue-900 font-semibold text-sm">
+                                    <i class="pi pi-arrow-up text-[12px]"></i> Sortant
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right font-bold text-gray-900">- 12,000,000 FCFA</td>
+                            <td class="px-6 py-4">
+                                <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full font-semibold text-xs">Confirmé</span>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 font-normal text-sm text-gray-900">08 Sep 2023</td>
+                            <td class="px-6 py-4 font-semibold text-gray-900">Régularisation frais examen</td>
+                            <td class="px-6 py-4">
+                                <span class="flex items-center gap-1.5 text-gray-500 font-semibold text-sm">
+                                    <i class="pi pi-sync text-[12px]"></i> Adjustment
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right font-bold text-gray-900">+ 85,000 FCFA</td>
+                            <td class="px-6 py-4">
+                                <span class="px-3 py-1 bg-gray-200 text-gray-700 rounded-full font-semibold text-xs">Historique</span>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 font-normal text-sm text-gray-900">05 Sep 2023</td>
+                            <td class="px-6 py-4 font-semibold text-gray-900">Paiements en ligne - FLO</td>
+                            <td class="px-6 py-4">
+                                <span class="flex items-center gap-1.5 text-green-600 font-semibold text-sm">
+                                    <i class="pi pi-arrow-down text-[12px]"></i> Entrant
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right font-bold text-gray-900">+ 1,200,000 FCFA</td>
+                            <td class="px-6 py-4">
+                                <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full font-semibold text-xs">Payé</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,94 @@
+<div class="bg-slate-50 text-gray-900 min-h-screen">
+    <!-- TopAppBar -->
+    <nav class="fixed top-0 w-full h-16 z-50 bg-white border-b border-gray-200 shadow-sm flex justify-between items-center px-6">
+        <div class="flex items-center gap-4">
+            <span class="text-xl font-bold text-blue-900">Portail StudCash</span>
+        </div>
+        <div class="hidden md:flex items-center space-x-8">
+            <a class="text-blue-900 font-bold border-b-2 border-blue-900 font-normal text-base py-1 cursor-pointer" routerLink="/univ/dashboard">Vue d'ensemble</a>
+            <a class="text-gray-600 hover:bg-blue-50 transition-colors font-normal text-base py-1 px-2 rounded-lg cursor-pointer" routerLink="/univ/registrations">Inscriptions</a>
+            <a class="text-gray-600 hover:bg-blue-50 transition-colors font-normal text-base py-1 px-2 rounded-lg cursor-pointer" routerLink="/univ/transactions">Transactions</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <button class="p-2 rounded-full hover:bg-blue-50 text-blue-900 transition-colors">
+                <i class="pi pi-bell text-[20px]"></i>
+            </button>
+            <button class="p-2 rounded-full hover:bg-blue-50 text-blue-900 transition-colors">
+                <i class="pi pi-question-circle text-[20px]"></i>
+            </button>
+            <div class="w-8 h-8 rounded-full bg-blue-100 overflow-hidden border border-gray-200">
+                <img alt="User profile photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDr2yRMnVNvMvZzGlI9KAcDPS-QcBeC5jcZ_Vc7JY9l0vtlPOOPKqnFrO0faYMu9ziSUEDkNV00m2jLLwgjY_IOXK4RbvHehcKcTypAQ9tH1W31cD1cgA5WIiHIvl4aclosx_gzXfsQ6QjWJ9qJhB2PeyQXexISKpfDvpQVjHCbw-OLT1zVlleAlH_D2-gcT5Vatj-0kuzPqBNyBo3LJJlQqk9MjFbZ80zXhjDHCtkS3yGcVkaLgL6NmbWs7VaokN2HVql3an5qoC3z"/>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- SideNavBar (Desktop Only) -->
+    <aside class="hidden md:flex fixed left-0 top-16 w-[200px] h-[calc(100vh-64px)] z-40 bg-white border-r border-gray-200 flex-col p-4 space-y-2">
+        <div class="mb-6 px-2">
+            <div class="flex items-center gap-3 mb-1">
+                <div class="w-8 h-8 bg-blue-900 rounded flex items-center justify-center">
+                    <i class="pi pi-graduation-cap text-white text-[18px]"></i>
+                </div>
+                <h2 class="font-normal text-lg font-bold text-blue-900 leading-tight">StudCash Admin</h2>
+            </div>
+            <p class="text-[11px] text-gray-500 uppercase tracking-wider font-semibold">Staff Portal</p>
+        </div>
+        <nav class="space-y-1">
+            <a class="flex items-center gap-3 px-3 py-2 bg-green-200 text-green-800 font-semibold rounded-lg transition-all cursor-pointer" routerLink="/univ/dashboard">
+                <i class="pi pi-th-large"></i>
+                <span class="font-semibold text-sm">Vue d'ensemble</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-all active:scale-95 duration-100 cursor-pointer" routerLink="/univ/registrations" routerLinkActive="bg-green-200 text-green-800">
+                <i class="pi pi-verified"></i>
+                <span class="font-semibold text-sm">État Inscriptions</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-all active:scale-95 duration-100 cursor-pointer" routerLink="/univ/portfolio" routerLinkActive="bg-green-200 text-green-800">
+                <i class="pi pi-wallet"></i>
+                <span class="font-semibold text-sm">Portefeuille</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-all active:scale-95 duration-100 cursor-pointer" routerLink="/univ/transactions" routerLinkActive="bg-green-200 text-green-800">
+                <i class="pi pi-receipt"></i>
+                <span class="font-semibold text-sm">Transactions</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-all active:scale-95 duration-100 cursor-pointer" routerLink="/univ/students" routerLinkActive="bg-green-200 text-green-800">
+                <i class="pi pi-users"></i>
+                <span class="font-semibold text-sm">Étudiants</span>
+            </a>
+            <div class="mt-auto pt-4 border-t border-gray-200">
+                <a class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-all active:scale-95 duration-100 cursor-pointer" routerLink="/univ/settings" routerLinkActive="bg-gray-200 text-gray-900 font-bold">
+                    <i class="pi pi-cog"></i>
+                    <span class="font-semibold text-sm">Paramètres</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-20 md:pb-12 px-6 md:ml-[200px] max-w-[1280px] mx-auto">
+        <router-outlet></router-outlet>
+    </main>
+    
+    <!-- BottomNavBar (Mobile Only) -->
+    <nav class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 h-16 flex items-center justify-around z-50">
+        <button class="flex flex-col items-center gap-1 text-blue-900">
+            <i class="pi pi-th-large text-[20px]"></i>
+            <span class="text-[10px] font-bold">Aperçu</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 text-gray-500" routerLink="/univ/registrations">
+            <i class="pi pi-verified text-[20px]"></i>
+            <span class="text-[10px] font-medium">Inscr.</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 text-gray-500" routerLink="/univ/transactions">
+            <i class="pi pi-receipt text-[20px]"></i>
+            <span class="text-[10px] font-medium">Transac.</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 text-gray-500" routerLink="/univ/students">
+            <i class="pi pi-users text-[20px]"></i>
+            <span class="text-[10px] font-medium">Étudiants</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 text-gray-500" routerLink="/univ/settings">
+            <i class="pi pi-user text-[20px]"></i>
+            <span class="text-[10px] font-medium">Profil</span>
+        </button>
+    </nav>
+</div>
