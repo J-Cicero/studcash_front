@@ -1,17 +1,104 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: "class",
   content: [
     "./src/**/*.{html,ts}",
   ],
   theme: {
     extend: {
       colors: {
-        'gns-blue': '#1e3a8a',    // Bleu Sombre (Confiance/GNS)
-        'ul-green': '#16a34a',    // Vert (Université/Succès)
-        'alert-red': '#dc2626'    // Rouge pour les rejets
+        'primary': '#1e3a8a',
+        'success': '#16a34a',
+        'danger': '#dc2626',
+        'warning': '#d97706',
+        "outline-variant": "#c5c5d3",
+        "surface-container-high": "#e9e7ef",
+        "surface-bright": "#faf8ff",
+        "secondary-fixed": "#dae2fd",
+        "background": "#faf8ff",
+        "on-background": "#1a1b21",
+        "tertiary-container": "#6e2c00",
+        "surface-variant": "#e3e1e9",
+        "surface-container-low": "#f4f3fa",
+        "surface": "#faf8ff",
+        "secondary": "#565e74",
+        "on-tertiary-fixed-variant": "#773205",
+        "tertiary": "#4b1c00",
+        "primary-fixed-dim": "#b6c4ff",
+        "on-error-container": "#93000a",
+        "surface-dim": "#dad9e1",
+        "inverse-on-surface": "#f1f0f7",
+        "error-container": "#ffdad6",
+        "inverse-primary": "#b6c4ff",
+        "on-secondary-container": "#5c647a",
+        "on-error": "#ffffff",
+        "tertiary-fixed-dim": "#ffb691",
+        "on-tertiary-fixed": "#341100",
+        "primary-fixed": "#dce1ff",
+        "primary-container": "#1e3a8a",
+        "on-primary-container": "#90a8ff",
+        "secondary-fixed-dim": "#bec6e0",
+        "on-primary": "#ffffff",
+        "inverse-surface": "#2f3036",
+        "tertiary-fixed": "#ffdbcb",
+        "on-tertiary": "#ffffff",
+        "on-surface-variant": "#444651",
+        "outline": "#757682",
+        "on-tertiary-container": "#f39461",
+        "on-secondary-fixed-variant": "#3f465c",
+        "surface-container-lowest": "#ffffff",
+        "on-surface": "#1a1b21",
+        "secondary-container": "#dae2fd",
+        "on-primary-fixed": "#00164e",
+        "on-secondary": "#ffffff",
+        "on-secondary-fixed": "#131b2e",
+        "surface-container-highest": "#e3e1e9",
+        "on-primary-fixed-variant": "#264191",
+        "surface-tint": "#4059aa",
+        "surface-container": "#eeedf4",
+        "error": "#ba1a1a"
+      },
+      borderRadius: {
+        "DEFAULT": "0.125rem",
+        "lg": "0.25rem",
+        "xl": "0.5rem",
+        "full": "0.75rem"
+      },
+      spacing: {
+        "container-max-width": "1440px",
+        "sidebar-width": "240px",
+        "stack-md": "1rem",
+        "stack-lg": "2rem",
+        "panel-padding": "1.25rem",
+        "stack-sm": "0.5rem",
+        "gutter": "1.5rem"
+      },
+      fontFamily: {
+        "display-lg": ["Inter", "sans-serif"],
+        "data-tabular": ["Inter", "sans-serif"],
+        "label-sm": ["Inter", "sans-serif"],
+        "body-md": ["Inter", "sans-serif"],
+        "body-lg": ["Inter", "sans-serif"],
+        "headline-md": ["Inter", "sans-serif"],
+        "body-sm": ["Inter", "sans-serif"],
+        "label-md": ["Inter", "sans-serif"],
+        "headline-sm": ["Inter", "sans-serif"]
+      },
+      fontSize: {
+        "display-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+        "data-tabular": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+        "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "500"}],
+        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
       }
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/container-queries')
+  ],
 }
-

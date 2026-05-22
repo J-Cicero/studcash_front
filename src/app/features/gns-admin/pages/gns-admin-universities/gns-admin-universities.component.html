@@ -1,0 +1,293 @@
+<div class="p-8 max-w-[1440px] mx-auto w-full">
+    <!-- Header Section -->
+    <div class="flex justify-between items-end mb-8">
+        <div>
+            <h2 class="font-headline-md text-headline-md text-on-surface mb-1">5 universités partenaires</h2>
+            <p class="text-on-surface-variant font-body-md text-body-md">Gestion des établissements et suivi des allocations boursières.</p>
+        </div>
+        <button class="bg-primary text-on-primary px-6 py-2.5 rounded-xl font-label-md text-label-md flex items-center gap-2 hover:bg-opacity-90 active:scale-95 transition-all shadow-sm" (click)="toggleSidePanel()">
+            <i class="pi pi-plus"></i>
+            Ajouter une université
+        </button>
+    </div>
+    
+    <!-- Dashboard Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Add University Placeholder -->
+        <div class="group cursor-pointer border-2 border-dashed border-outline-variant rounded-xl p-6 flex flex-col items-center justify-center text-on-surface-variant hover:border-primary hover:text-primary transition-all min-h-[320px] bg-surface-container-lowest/50" (click)="toggleSidePanel()">
+            <div class="w-12 h-12 rounded-full border-2 border-dashed border-current flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <i class="pi pi-plus text-3xl"></i>
+            </div>
+            <span class="font-headline-sm text-headline-sm">Ajouter une université</span>
+            <p class="text-center font-body-sm text-body-sm mt-2 opacity-70">Enregistrez un nouvel établissement pour commencer à gérer ses étudiants.</p>
+        </div>
+        
+        <!-- University Card 1 -->
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-panel-padding shadow-sm hover:border-primary/40 transition-colors flex flex-col group">
+            <div class="flex items-start justify-between mb-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-xl bg-primary-container flex items-center justify-center text-on-primary-container font-extrabold text-xl shadow-inner">UL</div>
+                    <div>
+                        <h3 class="font-headline-sm text-headline-sm text-on-surface leading-tight">Université de Lomé</h3>
+                        <div class="flex items-center gap-1 text-on-surface-variant font-body-sm text-body-sm mt-1">
+                            <i class="pi pi-map-marker text-[16px]"></i>
+                            Lomé, Togo
+                        </div>
+                    </div>
+                </div>
+                <span class="px-2 py-1 bg-secondary-container text-on-secondary-container rounded-lg text-[10px] font-bold uppercase tracking-wider">Public</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 mb-8 bg-surface-container-low rounded-xl p-3">
+                <div class="text-center">
+                    <p class="text-[10px] font-label-md text-on-surface-variant uppercase">Étudiants</p>
+                    <p class="font-headline-sm text-headline-sm text-on-surface">42k</p>
+                </div>
+                <div class="text-center border-x border-outline-variant/30">
+                    <p class="text-[10px] font-label-md text-on-surface-variant uppercase">Wallets</p>
+                    <p class="font-headline-sm text-headline-sm text-on-surface">38k</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-[10px] font-label-md text-on-surface-variant uppercase">Bourses</p>
+                    <p class="font-headline-sm text-headline-sm text-on-surface">1.2B</p>
+                </div>
+            </div>
+            <div class="mt-auto flex gap-3">
+                <button class="flex-1 bg-surface-container-high text-on-surface font-label-md text-label-md py-2.5 rounded-lg hover:bg-primary hover:text-on-primary transition-all" (click)="toggleSidePanel()">Gérer</button>
+                <button class="flex-1 border border-outline-variant text-on-surface-variant font-label-md text-label-md py-2.5 rounded-lg hover:bg-surface-container-low transition-all">Voir étudiants</button>
+            </div>
+        </div>
+        
+        <!-- University Card 2 -->
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-panel-padding shadow-sm hover:border-primary/40 transition-colors flex flex-col group">
+            <div class="flex items-start justify-between mb-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-xl bg-tertiary-fixed text-on-tertiary-fixed font-extrabold text-xl shadow-inner flex items-center justify-center">UK</div>
+                    <div>
+                        <h3 class="font-headline-sm text-headline-sm text-on-surface leading-tight">Université de Kara</h3>
+                        <div class="flex items-center gap-1 text-on-surface-variant font-body-sm text-body-sm mt-1">
+                            <i class="pi pi-map-marker text-[16px]"></i>
+                            Kara, Togo
+                        </div>
+                    </div>
+                </div>
+                <span class="px-2 py-1 bg-secondary-container text-on-secondary-container rounded-lg text-[10px] font-bold uppercase tracking-wider">Public</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 mb-8 bg-surface-container-low rounded-xl p-3">
+                <div class="text-center">
+                    <p class="text-[10px] font-label-md text-on-surface-variant uppercase">Étudiants</p>
+                    <p class="font-headline-sm text-headline-sm text-on-surface">18k</p>
+                </div>
+                <div class="text-center border-x border-outline-variant/30">
+                    <p class="text-[10px] font-label-md text-on-surface-variant uppercase">Wallets</p>
+                    <p class="font-headline-sm text-headline-sm text-on-surface">15k</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-[10px] font-label-md text-on-surface-variant uppercase">Bourses</p>
+                    <p class="font-headline-sm text-headline-sm text-on-surface">450M</p>
+                </div>
+            </div>
+            <div class="mt-auto flex gap-3">
+                <button class="flex-1 bg-surface-container-high text-on-surface font-label-md text-label-md py-2.5 rounded-lg hover:bg-primary hover:text-on-primary transition-all" (click)="toggleSidePanel()">Gérer</button>
+                <button class="flex-1 border border-outline-variant text-on-surface-variant font-label-md text-label-md py-2.5 rounded-lg hover:bg-surface-container-low transition-all">Voir étudiants</button>
+            </div>
+        </div>
+        
+        <!-- University Card 3 -->
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-panel-padding shadow-sm hover:border-primary/40 transition-colors flex flex-col group">
+            <div class="flex items-start justify-between mb-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-xl bg-secondary-fixed text-on-secondary-fixed font-extrabold text-xl shadow-inner flex items-center justify-center">ESA</div>
+                    <div>
+                        <h3 class="font-headline-sm text-headline-sm text-on-surface leading-tight">ESA Adidogomé</h3>
+                        <div class="flex items-center gap-1 text-on-surface-variant font-body-sm text-body-sm mt-1">
+                            <i class="pi pi-map-marker text-[16px]"></i>
+                            Lomé, Togo
+                        </div>
+                    </div>
+                </div>
+                <span class="px-2 py-1 bg-primary-fixed text-on-primary-fixed font-bold text-[10px] uppercase tracking-wider rounded-lg">Privé</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 mb-8 bg-surface-container-low rounded-xl p-3">
+                <div class="text-center">
+                    <p class="text-[10px] font-label-md text-on-surface-variant uppercase">Étudiants</p>
+                    <p class="font-headline-sm text-headline-sm text-on-surface">2.5k</p>
+                </div>
+                <div class="text-center border-x border-outline-variant/30">
+                    <p class="text-[10px] font-label-md text-on-surface-variant uppercase">Wallets</p>
+                    <p class="font-headline-sm text-headline-sm text-on-surface">2.4k</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-[10px] font-label-md text-on-surface-variant uppercase">Bourses</p>
+                    <p class="font-headline-sm text-headline-sm text-on-surface">120M</p>
+                </div>
+            </div>
+            <div class="mt-auto flex gap-3">
+                <button class="flex-1 bg-surface-container-high text-on-surface font-label-md text-label-md py-2.5 rounded-lg hover:bg-primary hover:text-on-primary transition-all" (click)="toggleSidePanel()">Gérer</button>
+                <button class="flex-1 border border-outline-variant text-on-surface-variant font-label-md text-label-md py-2.5 rounded-lg hover:bg-surface-container-low transition-all">Voir étudiants</button>
+            </div>
+        </div>
+        
+        <!-- University Card 4 -->
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-panel-padding shadow-sm hover:border-primary/40 transition-colors flex flex-col group">
+            <div class="flex items-start justify-between mb-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-xl bg-inverse-primary text-primary font-extrabold text-xl shadow-inner flex items-center justify-center">IAEC</div>
+                    <div>
+                        <h3 class="font-headline-sm text-headline-sm text-on-surface leading-tight">IAEC Togo</h3>
+                        <div class="flex items-center gap-1 text-on-surface-variant font-body-sm text-body-sm mt-1">
+                            <i class="pi pi-map-marker text-[16px]"></i>
+                            Lomé, Togo
+                        </div>
+                    </div>
+                </div>
+                <span class="px-2 py-1 bg-primary-fixed text-on-primary-fixed font-bold text-[10px] uppercase tracking-wider rounded-lg">Privé</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 mb-8 bg-surface-container-low rounded-xl p-3">
+                <div class="text-center">
+                    <p class="text-[10px] font-label-md text-on-surface-variant uppercase">Étudiants</p>
+                    <p class="font-headline-sm text-headline-sm text-on-surface">3.2k</p>
+                </div>
+                <div class="text-center border-x border-outline-variant/30">
+                    <p class="text-[10px] font-label-md text-on-surface-variant uppercase">Wallets</p>
+                    <p class="font-headline-sm text-headline-sm text-on-surface">3.1k</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-[10px] font-label-md text-on-surface-variant uppercase">Bourses</p>
+                    <p class="font-headline-sm text-headline-sm text-on-surface">155M</p>
+                </div>
+            </div>
+            <div class="mt-auto flex gap-3">
+                <button class="flex-1 bg-surface-container-high text-on-surface font-label-md text-label-md py-2.5 rounded-lg hover:bg-primary hover:text-on-primary transition-all" (click)="toggleSidePanel()">Gérer</button>
+                <button class="flex-1 border border-outline-variant text-on-surface-variant font-label-md text-label-md py-2.5 rounded-lg hover:bg-surface-container-low transition-all">Voir étudiants</button>
+            </div>
+        </div>
+        
+        <!-- University Card 5 -->
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-panel-padding shadow-sm hover:border-primary/40 transition-colors flex flex-col group">
+            <div class="flex items-start justify-between mb-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-xl bg-on-tertiary-container text-tertiary-container font-extrabold text-xl shadow-inner flex items-center justify-center">UDAO</div>
+                    <div>
+                        <h3 class="font-headline-sm text-headline-sm text-on-surface leading-tight">Univ. de l'Afrique de l'Ouest</h3>
+                        <div class="flex items-center gap-1 text-on-surface-variant font-body-sm text-body-sm mt-1">
+                            <i class="pi pi-map-marker text-[16px]"></i>
+                            Cinkassé, Togo
+                        </div>
+                    </div>
+                </div>
+                <span class="px-2 py-1 bg-secondary-container text-on-secondary-container rounded-lg text-[10px] font-bold uppercase tracking-wider">Public</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 mb-8 bg-surface-container-low rounded-xl p-3">
+                <div class="text-center">
+                    <p class="text-[10px] font-label-md text-on-surface-variant uppercase">Étudiants</p>
+                    <p class="font-headline-sm text-headline-sm text-on-surface">5.6k</p>
+                </div>
+                <div class="text-center border-x border-outline-variant/30">
+                    <p class="text-[10px] font-label-md text-on-surface-variant uppercase">Wallets</p>
+                    <p class="font-headline-sm text-headline-sm text-on-surface">5.2k</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-[10px] font-label-md text-on-surface-variant uppercase">Bourses</p>
+                    <p class="font-headline-sm text-headline-sm text-on-surface">240M</p>
+                </div>
+            </div>
+            <div class="mt-auto flex gap-3">
+                <button class="flex-1 bg-surface-container-high text-on-surface font-label-md text-label-md py-2.5 rounded-lg hover:bg-primary hover:text-on-primary transition-all" (click)="toggleSidePanel()">Gérer</button>
+                <button class="flex-1 border border-outline-variant text-on-surface-variant font-label-md text-label-md py-2.5 rounded-lg hover:bg-surface-container-low transition-all">Voir étudiants</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Side Detail Panel -->
+<div class="fixed inset-0 bg-inverse-surface/40 backdrop-blur-sm z-[60] transition-opacity duration-300"
+     [class.opacity-0]="!isSidePanelOpen()"
+     [class.pointer-events-none]="!isSidePanelOpen()"
+     [class.opacity-100]="isSidePanelOpen()"
+     [class.pointer-events-auto]="isSidePanelOpen()"
+     id="sidePanelOverlay" (click)="toggleSidePanel()"></div>
+
+<div class="fixed right-0 top-0 h-full w-[400px] bg-surface-container-lowest z-[70] transition-transform duration-300 shadow-2xl flex flex-col"
+     [class.translate-x-full]="!isSidePanelOpen()"
+     [class.translate-x-0]="isSidePanelOpen()"
+     id="sidePanel">
+    <div class="p-6 border-b border-outline-variant flex items-center justify-between bg-surface-container-low">
+        <h2 class="font-headline-sm text-headline-sm text-on-surface">Détails Université</h2>
+        <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-surface-variant text-on-surface-variant" (click)="toggleSidePanel()">
+            <i class="pi pi-times"></i>
+        </button>
+    </div>
+    
+    <div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-8">
+        <!-- Summary Profile -->
+        <div class="flex flex-col items-center">
+            <div class="w-24 h-24 rounded-2xl bg-primary-container flex items-center justify-center text-on-primary-container font-extrabold text-4xl mb-4">UL</div>
+            <h3 class="font-headline-md text-headline-md text-on-surface">Université de Lomé</h3>
+            <span class="px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-xs font-bold mt-2">ÉTABLISSEMENT PUBLIC</span>
+        </div>
+        
+        <!-- Detailed Stats -->
+        <div class="space-y-4">
+            <div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl">
+                <div class="flex items-center gap-3">
+                    <i class="pi pi-users text-primary text-xl"></i>
+                    <span class="font-label-md text-label-md text-on-surface-variant">Inscrits GNS</span>
+                </div>
+                <span class="font-headline-sm text-headline-sm">42,504</span>
+            </div>
+            <div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl">
+                <div class="flex items-center gap-3">
+                    <i class="pi pi-wallet text-primary text-xl"></i>
+                    <span class="font-label-md text-label-md text-on-surface-variant">Wallets Actifs</span>
+                </div>
+                <span class="font-headline-sm text-headline-sm">38,112</span>
+            </div>
+            <div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl">
+                <div class="flex items-center gap-3">
+                    <i class="pi pi-money-bill text-primary text-xl"></i>
+                    <span class="font-label-md text-label-md text-on-surface-variant">Total Déboursé</span>
+                </div>
+                <span class="font-headline-sm text-headline-sm">1.280.000.000 F</span>
+            </div>
+        </div>
+        
+        <!-- Configuration Options -->
+        <div class="space-y-4">
+            <h4 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest border-b border-outline-variant pb-2">Configuration</h4>
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="font-body-md text-body-md font-semibold">Paiements Automatisés</p>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Activer le versement mensuel auto</p>
+                </div>
+                <div class="w-12 h-6 bg-primary rounded-full relative p-1 cursor-pointer">
+                    <div class="w-4 h-4 bg-on-primary rounded-full absolute right-1"></div>
+                </div>
+            </div>
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="font-body-md text-body-md font-semibold">Validation Biométrique</p>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Requis pour l'ouverture de wallet</p>
+                </div>
+                <div class="w-12 h-6 bg-outline-variant rounded-full relative p-1 cursor-pointer">
+                    <div class="w-4 h-4 bg-surface-container-lowest rounded-full absolute left-1"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Location Map Mockup -->
+        <div class="rounded-xl overflow-hidden border border-outline-variant relative group">
+            <img alt="Map Location" class="w-full h-40 object-cover" data-alt="A clean, top-down satellite view of a modern university campus layout with multiple academic buildings, green spaces, and connecting pathways. The visual style is crisp and professional, using a cool blue and green palette. It represents a digital mapping interface used in a high-end administrative dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFRT3e7ejekUE3h1rHtzzGfz2togTlLuv-BEftSJmLPoPYIfAgbjB5fY-A-7uzh6dX7QPCMoAutXQSkzfw8ALbT90I5fq16Zz6O92xGxc33aPeB3FvTZgiRSNFoNls-fSagix_04jCAPgRgVHCPbS9s8gTM4sXh1-ye0S9pPPTDzzoQv2wmBPVXJkcnniiLXA-RsSizBOxXFdalfM0aV2SYhbXEPHGYvCGN-WknbbrSfvCPhr6nzemDepu-huUArLX4SSScDKqzHRP"/>
+            <div class="absolute inset-0 bg-primary/20 flex items-center justify-center">
+                <i class="pi pi-map-marker text-on-primary text-4xl"></i>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 bg-surface-container-lowest/90 p-2 text-center font-label-md text-label-md">
+                Campus Universitaire de Lomé, Togo
+            </div>
+        </div>
+    </div>
+    
+    <div class="p-6 border-t border-outline-variant bg-surface-container-low flex flex-col gap-3">
+        <button class="w-full bg-primary text-on-primary py-3 rounded-xl font-headline-sm text-headline-sm hover:bg-opacity-90 transition-all">Sauvegarder les modifications</button>
+        <button class="w-full text-error border border-error/20 py-3 rounded-xl font-headline-sm text-headline-sm hover:bg-error/5 transition-all">Désactiver l'université</button>
+    </div>
+</div>

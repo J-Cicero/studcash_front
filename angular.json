@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "gns_front": {
+    "gns-front": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/gns_front",
+            "outputPath": "dist/gns-front",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -41,8 +41,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2.5MB",
-                  "maximumError": "3MB"
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -64,10 +64,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "gns_front:build:production"
+              "buildTarget": "gns-front:build:production"
             },
             "development": {
-              "buildTarget": "gns_front:build:development"
+              "buildTarget": "gns-front:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -100,6 +100,6 @@
     }
   },
   "cli": {
-    "analytics": "4b4484f9-a82c-405c-bfe2-90c886e50c66"
+    "analytics": false
   }
 }

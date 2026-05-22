@@ -1,47 +1,43 @@
 import { Routes } from '@angular/router';
-import { LoginWebComponent } from './features/auth/login-web/login-web.component';
-import { LoginAdminComponent } from './features/auth/login-admin/login-admin.component';
-import { MainLayoutComponent } from './core/layout/main-layout/main-layout.component';
-import { AdminLayoutComponent } from './core/layout/admin-layout/admin-layout.component';
-import { DashboardUlComponent } from './features/portail-ul/dashboard-ul/dashboard-ul.component';
-import { PaymentHistoryComponent } from './features/portail-ul/payment-history/payment-history.component';
-import { ProfileComponent } from './features/portail-ul/profile/profile.component';
-import { ValidationKycComponent } from './features/admin-gns/validation-kyc/validation-kyc.component';
-import { DashboardAdminComponent } from './features/admin-gns/dashboard-admin/dashboard-admin.component';
-import { GestionEtudiantsComponent } from './features/admin-gns/gestion-etudiants/gestion-etudiants.component';
-import { AdminSettingsComponent } from './features/admin-gns/settings/settings.component';
-import { WalletManagementComponent } from './features/admin-gns/wallet-management/wallet-management.component';
-import { GestionBoutiquesComponent } from './features/admin-gns/gestion-boutiques/gestion-boutiques.component';
-import { BoutiqueMapComponent } from './features/admin-gns/boutique-map/boutique-map.component';
 
 export const routes: Routes = [
-  { path: 'login', component: LoginWebComponent },
-  { path: 'login-admin', component: LoginAdminComponent },
-  {
-    path: 'ul',
-    component: MainLayoutComponent,
-    children: [
-      { path: 'dashboard', component: DashboardUlComponent },
-      { path: 'historique', component: PaymentHistoryComponent },
-      { path: 'profil', component: ProfileComponent },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
-    ]
-  },
   {
     path: 'admin',
-    component: AdminLayoutComponent,
+    loadComponent: () => import('./features/gns-admin/layout/gns-admin-layout/gns-admin-layout.component').then(m => m.GnsAdminLayoutComponent),
     children: [
-      { path: 'dashboard', component: DashboardAdminComponent },
-      { path: 'kyc', component: ValidationKycComponent },
-      { path: 'etudiants', component: GestionEtudiantsComponent },
-      { path: 'boutiques', component: GestionBoutiquesComponent },
-      { path: 'carte', component: BoutiqueMapComponent },
-      { path: 'wallet', component: WalletManagementComponent },
-      { path: 'parametres', component: AdminSettingsComponent },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/gns-admin/pages/gns-admin-dashboard/gns-admin-dashboard.component').then(m => m.GnsAdminDashboardComponent)
+      },
+      {
+        path: 'mass-actions',
+        loadComponent: () => import('./features/gns-admin/pages/gns-admin-mass-actions/gns-admin-mass-actions.component').then(m => m.GnsAdminMassActionsComponent)
+      },
+      {
+        path: 'wallets',
+        loadComponent: () => import('./features/gns-admin/pages/gns-admin-wallets-monitor/gns-admin-wallets-monitor.component').then(m => m.GnsAdminWalletsMonitorComponent)
+      },
+      {
+        path: 'universities',
+        loadComponent: () => import('./features/gns-admin/pages/gns-admin-universities/gns-admin-universities.component').then(m => m.GnsAdminUniversitiesComponent)
+      },
+      {
+        path: 'students',
+        loadComponent: () => import('./features/gns-admin/pages/gns-admin-students/gns-admin-students.component').then(m => m.GnsAdminStudentsComponent)
+      },
+      {
+        path: 'transactions',
+        loadComponent: () => import('./features/gns-admin/pages/gns-admin-transactions/gns-admin-transactions.component').then(m => m.GnsAdminTransactionsComponent)
+      },
+      {
+        path: 'settings',
+        loadComponent: () => import('./features/gns-admin/pages/gns-admin-settings/gns-admin-settings.component').then(m => m.GnsAdminSettingsComponent)
+      }
     ]
-  },
-  { path: '', redirectTo: 'login', pathMatch: 'full' }
+  }
 ];
-
-

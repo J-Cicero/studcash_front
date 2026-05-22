@@ -1,0 +1,265 @@
+<div class="p-gutter space-y-stack-lg">
+    <!-- Summary Stats Bar -->
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+        <!-- Stat Card 1 -->
+        <div class="bg-surface-container-lowest border border-outline-variant p-panel-padding rounded-xl shadow-sm hover:border-outline transition-colors group">
+            <div class="flex items-center justify-between mb-2">
+                <span class="p-2 rounded-lg bg-secondary-container text-primary">
+                    <i class="pi pi-wallet text-xl"></i>
+                </span>
+                <span class="text-green-600 font-label-md text-label-md flex items-center bg-green-50 px-2 py-0.5 rounded-full">
+                    <i class="pi pi-arrow-up-right text-[14px] mr-1"></i> 2.4%
+                </span>
+            </div>
+            <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Total Active Wallets</p>
+            <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">12,842</h3>
+        </div>
+        
+        <!-- Stat Card 2 -->
+        <div class="bg-surface-container-lowest border border-error p-panel-padding rounded-xl shadow-sm hover:border-error transition-colors group">
+            <div class="flex items-center justify-between mb-2">
+                <span class="p-2 rounded-lg bg-error-container text-error">
+                    <i class="pi pi-exclamation-triangle text-xl"></i>
+                </span>
+                <span class="text-error font-label-md text-label-md flex items-center bg-error-container/50 px-2 py-0.5 rounded-full">
+                    High Priority
+                </span>
+            </div>
+            <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Critical Alerts</p>
+            <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">48</h3>
+        </div>
+        
+        <!-- Stat Card 3 -->
+        <div class="bg-surface-container-lowest border border-tertiary p-panel-padding rounded-xl shadow-sm hover:border-tertiary transition-colors group">
+            <div class="flex items-center justify-between mb-2">
+                <span class="p-2 rounded-lg bg-tertiary-fixed text-tertiary">
+                    <i class="pi pi-info-circle text-xl"></i>
+                </span>
+                <span class="text-tertiary font-label-md text-label-md flex items-center bg-tertiary-fixed/50 px-2 py-0.5 rounded-full">
+                    Needs Review
+                </span>
+            </div>
+            <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Attention Required</p>
+            <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">126</h3>
+        </div>
+        
+        <!-- Stat Card 4 -->
+        <div class="bg-surface-container-lowest border border-outline-variant p-panel-padding rounded-xl shadow-sm hover:border-outline transition-colors group">
+            <div class="flex items-center justify-between mb-2">
+                <span class="p-2 rounded-lg bg-primary-fixed text-primary">
+                    <i class="pi pi-money-bill text-xl"></i>
+                </span>
+                <span class="text-on-surface-variant font-label-md text-label-md">MTN / Orange</span>
+            </div>
+            <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Total in Circulation</p>
+            <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">4.2M <span class="text-body-sm font-normal">XAF</span></h3>
+        </div>
+    </section>
+    
+    <!-- Filters & Actions -->
+    <section class="flex flex-col md:flex-row items-center justify-between gap-4 bg-surface-container-lowest p-4 rounded-xl border border-outline-variant">
+        <div class="flex flex-wrap items-center gap-4 w-full md:w-auto">
+            <div class="min-w-[200px] relative">
+                <select class="w-full bg-surface-container-low border border-outline-variant rounded-lg py-2 px-3 text-body-md appearance-none focus:ring-2 focus:ring-primary/20">
+                    <option>Toutes les Statuts</option>
+                    <option>CRITIQUE</option>
+                    <option>ATTENTION</option>
+                    <option>SAIN</option>
+                </select>
+                <i class="pi pi-chevron-down absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant"></i>
+            </div>
+            <div class="min-w-[200px] relative">
+                <select class="w-full bg-surface-container-low border border-outline-variant rounded-lg py-2 px-3 text-body-md appearance-none focus:ring-2 focus:ring-primary/20">
+                    <option>Toutes les Universités</option>
+                    <option>UY1 - Yaoundé</option>
+                    <option>UD - Douala</option>
+                    <option>UB - Buea</option>
+                </select>
+                <i class="pi pi-chevron-down absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant"></i>
+            </div>
+        </div>
+        <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+            <button class="flex items-center gap-2 px-4 py-2 border border-outline-variant rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container-low transition-colors">
+                <i class="pi pi-download text-[18px]"></i>
+                Exporter
+            </button>
+            <button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-lg font-label-md text-label-md font-bold hover:bg-on-primary-fixed-variant transition-colors" (click)="openModal()">
+                <i class="pi pi-sliders-h text-[18px]"></i>
+                Ajuster Quota
+            </button>
+        </div>
+    </section>
+    
+    <!-- Wallets Table -->
+    <section class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+        <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-surface-container-low text-on-surface-variant border-b border-outline-variant sticky top-0">
+                    <tr>
+                        <th class="px-6 py-4 font-label-md text-label-md uppercase tracking-wider">Boutique</th>
+                        <th class="px-6 py-4 font-label-md text-label-md uppercase tracking-wider">Propriétaire</th>
+                        <th class="px-6 py-4 font-label-md text-label-md uppercase tracking-wider">Université</th>
+                        <th class="px-6 py-4 font-label-md text-label-md uppercase tracking-wider">Solde</th>
+                        <th class="px-6 py-4 font-label-md text-label-md uppercase tracking-wider">Quota</th>
+                        <th class="px-6 py-4 font-label-md text-label-md uppercase tracking-wider">Utilisation</th>
+                        <th class="px-6 py-4 font-label-md text-label-md uppercase tracking-wider">Statut</th>
+                        <th class="px-6 py-4 font-label-md text-label-md uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-outline-variant/30">
+                    <!-- Critical Row -->
+                    <tr class="hover:bg-error-container/5 border-l-4 border-l-error hover:-translate-y-[1px] hover:translate-x-[2px] transition-transform duration-200">
+                        <td class="px-6 py-4 font-medium text-on-surface">Campus Snack Bar</td>
+                        <td class="px-6 py-4 text-on-surface-variant text-body-md">Jean Dupont</td>
+                        <td class="px-6 py-4 text-on-surface-variant text-body-md">UY1</td>
+                        <td class="px-6 py-4 font-data-tabular text-data-tabular">985,000 XAF</td>
+                        <td class="px-6 py-4 font-data-tabular text-data-tabular text-error">1,000,000</td>
+                        <td class="px-6 py-4">
+                            <div class="w-full bg-outline-variant/30 rounded-full h-1.5 overflow-hidden">
+                                <div class="bg-error h-full" style="width: 98.5%"></div>
+                            </div>
+                            <span class="text-[10px] text-error font-bold">98.5%</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 rounded-full bg-error-container text-error text-[10px] font-bold">CRITIQUE</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <button class="p-1 hover:bg-surface-container-high rounded text-primary">
+                                <i class="pi pi-ellipsis-v"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <!-- Attention Row -->
+                    <tr class="hover:bg-tertiary-fixed/10 border-l-4 border-l-tertiary hover:-translate-y-[1px] hover:translate-x-[2px] transition-transform duration-200">
+                        <td class="px-6 py-4 font-medium text-on-surface">U-Copy Shop</td>
+                        <td class="px-6 py-4 text-on-surface-variant text-body-md">Sarah M.</td>
+                        <td class="px-6 py-4 text-on-surface-variant text-body-md">UD</td>
+                        <td class="px-6 py-4 font-data-tabular text-data-tabular">412,000 XAF</td>
+                        <td class="px-6 py-4 font-data-tabular text-data-tabular text-tertiary">500,000</td>
+                        <td class="px-6 py-4">
+                            <div class="w-full bg-outline-variant/30 rounded-full h-1.5 overflow-hidden">
+                                <div class="bg-tertiary h-full" style="width: 82%"></div>
+                            </div>
+                            <span class="text-[10px] text-tertiary font-bold">82%</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 rounded-full bg-tertiary-fixed text-tertiary text-[10px] font-bold uppercase">ATTENTION</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <button class="p-1 hover:bg-surface-container-high rounded text-primary">
+                                <i class="pi pi-ellipsis-v"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <!-- Normal Row -->
+                    <tr class="hover:bg-surface-container-low hover:-translate-y-[1px] hover:translate-x-[2px] transition-transform duration-200">
+                        <td class="px-6 py-4 font-medium text-on-surface">BookStore Elite</td>
+                        <td class="px-6 py-4 text-on-surface-variant text-body-md">Francis K.</td>
+                        <td class="px-6 py-4 text-on-surface-variant text-body-md">UB</td>
+                        <td class="px-6 py-4 font-data-tabular text-data-tabular">150,000 XAF</td>
+                        <td class="px-6 py-4 font-data-tabular text-data-tabular">800,000</td>
+                        <td class="px-6 py-4">
+                            <div class="w-full bg-outline-variant/30 rounded-full h-1.5 overflow-hidden">
+                                <div class="bg-primary h-full" style="width: 18%"></div>
+                            </div>
+                            <span class="text-[10px] text-on-surface-variant font-bold">18%</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 rounded-full bg-secondary-container text-secondary text-[10px] font-bold">SAIN</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <button class="p-1 hover:bg-surface-container-high rounded text-primary">
+                                <i class="pi pi-ellipsis-v"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <!-- Repeating some data for depth -->
+                    <tr class="hover:bg-surface-container-low border-l-4 border-l-transparent hover:-translate-y-[1px] hover:translate-x-[2px] transition-transform duration-200">
+                        <td class="px-6 py-4 font-medium text-on-surface">Cyber Café Net</td>
+                        <td class="px-6 py-4 text-on-surface-variant text-body-md">Ariel T.</td>
+                        <td class="px-6 py-4 text-on-surface-variant text-body-md">UY1</td>
+                        <td class="px-6 py-4 font-data-tabular text-data-tabular">45,000 XAF</td>
+                        <td class="px-6 py-4 font-data-tabular text-data-tabular">200,000</td>
+                        <td class="px-6 py-4">
+                            <div class="w-full bg-outline-variant/30 rounded-full h-1.5 overflow-hidden">
+                                <div class="bg-primary h-full" style="width: 22%"></div>
+                            </div>
+                            <span class="text-[10px] text-on-surface-variant font-bold">22.5%</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 rounded-full bg-secondary-container text-secondary text-[10px] font-bold uppercase">SAIN</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <button class="p-1 hover:bg-surface-container-high rounded text-primary">
+                                <i class="pi pi-ellipsis-v"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination Placeholder -->
+        <div class="px-6 py-4 bg-surface-container-lowest border-t border-outline-variant flex justify-between items-center">
+            <span class="text-body-sm text-on-surface-variant">Affichage de 1-10 sur 1,284 portefeuilles</span>
+            <div class="flex gap-2">
+                <button class="p-2 border border-outline-variant rounded hover:bg-surface-container-low disabled:opacity-50" disabled>
+                    <i class="pi pi-chevron-left text-[18px]"></i>
+                </button>
+                <button class="p-2 border border-outline-variant rounded hover:bg-surface-container-low">
+                    <i class="pi pi-chevron-right text-[18px]"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Modal: Ajuster Quota -->
+<div class="fixed inset-0 z-[100]" [class.hidden]="!isModalOpen()">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-inverse-surface/40 backdrop-blur-sm" (click)="closeModal()"></div>
+    
+    <!-- Modal Content -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-surface-container-lowest rounded-xl shadow-2xl border border-outline-variant overflow-hidden">
+        <div class="p-6 border-b border-outline-variant flex justify-between items-center">
+            <h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Ajuster Quota de Portefeuille</h2>
+            <button class="text-on-surface-variant hover:text-error transition-colors" (click)="closeModal()">
+                <i class="pi pi-times"></i>
+            </button>
+        </div>
+        
+        <div class="p-6 space-y-4">
+            <div>
+                <label class="block font-label-md text-label-md text-on-surface-variant mb-1 uppercase tracking-wider">Sélectionner Boutique(s)</label>
+                <select class="w-full bg-surface-container-low border border-outline-variant rounded-lg py-3 px-4 text-body-md focus:ring-2 focus:ring-primary/20">
+                    <option>Campus Snack Bar (Jean Dupont)</option>
+                    <option>U-Copy Shop (Sarah M.)</option>
+                    <option>Appliquer à toutes les boutiques critiques</option>
+                </select>
+            </div>
+            <div>
+                <label class="block font-label-md text-label-md text-on-surface-variant mb-1 uppercase tracking-wider">Nouveau Quota (XAF)</label>
+                <div class="relative">
+                    <input class="w-full bg-surface-container-low border border-outline-variant rounded-lg py-3 pl-4 pr-12 text-body-md font-bold focus:ring-2 focus:ring-primary/20" placeholder="1,500,000" type="number"/>
+                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-bold">XAF</span>
+                </div>
+            </div>
+            
+            <div class="p-4 bg-tertiary-fixed/30 rounded-lg flex gap-3">
+                <i class="pi pi-info-circle text-tertiary mt-0.5"></i>
+                <p class="text-body-sm text-on-tertiary-fixed-variant">
+                    Cette action augmentera la limite de transaction instantanément pour les boutiques sélectionnées.
+                </p>
+            </div>
+        </div>
+        
+        <div class="p-6 bg-surface-container-low flex gap-3 justify-end">
+            <button class="px-6 py-2 rounded-lg font-label-md text-label-md text-on-surface hover:bg-outline-variant/20 transition-colors" (click)="closeModal()">
+                Annuler
+            </button>
+            <button class="px-6 py-2 bg-primary text-on-primary rounded-lg font-label-md text-label-md font-bold hover:bg-on-primary-fixed-variant transition-colors" (click)="closeModal()">
+                Confirmer l'ajustement
+            </button>
+        </div>
+    </div>
+</div>
