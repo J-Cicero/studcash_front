@@ -70,5 +70,36 @@ export const routes: Routes = [
         loadComponent: () => import('./features/dbs-portal/pages/dbs-settings/dbs-settings.component').then(m => m.DbsSettingsComponent)
       }
     ]
+  },
+  {
+    path: 'bank',
+    loadComponent: () => import('./features/bank-portal/layout/bank-layout/bank-layout.component').then(m => m.BankLayoutComponent),
+    children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/bank-portal/pages/bank-dashboard/bank-dashboard.component').then(m => m.BankDashboardComponent)
+      },
+      {
+        path: 'liquidation',
+        loadComponent: () => import('./features/bank-portal/pages/bank-liquidation/bank-liquidation.component').then(m => m.BankLiquidationComponent)
+      },
+      {
+        path: 'mandats',
+        loadComponent: () => import('./features/bank-portal/pages/bank-mandats/bank-mandats.component').then(m => m.BankMandatsComponent)
+      },
+      {
+        path: 'virements',
+        loadComponent: () => import('./features/bank-portal/pages/bank-virements/bank-virements.component').then(m => m.BankVirementsComponent)
+      },
+      {
+        path: 'settings',
+        loadComponent: () => import('./features/bank-portal/pages/bank-settings/bank-settings.component').then(m => m.BankSettingsComponent)
+      }
+    ]
   }
 ];

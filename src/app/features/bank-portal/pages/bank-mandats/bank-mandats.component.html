@@ -1,0 +1,163 @@
+<div class="flex flex-row w-full h-[calc(100vh-64px)] overflow-hidden -mx-4 md:-mx-8">
+    <!-- Left Sidebar: Mandate List (280px) -->
+    <aside class="w-[280px] border-r border-gray-200 bg-white flex flex-col shrink-0">
+        <div class="p-4 border-b border-gray-200 bg-gray-50">
+            <h2 class="font-bold text-xl text-blue-800 mb-1">Mandats En attente</h2>
+            <p class="font-normal text-sm text-gray-500">24 dossiers à traiter</p>
+        </div>
+        <div class="flex-grow overflow-y-auto">
+            @for (mandat of mandats(); track mandat.id) {
+                <div class="p-4 border-b border-gray-200 transition-colors cursor-pointer"
+                     [ngClass]="{
+                        'bg-gray-100 border-l-4 border-blue-800': activeMandat().id === mandat.id,
+                        'hover:bg-gray-50 border-l-4 border-transparent': activeMandat().id !== mandat.id
+                     }"
+                     (click)="selectMandat(mandat)">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="font-semibold text-sm" [ngClass]="activeMandat().id === mandat.id ? 'text-blue-800' : 'text-gray-500'">{{ mandat.id }}</span>
+                        <span class="w-2 h-2 rounded-full bg-red-600 mt-1"></span>
+                    </div>
+                    <p class="font-normal text-base font-semibold text-gray-900">{{ mandat.name }}</p>
+                    <p class="font-mono text-sm text-gray-600 mt-1">{{ mandat.amount }}</p>
+                    <p class="font-normal text-sm text-gray-500 mt-1">{{ mandat.time }}</p>
+                </div>
+            }
+        </div>
+    </aside>
+
+    <!-- Center: Document Viewer (55%) -->
+    <section class="flex-grow bg-gray-50 flex flex-col relative overflow-hidden">
+        <!-- Viewer Toolbar -->
+        <div class="h-12 bg-white border-b border-gray-200 flex items-center justify-between px-4 shrink-0">
+            <div class="flex items-center gap-2">
+                <button (click)="zoomIn()" class="p-1 hover:bg-gray-100 rounded transition-colors text-gray-600"><i class="pi pi-search-plus text-[20px]"></i></button>
+                <button (click)="zoomOut()" class="p-1 hover:bg-gray-100 rounded transition-colors text-gray-600"><i class="pi pi-search-minus text-[20px]"></i></button>
+                <span class="font-normal text-sm text-gray-500 border-l border-gray-200 pl-2 ml-1">Page 1 sur 1</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button class="p-1 hover:bg-gray-100 rounded transition-colors text-gray-600"><i class="pi pi-print text-[20px]"></i></button>
+                <button class="p-1 hover:bg-gray-100 rounded transition-colors text-gray-600"><i class="pi pi-download text-[20px]"></i></button>
+                <button class="p-1 hover:bg-gray-100 rounded transition-colors text-red-600"><i class="pi pi-flag text-[20px]"></i></button>
+            </div>
+        </div>
+        <!-- Document Canvas -->
+        <div class="flex-grow p-8 flex justify-center items-start overflow-y-auto bg-gray-200/20">
+            <div class="w-[595px] min-h-[842px] bg-white shadow-xl rounded-sm p-8 flex flex-col relative transform transition-transform duration-300 origin-top" 
+                 [style.transform]="'scale(' + zoomScale() + ')'">
+                <!-- Letterhead -->
+                <div class="flex justify-between items-start border-b-2 border-blue-800 pb-4 mb-6">
+                    <div class="flex flex-col">
+                        <span class="font-bold text-xl text-blue-800 uppercase">MANDAT DE PAIEMENT</span>
+                        <span class="font-semibold text-sm text-gray-500">MINISTÈRE DE L'ENSEIGNEMENT SUPÉRIEUR</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="font-semibold text-sm bg-blue-100 text-blue-900 px-2 py-1 rounded">N° {{ activeMandat().id.replace('REF', 'BOU') }}</span>
+                    </div>
+                </div>
+                <!-- Doc Content -->
+                <div class="flex-grow space-y-4">
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <p class="font-semibold text-sm text-gray-500 uppercase">Bénéficiaire</p>
+                            <p class="font-bold text-xl text-gray-900">{{ activeMandat().name }}</p>
+                            <p class="font-normal text-base text-gray-600">ID: CI-00128374-9</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-sm text-gray-500 uppercase">Établissement</p>
+                            <p class="font-normal text-lg text-gray-900 font-semibold">Université Alassane Ouattara</p>
+                            <p class="font-normal text-base text-gray-600">Bouaké, Côte d'Ivoire</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded border border-gray-200 mt-6">
+                        <p class="font-semibold text-sm text-gray-500 uppercase mb-2">Détails de l'Allocation</p>
+                        <div class="flex justify-between items-center py-1 border-b border-gray-200">
+                            <span class="font-normal text-base text-gray-900">Bourse d'Excellence - Trimestre 2</span>
+                            <span class="font-mono text-sm font-bold">{{ activeMandat().amount }}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-1 font-bold text-blue-800 text-lg mt-2">
+                            <span>NET À PERCEVOIR</span>
+                            <span class="font-mono">{{ activeMandat().amount }}</span>
+                        </div>
+                    </div>
+                    <div class="mt-12 flex justify-between items-end h-40">
+                        <div class="w-32 opacity-80">
+                            <img alt="Signature" class="mix-blend-multiply" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6FVoMNmn7rthKuGTirS4m0MZ2txh_cii4yvmerDQCVrq0oYHrjQ6krgvgwZcvlaBDHH2vkDBYCl0GGvncGhVxGaj67iXsK3Y_Pla54xh-86nkCUSU7zfEHdntuYjYhgSHdfvC6Rrd9O7V_CC3icbIIAMNNYK3fNbjbHPo6WATpb1m1ZUHUrr7wRd05OiP9SgUcb5X-nrDrULgvAbZgNJCJooNakaU8nx1miHLD5f1DkqZOky9JvJHztX-xBaxKfrh8zXhI2T9euum"/>
+                            <p class="font-medium text-xs text-center border-t border-gray-500 mt-1">Le Trésorier Général</p>
+                        </div>
+                        <!-- Validated Stamp (Absolute Center Overlay) -->
+                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-8 border-red-600 rounded-xl p-4 transform -rotate-12 opacity-30 select-none pointer-events-none">
+                            <p class="text-red-600 font-extrabold text-5xl uppercase tracking-widest m-0 leading-none">VALIDÉ</p>
+                            <p class="text-red-600 font-bold text-center text-sm m-0 mt-2">DIRECTION GÉNÉRALE</p>
+                        </div>
+                        <div class="text-right">
+                            <img alt="Barcode" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKi6sHja2xuQpuLWuwlQXZS7Ji6W723KjHONUdcYq73ZJ4jH_rHAGjBWBy1WBnVgo0LYtQtdsao1_7qystYq5gEGvl6i1FYKK7yjlmbt4Q5mAlQIjyM-9gCYztR5Di9PSmyuZOXg69zsA4uaRBcdBe5P9PM2W838urSWG1pdsTxSOAeRl5H6vOgUBMQJhCbmieZyPRv3DRTdsQFvWyH7O8COdIE0X-YB8U009gMvdGJb1lCWwBOCU9NxIMsbClNCOYLtiyJsUnfCDA"/>
+                            <p class="font-medium text-xs mt-1 text-gray-500">TS-AUTH-MD-{{ activeMandat().id.split('-')[1] }}-{{ activeMandat().id.split('-')[2] }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Right: Validation Form (400px) -->
+    <section class="w-[400px] border-l border-gray-200 bg-white p-8 flex flex-col shadow-inner shrink-0">
+        <h3 class="font-bold text-2xl text-gray-900 mb-6">Détails de Validation</h3>
+        <div class="space-y-6 flex-grow overflow-y-auto pr-2 custom-scrollbar">
+            <!-- Read Only Student Info -->
+            <div class="space-y-4">
+                <div class="space-y-1">
+                    <label class="font-semibold text-sm text-gray-500">Nom de l'étudiant</label>
+                    <input class="w-full bg-gray-50 border border-gray-200 rounded p-2 text-base font-normal text-gray-900 outline-none cursor-not-allowed" readonly type="text" [value]="activeMandat().name"/>
+                </div>
+                <div class="space-y-1">
+                    <label class="font-semibold text-sm text-gray-500">Matricule</label>
+                    <input class="w-full bg-gray-50 border border-gray-200 rounded p-2 text-base font-normal text-gray-900 outline-none cursor-not-allowed" readonly type="text" [value]="activeMandat().matricule"/>
+                </div>
+            </div>
+            
+            <div class="space-y-1">
+                <label class="font-semibold text-sm text-gray-500">Montant du Mandat</label>
+                <div class="w-full bg-blue-50 border border-blue-200 rounded-xl p-6 flex items-center justify-between">
+                    <span class="font-bold text-3xl text-blue-800 font-mono">{{ activeMandat().amount }}</span>
+                    <i class="pi pi-wallet text-blue-800 text-3xl"></i>
+                </div>
+            </div>
+            
+            <div class="space-y-1">
+                <label class="font-semibold text-sm text-gray-500">Observations & Notes (Optionnel)</label>
+                <textarea class="w-full border border-gray-200 rounded-lg p-4 text-base font-normal focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none" placeholder="Saisir un commentaire si nécessaire..." rows="4"></textarea>
+            </div>
+            
+            <!-- Compliance Checklist -->
+            <div class="space-y-4 pt-4 border-t border-gray-200">
+                <p class="font-semibold text-sm text-gray-500 uppercase">Points de contrôle</p>
+                <div class="space-y-2">
+                    <label class="flex items-center gap-4 p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
+                        <input checked class="w-5 h-5 rounded text-blue-800 focus:ring-blue-800 border-gray-300" type="checkbox"/>
+                        <span class="font-normal text-base text-gray-900">Conformité de l'identité du bénéficiaire</span>
+                    </label>
+                    <label class="flex items-center gap-4 p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
+                        <input checked class="w-5 h-5 rounded text-blue-800 focus:ring-blue-800 border-gray-300" type="checkbox"/>
+                        <span class="font-normal text-base text-gray-900">Authenticité du code-barres et signatures</span>
+                    </label>
+                    <label class="flex items-center gap-4 p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
+                        <input class="w-5 h-5 rounded text-blue-800 focus:ring-blue-800 border-gray-300" type="checkbox"/>
+                        <span class="font-normal text-base text-gray-900">Validité de l'établissement d'accueil</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="mt-8 grid grid-cols-2 gap-4 pt-6 border-t border-gray-200">
+            <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
+                <i class="pi pi-ban"></i>
+                Rejeter
+            </button>
+            <button class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
+                <i class="pi pi-check-circle"></i>
+                Valider
+            </button>
+        </div>
+    </section>
+</div>

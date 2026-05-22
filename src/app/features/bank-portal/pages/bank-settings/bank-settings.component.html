@@ -1,0 +1,298 @@
+<div class="flex h-[calc(100vh-64px)] -mx-4 md:-mx-8">
+    <!-- Sub-navigation Column -->
+    <nav class="w-[260px] bg-white border-r border-gray-200 flex flex-col p-4 shrink-0">
+        <div class="space-y-1">
+            <button (click)="setTab('profile')" [ngClass]="activeTab() === 'profile' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50'" class="w-full flex items-center gap-3 rounded-lg p-3 transition-colors">
+                <i class="pi pi-user"></i>
+                <span class="font-semibold text-sm">Mon profil</span>
+            </button>
+            <button (click)="setTab('security')" [ngClass]="activeTab() === 'security' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50'" class="w-full flex items-center gap-3 rounded-lg p-3 transition-colors">
+                <i class="pi pi-shield"></i>
+                <span class="font-semibold text-sm">Sécurité</span>
+            </button>
+            <button (click)="setTab('notifications')" [ngClass]="activeTab() === 'notifications' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50'" class="w-full flex items-center gap-3 rounded-lg p-3 transition-colors">
+                <i class="pi pi-bell"></i>
+                <span class="font-semibold text-sm">Notifications</span>
+            </button>
+            <button (click)="setTab('bank-info')" [ngClass]="activeTab() === 'bank-info' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50'" class="w-full flex items-center gap-3 rounded-lg p-3 transition-colors">
+                <i class="pi pi-building"></i>
+                <span class="font-semibold text-sm">Informations banque</span>
+            </button>
+            <button (click)="setTab('compliance')" [ngClass]="activeTab() === 'compliance' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50'" class="w-full flex items-center gap-3 rounded-lg p-3 transition-colors">
+                <i class="pi pi-file"></i>
+                <span class="font-semibold text-sm">Documents & Conformité</span>
+            </button>
+            <button (click)="setTab('support')" [ngClass]="activeTab() === 'support' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50'" class="w-full flex items-center gap-3 rounded-lg p-3 transition-colors">
+                <i class="pi pi-headphones"></i>
+                <span class="font-semibold text-sm">Support</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Content Canvas -->
+    <div class="flex-grow overflow-y-auto p-6 bg-gray-100">
+        <div class="max-w-5xl mx-auto space-y-6 pb-12">
+            
+            @switch (activeTab()) {
+                @case ('profile') {
+                    <!-- Section 1: Mon Profil -->
+                    <section class="space-y-4">
+                        <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm">
+                            <div class="flex items-start justify-between mb-8">
+                                <div class="flex items-center gap-6">
+                                    <div class="w-24 h-24 bg-blue-900 rounded-xl flex items-center justify-center shadow-lg relative">
+                                        <span class="font-bold text-3xl text-white">BP</span>
+                                        <button class="absolute -bottom-2 -right-2 bg-white p-2 rounded-full border border-gray-200 shadow-sm hover:bg-gray-50 transition-colors">
+                                            <i class="pi pi-camera text-[18px]"></i>
+                                        </button>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <h2 class="font-bold text-2xl text-gray-900">Responsable Partenariat UTB</h2>
+                                        <div class="flex gap-2">
+                                            <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full font-semibold text-sm flex items-center gap-1">
+                                                <i class="pi pi-building text-[14px]"></i> Union Togolaise de Banque
+                                            </span>
+                                            <span class="bg-emerald-100 text-emerald-500 px-3 py-1 rounded-full font-semibold text-sm flex items-center gap-1">
+                                                <i class="pi pi-verified text-[14px]"></i> Niveau Trésorier
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="bg-blue-800 text-white px-6 py-2 rounded-lg font-semibold text-sm hover:bg-black/90 transition-colors flex items-center gap-2">
+                                    <i class="pi pi-pencil text-[18px]"></i> Modifier le profil
+                                </button>
+                            </div>
+
+                            <!-- Compliance Alert -->
+                            <div class="bg-amber-100 border border-amber-200 p-4 rounded-lg flex gap-3 items-start mb-8">
+                                <i class="pi pi-exclamation-triangle text-amber-500 mt-1"></i>
+                                <div class="text-gray-800">
+                                    <p class="font-bold text-base mb-1">Audit de Conformité BCEAO</p>
+                                    <p class="text-sm">Une mise à jour des documents est nécessaire suite à l'audit triennal de la BCEAO prévu pour Q3 2025.</p>
+                                </div>
+                            </div>
+
+                            <!-- Form Grid -->
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="space-y-1">
+                                    <label class="font-semibold text-sm text-gray-500">Prénom</label>
+                                    <input class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 font-normal text-base text-gray-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-600 transition-all outline-none" readonly type="text" value="Banque"/>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="font-semibold text-sm text-gray-500">Nom</label>
+                                    <input class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 font-normal text-base text-gray-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-600 transition-all outline-none" readonly type="text" value="Partenaire"/>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="font-semibold text-sm text-gray-500">Email</label>
+                                    <input class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 font-normal text-base text-gray-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-600 transition-all outline-none" readonly type="email" value="tresorier@utb.tg"/>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="font-semibold text-sm text-gray-500">Tél</label>
+                                    <input class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 font-normal text-base text-gray-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-600 transition-all outline-none" readonly type="text" value="+228 22 21 62 20"/>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="font-semibold text-sm text-gray-500">Poste</label>
+                                    <input class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 font-normal text-base text-gray-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-600 transition-all outline-none" readonly type="text" value="Trésorier Principal"/>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="font-semibold text-sm text-gray-500">Agence</label>
+                                    <input class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 font-normal text-base text-gray-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-600 transition-all outline-none" readonly type="text" value="Siège Lomé"/>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="font-semibold text-sm text-gray-500">Numéro employé</label>
+                                    <input class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 font-normal text-base text-gray-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-600 transition-all outline-none" readonly type="text" value="UTB-7742-XP"/>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="font-semibold text-sm text-gray-500">Niveau d'accès</label>
+                                    <input class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 font-normal text-base text-gray-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-600 transition-all outline-none" readonly type="text" value="Administrateur Global / Trésorerie"/>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                }
+                
+                @case ('security') {
+                    <!-- Section 2: Sécurité -->
+                    <section class="space-y-4">
+                        <h3 class="font-bold text-2xl text-gray-900">Sécurité & Habilitations</h3>
+                        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="p-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <i class="pi pi-shield text-blue-600 text-xl"></i>
+                                    <div>
+                                        <p class="font-normal text-base font-bold">Certificat SSL Digital</p>
+                                        <p class="font-semibold text-sm text-gray-500">ID: UTB-CERT-2025</p>
+                                    </div>
+                                </div>
+                                <span class="bg-emerald-100 text-emerald-500 px-3 py-1 rounded-full font-semibold text-sm">Valide jusqu'au 12/2025</span>
+                            </div>
+                            
+                            <div class="p-6">
+                                <h4 class="font-semibold text-sm text-gray-500 uppercase tracking-wider mb-4">Table des Habilitations (Validation de Trésorerie)</h4>
+                                <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                    <table class="w-full text-left border-collapse">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th class="p-4 font-semibold text-sm text-gray-500 border-b border-gray-200">LIMITE TRANSACTIONNELLE</th>
+                                                <th class="p-4 font-semibold text-sm text-gray-500 border-b border-gray-200 text-center">NIVEAU D'APPROBATION</th>
+                                                <th class="p-4 font-semibold text-sm text-gray-500 border-b border-gray-200 text-right">STATUT</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-200">
+                                            <tr class="hover:bg-gray-50 transition-colors">
+                                                <td class="p-4 font-normal text-base">< 500,000 FCFA</td>
+                                                <td class="p-4 text-center"><span class="font-normal text-base">Agent Certifié</span></td>
+                                                <td class="p-4 text-right"><span class="bg-emerald-100 text-emerald-500 px-2 py-0.5 rounded text-[12px]">Actif</span></td>
+                                            </tr>
+                                            <tr class="hover:bg-gray-50 transition-colors">
+                                                <td class="p-4 font-normal text-base">500,000 - 5,000,000 FCFA</td>
+                                                <td class="p-4 text-center"><span class="font-normal text-base">Responsable Agence</span></td>
+                                                <td class="p-4 text-right"><span class="bg-emerald-100 text-emerald-500 px-2 py-0.5 rounded text-[12px]">Actif</span></td>
+                                            </tr>
+                                            <tr class="hover:bg-gray-50 transition-colors">
+                                                <td class="p-4 font-normal text-base">> 5,000,000 FCFA</td>
+                                                <td class="p-4 text-center"><span class="font-normal text-base">Direction Trésorerie</span></td>
+                                                <td class="p-4 text-right"><span class="bg-amber-100 text-amber-500 px-2 py-0.5 rounded text-[12px]">Double Validation</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                }
+                
+                @case ('bank-info') {
+                    <!-- Section 4: Informations Banque -->
+                    <section class="space-y-4">
+                        <h3 class="font-bold text-2xl text-gray-900">Informations Partenariat</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Contract Card -->
+                            <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm flex flex-col justify-between">
+                                <div class="mb-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <i class="pi pi-users text-blue-600 text-xl"></i>
+                                        <span class="bg-emerald-100 text-emerald-500 px-2 py-0.5 rounded text-[12px]">Actif</span>
+                                    </div>
+                                    <h4 class="font-bold text-lg font-bold">Contrat de partenariat</h4>
+                                    <p class="font-semibold text-sm text-gray-500 mt-1">Signé le 15 Jan 2024</p>
+                                </div>
+                                <button class="w-full border border-gray-200 rounded-lg py-2 font-semibold text-sm hover:bg-gray-50 transition-colors">Consulter les clauses</button>
+                            </div>
+                            
+                            <!-- Limits Card -->
+                            <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm col-span-1 md:col-span-1">
+                                <h4 class="font-bold text-lg font-bold mb-4">Limites opérationnelles</h4>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between font-semibold text-sm">
+                                        <span class="text-gray-500">Plafond mensuel</span>
+                                        <span class="text-gray-900 font-bold">500M FCFA</span>
+                                    </div>
+                                    <div class="w-full bg-gray-50 h-2 rounded-full overflow-hidden">
+                                        <div class="bg-blue-600 h-full" style="width: 9.6%"></div>
+                                    </div>
+                                    <div class="flex justify-between font-semibold text-sm">
+                                        <span class="text-gray-500">Consommé</span>
+                                        <span class="text-blue-600 font-bold">48M FCFA</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Contacts Card -->
+                            <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm">
+                                <h4 class="font-bold text-lg font-bold mb-4">Contacts référents</h4>
+                                <div class="space-y-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                                            <i class="pi pi-headphones text-[14px]"></i>
+                                        </div>
+                                        <div class="text-[12px]">
+                                            <p class="font-bold">Support Dédié UTB</p>
+                                            <p class="text-gray-500">support-bp@studcash.com</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                                            <i class="pi pi-user text-[14px]"></i>
+                                        </div>
+                                        <div class="text-[12px]">
+                                            <p class="font-bold">Account Manager</p>
+                                            <p class="text-gray-500">+228 90 00 00 00</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                }
+                
+                @case ('compliance') {
+                    <!-- Section 5: Documents & Conformité -->
+                    <section class="space-y-4">
+                        <h3 class="font-bold text-2xl text-gray-900">Documents & Conformité</h3>
+                        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                            <div class="divide-y divide-gray-200">
+                                <!-- Document Row -->
+                                <div class="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                                    <div class="flex items-center gap-4">
+                                        <div class="bg-gray-200 p-2 rounded">
+                                            <i class="pi pi-file-o text-gray-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-normal text-base font-bold text-gray-900">Convention Cadre de Service</p>
+                                            <p class="font-semibold text-sm text-gray-500">v2.4 — Signé numériquement</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-6">
+                                        <span class="font-semibold text-sm text-emerald-500 flex items-center gap-1">
+                                            <i class="pi pi-check-circle text-[16px]"></i> Conforme
+                                        </span>
+                                        <button class="pi pi-download text-gray-500 hover:text-gray-900 transition-colors cursor-pointer"></button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Document Row -->
+                                <div class="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                                    <div class="flex items-center gap-4">
+                                        <div class="bg-gray-200 p-2 rounded">
+                                            <i class="pi pi-file text-gray-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-normal text-base font-bold text-gray-900">Accord d'interopérabilité BCEAO</p>
+                                            <p class="font-semibold text-sm text-gray-500">Réf: RT0029-2024</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-6">
+                                        <span class="font-semibold text-sm text-emerald-500 flex items-center gap-1">
+                                            <i class="pi pi-check-circle text-[16px]"></i> Conforme
+                                        </span>
+                                        <button class="pi pi-download text-gray-500 hover:text-gray-900 transition-colors cursor-pointer"></button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Document Row -->
+                                <div class="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                                    <div class="flex items-center gap-4">
+                                        <div class="bg-gray-200 p-2 rounded">
+                                            <i class="pi pi-book text-gray-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-normal text-base font-bold text-gray-900">Politique LAB/CFT Interne</p>
+                                            <p class="font-semibold text-sm text-gray-500">Dernière révision: 12/2023</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-6">
+                                        <span class="font-semibold text-sm text-amber-500 flex items-center gap-1">
+                                            <i class="pi pi-sync text-[16px]"></i> À réviser
+                                        </span>
+                                        <button class="pi pi-download text-gray-500 hover:text-gray-900 transition-colors cursor-pointer"></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                }
+            }
+        </div>
+    </div>
+</div>

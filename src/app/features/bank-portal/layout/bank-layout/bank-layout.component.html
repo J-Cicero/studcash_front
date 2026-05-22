@@ -1,0 +1,31 @@
+<div class="min-h-screen bg-[#faf8ff] text-[#131b2e]">
+    <!-- TopNavBar -->
+    <header class="fixed top-0 left-0 right-0 h-[64px] bg-white border-b border-gray-200 shadow-sm z-50">
+        <div class="flex justify-between items-center h-16 px-8 max-w-7xl mx-auto w-full">
+            <div class="flex items-center gap-8">
+                <span class="font-bold text-2xl text-gray-900">StudCash</span>
+                <nav class="hidden md:flex gap-6 items-center h-full mt-1">
+                    <a routerLink="/bank/dashboard" routerLinkActive="text-primary font-bold border-b-2 border-primary pb-1" class="text-gray-600 font-normal text-base hover:text-primary transition-colors cursor-pointer pb-1 border-b-2 border-transparent">Tableau de bord</a>
+                    <a routerLink="/bank/liquidation" routerLinkActive="!text-primary !font-bold !border-primary" class="text-gray-600 font-normal text-base hover:text-primary transition-colors cursor-pointer pb-1 border-b-2 border-transparent">Liquidation</a>
+                    <a routerLink="/bank/mandats" routerLinkActive="!text-primary !font-bold !border-primary" class="text-gray-600 font-normal text-base hover:text-primary transition-colors cursor-pointer pb-1 border-b-2 border-transparent">Vérification Mandats</a>
+                    <a routerLink="/bank/virements" routerLinkActive="!text-primary !font-bold !border-primary" class="text-gray-600 font-normal text-base hover:text-primary transition-colors cursor-pointer pb-1 border-b-2 border-transparent">Virements</a>
+                </nav>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="p-1 text-gray-600 hover:bg-gray-100 rounded-full transition-all">
+                    <i class="pi pi-bell text-[20px]"></i>
+                </button>
+                <div class="flex items-center gap-2 pl-4 border-l border-gray-300">
+                    <span class="font-medium text-sm text-primary">UTB</span>
+                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center overflow-hidden">
+                        <img alt="User Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAeRsxWugrn_tjlMTaoXQWvX_rRYJdFLp7zVABMWUcgoudLHBI1YRmY2m3r0VXzgbLAqvIsAm3sa9D7JFiqpU-WTpYtRUV9QXLnZT5JK3wirtvutxTODe0k7y_Guxak18zFYI5EtdPr5bcYVsGpCbJ-dVqEXQeW_o7FaUFhwnPkqCa4hbjzgkOKJ5AOLvFtmhe-7FKsbDQToL2vnYwMgwYHtzoJbArb-lPvzqmgaLX9G2Qr4NBA0IgQ1GBEIlK4NZBcL87U4H4UqkzN"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="pt-24 pb-12 px-4 md:px-8 max-w-7xl mx-auto">
+        <router-outlet></router-outlet>
+    </main>
+</div>
