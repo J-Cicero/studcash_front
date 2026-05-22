@@ -13,7 +13,11 @@
                 </span>
             </div>
             <p class="text-label-md font-label-md text-outline mb-1">Total Bourses</p>
-            <h3 class="text-headline-sm font-headline-sm text-on-surface">1.247M FCFA</h3>
+            @if (isLoading) {
+                <p-skeleton width="120px" height="2rem"></p-skeleton>
+            } @else {
+                <h3 class="text-headline-sm font-headline-sm text-on-surface">1.247M FCFA</h3>
+            }
         </div>
         <!-- Card 2 -->
         <div class="bg-surface-container-lowest p-panel-padding rounded-xl border border-outline-variant shadow-sm hover:border-primary/30 transition-colors group">
@@ -26,7 +30,11 @@
                 </span>
             </div>
             <p class="text-label-md font-label-md text-outline mb-1">Étudiants Actifs</p>
-            <h3 class="text-headline-sm font-headline-sm text-on-surface">8,420</h3>
+            @if (isLoading) {
+                <p-skeleton width="80px" height="2rem"></p-skeleton>
+            } @else {
+                <h3 class="text-headline-sm font-headline-sm text-on-surface">8,420</h3>
+            }
         </div>
         <!-- Card 3 -->
         <div class="bg-surface-container-lowest p-panel-padding rounded-xl border border-outline-variant shadow-sm hover:border-primary/30 transition-colors group">
@@ -39,7 +47,11 @@
                 </span>
             </div>
             <p class="text-label-md font-label-md text-outline mb-1">Wallets Boutiques</p>
-            <h3 class="text-headline-sm font-headline-sm text-on-surface">124</h3>
+            @if (isLoading) {
+                <p-skeleton width="60px" height="2rem"></p-skeleton>
+            } @else {
+                <h3 class="text-headline-sm font-headline-sm text-on-surface">124</h3>
+            }
         </div>
         <!-- Card 4 -->
         <div class="bg-surface-container-lowest p-panel-padding rounded-xl border border-outline-variant shadow-sm hover:border-primary/30 transition-colors group">
@@ -52,7 +64,11 @@
                 </span>
             </div>
             <p class="text-label-md font-label-md text-outline mb-1">Transactions Today</p>
-            <h3 class="text-headline-sm font-headline-sm text-on-surface">2,847</h3>
+            @if (isLoading) {
+                <p-skeleton width="80px" height="2rem"></p-skeleton>
+            } @else {
+                <h3 class="text-headline-sm font-headline-sm text-on-surface">2,847</h3>
+            }
         </div>
     </div>
     <!-- Charts Row -->
@@ -69,17 +85,12 @@
                     <button class="px-3 py-1 text-label-md bg-primary text-white rounded-lg">Année</button>
                 </div>
             </div>
-            <div class="relative h-[300px] w-full flex items-end justify-between px-4">
-                <!-- Visual Chart Mockup -->
-                <div class="absolute inset-0 flex items-end pb-8 px-8">
-                    <svg class="w-full h-full overflow-visible" preserveAspectRatio="none">
-                        <path d="M0,80 Q50,60 100,100 T200,40 T300,120 T400,60 T500,90 T600,20" fill="none" stroke="#00236f" stroke-width="3"></path>
-                        <path d="M0,120 Q50,140 100,110 T200,150 T300,90 T400,130 T500,110 T600,140" fill="none" stroke="#757682" stroke-dasharray="4" stroke-width="2"></path>
-                    </svg>
-                </div>
-                <div class="w-full flex justify-between text-label-sm text-outline pt-4">
-                    <span>Jan</span><span>Fev</span><span>Mar</span><span>Avr</span><span>Mai</span><span>Juin</span><span>Juil</span><span>Aout</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
-                </div>
+            <div class="relative h-[300px] w-full mt-4">
+                @if (isLoading) {
+                    <p-skeleton width="100%" height="300px"></p-skeleton>
+                } @else {
+                    <p-chart type="line" [data]="lineData" [options]="lineOptions" height="300px"></p-chart>
+                }
             </div>
             <div class="flex gap-6 mt-6 pt-6 border-t border-outline-variant/30">
                 <div class="flex items-center gap-2">
@@ -98,16 +109,15 @@
             <p class="text-body-sm text-outline mb-8">Part des étudiants par institution</p>
             <div class="flex-1 flex flex-col items-center justify-center">
                 <div class="relative w-48 h-48 mb-8">
-                    <svg class="w-full h-full -rotate-90">
-                        <circle cx="96" cy="96" fill="none" r="80" stroke="#f1f5f9" stroke-width="24"></circle>
-                        <circle cx="96" cy="96" fill="none" r="80" stroke="#00236f" stroke-dasharray="502" stroke-dashoffset="150" stroke-width="24"></circle>
-                        <circle cx="96" cy="96" fill="none" r="80" stroke="#264191" stroke-dasharray="502" stroke-dashoffset="350" stroke-width="24"></circle>
-                        <circle cx="96" cy="96" fill="none" r="80" stroke="#b6c4ff" stroke-dasharray="502" stroke-dashoffset="450" stroke-width="24"></circle>
-                    </svg>
-                    <div class="absolute inset-0 flex flex-col items-center justify-center">
-                        <span class="text-headline-md font-bold">8,420</span>
-                        <span class="text-label-sm text-outline uppercase tracking-wider">Total</span>
-                    </div>
+                    @if (isLoading) {
+                        <p-skeleton shape="circle" size="12rem"></p-skeleton>
+                    } @else {
+                        <p-chart type="doughnut" [data]="doughnutData" [options]="doughnutOptions" height="192px"></p-chart>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                            <span class="text-headline-md font-bold">8,420</span>
+                            <span class="text-label-sm text-outline uppercase tracking-wider">Total</span>
+                        </div>
+                    }
                 </div>
                 <div class="w-full space-y-3">
                     <div class="flex items-center justify-between">
