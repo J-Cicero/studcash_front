@@ -1,0 +1,17 @@
+.ai-glow {
+    box-shadow: 0 0 15px -3px rgba(124, 58, 237, 0.2);
+    border: 1px solid rgba(124, 58, 237, 0.3);
+}
+
+.custom-toggle:checked + .toggle-dot {
+    transform: translateX(100%);
+    background-color: #ffffff;
+}
+
+.custom-toggle:checked ~ .toggle-bg {
+    background-color: #7c3aed;
+}
+
+input[type="number"]:focus {
+    --tw-ring-color: #7c3aed;
+}

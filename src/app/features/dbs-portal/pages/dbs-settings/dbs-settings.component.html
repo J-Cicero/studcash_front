@@ -1,0 +1,303 @@
+<div class="flex gap-8">
+    <!-- Left Sidebar Menu -->
+    <aside class="w-[260px] border-r border-outline-variant flex flex-col py-6 bg-white min-h-[calc(100vh-100px)] rounded-xl shadow-sm hidden md:flex shrink-0">
+        <nav class="flex-grow">
+            <ul class="space-y-1">
+                <li>
+                    <button class="w-full flex items-center gap-4 px-6 py-4 text-sm font-medium transition-all"
+                            [ngClass]="activeTab() === 'profile' ? 'sidebar-active' : 'text-on-surface-variant hover:bg-gray-50'"
+                            (click)="switchTab('profile')">
+                        <i class="pi pi-user text-[18px]"></i>
+                        Mon profil
+                    </button>
+                </li>
+                <li>
+                    <button class="w-full flex items-center gap-4 px-6 py-4 text-sm font-medium transition-all"
+                            [ngClass]="activeTab() === 'security' ? 'sidebar-active' : 'text-on-surface-variant hover:bg-gray-50'"
+                            (click)="switchTab('security')">
+                        <i class="pi pi-shield text-[18px]"></i>
+                        Sécurité
+                    </button>
+                </li>
+                <li>
+                    <button class="w-full flex items-center gap-4 px-6 py-4 text-sm font-medium transition-all"
+                            [ngClass]="activeTab() === 'notifications' ? 'sidebar-active' : 'text-on-surface-variant hover:bg-gray-50'"
+                            (click)="switchTab('notifications')">
+                        <i class="pi pi-bell text-[18px]"></i>
+                        Notifications
+                    </button>
+                </li>
+                <li>
+                    <button class="w-full flex items-center gap-4 px-6 py-4 text-sm font-medium transition-all"
+                            [ngClass]="activeTab() === 'ai-config' ? 'sidebar-active' : 'text-on-surface-variant hover:bg-gray-50'"
+                            (click)="switchTab('ai-config')">
+                        <i class="pi pi-microchip text-[18px]"></i>
+                        Configuration IA
+                    </button>
+                </li>
+                <li>
+                    <button class="w-full flex items-center gap-4 px-6 py-4 text-sm font-medium transition-all"
+                            [ngClass]="activeTab() === 'legal' ? 'sidebar-active' : 'text-on-surface-variant hover:bg-gray-50'"
+                            (click)="switchTab('legal')">
+                        <i class="pi pi-book text-[18px]"></i>
+                        Mentions légales
+                    </button>
+                </li>
+            </ul>
+        </nav>
+        <div class="px-6 pb-8 mt-4 border-t border-outline-variant pt-4">
+            <button class="w-full flex items-center gap-4 px-4 py-4 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-all">
+                <i class="pi pi-sign-out text-[18px]"></i>
+                Se déconnecter
+            </button>
+        </div>
+    </aside>
+
+    <!-- Right Content Area -->
+    <section class="flex-grow bg-transparent overflow-x-hidden">
+        <!-- SECTION 1: MON PROFIL -->
+        @if (activeTab() === 'profile') {
+        <div>
+            <div class="flex items-center gap-6 mb-8">
+                <div class="w-20 h-20 rounded-full bg-purple-100 flex items-center justify-center text-purple-800 font-bold text-2xl shadow-sm">
+                    DB
+                </div>
+                <div>
+                    <h2 class="font-bold text-2xl text-on-surface">Directeur DBS</h2>
+                    <span class="inline-flex items-center px-4 py-1 rounded-full bg-purple-100 text-purple-800 font-semibold text-xs mt-1">
+                        Direction des Bourses
+                    </span>
+                </div>
+            </div>
+            
+            <div class="bg-white border border-outline-variant rounded-xl p-6 shadow-sm">
+                <form class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm font-medium text-on-surface-variant">Prénom</label>
+                        <input class="bg-white border border-outline-variant rounded-lg p-4 focus:ring-2 focus:ring-primary outline-none" type="text" value="Daniel"/>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm font-medium text-on-surface-variant">Nom</label>
+                        <input class="bg-white border border-outline-variant rounded-lg p-4 focus:ring-2 focus:ring-primary outline-none" type="text" value="Bakayoko"/>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm font-medium text-on-surface-variant">Email</label>
+                        <input class="bg-gray-50 border border-outline-variant rounded-lg p-4 text-on-surface-variant cursor-not-allowed" readonly type="email" value="d.bakayoko@dbs.gouv.ci"/>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm font-medium text-on-surface-variant">Téléphone</label>
+                        <input class="bg-white border border-outline-variant rounded-lg p-4 focus:ring-2 focus:ring-primary outline-none" type="tel" value="+225 07 08 09 10 11"/>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm font-medium text-on-surface-variant">Fonction</label>
+                        <input class="bg-white border border-outline-variant rounded-lg p-4 focus:ring-2 focus:ring-primary outline-none" type="text" value="Administrateur Central"/>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm font-medium text-on-surface-variant">Ministère</label>
+                        <input class="bg-white border border-outline-variant rounded-lg p-4 focus:ring-2 focus:ring-primary outline-none" type="text" value="Enseignement Supérieur et Recherche"/>
+                    </div>
+                    <div class="flex flex-col gap-1 md:col-span-2">
+                        <label class="text-sm font-medium text-on-surface-variant">Numéro d'accréditation</label>
+                        <input class="bg-gray-50 border border-outline-variant rounded-lg p-4 text-on-surface-variant cursor-not-allowed font-mono" readonly type="text" value="DBS-2024-ADMIN-001"/>
+                    </div>
+                    
+                    <div class="md:col-span-2">
+                        <label class="text-sm font-medium text-on-surface-variant mb-1 block">Zone de signature numérique</label>
+                        <div class="border-2 border-dashed border-outline-variant rounded-xl p-8 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition-all cursor-pointer">
+                            <i class="pi pi-upload text-outline text-3xl mb-2"></i>
+                            <p class="text-sm font-normal text-on-surface-variant">Glissez-déposez votre signature (PNG, SVG) ou cliquez pour parcourir</p>
+                        </div>
+                    </div>
+                    
+                    <div class="md:col-span-2 flex justify-end gap-4 mt-6">
+                        <button class="px-8 py-4 border border-primary text-primary font-medium text-sm rounded-lg hover:bg-blue-50 transition-all" type="button">Annuler</button>
+                        <button class="px-8 py-4 bg-primary text-white font-medium text-sm rounded-lg shadow-md hover:bg-primary-container transition-all" type="submit">Sauvegarder les modifications</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        }
+
+        <!-- SECTION 2: SÉCURITÉ -->
+        @if (activeTab() === 'security') {
+        <div>
+            <h2 class="font-bold text-2xl text-on-surface mb-8">Paramètres de Sécurité</h2>
+            <div class="grid gap-6">
+                <!-- Password Change -->
+                <div class="bg-white border border-outline-variant rounded-xl p-6 shadow-sm">
+                    <div class="flex items-center gap-4 mb-6">
+                        <i class="pi pi-lock text-primary text-[24px]"></i>
+                        <h3 class="font-semibold text-lg">Changer le mot de passe</h3>
+                    </div>
+                    <div class="space-y-4 max-w-md">
+                        <input class="w-full bg-white border border-outline-variant rounded-lg p-4 focus:ring-2 focus:ring-primary outline-none" placeholder="Mot de passe actuel" type="password"/>
+                        <input class="w-full bg-white border border-outline-variant rounded-lg p-4 focus:ring-2 focus:ring-primary outline-none" placeholder="Nouveau mot de passe" type="password"/>
+                        <input class="w-full bg-white border border-outline-variant rounded-lg p-4 focus:ring-2 focus:ring-primary outline-none" placeholder="Confirmer le nouveau mot de passe" type="password"/>
+                        <button class="bg-primary text-white px-8 py-4 rounded-lg font-medium text-sm mt-4">Mettre à jour le mot de passe</button>
+                    </div>
+                </div>
+                
+                <!-- 2FA -->
+                <div class="bg-white border border-outline-variant rounded-xl p-6 shadow-sm flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <i class="pi pi-shield text-primary text-[24px]"></i>
+                        <div>
+                            <h3 class="font-semibold text-lg">Double Authentification (2FA)</h3>
+                            <p class="text-sm font-normal text-on-surface-variant">Ajoutez une couche de sécurité supplémentaire à votre compte.</p>
+                        </div>
+                    </div>
+                    <div class="relative inline-block w-12 h-6 transition duration-200 ease-in-out bg-purple-600 rounded-full cursor-pointer">
+                        <div class="absolute left-6 top-1 w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-200 ease-in-out"></div>
+                    </div>
+                </div>
+                
+                <!-- Sessions -->
+                <div class="bg-white border border-outline-variant rounded-xl p-6 shadow-sm">
+                    <h3 class="font-semibold text-lg mb-6">Sessions actives</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+                            <div class="flex items-center gap-4">
+                                <i class="pi pi-desktop text-on-surface-variant text-[24px]"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Chrome sur MacOS (Session actuelle)</p>
+                                    <p class="text-sm font-normal text-on-surface-variant">Abidjan, Côte d'Ivoire • IP: 197.214.xx.xx</p>
+                                </div>
+                            </div>
+                            <span class="text-green-700 font-semibold text-xs bg-green-100 px-4 py-1 rounded-full">Actif</span>
+                        </div>
+                        <div class="flex items-center justify-between p-4 border border-outline-variant rounded-lg">
+                            <div class="flex items-center gap-4">
+                                <i class="pi pi-mobile text-on-surface-variant text-[24px]"></i>
+                                <div>
+                                    <p class="font-medium text-sm">iPhone 15 Pro</p>
+                                    <p class="text-sm font-normal text-on-surface-variant">Yamoussoukro, Côte d'Ivoire • Il y a 2 heures</p>
+                                </div>
+                            </div>
+                            <button class="text-red-600 font-medium text-sm hover:underline">Déconnecter</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+
+        <!-- SECTION 3: CONFIGURATION IA -->
+        @if (activeTab() === 'ai-config') {
+        <div>
+            <h2 class="font-bold text-2xl text-on-surface mb-8">Configuration Intelligence Artificielle</h2>
+            <div class="grid gap-6">
+                <!-- Gemini Card -->
+                <div class="bg-white border border-purple-600 rounded-xl p-6 shadow-sm ai-glow">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-4">
+                            <img alt="Gemini Logo" class="w-8 h-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAk6ApJ3y1YPguJO5faXaL7knO6VQnYBUNeVAT_GFcvNzFxEaqVf-LfoBL9UoVJ8rUEoF7yy_-x0NF9hKbRmonH8-qnpXhcdi6IWHeWG9Xwp9KeNzELsTfj5pndWCoWJGWMv7_f2WI0sAMS6I3V-ZJeey1W8ljwqkUW9QpJ5pH7lByKvyPmKWl-YvFfeoG_t1WJ7wap1p9FCM0SYnugOfIOQWd-FT2fZMZ_SyTa58vpanlOb6-gJHun9BnejUNISFmqwDQNX0ZvdiME"/>
+                            <div>
+                                <h3 class="font-semibold text-lg text-purple-600">Google Gemini Connection</h3>
+                                <p class="text-sm font-normal text-on-surface-variant">Moteur d'analyse sémantique pour les dossiers de bourses.</p>
+                            </div>
+                        </div>
+                        <span class="inline-flex items-center gap-1 px-4 py-1 bg-green-100 text-green-800 rounded-full font-semibold text-xs">
+                            <span class="w-2 h-2 rounded-full bg-green-600 animate-pulse"></span>
+                            Connecté
+                        </span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-sm font-medium text-on-surface-variant">Clé API (Encodée)</label>
+                            <div class="flex gap-2">
+                                <input class="flex-grow bg-gray-50 border border-outline-variant rounded-lg p-4 font-mono text-sm" readonly type="password" value="**********************************"/>
+                                <button class="p-4 border border-outline-variant rounded-lg hover:bg-gray-50"><i class="pi pi-eye"></i></button>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-sm font-medium text-on-surface-variant">Quota mensuel utilisé (84%)</label>
+                            <div class="w-full bg-outline-variant h-3 rounded-full mt-2 overflow-hidden">
+                                <div class="bg-purple-600 h-full w-[84%] transition-all duration-1000"></div>
+                            </div>
+                            <p class="font-semibold text-xs text-right mt-1">16,800 / 20,000 requêtes</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Toggles & Logic -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white border border-outline-variant rounded-xl p-6 shadow-sm">
+                        <h3 class="font-semibold text-lg mb-6">Comportement de l'Analyse</h3>
+                        <div class="space-y-4">
+                            <label class="flex items-center justify-between cursor-pointer">
+                                <span class="font-normal text-base">Analyse automatique des documents</span>
+                                <div class="relative inline-block w-10 h-5 transition duration-200 ease-in-out bg-purple-600 rounded-full">
+                                    <div class="absolute left-5 top-1 w-3 h-3 bg-white rounded-full"></div>
+                                </div>
+                            </label>
+                            <label class="flex items-center justify-between cursor-pointer">
+                                <span class="font-normal text-base">Rejet auto pour pièces manquantes</span>
+                                <div class="relative inline-block w-10 h-5 transition duration-200 ease-in-out bg-outline rounded-full">
+                                    <div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full"></div>
+                                </div>
+                            </label>
+                            <label class="flex items-center justify-between cursor-pointer">
+                                <span class="font-normal text-base">Extraction de texte OCR Premium</span>
+                                <div class="relative inline-block w-10 h-5 transition duration-200 ease-in-out bg-purple-600 rounded-full">
+                                    <div class="absolute left-5 top-1 w-3 h-3 bg-white rounded-full"></div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-outline-variant rounded-xl p-6 shadow-sm">
+                        <h3 class="font-semibold text-lg mb-6">Sélection du Modèle</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-4 border-2 border-purple-600 bg-purple-50 rounded-lg cursor-pointer">
+                                <div>
+                                    <p class="font-medium text-sm text-purple-900">Gemini 1.5 Pro</p>
+                                    <p class="text-sm font-normal opacity-80 text-purple-700">Haute précision, raisonnement complexe</p>
+                                </div>
+                                <i class="pi pi-check-circle text-purple-600 text-[20px]"></i>
+                            </div>
+                            <div class="flex items-center justify-between p-4 border border-outline-variant rounded-lg hover:bg-gray-50 cursor-pointer transition-all">
+                                <div>
+                                    <p class="font-medium text-sm">Gemini 1.5 Flash</p>
+                                    <p class="text-sm font-normal text-on-surface-variant">Haute vitesse, tâches simples</p>
+                                </div>
+                                <i class="pi pi-circle text-outline text-[20px]"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end">
+                    <button class="bg-purple-600 text-white px-8 py-4 rounded-lg font-medium text-sm flex items-center gap-2 shadow-md hover:scale-[1.02] transition-all">
+                        <i class="pi pi-sparkles"></i>
+                        Tester la synchronisation IA
+                    </button>
+                </div>
+            </div>
+        </div>
+        }
+
+        <!-- SECTION 4: NOTIFICATIONS -->
+        @if (activeTab() === 'notifications') {
+        <div>
+            <h2 class="font-bold text-2xl text-on-surface mb-8">Préférences de Notification</h2>
+            <div class="bg-white border border-outline-variant rounded-xl p-6 text-center py-16">
+                <i class="pi pi-bell-slash text-outline text-[48px] mb-4"></i>
+                <p class="text-on-surface-variant font-normal text-lg">Les réglages de notifications sont en cours de mise à jour.</p>
+            </div>
+        </div>
+        }
+
+        <!-- SECTION 5: LEGAL -->
+        @if (activeTab() === 'legal') {
+        <div>
+            <h2 class="font-bold text-2xl text-on-surface mb-8">Mentions Légales &amp; Conformité</h2>
+            <div class="bg-white border border-outline-variant rounded-xl p-6 space-y-4">
+                <p class="font-normal text-base">StudCash DBS est une plateforme régie par les lois en vigueur sur la protection des données à caractère personnel de la République de Côte d'Ivoire.</p>
+                <hr class="border-outline-variant"/>
+                <p class="text-sm font-normal text-on-surface-variant">Version 2.4.0-build.2024</p>
+            </div>
+        </div>
+        }
+    </section>
+</div>

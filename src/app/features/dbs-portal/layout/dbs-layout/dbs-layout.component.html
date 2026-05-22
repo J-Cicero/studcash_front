@@ -1,0 +1,30 @@
+<div class="bg-background text-on-surface min-h-screen">
+    <!-- TopAppBar Shell -->
+    <header class="bg-surface border-b border-outline-variant shadow-sm sticky top-0 z-50">
+        <div class="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
+            <div class="flex items-center gap-4">
+                <span class="text-xl font-bold text-primary">StudCash DBS | Direction des Bourses</span>
+            </div>
+            <nav class="hidden md:flex gap-8 items-center">
+                <a routerLink="/dbs/dashboard" routerLinkActive="!text-primary !font-semibold !border-primary" [routerLinkActiveOptions]="{exact: true}" class="border-b-2 border-transparent pb-2 cursor-pointer active:opacity-80 transition-all text-on-surface-variant hover:text-purple-600">Tableau de bord</a>
+                <a routerLink="/dbs/dossiers" routerLinkActive="!text-primary !font-semibold !border-primary" class="text-on-surface-variant border-b-2 border-transparent text-base hover:text-purple-600 pb-2 transition-colors duration-200 cursor-pointer">Dossiers</a>
+                <a routerLink="/dbs/ia-rules" routerLinkActive="!text-primary !font-semibold !border-primary" class="text-on-surface-variant border-b-2 border-transparent text-base hover:text-purple-600 pb-2 transition-colors duration-200 cursor-pointer">Règles IA</a>
+                <a routerLink="/dbs/reports" routerLinkActive="!text-primary !font-semibold !border-primary" class="text-on-surface-variant border-b-2 border-transparent text-base hover:text-purple-600 pb-2 transition-colors duration-200 cursor-pointer">Rapports</a>
+                <a routerLink="/dbs/settings" routerLinkActive="!text-primary !font-semibold !border-primary" class="text-on-surface-variant border-b-2 border-transparent text-base hover:text-purple-600 pb-2 transition-colors duration-200 cursor-pointer">Mon Profil</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <button class="hover:text-primary transition-colors cursor-pointer text-on-surface-variant">
+                    <i class="pi pi-bell text-xl"></i>
+                </button>
+                <div class="flex items-center gap-2 cursor-pointer hover:bg-surface-container px-2 py-1 rounded-xl transition-all">
+                    <i class="pi pi-user text-primary-container text-xl"></i>
+                    <span class="font-medium text-sm text-on-surface hidden sm:inline">Directeur DBS</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-8 py-8">
+        <router-outlet></router-outlet>
+    </main>
+</div>

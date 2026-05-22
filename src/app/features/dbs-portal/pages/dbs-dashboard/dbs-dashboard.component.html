@@ -1,0 +1,296 @@
+<div class="space-y-8">
+    <!-- Header & Title -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+            <h1 class="font-bold text-2xl text-on-background">Tableau de bord</h1>
+            <p class="text-base text-on-surface-variant mt-1">Promotion 2024-2025 • Mise à jour en temps réel</p>
+        </div>
+        <div class="flex gap-2">
+            <button class="bg-surface-container text-primary px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-surface-container-high transition-all">
+                <i class="pi pi-download text-[18px]"></i>
+                Exporter
+            </button>
+            <button class="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:opacity-90 transition-all shadow-md ai-glow">
+                <i class="pi pi-sparkles text-[18px]"></i>
+                Lancer Vérification IA
+            </button>
+        </div>
+    </div>
+
+    <!-- KPI Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Card 1 -->
+        <div class="bg-white p-6 rounded-xl border border-outline-variant shadow-sm">
+            <div class="flex justify-between items-start">
+                <span class="text-on-surface-variant text-sm font-medium">Dossiers reçus</span>
+                <div class="p-2 bg-surface-container rounded-lg">
+                    <i class="pi pi-folder text-primary text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4">
+                <div class="text-2xl font-bold text-on-surface">1,247</div>
+                <div class="text-xs font-semibold text-green-600 flex items-center gap-1 mt-1">
+                    <i class="pi pi-chart-line text-[14px]"></i>
+                    +12% vs hier
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2: AI Focus -->
+        <div class="bg-white p-6 rounded-xl border border-purple-600 shadow-sm relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-2 opacity-10">
+                <i class="pi pi-sparkles text-[64px] text-purple-600"></i>
+            </div>
+            <div class="flex justify-between items-start">
+                <span class="text-on-surface-variant text-sm font-medium">Vérifiés par IA</span>
+                <div class="p-2 bg-purple-100 rounded-lg">
+                    <i class="pi pi-check-circle text-purple-600 text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4">
+                <div class="text-2xl font-bold text-on-surface">1,089</div>
+                <div class="inline-flex items-center px-2 py-0.5 bg-purple-50 text-purple-700 text-xs font-semibold rounded-full mt-1">
+                    87.3% complété
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="bg-white p-6 rounded-xl border border-outline-variant shadow-sm">
+            <div class="flex justify-between items-start">
+                <span class="text-on-surface-variant text-sm font-medium">Étudiants Éligibles</span>
+                <div class="p-2 bg-surface-container rounded-lg">
+                    <i class="pi pi-user-plus text-primary text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4">
+                <div class="text-2xl font-bold text-on-surface">982</div>
+                <div class="text-xs font-semibold text-on-surface-variant mt-1">Basé sur les critères 2024</div>
+            </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="bg-white p-6 rounded-xl border border-outline-variant shadow-sm">
+            <div class="flex justify-between items-start">
+                <span class="text-on-surface-variant text-sm font-medium">En attente</span>
+                <div class="p-2 bg-red-100 rounded-lg">
+                    <i class="pi pi-clock text-red-600 text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4">
+                <div class="text-2xl font-bold text-on-surface">158</div>
+                <div class="text-xs font-semibold text-red-600 flex items-center gap-1 mt-1">
+                    <i class="pi pi-exclamation-circle text-[14px]"></i>
+                    Requiert attention
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section (Bento Style) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Area Chart -->
+        <div class="lg:col-span-8 bg-white p-8 rounded-xl border border-outline-variant shadow-sm">
+            <div class="flex justify-between items-center mb-8">
+                <h3 class="text-lg font-bold text-on-surface">Activité de vérification (7 derniers jours)</h3>
+                <div class="flex gap-4">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-primary"></span>
+                        <span class="text-xs font-semibold text-on-surface-variant">Soumis</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-purple-600"></span>
+                        <span class="text-xs font-semibold text-on-surface-variant">Vérifiés IA</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="h-64 flex items-end justify-between gap-2 relative">
+                <!-- Simulated Area Chart Bars -->
+                <div class="w-full flex items-end gap-4 h-48 border-b border-outline-variant pb-1">
+                    <div class="flex-1 flex flex-col justify-end gap-1 h-full">
+                        <div class="bg-primary/20 rounded-t-sm h-3/4"></div>
+                        <div class="bg-purple-600/40 rounded-t-sm h-2/3 -mt-4 shadow-sm"></div>
+                    </div>
+                    <div class="flex-1 flex flex-col justify-end gap-1 h-full">
+                        <div class="bg-primary/20 rounded-t-sm h-4/5"></div>
+                        <div class="bg-purple-600/40 rounded-t-sm h-3/4 -mt-4 shadow-sm"></div>
+                    </div>
+                    <div class="flex-1 flex flex-col justify-end gap-1 h-full">
+                        <div class="bg-primary/20 rounded-t-sm h-1/2"></div>
+                        <div class="bg-purple-600/40 rounded-t-sm h-1/3 -mt-4 shadow-sm"></div>
+                    </div>
+                    <div class="flex-1 flex flex-col justify-end gap-1 h-full">
+                        <div class="bg-primary/20 rounded-t-sm h-5/6"></div>
+                        <div class="bg-purple-600/40 rounded-t-sm h-4/6 -mt-4 shadow-sm"></div>
+                    </div>
+                    <div class="flex-1 flex flex-col justify-end gap-1 h-full">
+                        <div class="bg-primary/20 rounded-t-sm h-2/3"></div>
+                        <div class="bg-purple-600/40 rounded-t-sm h-3/5 -mt-4 shadow-sm"></div>
+                    </div>
+                    <div class="flex-1 flex flex-col justify-end gap-1 h-full">
+                        <div class="bg-primary/20 rounded-t-sm h-full"></div>
+                        <div class="bg-purple-600/40 rounded-t-sm h-5/6 -mt-4 shadow-sm"></div>
+                    </div>
+                    <div class="flex-1 flex flex-col justify-end gap-1 h-full">
+                        <div class="bg-primary/20 rounded-t-sm h-4/6"></div>
+                        <div class="bg-purple-600/40 rounded-t-sm h-3/6 -mt-4 shadow-sm"></div>
+                    </div>
+                </div>
+                
+                <!-- Days Labels -->
+                <div class="absolute -bottom-6 left-0 w-full flex justify-between text-xs font-semibold text-on-surface-variant opacity-60">
+                    <span>Lun</span><span>Mar</span><span>Mer</span><span>Jeu</span><span>Ven</span><span>Sam</span><span>Dim</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Donut Chart -->
+        <div class="lg:col-span-4 bg-white p-8 rounded-xl border border-outline-variant shadow-sm flex flex-col">
+            <h3 class="text-lg font-bold text-on-surface mb-8">Résultats IA aujourd'hui</h3>
+            
+            <div class="flex-grow flex items-center justify-center relative py-4">
+                <!-- Fake Donut Chart with SVG -->
+                <svg class="w-48 h-48 transform -rotate-90" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" fill="none" r="40" stroke="#f1f5f9" stroke-width="12"></circle>
+                    <circle cx="50" cy="50" fill="none" r="40" stroke="#44c365" stroke-dasharray="251.2" stroke-dashoffset="55" stroke-width="12"></circle>
+                    <circle cx="50" cy="50" fill="none" r="40" stroke="#ba1a1a" stroke-dasharray="251.2" stroke-dashoffset="210" stroke-width="12"></circle>
+                    <circle cx="50" cy="50" fill="none" r="40" stroke="#7c3aed" stroke-dasharray="251.2" stroke-dashoffset="230" stroke-width="12"></circle>
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <span class="text-3xl font-bold text-on-surface">154</span>
+                    <span class="text-xs font-semibold text-on-surface-variant">Analysés</span>
+                </div>
+            </div>
+            
+            <div class="space-y-2 mt-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                        <span class="text-sm">Éligible</span>
+                    </div>
+                    <span class="text-sm font-medium">78%</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-red-600"></span>
+                        <span class="text-sm">Non éligible</span>
+                    </div>
+                    <span class="text-sm font-medium">14%</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-purple-600"></span>
+                        <span class="text-sm">À vérifier</span>
+                    </div>
+                    <span class="text-sm font-medium">8%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Dossiers Table -->
+    <div class="bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+        <div class="px-8 py-6 border-b border-outline-variant flex justify-between items-center">
+            <h3 class="text-lg font-bold text-on-surface">Dossiers récents</h3>
+            <button class="text-primary text-sm font-medium hover:underline">Voir tout</button>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-surface-container-low text-on-surface-variant text-sm font-medium">
+                    <tr>
+                        <th class="px-8 py-4">Étudiant</th>
+                        <th class="px-8 py-4">N° Dossier</th>
+                        <th class="px-8 py-4">Université</th>
+                        <th class="px-8 py-4">Statut IA</th>
+                        <th class="px-8 py-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-outline-variant">
+                    <tr class="hover:bg-surface-bright transition-colors">
+                        <td class="px-8 py-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary font-bold">AT</div>
+                                <div>
+                                    <div class="text-sm font-medium text-on-surface">Aminata Traoré</div>
+                                    <div class="text-sm text-on-surface-variant">aminata.t@example.com</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-8 py-4 text-base">DBS-2024-0042</td>
+                        <td class="px-8 py-4 text-base">Univ. Félix H.B.</td>
+                        <td class="px-8 py-4">
+                            <div class="inline-flex items-center gap-1 px-2 py-0.5 bg-purple-50 text-purple-700 text-xs font-semibold rounded-full">
+                                <i class="pi pi-sparkles text-[12px]"></i>
+                                Vérifié par IA
+                            </div>
+                        </td>
+                        <td class="px-8 py-4 text-right">
+                            <button class="text-primary hover:bg-surface-container p-2 rounded-lg transition-all">
+                                <i class="pi pi-eye"></i>
+                            </button>
+                            <button class="text-on-surface-variant hover:bg-surface-container p-2 rounded-lg transition-all ml-1">
+                                <i class="pi pi-ellipsis-v"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    
+                    <tr class="hover:bg-surface-bright transition-colors">
+                        <td class="px-8 py-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary font-bold">KM</div>
+                                <div>
+                                    <div class="text-sm font-medium text-on-surface">Kofi Mensah</div>
+                                    <div class="text-sm text-on-surface-variant">kofi.m@example.com</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-8 py-4 text-base">DBS-2024-0056</td>
+                        <td class="px-8 py-4 text-base">ESATIC</td>
+                        <td class="px-8 py-4">
+                            <div class="inline-flex items-center gap-1 px-2 py-0.5 bg-surface-container-high text-on-surface-variant text-xs font-semibold rounded-full">
+                                En attente
+                            </div>
+                        </td>
+                        <td class="px-8 py-4 text-right">
+                            <button class="text-primary hover:bg-surface-container p-2 rounded-lg transition-all">
+                                <i class="pi pi-eye"></i>
+                            </button>
+                            <button class="text-on-surface-variant hover:bg-surface-container p-2 rounded-lg transition-all ml-1">
+                                <i class="pi pi-ellipsis-v"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    
+                    <tr class="hover:bg-surface-bright transition-colors">
+                        <td class="px-8 py-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary font-bold">SD</div>
+                                <div>
+                                    <div class="text-sm font-medium text-on-surface">Salimata Diop</div>
+                                    <div class="text-sm text-on-surface-variant">salimata.d@example.com</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-8 py-4 text-base">DBS-2024-0061</td>
+                        <td class="px-8 py-4 text-base">Univ. de Bouaké</td>
+                        <td class="px-8 py-4">
+                            <div class="inline-flex items-center gap-1 px-2 py-0.5 bg-purple-50 text-purple-700 text-xs font-semibold rounded-full">
+                                <i class="pi pi-sparkles text-[12px]"></i>
+                                Vérifié par IA
+                            </div>
+                        </td>
+                        <td class="px-8 py-4 text-right">
+                            <button class="text-primary hover:bg-surface-container p-2 rounded-lg transition-all">
+                                <i class="pi pi-eye"></i>
+                            </button>
+                            <button class="text-on-surface-variant hover:bg-surface-container p-2 rounded-lg transition-all ml-1">
+                                <i class="pi pi-ellipsis-v"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

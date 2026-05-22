@@ -39,5 +39,36 @@ export const routes: Routes = [
         loadComponent: () => import('./features/gns-admin/pages/gns-admin-settings/gns-admin-settings.component').then(m => m.GnsAdminSettingsComponent)
       }
     ]
+  },
+  {
+    path: 'dbs',
+    loadComponent: () => import('./features/dbs-portal/layout/dbs-layout/dbs-layout.component').then(m => m.DbsLayoutComponent),
+    children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/dbs-portal/pages/dbs-dashboard/dbs-dashboard.component').then(m => m.DbsDashboardComponent)
+      },
+      {
+        path: 'ia-rules',
+        loadComponent: () => import('./features/dbs-portal/pages/dbs-ia-rules/dbs-ia-rules.component').then(m => m.DbsIaRulesComponent)
+      },
+      {
+        path: 'dossiers',
+        loadComponent: () => import('./features/dbs-portal/pages/dbs-dossiers/dbs-dossiers.component').then(m => m.DbsDossiersComponent)
+      },
+      {
+        path: 'reports',
+        loadComponent: () => import('./features/dbs-portal/pages/dbs-reports/dbs-reports.component').then(m => m.DbsReportsComponent)
+      },
+      {
+        path: 'settings',
+        loadComponent: () => import('./features/dbs-portal/pages/dbs-settings/dbs-settings.component').then(m => m.DbsSettingsComponent)
+      }
+    ]
   }
 ];
