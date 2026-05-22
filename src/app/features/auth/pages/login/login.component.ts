@@ -24,8 +24,6 @@ export class LoginComponent {
   }
 
   handleLogin() {
-    if (!this.email || !this.password) return;
-    
     this.isLoading = true;
     
     setTimeout(() => {
