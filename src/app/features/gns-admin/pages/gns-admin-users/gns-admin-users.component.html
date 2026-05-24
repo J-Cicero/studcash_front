@@ -1,0 +1,132 @@
+<div class="p-6 bg-[#F8FAFC] min-h-screen font-['Inter',sans-serif]">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Utilisateurs & Rôles</h1>
+            <p class="text-slate-500 font-medium mt-1">Gérez les accès des administrateurs et partenaires institutionnels.</p>
+        </div>
+        <button pButton icon="pi pi-plus" label="Nouvel Utilisateur" class="p-button-primary rounded-xl shadow-lg shadow-indigo-200" (click)="openCreationPanel()"></button>
+    </div>
+
+    <!-- Main Table Card -->
+    <div class="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
+        <p-table [value]="users()" [rows]="10" [paginator]="true" [loading]="isLoading()" styleClass="p-datatable-sm"
+                 [showCurrentPageReport]="true" currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords}">
+            
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="utilisateur">Utilisateur <p-sortIcon field="utilisateur"></p-sortIcon></th>
+                    <th pSortableColumn="role">Rôle <p-sortIcon field="role"></p-sortIcon></th>
+                    <th pSortableColumn="entite">Université / Entité <p-sortIcon field="entite"></p-sortIcon></th>
+                    <th pSortableColumn="statut">Statut <p-sortIcon field="statut"></p-sortIcon></th>
+                    <th class="text-right">Actions</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-user>
+                <tr>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center font-bold text-indigo-600 border border-slate-200 shadow-sm">
+                                {{ (user.nom?.charAt(0) || '') }}{{ (user.prenom?.charAt(0) || '') }}
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="font-bold text-slate-800">{{ user.prenom }} {{ user.nom }}</span>
+                                <span class="text-xs text-slate-400 font-medium">{{ user.email }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <p-tag [value]="user.role" [severity]="getSeverity(user.role)" styleClass="text-[10px] font-black uppercase tracking-tighter px-2.5 py-0.5 rounded-lg border-current/20"></p-tag>
+                    </td>
+                    <td class="px-6 py-4">
+                        @if (user.role === 'UNIVERSITY_ADMIN') {
+                            <span class="text-sm font-semibold text-slate-600"><i class="pi pi-graduation-cap mr-2"></i>Université</span>
+                        } @else if (user.role === 'ADMIN_BANQUE') {
+                            <span class="text-sm font-semibold text-slate-600"><i class="pi pi-building mr-2"></i>Banque Partenaire</span>
+                        } @else {
+                            <span class="text-sm font-medium text-slate-400 italic">Plateforme GNS</span>
+                        }
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold"
+                              [ngClass]="user.estActif ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
+                            <span class="w-1.5 h-1.5 rounded-full" [ngClass]="user.estActif ? 'bg-green-700' : 'bg-red-700'"></span>
+                            {{ user.estActif ? 'Actif' : 'Bloqué' }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <button pButton icon="pi pi-ellipsis-v" class="p-button-text p-button-rounded text-slate-400"></button>
+                    </td>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="5" class="p-20 text-center">
+                        <div class="flex flex-col items-center justify-center opacity-30 grayscale">
+                            <i class="pi pi-inbox text-6xl mb-4"></i>
+                            <p class="text-sm font-black uppercase tracking-widest">Aucun utilisateur disponible</p>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <!-- Create User Dialog -->
+    <p-dialog [visible]="isCreationPanelOpen()" (visibleChange)="isCreationPanelOpen.set($event)" [modal]="true" [style]="{ width: '500px' }" [draggable]="false" [resizable]="false" [closable]="false" [showHeader]="false">
+        <header class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+            <div>
+                <h2 class="text-xl font-black text-slate-800 uppercase tracking-tight">Nouvel Utilisateur</h2>
+                <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Accès Institutionnel</p>
+            </div>
+            <button pButton icon="pi pi-times" class="p-button-text p-button-rounded text-slate-400" (click)="closeCreationPanel()"></button>
+        </header>
+
+        <div class="p-6 space-y-6">
+            <form [formGroup]="userForm" class="space-y-4" id="userForm">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Prénom</label>
+                        <input pInputText formControlName="prenom" placeholder="Ex: Jean" class="w-full border-slate-200 rounded-xl px-4 py-2.5">
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nom</label>
+                        <input pInputText formControlName="nom" placeholder="Ex: Dupont" class="w-full border-slate-200 rounded-xl px-4 py-2.5">
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email professionnel</label>
+                    <input pInputText formControlName="email" placeholder="jean.dupont@institution.com" class="w-full border-slate-200 rounded-xl px-4 py-2.5">
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Téléphone</label>
+                    <input pInputText formControlName="telephone" placeholder="+228 90 00 00 00" class="w-full border-slate-200 rounded-xl px-4 py-2.5">
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Mot de passe temporaire</label>
+                    <p-password formControlName="motDePasse" [feedback]="false" placeholder="••••••••" styleClass="w-full" inputStyleClass="w-full border-slate-200 rounded-xl px-4 py-2.5"></p-password>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Rôle Système</label>
+                    <p-dropdown [options]="roles" formControlName="role" styleClass="w-full border-slate-200 rounded-xl"></p-dropdown>
+                </div>
+
+                <div class="flex flex-col gap-1.5" *ngIf="userForm.get('role')?.value === 'UNIVERSITY_ADMIN'">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Université rattachée</label>
+                    <p-dropdown [options]="universities()" formControlName="universiteTrackingId" placeholder="Sélectionner une université" styleClass="w-full border-slate-200 rounded-xl"></p-dropdown>
+                </div>
+            </form>
+        </div>
+
+        <footer class="p-6 border-t border-slate-100 bg-slate-50 flex gap-4">
+            <button pButton label="Annuler" class="p-button-outlined p-button-secondary flex-1 rounded-xl font-bold" (click)="closeCreationPanel()"></button>
+            <button pButton label="Créer le compte" class="p-button-primary flex-1 rounded-xl font-bold" (click)="submitForm()" [disabled]="userForm.invalid"></button>
+        </footer>
+    </p-dialog>
+</div>

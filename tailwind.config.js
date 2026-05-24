@@ -7,7 +7,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'primary': '#1e3a8a',
+        'primary': 'var(--color-primary)',
         'success': '#16a34a',
         'danger': '#dc2626',
         'warning': '#d97706',
@@ -83,15 +83,16 @@ module.exports = {
         "gutter": "1.5rem"
       },
       fontFamily: {
-        "display-lg": ["Inter", "sans-serif"],
-        "data-tabular": ["Inter", "sans-serif"],
-        "label-sm": ["Inter", "sans-serif"],
-        "body-md": ["Inter", "sans-serif"],
-        "body-lg": ["Inter", "sans-serif"],
-        "headline-md": ["Inter", "sans-serif"],
-        "body-sm": ["Inter", "sans-serif"],
-        "label-md": ["Inter", "sans-serif"],
-        "headline-sm": ["Inter", "sans-serif"]
+        "sans": ["var(--font-main)"],
+        "display-lg": ["var(--font-main)"],
+        "data-tabular": ["var(--font-main)"],
+        "label-sm": ["var(--font-main)"],
+        "body-md": ["var(--font-main)"],
+        "body-lg": ["var(--font-main)"],
+        "headline-md": ["var(--font-main)"],
+        "body-sm": ["var(--font-main)"],
+        "label-md": ["var(--font-main)"],
+        "headline-sm": ["var(--font-main)"]
       },
       fontSize: {
         "display-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],

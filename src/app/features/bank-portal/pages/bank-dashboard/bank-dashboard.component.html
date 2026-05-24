@@ -1,241 +1,75 @@
-<div class="space-y-6">
-    <!-- Header Section -->
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div class="animate-fade-in-up font-['Inter',sans-serif] bg-[#F8FAFC] min-h-screen p-6 space-y-8">
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-8">
         <div>
-            <h1 class="font-bold text-3xl text-gray-900">Tableau de bord — UTB × StudCash</h1>
-            <p class="text-base font-normal text-gray-500">Vue d'ensemble des opérations financières en temps réel.</p>
+            <h1 class="text-3xl font-black text-slate-800 uppercase tracking-tighter">Tableau de bord Banque</h1>
+            <p class="text-sm font-medium text-slate-500">Gestion de la trésorerie et des liquidations StudCash.</p>
         </div>
-        <div class="flex gap-2">
-            <button class="px-4 py-2 bg-white border border-gray-200 text-gray-900 font-semibold text-sm rounded-lg flex items-center gap-1 hover:bg-gray-50 transition-colors">
-                <i class="pi pi-download text-[18px]"></i> Exporter le rapport
-            </button>
-            <button class="px-4 py-2 bg-primary text-white font-semibold text-sm rounded-lg flex items-center gap-1 hover:bg-blue-800 transition-colors shadow-sm">
-                <i class="pi pi-plus text-[18px]"></i> Nouvelle liquidation
-            </button>
-        </div>
-    </div>
+        <button pButton icon="pi pi-refresh" (click)="loadData()" class="p-button-text p-button-rounded text-slate-400"></button>
+    </header>
 
-    <!-- 1. KPI Grid (4 cards) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- Total Liquidations -->
-        <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:-translate-y-[2px] transition-transform duration-200 ease-out">
-            <div class="flex justify-between items-start mb-2">
-                <span class="p-1 bg-blue-100 text-blue-900 rounded">
-                    <i class="pi pi-wallet text-[20px]"></i>
-                </span>
-                <span class="text-xs font-medium text-primary">+12.5%</span>
+    <!-- KPI Row -->
+    <section class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm transition-all hover:shadow-lg group">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 text-xl">
+                    <i class="pi pi-landmark"></i>
+                </div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total à Liquider</p>
             </div>
-            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Liquidations</p>
-            <p class="font-bold text-xl tabular-nums mt-1">4 847 250 000 FCFA</p>
+            @if(isLoading()) { <p-skeleton width="90%" height="2.5rem"></p-skeleton> }
+            @else { <h3 class="text-2xl font-black text-slate-800 tabular-nums">{{ stats().totalLiquidations | number }} F</h3> }
         </div>
 
-        <!-- Mandats à vérifier -->
-        <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:-translate-y-[2px] transition-transform duration-200 ease-out">
-            <div class="flex justify-between items-start mb-2">
-                <span class="p-1 bg-orange-100 text-orange-900 rounded">
-                    <i class="pi pi-file-edit text-[20px]"></i>
-                </span>
-                <span class="text-xs font-medium text-orange-700">Urgent</span>
+        <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm transition-all hover:shadow-lg group">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600 text-xl">
+                    <i class="pi pi-file-check"></i>
+                </div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Mandats en attente</p>
             </div>
-            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Mandats à vérifier</p>
-            <p class="font-bold text-xl text-orange-700 tabular-nums mt-1">47</p>
+            @if(isLoading()) { <p-skeleton width="50%" height="2.5rem"></p-skeleton> }
+            @else { <h3 class="text-4xl font-black text-amber-600">{{ stats().mandatsAttente }}</h3> }
         </div>
 
-        <!-- Virements effectués -->
-        <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:-translate-y-[2px] transition-transform duration-200 ease-out">
-            <div class="flex justify-between items-start mb-2">
-                <span class="p-1 bg-purple-100 text-purple-900 rounded">
-                    <i class="pi pi-sync text-[20px]"></i>
-                </span>
-                <span class="text-xs font-medium text-purple-600">Aujourd'hui</span>
+        <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm transition-all hover:shadow-lg group">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 text-xl">
+                    <i class="pi pi-send"></i>
+                </div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Virements effectués</p>
             </div>
-            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Virements effectués</p>
-            <p class="font-bold text-xl tabular-nums mt-1">234</p>
+            @if(isLoading()) { <p-skeleton width="40%" height="2.5rem"></p-skeleton> }
+            @else { <h3 class="text-4xl font-black text-slate-800">---</h3> }
         </div>
 
-        <!-- Taux de liquidation -->
-        <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:-translate-y-[2px] transition-transform duration-200 ease-out">
-            <div class="flex justify-between items-start mb-2">
-                <span class="p-1 bg-green-100 text-green-800 rounded">
-                    <i class="pi pi-chart-line text-[20px]"></i>
-                </span>
-                <span class="text-xs font-medium text-green-700">Objectif atteint</span>
+        <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm transition-all hover:shadow-lg group">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white text-xl">
+                    <i class="pi pi-percentage"></i>
+                </div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Taux Liquidation</p>
             </div>
-            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Taux de liquidation</p>
-            <p class="font-bold text-xl text-green-700 tabular-nums mt-1">98.7%</p>
+            @if(isLoading()) { <p-skeleton width="60%" height="2.5rem"></p-skeleton> }
+            @else { <h3 class="text-4xl font-black text-indigo-600">{{ stats().tauxLiquidation }}%</h3> }
         </div>
-    </div>
+    </section>
 
-    <!-- 2. Charts (2 columns) -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- Left: Bar Chart -->
-        <div class="lg:col-span-7 bg-white border border-gray-200 p-6 rounded-xl shadow-sm">
-            <div class="flex justify-between items-center mb-8">
-                <h3 class="font-bold text-xl">Volume des liquidations</h3>
-                <select class="bg-[#faf8ff] border border-gray-200 rounded px-2 py-1 text-sm font-normal focus:ring-1 focus:ring-primary outline-none">
-                    <option>Derniers 6 mois</option>
-                    <option>Année 2023</option>
-                </select>
-            </div>
-            <div class="h-[300px] flex items-end justify-between gap-2 pt-8">
-                <!-- Chart Simulation -->
-                <div class="flex-1 flex flex-col items-center gap-2 group">
-                    <div class="w-full bg-blue-100 hover:bg-primary transition-all duration-300 rounded-t-sm" style="height: 60%;"></div>
-                    <span class="text-xs font-medium text-gray-500">Jan</span>
-                </div>
-                <div class="flex-1 flex flex-col items-center gap-2 group">
-                    <div class="w-full bg-blue-100 hover:bg-primary transition-all duration-300 rounded-t-sm" style="height: 75%;"></div>
-                    <span class="text-xs font-medium text-gray-500">Fév</span>
-                </div>
-                <div class="flex-1 flex flex-col items-center gap-2 group">
-                    <div class="w-full bg-blue-100 hover:bg-primary transition-all duration-300 rounded-t-sm" style="height: 55%;"></div>
-                    <span class="text-xs font-medium text-gray-500">Mar</span>
-                </div>
-                <div class="flex-1 flex flex-col items-center gap-2 group">
-                    <div class="w-full bg-blue-100 hover:bg-primary transition-all duration-300 rounded-t-sm" style="height: 90%;"></div>
-                    <span class="text-xs font-medium text-gray-500">Avr</span>
-                </div>
-                <div class="flex-1 flex flex-col items-center gap-2 group">
-                    <div class="w-full bg-blue-100 hover:bg-primary transition-all duration-300 rounded-t-sm" style="height: 85%;"></div>
-                    <span class="text-xs font-medium text-gray-500">Mai</span>
-                </div>
-                <div class="flex-1 flex flex-col items-center gap-2 group">
-                    <div class="w-full bg-primary hover:bg-blue-800 transition-all duration-300 rounded-t-sm" style="height: 95%;"></div>
-                    <span class="text-xs font-medium text-primary font-bold">Juin</span>
-                </div>
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm">
+            <h4 class="text-xl font-black text-slate-800 uppercase tracking-tight mb-8">Volume des Liquidations</h4>
+            <div class="h-[300px]">
+                @if(isLoading()) { <p-skeleton width="100%" height="100%"></p-skeleton> }
+                @else { <p-chart type="bar" [data]="chartData" [options]="chartOptions" height="300px"></p-chart> }
             </div>
         </div>
 
-        <!-- Right: Donut Chart -->
-        <div class="lg:col-span-5 bg-white border border-gray-200 p-6 rounded-xl shadow-sm">
-            <h3 class="font-bold text-xl mb-8">Statut des liquidations</h3>
-            <div class="flex flex-col items-center justify-center h-[300px]">
-                <!-- Donut SVG Simulation -->
-                <div class="relative w-48 h-48">
-                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                        <circle class="stroke-green-500" cx="18" cy="18" fill="none" r="16" stroke-dasharray="75, 100" stroke-width="4"></circle>
-                        <circle class="stroke-amber-500" cx="18" cy="18" fill="none" r="16" stroke-dasharray="15, 100" stroke-dashoffset="-75" stroke-width="4"></circle>
-                        <circle class="stroke-red-500" cx="18" cy="18" fill="none" r="16" stroke-dasharray="10, 100" stroke-dashoffset="-90" stroke-width="4"></circle>
-                    </svg>
-                    <div class="absolute inset-0 flex flex-col items-center justify-center">
-                        <span class="text-2xl font-bold">100%</span>
-                        <span class="text-xs font-medium text-gray-500">Total</span>
-                    </div>
-                </div>
-                <!-- Legend -->
-                <div class="grid grid-cols-3 gap-4 w-full mt-6">
-                    <div class="flex flex-col items-center">
-                        <span class="w-2 h-2 rounded-full bg-green-500 mb-1"></span>
-                        <span class="text-xs font-medium">Soldé</span>
-                        <span class="font-mono text-sm">75%</span>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <span class="w-2 h-2 rounded-full bg-amber-500 mb-1"></span>
-                        <span class="text-xs font-medium">Partiel</span>
-                        <span class="font-mono text-sm">15%</span>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <span class="w-2 h-2 rounded-full bg-red-500 mb-1"></span>
-                        <span class="text-xs font-medium">Impayé</span>
-                        <span class="font-mono text-sm">10%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. Bottom Sections -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- Left: Table -->
-        <div class="lg:col-span-8 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-                <h3 class="font-bold text-xl">Dernières liquidations</h3>
-                <a class="text-primary text-sm font-semibold hover:underline" href="#">Voir tout</a>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                    <thead>
-                        <tr class="bg-gray-100 border-b border-gray-200">
-                            <th class="px-6 py-4 text-sm font-semibold text-gray-500">DATE</th>
-                            <th class="px-6 py-4 text-sm font-semibold text-gray-500">RÉFÉRENCE</th>
-                            <th class="px-6 py-4 text-sm font-semibold text-gray-500">BÉNÉFICIAIRE</th>
-                            <th class="px-6 py-4 text-sm font-semibold text-gray-500 text-right">MONTANT</th>
-                            <th class="px-6 py-4 text-sm font-semibold text-gray-500 text-center">STATUT</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200">
-                        <tr class="hover:bg-[#faf8ff] transition-colors">
-                            <td class="px-6 py-4 text-base font-normal">24/10/2023</td>
-                            <td class="px-6 py-4 font-mono text-sm font-bold">#LQ-98234</td>
-                            <td class="px-6 py-4 text-base font-normal">SOTRA Transport</td>
-                            <td class="px-6 py-4 font-mono text-sm text-right text-green-700">12 450 000 FCFA</td>
-                            <td class="px-6 py-4 text-center">
-                                <span class="px-2 py-1 bg-green-100 text-green-800 text-[10px] font-bold rounded-sm uppercase">Soldé</span>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-[#faf8ff] transition-colors">
-                            <td class="px-6 py-4 text-base font-normal">24/10/2023</td>
-                            <td class="px-6 py-4 font-mono text-sm font-bold">#LQ-98235</td>
-                            <td class="px-6 py-4 text-base font-normal">CIE Energie</td>
-                            <td class="px-6 py-4 font-mono text-sm text-right text-red-600">-2 800 000 FCFA</td>
-                            <td class="px-6 py-4 text-center">
-                                <span class="px-2 py-1 bg-amber-100 text-amber-800 text-[10px] font-bold rounded-sm uppercase">Partiel</span>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-[#faf8ff] transition-colors">
-                            <td class="px-6 py-4 text-base font-normal">23/10/2023</td>
-                            <td class="px-6 py-4 font-mono text-sm font-bold">#LQ-98230</td>
-                            <td class="px-6 py-4 text-base font-normal">SODECI Eaux</td>
-                            <td class="px-6 py-4 font-mono text-sm text-right text-green-700">8 120 000 FCFA</td>
-                            <td class="px-6 py-4 text-center">
-                                <span class="px-2 py-1 bg-green-100 text-green-800 text-[10px] font-bold rounded-sm uppercase">Soldé</span>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-[#faf8ff] transition-colors">
-                            <td class="px-6 py-4 text-base font-normal">23/10/2023</td>
-                            <td class="px-6 py-4 font-mono text-sm font-bold">#LQ-98229</td>
-                            <td class="px-6 py-4 text-base font-normal">MTN Côte d'Ivoire</td>
-                            <td class="px-6 py-4 font-mono text-sm text-right text-green-700">45 000 000 FCFA</td>
-                            <td class="px-6 py-4 text-center">
-                                <span class="px-2 py-1 bg-green-100 text-green-800 text-[10px] font-bold rounded-sm uppercase">Soldé</span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Right: Alerts -->
-        <div class="lg:col-span-4 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-            <div class="p-6 border-b border-gray-200 flex items-center gap-2 bg-gray-50">
-                <i class="pi pi-bell text-orange-700 text-[24px]"></i>
-                <h3 class="font-bold text-xl">Alertes trésorerie</h3>
-            </div>
-            <div class="p-6 space-y-4">
-                <div class="flex gap-4 p-4 bg-orange-100 rounded-lg border-l-4 border-orange-500">
-                    <i class="pi pi-exclamation-triangle text-orange-800 mt-1"></i>
-                    <div class="space-y-1">
-                        <p class="text-sm font-semibold text-orange-900">Seuil critique atteint</p>
-                        <p class="text-sm font-normal text-orange-800">Le compte de liquidation #4029 a atteint son seuil de réserve minimal.</p>
-                    </div>
-                </div>
-                <div class="flex gap-4 p-4 bg-purple-100 rounded-lg">
-                    <i class="pi pi-clock text-purple-800 mt-1"></i>
-                    <div class="space-y-1">
-                        <p class="text-sm font-semibold text-purple-900">Mandats en attente (47)</p>
-                        <p class="text-sm font-normal text-purple-800">Vérification requise pour les virements de la semaine 43.</p>
-                    </div>
-                </div>
-                <div class="flex gap-4 p-4 border border-gray-200 rounded-lg">
-                    <i class="pi pi-info-circle text-gray-400 mt-1"></i>
-                    <div class="space-y-1">
-                        <p class="text-sm font-semibold text-gray-900">Mise à jour système</p>
-                        <p class="text-sm font-normal text-gray-500">Réconciliation automatique prévue à 23:00 GMT.</p>
-                    </div>
-                </div>
-                <button class="w-full py-2 border border-gray-300 text-gray-900 text-sm font-semibold rounded-lg hover:bg-gray-50 transition-colors">
-                    Gérer toutes les alertes
-                </button>
+        <div class="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col">
+            <h4 class="text-xl font-black text-slate-800 uppercase tracking-tight mb-8">Alertes Trésorerie</h4>
+            <div class="flex-1 flex flex-col items-center justify-center opacity-30 grayscale">
+                <i class="pi pi-bell-slash text-5xl mb-4"></i>
+                <p class="text-sm font-black uppercase tracking-widest">Aucune alerte</p>
             </div>
         </div>
     </div>

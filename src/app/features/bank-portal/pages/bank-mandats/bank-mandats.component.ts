@@ -1,41 +1,74 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-interface Mandat {
-  id: string;
-  name: string;
-  amount: string;
-  time: string;
-  matricule: string;
-}
+import { TableModule } from 'primeng/table';
+import { SkeletonModule } from 'primeng/skeleton';
+import { ButtonModule } from 'primeng/button';
+import { TagModule } from 'primeng/tag';
+import { BankPortalService } from '../../../../core/services/bank-portal.service';
+import { DocumentEtudiantService } from '../../../../core/services/document-etudiant.service';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-bank-mandats',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TableModule, SkeletonModule, ButtonModule, TagModule],
   templateUrl: './bank-mandats.component.html',
   styleUrls: ['./bank-mandats.component.scss']
 })
-export class BankMandatsComponent {
-  mandats = signal<Mandat[]>([
-    { id: 'REF-2023-0045', name: 'KOFFI Amenan Esther', amount: '75 000 FCFA', time: 'Il y a 14 mins', matricule: '23-UAO-1284' },
-    { id: 'REF-2023-0044', name: 'DIABATE Moussa', amount: '120 000 FCFA', time: 'Il y a 32 mins', matricule: '23-UAO-1285' },
-    { id: 'REF-2023-0043', name: 'TRAORE Bakary', amount: '50 000 FCFA', time: 'Il y a 1 heure', matricule: '23-UAO-1286' },
-    { id: 'REF-2023-0042', name: 'YABOUE Ange', amount: '95 000 FCFA', time: 'Hier, 16:45', matricule: '23-UAO-1287' }
-  ]);
+export class BankMandatsComponent implements OnInit {
+  isLoading = signal(true);
+  mandats = signal<any[]>([]);
   
-  activeMandat = signal<Mandat>(this.mandats()[0]);
-  zoomScale = signal<number>(1);
+  selectedMandat = signal<any>(null);
+  documentImage = signal<string | null>(null);
 
-  selectMandat(m: Mandat) {
-    this.activeMandat.set(m);
+  private bankService = inject(BankPortalService);
+  private docService = inject(DocumentEtudiantService);
+  private authService = inject(AuthService);
+
+  ngOnInit(): void {
+    this.loadMandats();
   }
 
-  zoomIn() {
-    this.zoomScale.update(s => s + 0.1);
+  loadMandats() {
+    this.isLoading.set(true);
+    const operatorId = "79633e9d-72e7-4953-b295-5853507d3913"; // Simulation
+
+    this.bankService.getStudents(operatorId).subscribe({
+      next: (students) => {
+        // Here we map students to mandats for simulation as we lack a direct mandat endpoint
+        this.mandats.set(students.map(s => ({
+            ...s,
+            status: 'PENDING',
+            date: '23 Mai 2026'
+        })));
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Error fetching mandats', err);
+        this.isLoading.set(false);
+      }
+    });
   }
 
-  zoomOut() {
-    this.zoomScale.update(s => s > 0.5 ? s - 0.1 : s);
+  viewMandat(mandat: any) {
+    this.selectedMandat.set(mandat);
+    this.docService.getByInscription(mandat.studentTrackingId).subscribe({
+        next: (docs) => {
+            const doc = docs.find(d => d.type === 'SOUCHE_TAMPONNEE');
+            this.documentImage.set(doc ? doc.cheminFichier : null);
+        }
+    });
+  }
+
+  validate(valide: boolean) {
+    if (!this.selectedMandat()) return;
+    
+    this.bankService.validerMandat(this.selectedMandat().studentTrackingId, valide).subscribe({
+        next: () => {
+            this.loadMandats();
+            this.selectedMandat.set(null);
+        }
+    });
   }
 }

@@ -1,8 +1,11 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
     path: 'admin',
+    canActivate: [authGuard],
+    data: { roles: ['ADMIN_GNS'] },
     loadComponent: () => import('./features/gns-admin/layout/gns-admin-layout/gns-admin-layout.component').then(m => m.GnsAdminLayoutComponent),
     children: [
       {
@@ -35,6 +38,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/gns-admin/pages/gns-admin-transactions/gns-admin-transactions.component').then(m => m.GnsAdminTransactionsComponent)
       },
       {
+        path: 'users',
+        loadComponent: () => import('./features/gns-admin/pages/gns-admin-users/gns-admin-users.component').then(m => m.GnsAdminUsersComponent)
+      },
+      {
         path: 'settings',
         loadComponent: () => import('./features/gns-admin/pages/gns-admin-settings/gns-admin-settings.component').then(m => m.GnsAdminSettingsComponent)
       }
@@ -42,6 +49,8 @@ export const routes: Routes = [
   },
   {
     path: 'dbs',
+    canActivate: [authGuard],
+    data: { roles: ['ADMIN_DBS'] },
     loadComponent: () => import('./features/dbs-portal/layout/dbs-layout/dbs-layout.component').then(m => m.DbsLayoutComponent),
     children: [
       {
@@ -73,6 +82,8 @@ export const routes: Routes = [
   },
   {
     path: 'univ',
+    canActivate: [authGuard],
+    data: { roles: ['UNIVERSITY_ADMIN'] },
     loadComponent: () => import('./features/univ-portal/layout/univ-layout/univ-layout.component').then(m => m.UnivLayoutComponent),
     children: [
       {
@@ -108,6 +119,8 @@ export const routes: Routes = [
   },
   {
     path: 'bank',
+    canActivate: [authGuard],
+    data: { roles: ['ADMIN_BANQUE'] },
     loadComponent: () => import('./features/bank-portal/layout/bank-layout/bank-layout.component').then(m => m.BankLayoutComponent),
     children: [
       {

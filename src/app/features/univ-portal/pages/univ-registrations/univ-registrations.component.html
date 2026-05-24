@@ -1,215 +1,74 @@
-<div class="animate-fade-in-up">
+<div class="animate-fade-in-up font-['Inter',sans-serif] bg-[#F8FAFC] min-h-screen p-6 space-y-8">
     <!-- Header & Selectors -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
-            <h2 class="font-bold text-3xl text-gray-900">État des Inscriptions</h2>
-            <p class="font-normal text-sm text-gray-600">Année Académique 2024-2025</p>
+            <h2 class="font-black text-3xl text-slate-800 uppercase tracking-tighter">État des Inscriptions</h2>
+            <p class="font-medium text-sm text-slate-500">Année Académique 2024-2025</p>
         </div>
         <div class="flex flex-wrap gap-2">
-            <select class="bg-white border border-gray-200 rounded-lg px-4 py-2 font-semibold text-sm focus:ring-blue-900 focus:border-blue-900">
-                <option>2024-2025</option>
-                <option>2023-2024</option>
-            </select>
-            <select class="bg-white border border-gray-200 rounded-lg px-4 py-2 font-semibold text-sm focus:ring-blue-900 focus:border-blue-900">
-                <option>Semestre 1</option>
-                <option>Semestre 2</option>
-            </select>
-            <select class="bg-white border border-gray-200 rounded-lg px-4 py-2 font-semibold text-sm focus:ring-blue-900 focus:border-blue-900">
-                <option>Toutes les Facultés</option>
-                <option>FDS (Sciences)</option>
-                <option>FASEG (Economie)</option>
-                <option>FDD (Droit)</option>
-            </select>
+            <button pButton icon="pi pi-refresh" (click)="loadInscriptions()" class="p-button-text p-button-rounded text-slate-400"></button>
+            <button pButton icon="pi pi-download" label="Exporter" class="p-button-outlined p-button-sm rounded-xl"></button>
         </div>
     </div>
 
-    <!-- Stats Row -->
+    <!-- Stats Row (Brief summary) -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-            <p class="font-semibold text-sm text-gray-600 mb-1">Total Inscriptions</p>
-            <p class="font-bold text-4xl text-blue-900">12,480</p>
-            <p class="font-normal text-sm text-green-600 flex items-center gap-1 mt-1">
-                <i class="pi pi-arrow-up-right text-[12px]"></i> +5.2% vs 2023
-            </p>
-        </div>
-        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-            <p class="font-semibold text-sm text-gray-600 mb-1">Paiements Validés</p>
-            <p class="font-bold text-4xl text-green-600">10,245</p>
-            <p class="font-normal text-sm text-gray-600 mt-1">82% de complétion</p>
-        </div>
-        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-            <p class="font-semibold text-sm text-gray-600 mb-1">En Attente</p>
-            <p class="font-bold text-4xl text-amber-600">1,835</p>
-            <p class="font-normal text-sm text-gray-600 mt-1">Relances en cours</p>
-        </div>
-        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-            <p class="font-semibold text-sm text-gray-600 mb-1">Revenus StudCash</p>
-            <p class="font-bold text-4xl text-blue-700">642.5M</p>
-            <p class="font-normal text-sm text-gray-500 mt-1">FCFA (Net)</p>
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <p class="font-bold text-[10px] text-slate-400 uppercase tracking-widest mb-1">Total Inscriptions</p>
+            @if(isLoading()) { <p-skeleton width="80px" height="2rem"></p-skeleton> }
+            @else { <p class="font-black text-3xl text-indigo-600">{{ totalElements() | number }}</p> }
         </div>
     </div>
 
-    <!-- Analytical Bento Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
-        <!-- Donut Chart & Breakdown -->
-        <div class="lg:col-span-4 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-            <h3 class="font-bold text-2xl text-gray-900 mb-6">Répartition par Faculté</h3>
-            <div class="relative w-48 h-48 mx-auto mb-6">
-                <!-- Fake SVG Donut -->
-                <div class="absolute inset-0 flex items-center justify-center">
-                    <div class="w-40 h-40 rounded-full border-[12px] border-blue-900 border-r-green-600 border-b-amber-600 border-l-gray-200 rotate-45"></div>
-                </div>
-                <div class="absolute inset-0 flex flex-col items-center justify-center">
-                    <p class="font-bold text-2xl text-blue-900">12k+</p>
-                    <p class="font-semibold text-xs text-gray-500">Étudiants</p>
-                </div>
-            </div>
-            <div class="space-y-4">
-                <div class="flex justify-between items-center font-normal text-sm">
-                    <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-900"></span> FASEG</span>
-                    <span class="font-bold">45%</span>
-                </div>
-                <div class="flex justify-between items-center font-normal text-sm">
-                    <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-green-600"></span> FDD</span>
-                    <span class="font-bold">30%</span>
-                </div>
-                <div class="flex justify-between items-center font-normal text-sm">
-                    <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-amber-600"></span> FDS</span>
-                    <span class="font-bold">15%</span>
-                </div>
-                <div class="flex justify-between items-center font-normal text-sm">
-                    <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gray-200"></span> Autres</span>
-                    <span class="font-bold">10%</span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Department Table -->
-        <div class="lg:col-span-8 bg-white rounded-xl border border-gray-200 shadow-sm flex flex-col">
-            <div class="p-6 border-b border-gray-200 flex justify-between items-center">
-                <h3 class="font-bold text-2xl text-gray-900">Top Départements</h3>
-                <button class="text-blue-900 font-semibold text-sm hover:underline">Exporter PDF</button>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                    <thead class="bg-gray-50 text-gray-600 font-semibold text-sm">
-                        <tr>
-                            <th class="px-6 py-4">Département</th>
-                            <th class="px-6 py-4">Inscrits</th>
-                            <th class="px-6 py-4">Paiements (%)</th>
-                            <th class="px-6 py-4 text-right">Montant (CFA)</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200">
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 font-normal text-sm font-semibold text-gray-900">Gestion des Entreprises</td>
-                            <td class="px-6 py-4 font-normal text-sm text-gray-900">1,450</td>
-                            <td class="px-6 py-4">
-                                <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-                                    <div class="bg-green-600 h-full w-[92%]"></div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 font-normal text-sm text-gray-900 text-right font-mono">75.400.000</td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 font-normal text-sm font-semibold text-gray-900">Droit Privé</td>
-                            <td class="px-6 py-4 font-normal text-sm text-gray-900">1,120</td>
-                            <td class="px-6 py-4">
-                                <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-                                    <div class="bg-green-600 h-full w-[88%]"></div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 font-normal text-sm text-gray-900 text-right font-mono">58.240.000</td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 font-normal text-sm font-semibold text-gray-900">Informatique</td>
-                            <td class="px-6 py-4 font-normal text-sm text-gray-900">980</td>
-                            <td class="px-6 py-4">
-                                <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-                                    <div class="bg-green-600 h-full w-[75%]"></div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 font-normal text-sm text-gray-900 text-right font-mono opacity-80">50.960.000</td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 font-normal text-sm font-semibold text-gray-900">Économie</td>
-                            <td class="px-6 py-4 font-normal text-sm text-gray-900">850</td>
-                            <td class="px-6 py-4">
-                                <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-                                    <div class="bg-green-600 h-full w-[80%]"></div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 font-normal text-sm text-gray-900 text-right font-mono">44.200.000</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+    <!-- Main Table Card -->
+    <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+        <p-table [value]="inscriptions()" [rows]="10" [paginator]="true" [loading]="isLoading()" styleClass="p-datatable-sm"
+                 [showCurrentPageReport]="true" currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords}">
+            
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="numEtudiantUniv">Matricule <p-sortIcon field="numEtudiantUniv"></p-sortIcon></th>
+                    <th pSortableColumn="studentNom">Étudiant <p-sortIcon field="studentNom"></p-sortIcon></th>
+                    <th pSortableColumn="niveau">Niveau <p-sortIcon field="niveau"></p-sortIcon></th>
+                    <th pSortableColumn="typeBourse">Bourse <p-sortIcon field="typeBourse"></p-sortIcon></th>
+                    <th pSortableColumn="plafondAccorde" class="text-right">Plafond <p-sortIcon field="plafondAccorde"></p-sortIcon></th>
+                    <th pSortableColumn="statut">Statut GNS <p-sortIcon field="statut"></p-sortIcon></th>
+                    <th pSortableColumn="estInscritDefinitif" class="text-right">Réelle <p-sortIcon field="estInscritDefinitif"></p-sortIcon></th>
+                </tr>
+            </ng-template>
 
-    <!-- Student List Table -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-16 md:mb-0">
-        <div class="p-6 border-b border-gray-200 flex flex-col md:flex-row justify-between gap-4 items-center">
-            <div class="relative w-full md:w-96">
-                <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
-                <input class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg font-normal text-sm focus:ring-2 focus:ring-blue-900 outline-none" placeholder="Rechercher un étudiant (Nom, ID...)" type="text"/>
-            </div>
-            <div class="flex gap-2 w-full md:w-auto">
-                <button class="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 border border-gray-200 rounded-lg font-semibold text-sm text-gray-900 hover:bg-gray-50 transition-colors">
-                    <i class="pi pi-filter"></i> Filtrer
-                </button>
-                <button class="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 border border-gray-200 rounded-lg font-semibold text-sm text-gray-900 hover:bg-gray-50 transition-colors">
-                    <i class="pi pi-download"></i> Télécharger
-                </button>
-            </div>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left">
-                <thead class="bg-gray-50 text-gray-600 font-semibold text-sm">
-                    <tr>
-                        <th class="px-6 py-4">ID UL</th>
-                        <th class="px-6 py-4">Étudiant</th>
-                        <th class="px-6 py-4">Département</th>
-                        <th class="px-6 py-4">Niveau</th>
-                        <th class="px-6 py-4">Scolarité</th>
-                        <th class="px-6 py-4">Mode</th>
-                        <th class="px-6 py-4">Statut</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200 font-normal text-sm text-gray-900">
-                    @for (student of students(); track student.id; let even = $even) {
-                        <tr class="hover:bg-blue-50 transition-colors cursor-pointer group" [ngClass]="{'bg-gray-50/50': even}">
-                            <td class="px-6 py-4 font-mono text-gray-500">{{ student.id }}</td>
-                            <td class="px-6 py-4 font-semibold text-gray-900">{{ student.name }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">{{ student.department }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">{{ student.level }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">{{ student.amount }}</td>
-                            <td class="px-6 py-4">
-                                <span class="bg-blue-900 text-white px-3 py-1 rounded-full text-[10px] font-bold tracking-wider">{{ student.mode }}</span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="flex items-center gap-1 text-green-600 font-semibold">
-                                    <i class="pi pi-check-circle text-[16px]"></i> {{ student.status }}
-                                </span>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-        <div class="p-6 border-t border-gray-200 flex justify-between items-center">
-            <p class="font-semibold text-sm text-gray-600">Affichage 1-10 sur 10,245 validés</p>
-            <div class="flex gap-2">
-                <button class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors">
-                    <i class="pi pi-chevron-left text-[14px]"></i>
-                </button>
-                <button class="w-8 h-8 flex items-center justify-center rounded bg-blue-900 text-white font-bold">1</button>
-                <button class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors">2</button>
-                <button class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors">3</button>
-                <button class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors">
-                    <i class="pi pi-chevron-right text-[14px]"></i>
-                </button>
-            </div>
-        </div>
+            <ng-template pTemplate="body" let-ins>
+                <tr>
+                    <td class="px-6 py-4 font-mono text-xs text-slate-400">#{{ ins.numEtudiantUniv }}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center font-black text-indigo-600 text-[10px] border border-indigo-100">
+                                {{ ins.studentNom?.charAt(0) }}{{ ins.studentPrenom?.charAt(0) }}
+                            </div>
+                            <span class="font-bold text-slate-700 text-sm">{{ ins.studentPrenom }} {{ ins.studentNom }}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">{{ ins.niveau }}</td>
+                    <td class="px-6 py-4">
+                        <span class="text-[10px] font-black uppercase text-slate-400">{{ ins.typeBourse }}</span>
+                    </td>
+                    <td class="px-6 py-4 text-right font-black text-slate-800 text-sm">{{ ins.plafondAccorde | number }} F</td>
+                    <td class="px-6 py-4">
+                        <p-tag [value]="ins.statut" [severity]="getSeverity(ins.statut)" styleClass="text-[9px] font-black px-2 py-0.5 rounded-md"></p-tag>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        @if (ins.estInscritDefinitif) {
+                            <i class="pi pi-check-circle text-green-600 text-lg"></i>
+                        } @else {
+                            <i class="pi pi-clock text-amber-500 text-lg"></i>
+                        }
+                    </td>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+                <tr><td colspan="7" class="p-16 text-center text-slate-400 italic font-medium">Aucune inscription trouvée pour cet établissement</td></tr>
+            </ng-template>
+        </p-table>
     </div>
 </div>

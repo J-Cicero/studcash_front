@@ -1,75 +1,58 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-interface Student {
-  id: string;
-  initials: string;
-  name: string;
-  dept: string;
-  level: string;
-  mode: string;
-  modeClass: string;
-  paymentStatus: string;
-  paymentIcon: string;
-  paymentClass: string;
-  scholarship: string;
-  scholarshipClass: string;
-  verified: boolean;
-}
+import { TableModule } from 'primeng/table';
+import { SkeletonModule } from 'primeng/skeleton';
+import { TagModule } from 'primeng/tag';
+import { ButtonModule } from 'primeng/button';
+import { StudentService, StudentResponse } from '../../../../shared/services/student.service';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-univ-students',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TableModule, SkeletonModule, TagModule, ButtonModule],
   templateUrl: './univ-students.component.html',
   styleUrls: ['./univ-students.component.scss']
 })
-export class UnivStudentsComponent {
-  students = signal<Student[]>([
-    {
-      id: 'UL-2301452',
-      initials: 'AK',
-      name: 'ADJOA Kouigan',
-      dept: 'FSEG',
-      level: 'Licence 3',
-      mode: 'StudCash',
-      modeClass: 'bg-blue-100 text-blue-900',
-      paymentStatus: 'Soldé',
-      paymentIcon: 'pi pi-check-circle text-green-600',
-      paymentClass: 'text-green-600',
-      scholarship: 'Non-Boursier',
-      scholarshipClass: 'bg-gray-200 text-gray-700',
-      verified: true
-    },
-    {
-      id: 'UL-2309821',
-      initials: 'EM',
-      name: 'EGBÉ Mensah',
-      dept: 'FDS',
-      level: 'Licence 1',
-      mode: 'Virement',
-      modeClass: 'border border-gray-500 text-gray-600',
-      paymentStatus: 'Partiel',
-      paymentIcon: 'pi pi-clock text-gray-500',
-      paymentClass: 'text-gray-600',
-      scholarship: 'Boursier État',
-      scholarshipClass: 'bg-green-100 text-green-800',
-      verified: true
-    },
-    {
-      id: 'UL-2304192',
-      initials: 'LT',
-      name: 'LAWSON Thérèse',
-      dept: 'FLLA',
-      level: 'Master 2',
-      mode: 'StudCash',
-      modeClass: 'bg-blue-100 text-blue-900',
-      paymentStatus: 'Soldé',
-      paymentIcon: 'pi pi-check-circle text-green-600',
-      paymentClass: 'text-green-600',
-      scholarship: 'Non-Boursier',
-      scholarshipClass: 'bg-gray-200 text-gray-700',
-      verified: false
-    }
-  ]);
+export class UnivStudentsComponent implements OnInit {
+  isLoading = signal(false);
+  students = signal<StudentResponse[]>([]);
+  totalElements = signal(0);
+
+  private studentService = inject(StudentService);
+  private authService = inject(AuthService);
+
+  ngOnInit(): void {
+    this.loadStudents();
+  }
+
+  loadStudents(page: number = 0, size: number = 10) {
+    const univId = this.authService.universityId();
+    if (!univId) return;
+
+    this.isLoading.set(true);
+    this.studentService.getStudentsByUniversite(univId, page, size).subscribe({
+      next: (data) => {
+        this.students.set(data.content);
+        this.totalElements.set(data.totalElements);
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Error fetching students', err);
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+  isBulkUploadModalOpen = signal(false);
+
+  openBulkUploadModal() {
+    this.isBulkUploadModalOpen.set(true);
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeBulkUploadModal() {
+    this.isBulkUploadModalOpen.set(false);
+    document.body.style.overflow = 'auto';
+  }
 }

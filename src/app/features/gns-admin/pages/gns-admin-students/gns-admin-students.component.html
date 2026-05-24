@@ -1,239 +1,159 @@
-<div class="p-gutter">
-    <!-- Stats Bar -->
-    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-stack-lg">
-        <!-- Stat Card 1 -->
-        <div class="bg-surface-container-lowest p-panel-padding rounded-xl border border-outline-variant shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-primary">
-                <i class="pi pi-users text-xl"></i>
-            </div>
-            <div>
-                <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Total Students</p>
-                <div class="flex items-baseline gap-2">
-                    <span class="font-headline-sm text-headline-sm text-on-surface">12,450</span>
-                    <span class="font-label-sm text-label-sm text-on-tertiary-container">+4.2%</span>
-                </div>
-            </div>
+<div class="min-h-screen bg-[#F8FAFC] font-['Inter',sans-serif] p-6 space-y-8">
+    <!-- Header Section -->
+    <header class="flex justify-between items-end mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Gestion des Étudiants</h1>
+            <p class="text-slate-500 font-medium mt-1">Annuaire centralisé et contrôle des accès.</p>
         </div>
-        <!-- Stat Card 2 -->
-        <div class="bg-surface-container-lowest p-panel-padding rounded-xl border border-outline-variant shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-fixed">
-                <i class="pi pi-wallet text-xl"></i>
-            </div>
-            <div>
-                <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Active Wallets</p>
-                <div class="flex items-baseline gap-2">
-                    <span class="font-headline-sm text-headline-sm text-on-surface">11,280</span>
-                    <span class="font-label-sm text-label-sm text-on-tertiary-container">+1.8%</span>
-                </div>
-            </div>
-        </div>
-        <!-- Stat Card 3 -->
-        <div class="bg-surface-container-lowest p-panel-padding rounded-xl border border-outline-variant shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-tertiary-fixed flex items-center justify-center text-tertiary">
-                <i class="pi pi-book text-xl"></i>
-            </div>
-            <div>
-                <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Bourses</p>
-                <div class="flex items-baseline gap-2">
-                    <span class="font-headline-sm text-headline-sm text-on-surface">8,940</span>
-                    <span class="font-label-sm text-label-sm text-on-surface-variant">stable</span>
-                </div>
-            </div>
-        </div>
-        <!-- Stat Card 4 -->
-        <div class="bg-surface-container-lowest p-panel-padding rounded-xl border border-outline-variant shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-error-container flex items-center justify-center text-error">
-                <i class="pi pi-ban text-xl"></i>
-            </div>
-            <div>
-                <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Blocked Accounts</p>
-                <div class="flex items-baseline gap-2">
-                    <span class="font-headline-sm text-headline-sm text-on-surface">124</span>
-                    <span class="font-label-sm text-label-sm text-error">-12%</span>
-                </div>
-            </div>
-        </div>
-    </section>
+        <button pButton icon="pi pi-plus" label="Ajouter un étudiant" 
+                class="p-button-primary rounded-xl shadow-lg shadow-indigo-100" 
+                (click)="openCreateStudentPanel()"></button>
+    </header>
 
-    <!-- Filters & Actions -->
-    <section class="bg-surface-container-lowest p-panel-padding rounded-xl border border-outline-variant shadow-sm mb-stack-lg flex flex-wrap items-center gap-4">
-        <div class="flex-1 flex flex-wrap gap-3">
-            <select class="bg-surface-container-low border border-outline-variant rounded-xl px-4 py-2 text-body-md focus:ring-2 focus:ring-primary/20 outline-none w-full md:w-auto">
-                <option>All Universities</option>
-                <option>Université de Dakar</option>
-                <option>Université de Thiès</option>
-                <option>UGB St Louis</option>
-            </select>
-            <select class="bg-surface-container-low border border-outline-variant rounded-xl px-4 py-2 text-body-md focus:ring-2 focus:ring-primary/20 outline-none w-full md:w-auto">
-                <option>All Status</option>
-                <option>Active</option>
-                <option>Inactive</option>
-                <option>Pending</option>
-            </select>
-            <select class="bg-surface-container-low border border-outline-variant rounded-xl px-4 py-2 text-body-md focus:ring-2 focus:ring-primary/20 outline-none w-full md:w-auto">
-                <option>Promotion 2024</option>
-                <option>Promotion 2023</option>
-                <option>Promotion 2022</option>
-            </select>
-        </div>
-        <button class="w-full md:w-auto bg-primary text-on-primary px-6 py-2.5 rounded-xl font-label-md flex items-center justify-center gap-2 hover:brightness-110 transition-all active:scale-95">
-            <i class="pi pi-plus"></i>
-            Ajouter étudiant
-        </button>
+    <!-- KPI Cards Row -->
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        @for (kpi of [
+            { label: 'Total Étudiants', key: 'totalStudents', icon: 'pi-users', color: '#4F46E5' },
+            { label: 'Wallets Actifs', key: 'activeStudents', icon: 'pi-wallet', color: '#10B981' },
+            { label: 'KYC Vérifiés', key: 'verifiedKyc', icon: 'pi-check-circle', color: '#7C3AED' },
+            { label: 'Comptes Bloqués', key: 'blockedStudents', icon: 'pi-ban', color: '#DC2626' }
+        ]; track kpi.key) {
+            <div class="bg-white p-6 rounded-[16px] border border-slate-100 shadow-sm flex items-center gap-5 group hover:shadow-md transition-shadow">
+                <div class="w-[40px] h-[40px] rounded-full flex items-center justify-center text-lg transition-transform group-hover:scale-110" 
+                     [style.color]="kpi.color" [style.backgroundColor]="kpi.color + '15'">
+                    <i class="pi" [ngClass]="kpi.icon"></i>
+                </div>
+                <div class="flex flex-col">
+                    <p class="text-[0.7rem] font-bold text-slate-400 uppercase tracking-[0.1em]">{{ kpi.label }}</p>
+                    @if (isLoading()) {
+                        <p-skeleton width="80px" height="1.5rem" styleClass="mt-1"></p-skeleton>
+                    } @else {
+                        <h3 class="text-[2rem] font-black text-slate-900 leading-none mt-1">
+                            {{ (stats()?.[kpi.key] ?? 0) | number }}
+                        </h3>
+                    }
+                </div>
+            </div>
+        }
     </section>
 
     <!-- Students Table Card -->
-    <section class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden">
-        <div class="p-panel-padding border-b border-outline-variant flex justify-between items-center">
-            <h3 class="font-headline-sm text-headline-sm text-on-surface">Liste des étudiants</h3>
-            <div class="flex items-center gap-2">
-                <button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
-                    <i class="pi pi-filter"></i>
-                </button>
-                <button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
-                    <i class="pi pi-download"></i>
-                </button>
+    <section class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+        <div class="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/20">
+            <h4 class="text-xl font-bold text-slate-800 tracking-tight">Liste des Étudiants</h4>
+            <div class="flex gap-2">
+                <button pButton icon="pi pi-download" class="p-button-text p-button-secondary p-button-sm"></button>
+                <button pButton icon="pi pi-filter" class="p-button-text p-button-secondary p-button-sm"></button>
             </div>
         </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead class="bg-surface-container-low">
-                    <tr>
-                        <th class="p-4 border-b border-outline-variant w-12">
-                            <input class="rounded text-primary focus:ring-primary" type="checkbox"/>
-                        </th>
-                        <th class="p-4 border-b border-outline-variant font-label-md text-on-surface-variant uppercase tracking-wider">ID Student</th>
-                        <th class="p-4 border-b border-outline-variant font-label-md text-on-surface-variant uppercase tracking-wider">Name</th>
-                        <th class="p-4 border-b border-outline-variant font-label-md text-on-surface-variant uppercase tracking-wider">University</th>
-                        <th class="p-4 border-b border-outline-variant font-label-md text-on-surface-variant uppercase tracking-wider">Niveau</th>
-                        <th class="p-4 border-b border-outline-variant font-label-md text-on-surface-variant uppercase tracking-wider">Wallet Balance</th>
-                        <th class="p-4 border-b border-outline-variant font-label-md text-on-surface-variant uppercase tracking-wider">Last Transaction</th>
-                        <th class="p-4 border-b border-outline-variant font-label-md text-on-surface-variant uppercase tracking-wider">Statut</th>
-                        <th class="p-4 border-b border-outline-variant font-label-md text-on-surface-variant uppercase tracking-wider text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-outline-variant">
-                    <!-- Table Row 1 -->
-                    <tr class="transition-colors cursor-pointer hover:bg-surface-container-low" 
-                        [ngClass]="{'bg-primary/5': selectedRows().has('ST-2024-001')}"
-                        (click)="toggleRow('ST-2024-001', $event)">
-                        <td class="p-4"><input class="rounded text-primary focus:ring-primary pointer-events-none" type="checkbox" [checked]="selectedRows().has('ST-2024-001')"/></td>
-                        <td class="p-4 font-data-tabular text-on-surface">#ST-2024-001</td>
-                        <td class="p-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
-                                    <img alt="Student" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABd6bek7pgCgsSc_lBAAoo2enDMGM26PD2SQWZJmlOhu41pJ9oo54NivmfU6W7qdvurris3XSPfAYT3tKECGkXhlBvBeFQWJI-VOojHPfFsw6BAnPko4r9TAHapBsIpKHxM41jw64X3jtUeNVKof_gTePLmaA62mERS5ajx6ElVmjH-MHBNPSettXSWvyUyWK7iOTDm-31FJNFijrYC7ESSYfaCMnrgK24MyxdfwjVo05OeUDwZK0sgtHBTucWtOmc_1DaNLqjYGKT"/>
-                                </div>
-                                <span class="font-body-md font-semibold text-on-surface">Moussa Diop</span>
+
+        <p-table [value]="students()" [rows]="10" [paginator]="true" [loading]="isLoading()" styleClass="p-datatable-sm"
+                 [showCurrentPageReport]="true" currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords}">
+            
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="numEtudiantUniv">Matricule <p-sortIcon field="numEtudiantUniv"></p-sortIcon></th>
+                    <th pSortableColumn="nom">Étudiant <p-sortIcon field="nom"></p-sortIcon></th>
+                    <th pSortableColumn="universiteNom">Université <p-sortIcon field="universiteNom"></p-sortIcon></th>
+                    <th pSortableColumn="solde" class="text-right">Solde <p-sortIcon field="solde"></p-sortIcon></th>
+                    <th pSortableColumn="estActif">Statut <p-sortIcon field="estActif"></p-sortIcon></th>
+                    <th class="text-right">Actions</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-student>
+                <tr>
+                    <td class="px-6 py-4 font-mono text-xs text-slate-400">#{{ student.numEtudiantUniv }}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center font-black text-indigo-600 text-[10px] border border-indigo-100">
+                                {{ student.nom?.charAt(0) }}{{ student.prenom?.charAt(0) }}
                             </div>
-                        </td>
-                        <td class="p-4">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary-container text-on-secondary-container">UCAD Dakar</span>
-                        </td>
-                        <td class="p-4 text-on-surface-variant">Master 2</td>
-                        <td class="p-4 font-data-tabular text-on-surface font-semibold">45,000 FCFA</td>
-                        <td class="p-4 text-body-sm text-on-surface-variant">Today, 14:22</td>
-                        <td class="p-4">
-                            <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-bold bg-green-100 text-green-700">
-                                <span class="w-1.5 h-1.5 rounded-full bg-green-700"></span>
-                                Active
-                            </span>
-                        </td>
-                        <td class="p-4 text-right">
-                            <div class="flex items-center justify-end gap-2">
-                                <button class="p-1.5 text-on-surface-variant hover:text-primary transition-colors"><i class="pi pi-eye text-lg"></i></button>
-                                <button class="p-1.5 text-on-surface-variant hover:text-primary transition-colors"><i class="pi pi-pencil text-lg"></i></button>
-                                <button class="p-1.5 text-on-surface-variant hover:text-primary transition-colors"><i class="pi pi-ellipsis-v text-lg"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                    <!-- Table Row 2 -->
-                    <tr class="transition-colors cursor-pointer hover:bg-surface-container-low" 
-                        [ngClass]="{'bg-primary/5': selectedRows().has('ST-2024-042')}"
-                        (click)="toggleRow('ST-2024-042', $event)">
-                        <td class="p-4"><input class="rounded text-primary focus:ring-primary pointer-events-none" type="checkbox" [checked]="selectedRows().has('ST-2024-042')"/></td>
-                        <td class="p-4 font-data-tabular text-on-surface">#ST-2024-042</td>
-                        <td class="p-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
-                                    <img alt="Student" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkybhVtesW4MSoG7w3HX5YWSXuC7PVpR3mF3_4GmbHKTAZoFQ21Y77u1RHf951st3jsEkf2IEkYPULWUVwZnym99oQYhUkIwfW9KaZYTEN_ep0QnKGn32tIjfcEEcKJ9m7tuGzpzaf3j4IgDVJ17HBn_vp0sZhMqnTw8lhlh8OKT3umr1_O1si6OiaTZUMfz4Pv57Bpor7kM_9fcZxavs5GrjeAV3ZrQFsKLKtRl6SCD-Qrrpnd-kqvogRb-LJVgzV9lIYJr21x1HU"/>
-                                </div>
-                                <span class="font-body-md font-semibold text-on-surface">Awa Ndiaye</span>
-                            </div>
-                        </td>
-                        <td class="p-4">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary-container text-on-secondary-container">UGB Saint-Louis</span>
-                        </td>
-                        <td class="p-4 text-on-surface-variant">Licence 3</td>
-                        <td class="p-4 font-data-tabular text-on-surface font-semibold">12,500 FCFA</td>
-                        <td class="p-4 text-body-sm text-on-surface-variant">Yesterday, 09:15</td>
-                        <td class="p-4">
-                            <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-bold bg-green-100 text-green-700">
-                                <span class="w-1.5 h-1.5 rounded-full bg-green-700"></span>
-                                Active
-                            </span>
-                        </td>
-                        <td class="p-4 text-right">
-                            <div class="flex items-center justify-end gap-2">
-                                <button class="p-1.5 text-on-surface-variant hover:text-primary transition-colors"><i class="pi pi-eye text-lg"></i></button>
-                                <button class="p-1.5 text-on-surface-variant hover:text-primary transition-colors"><i class="pi pi-pencil text-lg"></i></button>
-                                <button class="p-1.5 text-on-surface-variant hover:text-primary transition-colors"><i class="pi pi-ellipsis-v text-lg"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                    <!-- Table Row 3 -->
-                    <tr class="transition-colors cursor-pointer hover:bg-surface-container-low" 
-                        [ngClass]="{'bg-primary/5': selectedRows().has('ST-2024-105')}"
-                        (click)="toggleRow('ST-2024-105', $event)">
-                        <td class="p-4"><input class="rounded text-primary focus:ring-primary pointer-events-none" type="checkbox" [checked]="selectedRows().has('ST-2024-105')"/></td>
-                        <td class="p-4 font-data-tabular text-on-surface">#ST-2024-105</td>
-                        <td class="p-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
-                                    <img alt="Student" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBq1XaTFSEjme3hohz1fmV5TM-ZGtPd9juKPwmqdqKH-4eCVhMXmASBqSMjKrny_8D7gs7KZ_Et3gDnAFxEqykKOZ-TvBdMWcDYjhaUx7pOWYjmxRxtlGfsIdF2mr7viXYSbkBEiHCbYNfJLF3IpGipqE0YtB2PbSt4xDRdmcUFfAqtcN-Q-Jj0UMeSKIZotK9axX587a-nfDIRNEywkNv4a4oOCORRpQES2hptLsK828YDRyi5FWuSgmnL7oUikviz_El8_AmbMtb3"/>
-                                </div>
-                                <span class="font-body-md font-semibold text-on-surface">Ibrahima Sarr</span>
-                            </div>
-                        </td>
-                        <td class="p-4">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary-container text-on-secondary-container">Univ. de Thiès</span>
-                        </td>
-                        <td class="p-4 text-on-surface-variant">Master 1</td>
-                        <td class="p-4 font-data-tabular text-on-surface font-semibold">0 FCFA</td>
-                        <td class="p-4 text-body-sm text-on-surface-variant">03 Jan, 2024</td>
-                        <td class="p-4">
-                            <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-bold bg-error-container text-error">
-                                <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
-                                Blocked
-                            </span>
-                        </td>
-                        <td class="p-4 text-right">
-                            <div class="flex items-center justify-end gap-2">
-                                <button class="p-1.5 text-on-surface-variant hover:text-primary transition-colors"><i class="pi pi-eye text-lg"></i></button>
-                                <button class="p-1.5 text-on-surface-variant hover:text-primary transition-colors"><i class="pi pi-pencil text-lg"></i></button>
-                                <button class="p-1.5 text-on-surface-variant hover:text-primary transition-colors"><i class="pi pi-ellipsis-v text-lg"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <!-- Pagination -->
-        <div class="p-panel-padding bg-surface-container-low border-t border-outline-variant flex items-center justify-between">
-            <span class="text-label-md text-on-surface-variant">Affichage de 1-10 sur 12,450 étudiants</span>
-            <div class="flex items-center gap-2">
-                <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-surface-container-high transition-colors text-on-surface-variant">
-                    <i class="pi pi-chevron-left text-[14px]"></i>
-                </button>
-                <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-on-primary font-label-md">1</button>
-                <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-surface-container-high transition-colors text-on-surface-variant font-label-md">2</button>
-                <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-surface-container-high transition-colors text-on-surface-variant font-label-md">3</button>
-                <span class="px-2 text-outline">...</span>
-                <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-surface-container-high transition-colors text-on-surface-variant font-label-md">1245</button>
-                <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-surface-container-high transition-colors text-on-surface-variant">
-                    <i class="pi pi-chevron-right text-[14px]"></i>
-                </button>
-            </div>
-        </div>
+                            <span class="font-bold text-slate-700 text-sm">{{ student.prenom }} {{ student.nom }}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4"><span class="text-xs font-semibold text-slate-500 uppercase">{{ student.universiteNom || 'N/A' }}</span></td>
+                    <td class="px-6 py-4 text-right font-black text-slate-800 text-sm">{{ student.solde | number }} F</td>
+                    <td class="px-6 py-4">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold"
+                              [ngClass]="student.estActif ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
+                            {{ student.estActif ? 'ACTIF' : 'INACTIF' }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <button pButton icon="pi pi-eye" class="p-button-text p-button-rounded p-button-sm" (click)="selectStudent(student.trackingId)"></button>
+                    </td>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="6" class="p-20 text-center">
+                        <div class="flex flex-col items-center justify-center opacity-30 grayscale">
+                            <i class="pi pi-inbox text-6xl mb-4"></i>
+                            <p class="text-sm font-black uppercase tracking-widest">Aucun étudiant disponible</p>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
     </section>
 </div>
+
+<!-- Student Detail Dialog -->
+<p-dialog [visible]="!!selectedStudentId()" (visibleChange)="closePanel()" [modal]="true" [style]="{ width: '500px' }" [draggable]="false" [resizable]="false" [showHeader]="false">
+    <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <h2 class="text-xl font-black text-slate-800 uppercase tracking-tight">Détails Étudiant</h2>
+        <button pButton icon="pi pi-times" class="p-button-text p-button-rounded text-slate-400" (click)="closePanel()"></button>
+    </div>
+    <div class="p-8 space-y-6">
+        <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-5 flex items-start gap-4">
+            <i class="pi pi-sparkles text-indigo-600 text-xl"></i>
+            <div>
+                <h4 class="text-xs font-black text-indigo-800 uppercase tracking-widest mb-1">Analyse IA Gemini</h4>
+                <p class="text-sm text-indigo-600 font-medium">Les documents de cet étudiant sont en cours de vérification par notre moteur IA.</p>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 gap-4">
+            <button pButton label="Ouvrir le dossier Cloudinary" icon="pi pi-external-link" class="p-button-outlined p-button-secondary w-full rounded-xl py-3 font-bold"></button>
+            <button pButton label="Bloquer le compte" icon="pi pi-ban" class="p-button-danger p-button-text w-full font-bold"></button>
+        </div>
+    </div>
+</p-dialog>
+
+<!-- Create Student Dialog -->
+<p-dialog [visible]="isCreateStudentPanelOpen()" (visibleChange)="isCreateStudentPanelOpen.set($event)" [modal]="true" [style]="{ width: '500px' }" [draggable]="false" [resizable]="false" [showHeader]="false">
+    <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div>
+            <h2 class="text-xl font-black text-slate-800 uppercase tracking-tight">Inscrire un Étudiant</h2>
+            <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Nouveau Profil GNS</p>
+        </div>
+        <button pButton icon="pi pi-times" class="p-button-text p-button-rounded text-slate-400" (click)="closeCreateStudentPanel()"></button>
+    </div>
+    
+    <div class="p-8 space-y-6">
+        <form class="space-y-4">
+            <div class="flex flex-col gap-1.5">
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Prénom & Nom</label>
+                <div class="flex gap-2">
+                    <input pInputText placeholder="Prénom" class="flex-1 border-slate-200 rounded-xl px-4 py-2.5">
+                    <input pInputText placeholder="Nom" class="flex-1 border-slate-200 rounded-xl px-4 py-2.5">
+                </div>
+            </div>
+            <div class="flex flex-col gap-1.5">
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Universitaire</label>
+                <input pInputText type="email" placeholder="etudiant@univ.edu" class="w-full border-slate-200 rounded-xl px-4 py-2.5">
+            </div>
+            <div class="flex flex-col gap-1.5">
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Matricule</label>
+                <input pInputText placeholder="Ex: 2024-UL-1234" class="w-full border-slate-200 rounded-xl px-4 py-2.5">
+            </div>
+        </form>
+    </div>
+
+    <div class="p-6 border-t border-slate-100 bg-slate-50 flex gap-4">
+        <button pButton label="Annuler" class="p-button-outlined p-button-secondary flex-1 rounded-xl font-bold" (click)="closeCreateStudentPanel()"></button>
+        <button pButton label="Créer le Profil" class="p-button-primary flex-[2] rounded-xl font-bold shadow-lg shadow-indigo-200"></button>
+    </div>
+</p-dialog>

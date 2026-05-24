@@ -1,242 +1,138 @@
-<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-    <div>
-        <h1 class="text-3xl font-bold text-on-surface">Analyse des Dossiers — IA Gemini</h1>
-        <p class="text-base text-on-surface-variant mt-1">Gérez et validez les demandes de bourses assistées par l'intelligence artificielle.</p>
-    </div>
-    <div class="flex flex-wrap gap-2">
-        <div class="px-4 py-2 bg-surface-container-high rounded-lg text-sm font-medium text-on-surface border border-outline-variant">
-            Tous: <span class="font-bold">1247</span>
+<div class="min-h-screen bg-[#F8FAFC] font-['Inter',sans-serif] p-6 space-y-8">
+    <!-- Header Section -->
+    <header class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight uppercase">Dossiers en Attente</h1>
+            <p class="text-slate-500 font-medium mt-1">Validation assistée par Gemini IA.</p>
         </div>
-        <div class="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-xs font-semibold border border-purple-200 flex items-center gap-1">
-            <i class="pi pi-sparkles text-[14px]"></i>
-            Vérifié IA: <span class="font-bold">1089</span>
+        <div class="flex gap-3">
+            <button pButton icon="pi pi-refresh" (click)="loadDossiers()" class="p-button-text p-button-rounded text-slate-400"></button>
         </div>
-        <div class="px-4 py-2 bg-green-50 text-green-700 rounded-lg text-sm font-medium border border-outline-variant">
-            Éligible: <span class="font-bold">982</span>
-        </div>
-        <div class="px-4 py-2 bg-red-50 text-red-700 rounded-lg text-sm font-medium border border-outline-variant">
-            Non éligible: <span class="font-bold">107</span>
-        </div>
-        <div class="px-4 py-2 bg-yellow-50 text-yellow-800 rounded-lg text-sm font-medium border border-outline-variant">
-            En attente: <span class="font-bold">158</span>
-        </div>
-    </div>
-</div>
+    </header>
 
-<!-- Filters Grid -->
-<div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-6 bg-white p-4 rounded-xl border border-outline-variant shadow-sm">
-    <div class="relative">
-        <i class="pi pi-search absolute left-2 top-1/2 -translate-y-1/2 text-outline"></i>
-        <input class="w-full pl-8 pr-2 py-2 rounded-lg border border-outline focus:ring-2 focus:ring-primary outline-none text-base" placeholder="Nom, matricule..." type="text"/>
-    </div>
-    <select class="py-2 px-2 rounded-lg border border-outline focus:ring-2 focus:ring-primary outline-none text-base bg-white">
-        <option>Université</option>
-        <option>Université de Dakar</option>
-        <option>Université de Saint-Louis</option>
-    </select>
-    <select class="py-2 px-2 rounded-lg border border-outline focus:ring-2 focus:ring-primary outline-none text-base bg-white">
-        <option>Niveau d'étude</option>
-        <option>Licence 1</option>
-        <option>Licence 3</option>
-        <option>Master 2</option>
-    </select>
-    <select class="py-2 px-2 rounded-lg border border-outline focus:ring-2 focus:ring-primary outline-none text-base bg-white">
-        <option>Fiabilité IA</option>
-        <option>Haute (&gt;90%)</option>
-        <option>Moyenne (70-90%)</option>
-        <option>Basse (&lt;70%)</option>
-    </select>
-    <button class="bg-primary text-white py-2 px-4 rounded-lg font-semibold text-lg hover:bg-primary-container transition-all flex items-center justify-center gap-1">
-        <i class="pi pi-filter text-[20px]"></i>
-        Appliquer
-    </button>
-</div>
-
-<!-- Table Container -->
-<div class="bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden">
-    <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-            <thead>
-                <tr class="bg-surface-container-low border-b border-outline-variant">
-                    <th class="px-4 py-6 font-semibold text-lg text-on-surface-variant">Étudiant</th>
-                    <th class="px-4 py-6 font-semibold text-lg text-on-surface-variant">Établissement</th>
-                    <th class="px-4 py-6 font-semibold text-lg text-on-surface-variant">Données extraites Gemini</th>
-                    <th class="px-4 py-6 font-semibold text-lg text-on-surface-variant">Fiabilité</th>
-                    <th class="px-4 py-6 font-semibold text-lg text-on-surface-variant">Statut</th>
-                    <th class="px-4 py-6 font-semibold text-lg text-on-surface-variant">Action</th>
+    <!-- Main Dossiers Table -->
+    <section class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+        <p-table [value]="dossiers()" [rows]="10" [paginator]="true" [loading]="isLoading()" styleClass="p-datatable-sm"
+                 [showCurrentPageReport]="true" currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords}">
+            
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="numEtudiantUniv">Matricule <p-sortIcon field="numEtudiantUniv"></p-sortIcon></th>
+                    <th pSortableColumn="studentNom">Étudiant <p-sortIcon field="studentNom"></p-sortIcon></th>
+                    <th pSortableColumn="moyenneBac" class="text-right">Moyenne BAC <p-sortIcon field="moyenneBac"></p-sortIcon></th>
+                    <th pSortableColumn="creditsTotalValides" class="text-right">Crédits <p-sortIcon field="creditsTotalValides"></p-sortIcon></th>
+                    <th pSortableColumn="typeBourse">Type Bourse <p-sortIcon field="typeBourse"></p-sortIcon></th>
+                    <th class="text-right">Actions</th>
                 </tr>
-            </thead>
-            <tbody class="divide-y divide-outline-variant">
-                @for (student of students(); track student.id) {
-                <tr class="hover:bg-surface-container-lowest transition-colors cursor-pointer" (click)="openDetails(student)">
-                    <td class="px-4 py-4">
-                        <div class="flex items-center gap-2">
-                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-800 font-bold">{{student.initials}}</div>
-                            <div>
-                                <p class="font-semibold text-lg text-on-surface">{{student.name}}</p>
-                                <p class="text-xs font-semibold text-outline">{{student.matricule}}</p>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-d>
+                <tr>
+                    <td class="px-8 py-5 font-mono text-xs text-slate-400">#{{ d.numEtudiantUniv }}</td>
+                    <td class="px-8 py-5">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center font-black text-white text-[10px]">
+                                {{ d.studentNom?.charAt(0) }}{{ d.studentPrenom?.charAt(0) }}
                             </div>
+                            <span class="font-bold text-slate-700 text-sm">{{ d.studentPrenom }} {{ d.studentNom }}</span>
                         </div>
                     </td>
-                    <td class="px-4 py-4 text-base text-on-surface-variant">{{student.university}}</td>
-                    <td class="px-4 py-4">
-                        <div class="ai-glow bg-purple-50 p-2 rounded-lg inline-flex flex-col gap-1">
-                            <div class="flex gap-4 text-[11px] font-bold text-purple-600 uppercase tracking-wider">
-                                <span>{{student.credits}} Crédits</span>
-                                <span>Moy: {{student.moyenne | number:'1.1-1'}}</span>
-                                <span>{{student.age}} ans</span>
-                            </div>
-                        </div>
+                    <td class="px-8 py-5 text-right font-black text-slate-700 text-sm">{{ d.moyenneBac | number:'1.2-2' }}</td>
+                    <td class="px-8 py-5 text-right font-black text-slate-700 text-sm">{{ d.creditsTotalValides }} / 60</td>
+                    <td class="px-8 py-5">
+                        <span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">{{ d.typeBourse }}</span>
                     </td>
-                    <td class="px-4 py-4">
-                        <div class="flex items-center gap-2">
-                            <span class="text-sm font-bold" [ngClass]="getScoreColor(student.aiScore)">{{student.aiScore}}%</span>
-                            <div class="w-16 h-1.5 bg-outline-variant rounded-full overflow-hidden">
-                                <div class="h-full" [ngClass]="getScoreBg(student.aiScore)" [style.width.%]="student.aiScore"></div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-4 py-4">
-                        <span class="px-2 py-1 rounded text-xs font-semibold" [ngClass]="getStatusClass(student.status)">{{student.status}}</span>
-                    </td>
-                    <td class="px-4 py-4">
-                        <button class="text-primary hover:bg-primary/5 p-1 rounded-full">
-                            <i class="pi pi-eye"></i>
-                        </button>
+                    <td class="px-8 py-5 text-right">
+                        <button pButton icon="pi pi-search" label="Analyser" (click)="viewDossier(d)"
+                                class="p-button-primary p-button-sm rounded-xl font-black text-[9px] uppercase tracking-widest py-2.5 shadow-lg shadow-indigo-100"></button>
                     </td>
                 </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-    <div class="px-4 py-4 border-t border-outline-variant flex justify-between items-center bg-surface-container-lowest">
-        <span class="text-sm font-medium text-on-surface-variant">Affichage de 1-12 sur 1247 dossiers</span>
-        <div class="flex gap-1">
-            <button class="p-1 border border-outline-variant rounded hover:bg-surface-variant">
-                <i class="pi pi-chevron-left"></i>
-            </button>
-            <button class="px-2 py-1 bg-primary text-white rounded text-sm font-medium">1</button>
-            <button class="px-2 py-1 hover:bg-surface-variant rounded text-sm font-medium">2</button>
-            <button class="px-2 py-1 hover:bg-surface-variant rounded text-sm font-medium">3</button>
-            <button class="p-1 border border-outline-variant rounded hover:bg-surface-variant">
-                <i class="pi pi-chevron-right"></i>
-            </button>
-        </div>
-    </div>
-</div>
+            </ng-template>
 
-<!-- Detail Slide-in Panel -->
-<div class="fixed inset-0 sidebar-overlay z-50 transition-opacity duration-300" [class.hidden]="!selectedStudent()" [class.opacity-0]="!selectedStudent()" (click)="closeDetails()"></div>
-<div class="fixed top-0 right-0 h-full w-full max-w-lg bg-white shadow-2xl z-50 detail-panel border-l border-outline-variant flex flex-col transition-transform duration-300" [class.translate-x-full]="!selectedStudent()">
-    <div class="p-6 border-b border-outline-variant flex items-center justify-between bg-surface-container">
-        <div class="flex items-center gap-4">
-            <button class="hover:bg-outline-variant p-2 rounded-full transition-colors" (click)="closeDetails()">
-                <i class="pi pi-times"></i>
-            </button>
-            <div>
-                <h2 class="font-bold text-xl text-on-surface">{{selectedStudent()?.name}}</h2>
-                <p class="text-sm font-medium text-on-surface-variant">ID: {{selectedStudent()?.matricule}}</p>
+            <ng-template pTemplate="emptymessage">
+                <tr><td colspan="6" class="p-20 text-center text-slate-400 italic">Aucun dossier en attente pour le moment</td></tr>
+            </ng-template>
+        </p-table>
+    </section>
+
+    <!-- Dossier Analysis Slide Panel (Modal like) -->
+    <div class="fixed inset-0 z-[100] flex justify-end" *ngIf="selectedDossier()">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-md" (click)="selectedDossier.set(null)"></div>
+        <div class="relative w-full max-w-4xl bg-white h-full shadow-2xl flex flex-col animate-slide-in-right">
+            <header class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <div class="flex items-center gap-6">
+                    <div class="w-16 h-16 rounded-[1.5rem] bg-indigo-600 flex items-center justify-center text-white font-black text-2xl shadow-xl shadow-indigo-100">
+                        {{ selectedDossier()?.studentNom?.charAt(0) }}
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tight">{{ selectedDossier()?.studentPrenom }} {{ selectedDossier()?.studentNom }}</h2>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">{{ selectedDossier()?.niveau }}</span>
+                            <span class="w-1 h-1 rounded-full bg-slate-200"></span>
+                            <span class="text-xs font-bold text-indigo-400 uppercase tracking-widest">{{ selectedDossier()?.anneeAcademique }}</span>
+                        </div>
+                    </div>
+                </div>
+                <button pButton icon="pi pi-times" class="p-button-text p-button-rounded text-slate-400" (click)="selectedDossier.set(null)"></button>
+            </header>
+
+            <div class="flex-1 overflow-y-auto p-10 grid grid-cols-2 gap-10">
+                <!-- AI Summary Card -->
+                <div class="space-y-6">
+                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100 pb-3">Analyse Gemini IA</h3>
+                    
+                    @for (doc of documents(); track doc.trackingId) {
+                        <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100 space-y-4">
+                            <div class="flex justify-between items-start">
+                                <span class="px-3 py-1 bg-white border border-slate-100 rounded-lg text-[9px] font-black text-indigo-600 uppercase tracking-widest">{{ doc.type }}</span>
+                                <p-tag [value]="getReliabilityLabel(doc.scoreFiabilite)" 
+                                       [severity]="getReliabilitySeverity(doc.scoreFiabilite)"
+                                       styleClass="text-[9px] font-black px-2 py-0.5 rounded-md shadow-sm"></p-tag>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                @if (doc.parsedData) {
+                                    <div class="grid grid-cols-2 gap-2 text-xs">
+                                        <span class="text-slate-400">Crédits validés:</span>
+                                        <span class="font-black text-slate-800">{{ doc.parsedData.creditsTotalValides || 'N/A' }}</span>
+                                        <span class="text-slate-400">Moyenne BAC:</span>
+                                        <span class="font-black text-slate-800">{{ doc.parsedData.moyenneBac || 'N/A' }}</span>
+                                    </div>
+                                } @else {
+                                    <p class="text-xs italic text-slate-400">Analyse IA indisponible pour ce fichier.</p>
+                                }
+                            </div>
+                            
+                            <a [href]="doc.cheminFichier" target="_blank" class="block w-full py-3 bg-white border border-slate-200 rounded-2xl text-center text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:bg-slate-50 transition-all">Voir le scan Cloudinary</a>
+                        </div>
+                    } @empty {
+                        <p class="p-10 text-center text-slate-300 italic">Aucun document soumis</p>
+                    }
+                </div>
+
+                <!-- Manual Decision Panel -->
+                <div class="space-y-8">
+                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100 pb-3">Décision Officielle</h3>
+                    
+                    <div class="p-8 bg-indigo-50 border border-indigo-100 rounded-[2rem] space-y-6">
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                                <i class="pi pi-info-circle text-indigo-600"></i>
+                                <p class="text-xs font-medium text-indigo-800 leading-relaxed">
+                                    En validant ce dossier, vous autorisez l'ouverture du Wallet StudCash et le déclenchement des futurs versements boursiers.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="pt-6 border-t border-indigo-100 flex flex-col gap-4">
+                            <button pButton label="VALIDER LE DOSSIER" icon="pi pi-check-circle"
+                                    class="p-button-success w-full rounded-2xl font-black text-xs uppercase tracking-[0.1em] py-4 shadow-xl shadow-emerald-200"></button>
+                            <button pButton label="REJETER DÉFINITIVEMENT" icon="pi pi-times-circle"
+                                    class="p-button-danger p-button-text w-full font-black text-xs uppercase tracking-[0.1em]"></button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="flex gap-2">
-            <button class="bg-primary text-white px-4 py-2 rounded-lg font-semibold text-lg shadow-sm">Valider</button>
-            <button class="border border-red-600 text-red-600 px-4 py-2 rounded-lg font-semibold text-lg">Rejeter</button>
-        </div>
-    </div>
-    <div class="flex-1 overflow-y-auto custom-scrollbar">
-        <!-- Tabs -->
-        <div class="flex border-b border-outline-variant px-6 bg-surface">
-            <button class="px-4 py-4 border-b-2 border-primary text-primary font-semibold text-lg flex items-center gap-1">
-                <i class="pi pi-sparkles text-[18px]"></i>
-                Extraction IA
-            </button>
-            <button class="px-4 py-4 text-on-surface-variant text-base hover:text-primary transition-colors">Documents</button>
-            <button class="px-4 py-4 text-on-surface-variant text-base hover:text-primary transition-colors">Historique</button>
-        </div>
-        <div class="p-6 space-y-8">
-            <!-- AI Status Header -->
-            <div class="ai-glow bg-purple-50 p-4 rounded-xl border border-purple-300">
-                <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-1 text-purple-600 font-bold">
-                        <i class="pi pi-check-circle"></i>
-                        Vérifié par IA Gemini
-                    </div>
-                    <span class="text-xs font-bold bg-purple-600 text-white px-4 py-1 rounded-full">Score: {{selectedStudent()?.aiScore}}%</span>
-                </div>
-                <p class="text-sm text-purple-800">L'extraction a été effectuée à partir du relevé de notes du Semestre 2 (PDF) et de la carte d'étudiant.</p>
-            </div>
-            
-            <!-- Extracted Fields -->
-            <section>
-                <h3 class="text-xs font-bold text-outline uppercase tracking-widest mb-4">Champs Extraits &amp; Validation</h3>
-                <div class="space-y-4">
-                    <div class="p-4 bg-surface-container-low rounded-lg border border-outline-variant flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-semibold text-on-surface-variant">Total Crédits Validés</p>
-                            <p class="font-semibold text-lg text-on-surface">{{selectedStudent()?.credits}} / 30</p>
-                        </div>
-                        <div class="flex items-center gap-2 text-green-700">
-                            <span class="text-xs font-bold">Règle: >= 30</span>
-                            <i class="pi pi-check-circle text-[20px]"></i>
-                        </div>
-                    </div>
-                    <div class="p-4 bg-surface-container-low rounded-lg border border-outline-variant flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-semibold text-on-surface-variant">Moyenne Générale Annuelle</p>
-                            <p class="font-semibold text-lg text-on-surface">{{selectedStudent()?.moyenne | number:'1.2-2'}} / 20</p>
-                        </div>
-                        <div class="flex items-center gap-2 text-green-700">
-                            <span class="text-xs font-bold">Règle: >= 10</span>
-                            <i class="pi pi-check-circle text-[20px]"></i>
-                        </div>
-                    </div>
-                    <div class="p-4 bg-surface-container-low rounded-lg border border-outline-variant flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-semibold text-on-surface-variant">Âge de l'étudiant</p>
-                            <p class="font-semibold text-lg text-on-surface">{{selectedStudent()?.age}} ans</p>
-                        </div>
-                        <div class="flex items-center gap-2 text-green-700">
-                            <span class="text-xs font-bold">Règle: <= 25</span>
-                            <i class="pi pi-check-circle text-[20px]"></i>
-                        </div>
-                    </div>
-                    <div class="p-4 bg-surface-container-low rounded-lg border border-outline-variant flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-semibold text-on-surface-variant">Nationalité</p>
-                            <p class="font-semibold text-lg text-on-surface">Sénégalaise</p>
-                        </div>
-                        <div class="flex items-center gap-2 text-green-700">
-                            <span class="text-xs font-bold">Conforme</span>
-                            <i class="pi pi-check-circle text-[20px]"></i>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            
-            <!-- Document Preview Simulation -->
-            <section>
-                <h3 class="text-xs font-bold text-outline uppercase tracking-widest mb-4">Source de l'IA (Aperçu Relevé)</h3>
-                <div class="relative group cursor-pointer border-2 border-dashed border-outline-variant rounded-xl p-1 bg-surface-container-highest overflow-hidden">
-                    <img alt="Transcript Preview" class="w-full h-48 object-cover rounded-lg opacity-80 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRpXpkMNOVbRWx9gi5hPrsFPwlO8g8VA3QUOCUqsDa2AhLuAvmcFwHx6N-XvWvjyEBPD5aVSLXgwhZazbVXWqivD_CqOyCZR_ESkk8thYhAKnCq9DI1RjQnRTwftuZ4iZHe5lmPNWYNQa9U1JlSZGjLYKHPkbCpNrpVR4YGX1tQQV2VwkGREnNAdgpfECB-pzgqFNGBVrBmMwiIFRjfi3BXXHH70o3z9_m6Sbte666GxA5uW1j2V1J_EonoICw_mP5AVP05bfEKCJz"/>
-                    <div class="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span class="bg-white px-4 py-2 rounded-full font-semibold text-lg text-primary flex items-center gap-1">
-                            <i class="pi pi-search-plus"></i>
-                            Agrandir l'original
-                        </span>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </div>
-    
-    <!-- Footer Action -->
-    <div class="p-6 border-t border-outline-variant bg-surface-container-low flex gap-4">
-        <div class="flex-1">
-            <label class="text-xs font-semibold text-on-surface-variant mb-1 block">Commentaire interne</label>
-            <input class="w-full px-4 py-2 rounded-lg border border-outline-variant focus:ring-1 focus:ring-primary outline-none" placeholder="Ajouter une note..." type="text"/>
-        </div>
-        <button class="bg-surface text-on-surface-variant p-4 rounded-lg border border-outline-variant hover:bg-surface-variant">
-            <i class="pi pi-ellipsis-v"></i>
-        </button>
     </div>
 </div>

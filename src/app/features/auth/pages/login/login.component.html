@@ -43,11 +43,9 @@
                     </div>
                 </div>
                 
-                <button [disabled]="isLoading" class="w-full text-white font-bold text-lg py-3 rounded-lg shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2" [ngClass]="isSuccess ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-900 hover:bg-black'" type="submit">
+                <button [disabled]="isLoading" class="w-full text-white font-bold text-lg py-3 rounded-lg shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 bg-gray-900 hover:bg-black" type="submit">
                     @if (isLoading) {
                         <i class="pi pi-spin pi-spinner"></i> Authentification...
-                    } @else if (isSuccess) {
-                        <i class="pi pi-check-circle"></i> Accès autorisé
                     } @else {
                         Se connecter
                         <i class="pi pi-sign-in text-[22px]"></i>

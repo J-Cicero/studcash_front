@@ -1,323 +1,88 @@
-<!-- CANVAS CONTENT -->
-<div class="p-gutter space-y-6 max-w-[1440px] mx-auto w-full">
-    <!-- STATS ROW -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
-        <div class="bg-surface-container-lowest p-panel-padding border border-outline-variant rounded-xl shadow-sm hover:border-primary/30 transition-colors">
-            <div class="flex items-center justify-between mb-2">
-                <span class="text-label-md font-label-md text-outline">VOLUME TODAY</span>
-                <i class="pi pi-money-bill text-primary text-xl"></i>
-            </div>
-            <div class="flex items-baseline gap-2">
-                <h3 class="font-headline-sm text-headline-sm text-on-surface">€42,850.00</h3>
-                <span class="text-label-sm font-label-sm text-green-600 flex items-center">
-                    <i class="pi pi-arrow-up text-[12px] mr-1"></i> 12%
-                </span>
-            </div>
+<div class="min-h-screen bg-[#F8FAFC] font-['Inter',sans-serif] p-6 space-y-8">
+    <!-- Header Section -->
+    <header class="flex justify-between items-end mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Monitoring Transactions</h1>
+            <p class="text-slate-500 font-medium mt-1">Supervision globale des flux StudCash.</p>
         </div>
-        
-        <div class="bg-surface-container-lowest p-panel-padding border border-outline-variant rounded-xl shadow-sm hover:border-primary/30 transition-colors">
-            <div class="flex items-center justify-between mb-2">
-                <span class="text-label-md font-label-md text-outline">TOTAL TRANSACTIONS</span>
-                <i class="pi pi-arrow-right-arrow-left text-primary text-xl"></i>
-            </div>
-            <div class="flex items-baseline gap-2">
-                <h3 class="font-headline-sm text-headline-sm text-on-surface">1,284</h3>
-                <span class="text-label-sm font-label-sm text-green-600 flex items-center">
-                    <i class="pi pi-arrow-up text-[12px] mr-1"></i> 5.4%
-                </span>
-            </div>
+        <div class="flex gap-3">
+            <button pButton icon="pi pi-refresh" (click)="loadTransactions()" class="p-button-outlined p-button-rounded border-slate-200 text-slate-600 hover:bg-slate-100"></button>
+            <button pButton label="Exporter CSV" icon="pi pi-download" class="p-button-outlined p-button-sm rounded-xl font-bold"></button>
         </div>
-        
-        <div class="bg-surface-container-lowest p-panel-padding border border-outline-variant rounded-xl shadow-sm hover:border-primary/30 transition-colors">
-            <div class="flex items-center justify-between mb-2">
-                <span class="text-label-md font-label-md text-outline">FAILED TXNS</span>
-                <i class="pi pi-exclamation-circle text-error text-xl"></i>
-            </div>
-            <div class="flex items-baseline gap-2">
-                <h3 class="font-headline-sm text-headline-sm text-on-surface">12</h3>
-                <span class="text-label-sm font-label-sm text-error flex items-center">
-                    <i class="pi pi-arrow-down text-[12px] mr-1"></i> 2.1%
-                </span>
-            </div>
-        </div>
-        
-        <div class="bg-surface-container-lowest p-panel-padding border border-outline-variant rounded-xl shadow-sm hover:border-primary/30 transition-colors">
-            <div class="flex items-center justify-between mb-2">
-                <span class="text-label-md font-label-md text-outline">SUCCESS RATE</span>
-                <i class="pi pi-check-circle text-primary text-xl"></i>
-            </div>
-            <div class="flex items-baseline gap-2">
-                <h3 class="font-headline-sm text-headline-sm text-on-surface">99.12%</h3>
-                <div class="w-16 h-1.5 bg-surface-variant rounded-full overflow-hidden ml-auto">
-                    <div class="h-full bg-primary w-[99%]"></div>
+    </header>
+
+    <!-- KPI Cards Row -->
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        @for (kpi of [
+            { label: 'Volume Today', value: 42850, icon: 'pi-money-bill', color: '#4F46E5', suffix: ' F' },
+            { label: 'Total Transactions', value: totalElements(), icon: 'pi-arrow-right-arrow-left', color: '#10B981' },
+            { label: 'Failed TXNs', value: 12, icon: 'pi-exclamation-circle', color: '#DC2626' },
+            { label: 'Success Rate', value: 99.12, icon: 'pi-check-circle', color: '#7C3AED', suffix: '%' }
+        ]; track kpi.label) {
+            <div class="bg-white p-6 rounded-[16px] border border-slate-100 shadow-sm flex items-center gap-5 group hover:shadow-md transition-shadow">
+                <div class="w-[40px] h-[40px] rounded-full flex items-center justify-center text-lg transition-transform group-hover:scale-110" 
+                     [style.color]="kpi.color" [style.backgroundColor]="kpi.color + '15'">
+                    <i class="pi" [ngClass]="kpi.icon"></i>
+                </div>
+                <div class="flex flex-col">
+                    <p class="text-[0.7rem] font-bold text-slate-400 uppercase tracking-[0.1em]">{{ kpi.label }}</p>
+                    @if (isLoading()) {
+                        <p-skeleton width="80px" height="1.5rem" styleClass="mt-1"></p-skeleton>
+                    } @else {
+                        <h3 class="text-[2rem] font-black text-slate-900 leading-none mt-1">
+                            {{ kpi.value | number }}{{ kpi.suffix || '' }}
+                        </h3>
+                    }
                 </div>
             </div>
-        </div>
-    </div>
+        }
+    </section>
 
-    <!-- FILTER BAR -->
-    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm p-4">
-        <div class="flex flex-wrap items-center gap-4">
-            <!-- Date Picker Placeholder -->
-            <div class="flex items-center gap-2 border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-low cursor-pointer hover:bg-surface-variant transition-colors">
-                <i class="pi pi-calendar text-outline"></i>
-                <span class="text-body-md font-body-md">Oct 1, 2023 - Oct 31, 2023</span>
-                <i class="pi pi-chevron-down text-outline"></i>
-            </div>
+    <!-- Main Table Card -->
+    <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+        <p-table [value]="transactions()" [rows]="20" [paginator]="true" [loading]="isLoading()" styleClass="p-datatable-sm"
+                 [showCurrentPageReport]="true" currentPageReportTemplate="Affichage {first} à {last} sur {totalRecords}">
             
-            <div class="h-8 w-[1px] bg-outline-variant hidden md:block"></div>
-            
-            <!-- Type Chips -->
-            <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto">
-                <button class="px-4 py-1.5 rounded-full bg-primary text-on-primary font-label-md text-label-md shrink-0">ALL</button>
-                <button class="px-4 py-1.5 rounded-full border border-outline-variant hover:bg-surface-variant transition-colors font-label-md text-label-md shrink-0">BOURSE</button>
-                <button class="px-4 py-1.5 rounded-full border border-outline-variant hover:bg-surface-variant transition-colors font-label-md text-label-md shrink-0">PRET</button>
-                <button class="px-4 py-1.5 rounded-full border border-outline-variant hover:bg-surface-variant transition-colors font-label-md text-label-md shrink-0">ACHAT</button>
-                <button class="px-4 py-1.5 rounded-full border border-outline-variant hover:bg-surface-variant transition-colors font-label-md text-label-md shrink-0">VIREMENT</button>
-            </div>
-            
-            <div class="md:ml-auto flex items-center gap-3 w-full md:w-auto justify-end">
-                <button class="flex items-center gap-2 text-primary font-label-md text-label-md hover:underline">
-                    <i class="pi pi-sliders-h text-[18px]"></i>
-                    Advanced Filters
-                </button>
-            </div>
-        </div>
-    </div>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
+                    <th pSortableColumn="typePaiement">Type <p-sortIcon field="typePaiement"></p-sortIcon></th>
+                    <th pSortableColumn="studentName">Émetteur <p-sortIcon field="studentName"></p-sortIcon></th>
+                    <th pSortableColumn="boutiqueName">Récepteur <p-sortIcon field="boutiqueName"></p-sortIcon></th>
+                    <th pSortableColumn="montantTotal" class="text-right">Montant <p-sortIcon field="montantTotal"></p-sortIcon></th>
+                    <th pSortableColumn="datePaiement" class="text-center">Date <p-sortIcon field="datePaiement"></p-sortIcon></th>
+                    <th pSortableColumn="statutPaiement" class="text-right">Statut <p-sortIcon field="statutPaiement"></p-sortIcon></th>
+                </tr>
+            </ng-template>
 
-    <!-- TRANSACTIONS TABLE -->
-    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead class="bg-surface-container-low sticky top-0 border-b border-outline-variant">
-                    <tr>
-                        <th class="px-6 py-4 font-label-md text-label-md text-outline uppercase">TXN ID</th>
-                        <th class="px-6 py-4 font-label-md text-label-md text-outline uppercase">Type</th>
-                        <th class="px-6 py-4 font-label-md text-label-md text-outline uppercase">Émetteur</th>
-                        <th class="px-6 py-4 font-label-md text-label-md text-outline uppercase">Récepteur</th>
-                        <th class="px-6 py-4 font-label-md text-label-md text-outline uppercase">Montant</th>
-                        <th class="px-6 py-4 font-label-md text-label-md text-outline uppercase">Frais</th>
-                        <th class="px-6 py-4 font-label-md text-label-md text-outline uppercase">Net</th>
-                        <th class="px-6 py-4 font-label-md text-label-md text-outline uppercase">Date &amp; Time</th>
-                        <th class="px-6 py-4 font-label-md text-label-md text-outline uppercase">Statut</th>
-                        <th class="px-6 py-4"></th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-outline-variant/50">
-                    <!-- Row 1 -->
-                    <tr class="hover:bg-surface-container-low transition-colors group">
-                        <td class="px-6 py-4 font-mono text-body-sm text-primary">#TXN-49201</td>
-                        <td class="px-6 py-4">
-                            <span class="px-2 py-1 rounded bg-blue-100 text-blue-700 text-[10px] font-bold">BOURSE</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-2">
-                                <div class="w-6 h-6 rounded-full bg-secondary-container flex items-center justify-center text-[10px] font-bold">MS</div>
-                                <span class="text-body-md font-body-md">Min. Scolarité</span>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 text-body-md font-body-md">Jean-Pierre Dupont</td>
-                        <td class="px-6 py-4 text-body-md font-bold text-on-surface">€1,200.00</td>
-                        <td class="px-6 py-4 text-body-sm text-outline">€0.00</td>
-                        <td class="px-6 py-4 text-body-md font-semibold text-on-surface">€1,200.00</td>
-                        <td class="px-6 py-4">
-                            <div class="text-body-sm text-on-surface">24 Oct 2023</div>
-                            <div class="text-[10px] text-outline">14:22:10</div>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-green-100 text-green-700 text-label-sm font-label-sm">
-                                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Success
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-right">
-                            <button class="p-1 hover:bg-surface-variant rounded text-outline group-hover:text-primary transition-colors">
-                                <i class="pi pi-ellipsis-v"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    
-                    <!-- Row 2 -->
-                    <tr class="hover:bg-surface-container-low transition-colors group">
-                        <td class="px-6 py-4 font-mono text-body-sm text-primary">#TXN-49198</td>
-                        <td class="px-6 py-4">
-                            <span class="px-2 py-1 rounded bg-amber-100 text-amber-700 text-[10px] font-bold">PRET</span>
-                        </td>
-                        <td class="px-6 py-4 text-body-md font-body-md">BNP Paribas GNS</td>
-                        <td class="px-6 py-4 text-body-md font-body-md">Amira Said</td>
-                        <td class="px-6 py-4 text-body-md font-bold text-on-surface">€5,000.00</td>
-                        <td class="px-6 py-4 text-body-sm text-outline">€25.00</td>
-                        <td class="px-6 py-4 text-body-md font-semibold text-on-surface">€4,975.00</td>
-                        <td class="px-6 py-4">
-                            <div class="text-body-sm text-on-surface">24 Oct 2023</div>
-                            <div class="text-[10px] text-outline">13:45:02</div>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-700 text-label-sm font-label-sm">
-                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Processing
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-right">
-                            <button class="p-1 hover:bg-surface-variant rounded text-outline group-hover:text-primary transition-colors">
-                                <i class="pi pi-ellipsis-v"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    
-                    <!-- Row 3 -->
-                    <tr class="hover:bg-surface-container-low transition-colors group">
-                        <td class="px-6 py-4 font-mono text-body-sm text-primary">#TXN-49195</td>
-                        <td class="px-6 py-4">
-                            <span class="px-2 py-1 rounded bg-purple-100 text-purple-700 text-[10px] font-bold">ACHAT</span>
-                        </td>
-                        <td class="px-6 py-4 text-body-md font-body-md">Alice Martin</td>
-                        <td class="px-6 py-4 text-body-md font-body-md">Univ. Lyon Resto</td>
-                        <td class="px-6 py-4 text-body-md font-bold text-on-surface">€12.50</td>
-                        <td class="px-6 py-4 text-body-sm text-outline">€0.10</td>
-                        <td class="px-6 py-4 text-body-md font-semibold text-on-surface">€12.40</td>
-                        <td class="px-6 py-4">
-                            <div class="text-body-sm text-on-surface">24 Oct 2023</div>
-                            <div class="text-[10px] text-outline">12:30:45</div>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-green-100 text-green-700 text-label-sm font-label-sm">
-                                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Success
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-right">
-                            <button class="p-1 hover:bg-surface-variant rounded text-outline group-hover:text-primary transition-colors">
-                                <i class="pi pi-ellipsis-v"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    
-                    <!-- Row 4 -->
-                    <tr class="hover:bg-surface-container-low transition-colors group">
-                        <td class="px-6 py-4 font-mono text-body-sm text-primary">#TXN-49190</td>
-                        <td class="px-6 py-4">
-                            <span class="px-2 py-1 rounded bg-blue-100 text-blue-700 text-[10px] font-bold">BOURSE</span>
-                        </td>
-                        <td class="px-6 py-4 text-body-md font-body-md">Min. Scolarité</td>
-                        <td class="px-6 py-4 text-body-md font-body-md">Thomas Leroy</td>
-                        <td class="px-6 py-4 text-body-md font-bold text-on-surface">€1,200.00</td>
-                        <td class="px-6 py-4 text-body-sm text-outline">€0.00</td>
-                        <td class="px-6 py-4 text-body-md font-semibold text-on-surface">€1,200.00</td>
-                        <td class="px-6 py-4">
-                            <div class="text-body-sm text-on-surface">24 Oct 2023</div>
-                            <div class="text-[10px] text-outline">11:15:10</div>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-100 text-red-700 text-label-sm font-label-sm">
-                                <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Failed
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-right">
-                            <button class="p-1 hover:bg-surface-variant rounded text-outline group-hover:text-primary transition-colors">
-                                <i class="pi pi-ellipsis-v"></i>
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <!-- TABLE FOOTER / PAGINATION -->
-        <div class="p-4 bg-surface-container-low flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-outline-variant">
-            <div class="flex items-center gap-4">
-                <button class="flex items-center gap-2 px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-label-md font-label-md hover:bg-surface-variant transition-all">
-                    <i class="pi pi-download"></i>
-                    Export CSV
-                </button>
-                <button class="flex items-center gap-2 px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-label-md font-label-md hover:bg-surface-variant transition-all">
-                    <i class="pi pi-file-pdf"></i>
-                    Export PDF
-                </button>
-            </div>
-            
-            <div class="flex items-center gap-2">
-                <button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-surface-variant disabled:opacity-30" disabled>
-                    <i class="pi pi-chevron-left text-[14px]"></i>
-                </button>
-                <div class="flex items-center">
-                    <button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-on-primary font-bold">1</button>
-                    <button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-variant font-medium">2</button>
-                    <button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-variant font-medium">3</button>
-                    <span class="px-2">...</span>
-                    <button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-variant font-medium">12</button>
-                </div>
-                <button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-surface-variant">
-                    <i class="pi pi-chevron-right text-[14px]"></i>
-                </button>
-            </div>
-            
-            <div class="text-body-sm text-outline">
-                Showing 1-10 of 1,284 transactions
-            </div>
-        </div>
+            <ng-template pTemplate="body" let-trx>
+                <tr>
+                    <td class="px-6 py-4 font-mono text-xs text-slate-400">#{{ trx.trackingId.substring(0,8) }}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-3 py-1 rounded-lg text-[9px] font-black uppercase border" [ngClass]="getTypeClass(trx.typePaiement)">
+                            {{ trx.typePaiement }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 font-bold text-slate-700 text-sm">{{ trx.studentName || 'Système' }}</td>
+                    <td class="px-6 py-4 text-sm font-medium text-slate-500">{{ trx.boutiqueName || 'Admin GNS' }}</td>
+                    <td class="px-6 py-4 text-right font-black text-slate-800 text-sm">{{ trx.montantTotal | number }} F</td>
+                    <td class="px-6 py-4 text-xs font-medium text-slate-500 text-center">{{ trx.datePaiement | date:'dd MMM yyyy, HH:mm' }}</td>
+                    <td class="px-6 py-4 text-right">
+                        <p-tag [value]="trx.statutPaiement" [severity]="trx.statutPaiement === 'SUCCESS' ? 'success' : 'warn'" styleClass="text-[9px] font-black"></p-tag>
+                    </td>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="7" class="p-20 text-center">
+                        <div class="flex flex-col items-center justify-center opacity-30 grayscale">
+                            <i class="pi pi-receipt text-6xl mb-4"></i>
+                            <p class="text-sm font-black uppercase tracking-widest">Aucune transaction trouvée</p>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
     </div>
 </div>
-
-<!-- RECENT ACTIVITY BENTO ELEMENT -->
-<div class="p-gutter grid grid-cols-1 lg:grid-cols-3 gap-gutter max-w-[1440px] mx-auto w-full">
-    <div class="lg:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm">
-        <h3 class="font-headline-sm text-headline-sm text-on-surface mb-6">Volume Trends</h3>
-        <div class="h-64 flex items-end justify-between gap-2 px-4">
-            <!-- Simple CSS Bar Chart Simulation -->
-            <div class="w-full bg-primary/10 rounded-t-lg h-[40%] hover:bg-primary/30 transition-all relative group">
-                <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-on-surface text-on-primary text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">€12k</div>
-            </div>
-            <div class="w-full bg-primary/10 rounded-t-lg h-[65%] hover:bg-primary/30 transition-all relative group">
-                <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-on-surface text-on-primary text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">€24k</div>
-            </div>
-            <div class="w-full bg-primary/10 rounded-t-lg h-[85%] hover:bg-primary/30 transition-all relative group">
-                <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-on-surface text-on-primary text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">€38k</div>
-            </div>
-            <div class="w-full bg-primary rounded-t-lg h-[100%] hover:brightness-110 transition-all relative group">
-                <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-on-surface text-on-primary text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">€42k</div>
-            </div>
-            <div class="w-full bg-primary/10 rounded-t-lg h-[55%] hover:bg-primary/30 transition-all relative group">
-                <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-on-surface text-on-primary text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">€18k</div>
-            </div>
-            <div class="w-full bg-primary/10 rounded-t-lg h-[70%] hover:bg-primary/30 transition-all relative group">
-                <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-on-surface text-on-primary text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">€29k</div>
-            </div>
-        </div>
-        <div class="flex justify-between mt-4 text-label-sm text-outline">
-            <span>MON</span><span>TUE</span><span>WED</span><span class="text-primary font-bold">THU</span><span>FRI</span><span>SAT</span>
-        </div>
-    </div>
-    
-    <div class="bg-primary p-6 rounded-xl shadow-sm text-on-primary flex flex-col relative overflow-hidden">
-        <div class="absolute -right-10 -bottom-10 opacity-10">
-            <i class="pi pi-wallet text-[200px]"></i>
-        </div>
-        <div class="relative z-10">
-            <h3 class="font-headline-sm text-headline-sm mb-2">Vault Security</h3>
-            <p class="text-body-sm text-primary-fixed-dim mb-8">All transactions are secured by GNS protocols and multi-sig validation.</p>
-            
-            <div class="space-y-4">
-                <div class="flex items-center gap-3">
-                    <i class="pi pi-shield text-green-400 text-xl"></i>
-                    <span class="text-label-md">Biometric Auth Active</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    <i class="pi pi-shield text-green-400 text-xl"></i>
-                    <span class="text-label-md">Real-time Fraud Monitoring</span>
-                </div>
-            </div>
-            
-            <button class="mt-12 w-full py-3 bg-on-primary text-primary font-bold rounded-lg hover:bg-primary-fixed transition-colors">
-                View Audit Log
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- FLOATING ACTION BUTTON -->
-<button class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50">
-    <i class="pi pi-plus text-xl"></i>
-</button>
-
-<!-- FOOTER INFO -->
-<footer class="mt-auto p-gutter text-center border-t border-outline-variant bg-surface-container-low w-full">
-    <p class="text-label-sm text-outline">© 2023 StudCash GNS Administrative Portal. Institutional Grade Security Enabled.</p>
-</footer>

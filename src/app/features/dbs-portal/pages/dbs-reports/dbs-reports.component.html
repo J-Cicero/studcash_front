@@ -1,304 +1,49 @@
-<div class="space-y-8">
-    <!-- Header & Global Actions -->
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div class="min-h-screen bg-[#F8FAFC] font-['Inter',sans-serif] p-10 space-y-10">
+    <header class="flex justify-between items-end mb-10">
         <div>
-            <h1 class="font-bold text-2xl text-on-surface">Rapports &amp; Statistiques</h1>
-            <p class="text-on-surface-variant text-base">Analyse approfondie des performances de traitement des bourses.</p>
+            <h1 class="text-3xl font-black text-slate-800 uppercase tracking-tight">Rapports & Statistiques</h1>
+            <p class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mt-2">Bilan consolidé par établissement</p>
         </div>
-        <div class="flex flex-wrap gap-2">
-            <button class="flex items-center gap-1 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all">
-                <i class="pi pi-file-pdf text-[18px]"></i> PDF
-            </button>
-            <button class="flex items-center gap-1 px-4 py-2 border border-primary text-primary rounded-lg text-sm font-medium hover:bg-blue-50 transition-all">
-                <i class="pi pi-file-excel text-[18px]"></i> Excel
-            </button>
-            <button class="flex items-center gap-1 px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:opacity-90 transition-all">
-                <i class="pi pi-envelope text-[18px]"></i> Envoyer au Ministère
-            </button>
+        <div class="flex gap-4">
+            <button pButton label="Exporter PDF" icon="pi pi-file-pdf" class="p-button-danger p-button-sm rounded-xl font-bold px-6"></button>
+            <button pButton label="Exporter Excel" icon="pi pi-file-excel" class="p-button-success p-button-sm rounded-xl font-bold px-6"></button>
         </div>
-    </div>
+    </header>
 
-    <!-- Filters Section -->
-    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-wrap items-center gap-6">
-        <div class="flex items-center gap-2">
-            <i class="pi pi-calendar text-outline"></i>
-            <select class="bg-transparent border-none text-sm font-medium text-on-surface focus:ring-0">
-                <option>Derniers 30 jours</option>
-                <option>Semestre en cours</option>
-                <option>Année Académique 2023-2024</option>
-            </select>
-        </div>
-        <div class="h-8 w-px bg-outline-variant"></div>
-        <div class="flex items-center gap-2">
-            <i class="pi pi-graduation-cap text-outline"></i>
-            <select class="bg-transparent border-none text-sm font-medium text-on-surface focus:ring-0">
-                <option>Toutes les Universités</option>
-                <option>UL - Université de Lomé</option>
-                <option>UK - Université de Kara</option>
-                <option>UCAO</option>
-            </select>
-        </div>
-        <div class="h-8 w-px bg-outline-variant"></div>
-        <div class="flex items-center gap-2">
-            <i class="pi pi-users text-outline"></i>
-            <select class="bg-transparent border-none text-sm font-medium text-on-surface focus:ring-0">
-                <option>Toutes les Promotions</option>
-                <option>Licence 1</option>
-                <option>Master 2</option>
-            </select>
-        </div>
-        <button class="ml-auto text-primary text-sm font-medium flex items-center gap-1">
-            <i class="pi pi-filter"></i> Plus de filtres
-        </button>
-    </div>
-
-    <!-- KPI Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-white border border-outline-variant rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div class="flex justify-between items-start mb-2">
-                <span class="text-on-surface-variant text-sm font-medium">Total dossiers</span>
-                <div class="p-1 bg-blue-100 rounded text-primary">
-                    <i class="pi pi-folder"></i>
-                </div>
-            </div>
-            <div class="text-2xl font-bold text-on-surface">4,820</div>
-            <div class="text-green-700 text-xs font-semibold flex items-center gap-1 mt-1">
-                <i class="pi pi-chart-line text-[14px]"></i> +12% vs mois dernier
-            </div>
-        </div>
-        <div class="bg-white border border-outline-variant rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div class="flex justify-between items-start mb-2">
-                <span class="text-on-surface-variant text-sm font-medium">Taux éligibilité</span>
-                <div class="p-1 bg-green-100 rounded text-green-700">
-                    <i class="pi pi-check-circle"></i>
-                </div>
-            </div>
-            <div class="text-2xl font-bold text-on-surface">78.4%</div>
-            <div class="text-on-surface-variant text-xs font-semibold mt-1">Stable par rapport à L1</div>
-        </div>
-        <div class="bg-white border border-outline-variant rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow border-l-4 border-l-purple-600">
-            <div class="flex justify-between items-start mb-2">
-                <div class="flex items-center gap-1">
-                    <span class="text-on-surface-variant text-sm font-medium">Taux IA</span>
-                    <div class="px-1 py-[1px] bg-purple-100 text-purple-600 rounded-full font-semibold text-[10px] flex items-center">
-                        <i class="pi pi-sparkles text-[12px] mr-1"></i> IA
-                    </div>
-                </div>
-                <div class="p-1 bg-purple-100 rounded text-purple-600">
-                    <i class="pi pi-microchip"></i>
-                </div>
-            </div>
-            <div class="text-2xl font-bold text-on-surface">94.2%</div>
-            <div class="text-purple-600 text-xs font-semibold mt-1">Traitement automatisé</div>
-        </div>
-        <div class="bg-white border border-outline-variant rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div class="flex justify-between items-start mb-2">
-                <span class="text-on-surface-variant text-sm font-medium">Temps traitement</span>
-                <div class="p-1 bg-red-100 rounded text-red-600">
-                    <i class="pi pi-clock"></i>
-                </div>
-            </div>
-            <div class="text-2xl font-bold text-on-surface">4.2 min</div>
-            <div class="text-green-700 text-xs font-semibold flex items-center gap-1 mt-1">
-                <i class="pi pi-arrow-down text-[14px]"></i> -1.5 min par dossier
-            </div>
-        </div>
-    </div>
-
-    <!-- Charts Layout (Bento Style) -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Evolution Chart Card -->
-        <div class="lg:col-span-2 bg-white border border-outline-variant rounded-xl p-6 flex flex-col gap-6">
-            <div class="flex justify-between items-center">
-                <h3 class="font-semibold text-lg text-on-surface">Évolution mensuelle des traitements</h3>
-                <div class="flex gap-4">
-                    <div class="flex items-center gap-1">
-                        <div class="w-3 h-3 bg-primary rounded-full"></div>
-                        <span class="text-xs font-semibold">Acceptés</span>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <div class="w-3 h-3 bg-outline rounded-full"></div>
-                        <span class="text-xs font-semibold">Rejetés</span>
-                    </div>
-                </div>
-            </div>
-            <div class="flex-grow flex items-end justify-around h-64 px-4">
-                <!-- Bar Group Jan -->
-                <div class="flex flex-col items-center gap-2 group h-full justify-end">
-                    <div class="flex gap-1 items-end">
-                        <div class="w-8 bg-primary rounded-t-lg chart-bar" style="height: 120px;"></div>
-                        <div class="w-8 bg-outline-variant rounded-t-lg chart-bar" style="height: 30px;"></div>
-                    </div>
-                    <span class="text-xs font-semibold">Jan</span>
-                </div>
-                <!-- Bar Group Feb -->
-                <div class="flex flex-col items-center gap-2 group h-full justify-end">
-                    <div class="flex gap-1 items-end">
-                        <div class="w-8 bg-primary rounded-t-lg chart-bar" style="height: 150px;"></div>
-                        <div class="w-8 bg-outline-variant rounded-t-lg chart-bar" style="height: 45px;"></div>
-                    </div>
-                    <span class="text-xs font-semibold">Fév</span>
-                </div>
-                <!-- Bar Group Mar -->
-                <div class="flex flex-col items-center gap-2 group h-full justify-end">
-                    <div class="flex gap-1 items-end">
-                        <div class="w-8 bg-primary rounded-t-lg chart-bar" style="height: 180px;"></div>
-                        <div class="w-8 bg-outline-variant rounded-t-lg chart-bar" style="height: 40px;"></div>
-                    </div>
-                    <span class="text-xs font-semibold">Mar</span>
-                </div>
-                <!-- Bar Group Apr -->
-                <div class="flex flex-col items-center gap-2 group h-full justify-end">
-                    <div class="flex gap-1 items-end">
-                        <div class="w-8 bg-primary rounded-t-lg chart-bar" style="height: 200px;"></div>
-                        <div class="w-8 bg-outline-variant rounded-t-lg chart-bar" style="height: 35px;"></div>
-                    </div>
-                    <span class="text-xs font-semibold">Avr</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Horizontal Bar Chart Card -->
-        <div class="bg-white border border-outline-variant rounded-xl p-6 flex flex-col gap-6">
-            <h3 class="font-semibold text-lg text-on-surface">Éligibilité par Université</h3>
-            <div class="space-y-6 flex-grow justify-center flex flex-col">
-                <div class="space-y-1">
-                    <div class="flex justify-between text-xs font-semibold">
-                        <span>UL - Lomé</span>
-                        <span>82%</span>
-                    </div>
-                    <div class="w-full bg-surface-container rounded-full h-2">
-                        <div class="bg-primary h-2 rounded-full" style="width: 82%;"></div>
-                    </div>
-                </div>
-                <div class="space-y-1">
-                    <div class="flex justify-between text-xs font-semibold">
-                        <span>UK - Kara</span>
-                        <span>74%</span>
-                    </div>
-                    <div class="w-full bg-surface-container rounded-full h-2">
-                        <div class="bg-primary h-2 rounded-full" style="width: 74%;"></div>
-                    </div>
-                </div>
-                <div class="space-y-1">
-                    <div class="flex justify-between text-xs font-semibold">
-                        <span>UCAO</span>
-                        <span>91%</span>
-                    </div>
-                    <div class="w-full bg-surface-container rounded-full h-2">
-                        <div class="bg-purple-600 h-2 rounded-full" style="width: 91%;"></div>
-                    </div>
-                </div>
-                <div class="space-y-1">
-                    <div class="flex justify-between text-xs font-semibold">
-                        <span>IPG</span>
-                        <span>65%</span>
-                    </div>
-                    <div class="w-full bg-surface-container rounded-full h-2">
-                        <div class="bg-primary h-2 rounded-full" style="width: 65%;"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-purple-100 p-2 rounded flex items-center gap-2">
-                <i class="pi pi-sparkles text-purple-600"></i>
-                <span class="text-xs font-semibold text-purple-800 leading-tight">L'UCAO présente le taux d'éligibilité le plus précis.</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Detail Table -->
-    <div class="bg-white border border-outline-variant rounded-xl overflow-hidden shadow-sm">
-        <div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center bg-surface-bright">
-            <h3 class="font-semibold text-lg text-on-surface">Récapitulatif par université</h3>
-            <button class="text-primary text-sm font-medium flex items-center gap-1">
-                <i class="pi pi-download"></i> Télécharger CSV
-            </button>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-surface-container-low border-b border-outline-variant">
-                        <th class="px-6 py-4 text-sm font-medium text-on-surface-variant uppercase tracking-wider text-[11px]">Université</th>
-                        <th class="px-6 py-4 text-sm font-medium text-on-surface-variant uppercase tracking-wider text-[11px]">Dossiers</th>
-                        <th class="px-6 py-4 text-sm font-medium text-on-surface-variant uppercase tracking-wider text-[11px]">Vérifiés IA</th>
-                        <th class="px-6 py-4 text-sm font-medium text-on-surface-variant uppercase tracking-wider text-[11px]">Éligibles</th>
-                        <th class="px-6 py-4 text-sm font-medium text-on-surface-variant uppercase tracking-wider text-[11px]">Non-éligibles</th>
-                        <th class="px-6 py-4 text-sm font-medium text-on-surface-variant uppercase tracking-wider text-[11px]">Montant Alloué</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-outline-variant">
-                    <tr class="hover:bg-surface-container-lowest transition-colors">
-                        <td class="px-6 py-4 font-semibold text-lg text-primary">UL - Lomé</td>
-                        <td class="px-6 py-4 text-base">2,450</td>
-                        <td class="px-6 py-4">
-                            <div class="inline-flex items-center gap-1 px-2 py-[2px] bg-purple-100 text-purple-600 rounded-full text-xs font-semibold text-[10px]">
-                                <i class="pi pi-sparkles text-[12px]"></i> 2,380
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 text-green-700 text-base">1,820</td>
-                        <td class="px-6 py-4 text-on-surface-variant text-base">630</td>
-                        <td class="px-6 py-4 font-semibold text-lg">546,000,000 FCFA</td>
-                    </tr>
-                    <tr class="hover:bg-surface-container-lowest transition-colors">
-                        <td class="px-6 py-4 font-semibold text-lg text-primary">UK - Kara</td>
-                        <td class="px-6 py-4 text-base">1,580</td>
-                        <td class="px-6 py-4">
-                            <div class="inline-flex items-center gap-1 px-2 py-[2px] bg-purple-100 text-purple-600 rounded-full text-xs font-semibold text-[10px]">
-                                <i class="pi pi-sparkles text-[12px]"></i> 1,420
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 text-green-700 text-base">1,150</td>
-                        <td class="px-6 py-4 text-on-surface-variant text-base">430</td>
-                        <td class="px-6 py-4 font-semibold text-lg">345,000,000 FCFA</td>
-                    </tr>
-                    <tr class="hover:bg-surface-container-lowest transition-colors">
-                        <td class="px-6 py-4 font-semibold text-lg text-primary">UCAO</td>
-                        <td class="px-6 py-4 text-base">480</td>
-                        <td class="px-6 py-4">
-                            <div class="inline-flex items-center gap-1 px-2 py-[2px] bg-purple-100 text-purple-600 rounded-full text-xs font-semibold text-[10px]">
-                                <i class="pi pi-sparkles text-[12px]"></i> 480
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 text-green-700 text-base">440</td>
-                        <td class="px-6 py-4 text-on-surface-variant text-base">40</td>
-                        <td class="px-6 py-4 font-semibold text-lg">132,000,000 FCFA</td>
-                    </tr>
-                    <tr class="hover:bg-surface-container-lowest transition-colors">
-                        <td class="px-6 py-4 font-semibold text-lg text-primary">IPG</td>
-                        <td class="px-6 py-4 text-base">310</td>
-                        <td class="px-6 py-4">
-                            <div class="inline-flex items-center gap-1 px-2 py-[2px] bg-purple-100 text-purple-600 rounded-full text-xs font-semibold text-[10px]">
-                                <i class="pi pi-sparkles text-[12px]"></i> 255
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 text-green-700 text-base">205</td>
-                        <td class="px-6 py-4 text-on-surface-variant text-base">105</td>
-                        <td class="px-6 py-4 font-semibold text-lg">61,500,000 FCFA</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- System Message / Insights -->
-    <div class="relative bg-blue-900 rounded-xl p-6 overflow-hidden flex flex-col md:flex-row items-center gap-6 mt-8">
-        <!-- Decorative Background -->
-        <div class="absolute inset-0 opacity-10 pointer-events-none">
-            <img class="w-full h-full object-cover grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTVJIi4w7Uj35ucFSLMGEorLgpJErr0VywDak6KN__jHw8M6mdpHVQT3G4_Zscdw5_6zYQov8iXK8_dYh5tQTriRnC1TF6rCA7n8JhOoUmnVuhDIVPp4SY9InoX2d1hswTj3GRohEQOQyU-onxrhXj5dNUQadSSt5YXVH8As6FxHaXnsCN_pHyN7_vxr1G1ynzvnGjSCY-AKRpxetRIz9Hw9tN4Ssu65e0TJQww-WfDV_bTG09Gytf8q80eCni_zMgB6NHC4JZx6TW"/>
-        </div>
-        <div class="relative z-10 p-4 bg-white rounded-full flex items-center justify-center text-primary">
-            <i class="pi pi-chart-bar text-[40px]"></i>
-        </div>
-        <div class="relative z-10 flex-grow text-center md:text-left">
-            <h4 class="font-bold text-xl text-white mb-1">Analyse Prédictive de l'IA</h4>
-            <p class="text-blue-100 text-base">
-                Basé sur les tendances actuelles, nous prévoyons une augmentation de 15% des dossiers éligibles pour le semestre prochain. Le système recommande de provisionner 1.2Mds FCFA supplémentaires pour couvrir les besoins.
-            </p>
-        </div>
-        <div class="relative z-10 shrink-0">
-            <button class="bg-white text-primary px-6 py-2 rounded-full text-sm font-medium hover:bg-surface-container transition-all">
-                Voir les recommandations
-            </button>
-        </div>
+    <div class="bg-white rounded-[3rem] border border-slate-100 shadow-2xl shadow-indigo-200/40 overflow-hidden">
+        <p-table [value]="univStats()" styleClass="p-datatable-lg" [loading]="isLoading()">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="code">Code <p-sortIcon field="code"></p-sortIcon></th>
+                    <th pSortableColumn="nom">Université <p-sortIcon field="nom"></p-sortIcon></th>
+                    <th pSortableColumn="nbEtudiants" class="text-right">Total Étudiants <p-sortIcon field="nbEtudiants"></p-sortIcon></th>
+                    <th class="text-right">Eligibles (%)</th>
+                    <th class="text-right">Budget Alloué</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-stat>
+                <tr>
+                    <td class="px-10 py-8">
+                        <div class="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-indigo-100">
+                            {{ stat.code }}
+                        </div>
+                    </td>
+                    <td class="px-10 py-8 font-black text-slate-700 text-lg tracking-tight">{{ stat.nom }}</td>
+                    <td class="px-10 py-8 text-right font-black text-slate-800">{{ stat.nbEtudiants | number }}</td>
+                    <td class="px-10 py-8 text-right">
+                        <span class="text-emerald-600 font-black text-lg">--- %</span>
+                    </td>
+                    <td class="px-10 py-8 text-right font-black text-indigo-600">Calcul...</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <tr class="bg-slate-900 text-white">
+                    <td colspan="2" class="px-10 py-6 font-black uppercase tracking-widest text-xs">Total Consolidé</td>
+                    <td class="px-10 py-6 text-right font-black text-xl">---</td>
+                    <td class="px-10 py-6 text-right">---</td>
+                    <td class="px-10 py-6 text-right font-black text-xl text-emerald-400">--- FCFA</td>
+                </tr>
+            </ng-template>
+        </p-table>
     </div>
 </div>

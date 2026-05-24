@@ -1,472 +1,132 @@
-<div class="flex-1 flex max-w-[1440px] mx-auto w-full p-gutter gap-gutter h-full">
+<div class="flex-1 flex max-w-[1440px] mx-auto w-full p-gutter gap-gutter h-full font-['Inter',sans-serif]">
     <!-- Internal Left Menu (Fixed 280px) -->
     <aside class="w-[280px] flex flex-col shrink-0 gap-stack-md">
-        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden flex flex-col shadow-sm">
-            <button class="group flex items-center gap-3 px-panel-padding py-3 text-left transition-all hover:bg-surface-container-low border-l-4" 
-                [ngClass]="activeTab() === 'mon-profil' ? 'border-primary bg-surface-container-low text-primary font-bold' : 'border-transparent text-on-surface-variant'"
+        <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden flex flex-col shadow-sm">
+            <button class="group flex items-center gap-3 px-panel-padding py-4 text-left transition-all hover:bg-slate-50 border-l-4" 
+                [ngClass]="activeTab() === 'mon-profil' ? 'border-primary bg-indigo-50/50 text-primary font-bold' : 'border-transparent text-slate-500'"
                 (click)="switchTab('mon-profil')">
                 <i class="pi pi-user text-inherit"></i>
-                <span class="font-body-md text-body-md">Mon profil</span>
+                <span class="text-sm">Mon profil</span>
             </button>
-            <button class="group flex items-center gap-3 px-panel-padding py-3 text-left transition-all hover:bg-surface-container-low border-l-4" 
-                [ngClass]="activeTab() === 'securite' ? 'border-primary bg-surface-container-low text-primary font-bold' : 'border-transparent text-on-surface-variant'"
+            <button class="group flex items-center gap-3 px-panel-padding py-4 text-left transition-all hover:bg-slate-50 border-l-4" 
+                [ngClass]="activeTab() === 'securite' ? 'border-primary bg-indigo-50/50 text-primary font-bold' : 'border-transparent text-slate-500'"
                 (click)="switchTab('securite')">
                 <i class="pi pi-shield text-inherit"></i>
-                <span class="font-body-md text-body-md">Sécurité &amp; Accès</span>
+                <span class="text-sm">Sécurité &amp; Accès</span>
             </button>
-            <button class="group flex items-center gap-3 px-panel-padding py-3 text-left transition-all hover:bg-surface-container-low border-l-4" 
-                [ngClass]="activeTab() === 'notifications' ? 'border-primary bg-surface-container-low text-primary font-bold' : 'border-transparent text-on-surface-variant'"
-                (click)="switchTab('notifications')">
-                <i class="pi pi-bell text-inherit"></i>
-                <span class="font-body-md text-body-md">Notifications</span>
-            </button>
-            <button class="group flex items-center gap-3 px-panel-padding py-3 text-left transition-all hover:bg-surface-container-low border-l-4" 
-                [ngClass]="activeTab() === 'gestion-admins' ? 'border-primary bg-surface-container-low text-primary font-bold' : 'border-transparent text-on-surface-variant'"
-                (click)="switchTab('gestion-admins')">
-                <i class="pi pi-users text-inherit"></i>
-                <span class="font-body-md text-body-md">Utilisateurs &amp; Rôles</span>
-            </button>
-            <button class="group flex items-center gap-3 px-panel-padding py-3 text-left transition-all hover:bg-surface-container-low border-l-4" 
-                [ngClass]="activeTab() === 'plateforme' ? 'border-primary bg-surface-container-low text-primary font-bold' : 'border-transparent text-on-surface-variant'"
+            <button class="group flex items-center gap-3 px-panel-padding py-4 text-left transition-all hover:bg-slate-50 border-l-4" 
+                [ngClass]="activeTab() === 'plateforme' ? 'border-primary bg-indigo-50/50 text-primary font-bold' : 'border-transparent text-slate-500'"
                 (click)="switchTab('plateforme')">
                 <i class="pi pi-cog text-inherit"></i>
-                <span class="font-body-md text-body-md">Paramètres plateforme</span>
+                <span class="text-sm">Paramètres plateforme</span>
             </button>
-            <button class="group flex items-center gap-3 px-panel-padding py-3 text-left transition-all hover:bg-surface-container-low border-l-4" 
-                [ngClass]="activeTab() === 'logs' ? 'border-primary bg-surface-container-low text-primary font-bold' : 'border-transparent text-on-surface-variant'"
+            <button class="group flex items-center gap-3 px-panel-padding py-4 text-left transition-all hover:bg-slate-50 border-l-4" 
+                [ngClass]="activeTab() === 'logs' ? 'border-primary bg-indigo-50/50 text-primary font-bold' : 'border-transparent text-slate-500'"
                 (click)="switchTab('logs')">
                 <i class="pi pi-history text-inherit"></i>
-                <span class="font-body-md text-body-md">Logs &amp; Audit</span>
-            </button>
-            <button class="group flex items-center gap-3 px-panel-padding py-3 text-left transition-all hover:bg-surface-container-low border-l-4" 
-                [ngClass]="activeTab() === 'aide' ? 'border-primary bg-surface-container-low text-primary font-bold' : 'border-transparent text-on-surface-variant'"
-                (click)="switchTab('aide')">
-                <i class="pi pi-question-circle text-inherit"></i>
-                <span class="font-body-md text-body-md">Aide &amp; Support</span>
+                <span class="text-sm">Logs &amp; Audit</span>
             </button>
         </div>
         <div class="mt-auto">
-            <button class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-error/20 text-error font-bold hover:bg-error/5 transition-colors">
+            <button class="w-full flex items-center justify-center gap-2 py-4 px-4 rounded-2xl border border-red-100 text-red-500 font-bold hover:bg-red-50 transition-colors shadow-sm shadow-red-100/50">
                 <i class="pi pi-sign-out"></i>
-                <span class="font-label-md text-label-md">Se déconnecter</span>
+                <span class="text-sm uppercase tracking-widest">Se déconnecter</span>
             </button>
         </div>
     </aside>
 
     <!-- Dynamic Content Canvas -->
-    <div class="flex-1 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col min-h-[600px]">
+    <div class="flex-1 bg-white border border-slate-100 rounded-3xl shadow-xl shadow-slate-200/50 overflow-hidden flex flex-col min-h-[600px]">
+        
         <!-- Section 1: Mon Profil -->
-        <div class="p-panel-padding h-full overflow-y-auto" [class.hidden]="activeTab() !== 'mon-profil'">
-            <div class="flex items-center gap-6 mb-stack-lg">
+        <div class="p-8 h-full overflow-y-auto" [class.hidden]="activeTab() !== 'mon-profil'">
+            <div class="flex items-center gap-8 mb-10">
                 <div class="relative">
-                    <div class="w-20 h-20 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-headline-md border-4 border-surface shadow-md">
-                        AD
-                    </div>
-                    <button class="absolute bottom-0 right-0 w-7 h-7 bg-white rounded-full border border-outline-variant flex items-center justify-center shadow-sm hover:bg-surface-container-low">
-                        <i class="pi pi-pencil text-[12px]"></i>
-                    </button>
+                    @if (isLoading()) {
+                        <p-skeleton shape="circle" size="6rem"></p-skeleton>
+                    } @else {
+                        <div class="w-24 h-24 rounded-3xl bg-indigo-600 flex items-center justify-center text-white font-black text-3xl shadow-xl shadow-indigo-200">
+                            {{ (profile()?.nom?.charAt(0) || 'A') }}{{ (profile()?.prenom?.charAt(0) || 'D') }}
+                        </div>
+                    }
                 </div>
-                <div>
-                    <h3 class="font-headline-sm text-headline-sm text-on-surface">Admin GNS</h3>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-error/10 text-error border border-error/20">Super Administrateur</span>
-                        <span class="text-on-surface-variant font-label-sm text-label-sm">ID: ST-AD-001</span>
-                    </div>
+                <div class="space-y-2">
+                    @if (isLoading()) {
+                        <p-skeleton width="200px" height="2rem"></p-skeleton>
+                        <p-skeleton width="120px" height="1.2rem"></p-skeleton>
+                    } @else {
+                        <h3 class="text-3xl font-black text-slate-800 tracking-tight">{{ profile()?.prenom }} {{ profile()?.nom }}</h3>
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase bg-indigo-50 text-indigo-600 border border-indigo-100">{{ profile()?.role }}</span>
+                            <span class="text-slate-400 font-bold text-xs">ID: {{ profile()?.trackingId?.substring(0,8) }}</span>
+                        </div>
+                    }
                 </div>
             </div>
             
-            <hr class="border-outline-variant mb-stack-lg"/>
-            
-            <form class="grid grid-cols-2 gap-x-gutter gap-y-stack-md">
-                <div class="space-y-1">
-                    <label class="font-label-md text-label-md text-on-surface-variant">Prénom</label>
-                    <input class="w-full border-outline-variant rounded-lg focus:ring-primary focus:border-primary font-body-md" type="text" value="Super"/>
+            <div class="grid grid-cols-2 gap-8">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Prénom</label>
+                    <input class="w-full bg-slate-50 border-none rounded-xl px-5 py-3.5 text-sm font-bold text-slate-700 outline-none" type="text" [value]="profile()?.prenom" readonly/>
                 </div>
-                <div class="space-y-1">
-                    <label class="font-label-md text-label-md text-on-surface-variant">Nom</label>
-                    <input class="w-full border-outline-variant rounded-lg focus:ring-primary focus:border-primary font-body-md" type="text" value="Admin"/>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nom</label>
+                    <input class="w-full bg-slate-50 border-none rounded-xl px-5 py-3.5 text-sm font-bold text-slate-700 outline-none" type="text" [value]="profile()?.nom" readonly/>
                 </div>
-                <div class="space-y-1 col-span-2">
-                    <label class="font-label-md text-label-md text-on-surface-variant">Email (Identifiant)</label>
-                    <div class="relative">
-                        <input class="w-full bg-surface-container-low border-outline-variant rounded-lg font-body-md text-on-surface-variant cursor-not-allowed" readonly type="email" value="super-admin@studcash-gns.gov"/>
-                        <div class="mt-2 flex items-center gap-2 bg-primary/5 p-2 rounded-lg border border-primary/10">
-                            <i class="pi pi-info-circle text-primary text-[14px]"></i>
-                            <p class="text-[11px] text-on-primary-fixed-variant leading-tight">Pour modifier votre email, veuillez contacter le Support Sécurité Gouvernemental.</p>
-                        </div>
-                    </div>
+                <div class="space-y-2 col-span-2">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email (Identifiant)</label>
+                    <input class="w-full bg-slate-50 border-none rounded-xl px-5 py-3.5 text-sm font-bold text-slate-400 italic cursor-not-allowed" readonly type="email" [value]="profile()?.email"/>
                 </div>
-                <div class="space-y-1">
-                    <label class="font-label-md text-label-md text-on-surface-variant">Téléphone</label>
-                    <input class="w-full border-outline-variant rounded-lg focus:ring-primary focus:border-primary font-body-md" type="tel" value="+221 77 123 45 67"/>
-                </div>
-                <div class="space-y-1">
-                    <label class="font-label-md text-label-md text-on-surface-variant">Poste</label>
-                    <input class="w-full border-outline-variant rounded-lg focus:ring-primary focus:border-primary font-body-md" type="text" value="Directeur des Opérations"/>
-                </div>
-                <div class="space-y-1">
-                    <label class="font-label-md text-label-md text-on-surface-variant">Département</label>
-                    <input class="w-full border-outline-variant rounded-lg focus:ring-primary focus:border-primary font-body-md" type="text" value="Administration Centrale"/>
-                </div>
-                <div class="space-y-1">
-                    <label class="font-label-md text-label-md text-on-surface-variant">Université Affiliée</label>
-                    <select class="w-full border-outline-variant rounded-lg focus:ring-primary focus:border-primary font-body-md">
-                        <option>Ministère de l'Enseignement Supérieur</option>
-                        <option>UCAD</option>
-                        <option>UGB</option>
-                    </select>
-                </div>
-                <div class="col-span-2 flex justify-end gap-stack-md mt-6 pt-6 border-t border-outline-variant">
-                    <button class="px-6 py-2 border border-outline-variant rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-colors text-on-surface" type="button">Annuler</button>
-                    <button class="px-6 py-2 bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:opacity-90 transition-opacity" type="submit">Sauvegarder les modifications</button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Section 2: Sécurité -->
-        <div class="p-panel-padding h-full overflow-y-auto" [class.hidden]="activeTab() !== 'securite'">
-            <h3 class="font-headline-sm text-headline-sm mb-stack-md text-on-surface">Sécurité &amp; Accès</h3>
-            <div class="space-y-gutter">
-                <!-- Password Change -->
-                <div class="p-stack-md bg-surface-container-low border border-outline-variant rounded-xl">
-                    <h4 class="font-label-md text-label-md text-primary mb-3">Changer le mot de passe</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <input class="border-outline-variant rounded-lg font-body-md w-full" placeholder="Mot de passe actuel" type="password"/>
-                        <input class="border-outline-variant rounded-lg font-body-md w-full" placeholder="Nouveau mot de passe" type="password"/>
-                        <button class="bg-primary text-on-primary rounded-lg font-label-md w-full md:w-auto">Mettre à jour</button>
-                    </div>
-                </div>
-                
-                <!-- 2FA Toggle -->
-                <div class="flex items-center justify-between p-stack-md bg-surface-container-low border border-outline-variant rounded-xl">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600">
-                            <i class="pi pi-verified"></i>
-                        </div>
-                        <div>
-                            <p class="font-body-md font-bold text-on-surface">Double Authentification (2FA)</p>
-                            <p class="text-label-sm text-on-surface-variant">Requis pour toutes les sessions administratives</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-label-md text-green-600 font-bold uppercase tracking-widest">Activé</span>
-                        <button class="w-12 h-6 bg-primary rounded-full relative p-1 transition-colors">
-                            <div class="w-4 h-4 bg-white rounded-full translate-x-6"></div>
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Sessions -->
-                <div>
-                    <h4 class="font-label-md text-label-md text-on-surface-variant mb-3">Sessions actives</h4>
-                    <div class="space-y-2">
-                        <div class="flex items-center justify-between p-3 border border-outline-variant rounded-lg">
-                            <div class="flex items-center gap-3">
-                                <i class="pi pi-desktop text-primary text-xl"></i>
-                                <div>
-                                    <p class="font-label-md text-on-surface">Chrome sur Windows (Actuelle)</p>
-                                    <p class="text-label-sm text-on-surface-variant">Dakar, SN • 192.168.1.45</p>
-                                </div>
-                            </div>
-                            <span class="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] rounded font-bold">ACTIF</span>
-                        </div>
-                        <div class="flex items-center justify-between p-3 border border-outline-variant rounded-lg opacity-60">
-                            <div class="flex items-center gap-3">
-                                <i class="pi pi-mobile text-xl text-on-surface-variant"></i>
-                                <div>
-                                    <p class="font-label-md text-on-surface">Safari sur iPhone 13</p>
-                                    <p class="text-label-sm text-on-surface-variant">Saint-Louis, SN • Il y a 2h</p>
-                                </div>
-                            </div>
-                            <button class="text-error font-label-md hover:underline">Déconnecter</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Section 3: Gestion Admins -->
-        <div class="flex flex-col h-full overflow-hidden" [class.hidden]="activeTab() !== 'gestion-admins'">
-            <div class="p-panel-padding flex flex-col gap-4 border-b border-outline-variant">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="font-headline-sm text-headline-sm text-on-surface">Gestion des Utilisateurs</h3>
-                        <p class="text-label-sm text-on-surface-variant">La Tour de Contrôle : gérez les accès de toutes les entités (GNS, Banques, DBS, Universités).</p>
-                    </div>
-                    <button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-lg font-label-md hover:bg-primary/90 transition-colors">
-                        <i class="pi pi-user-plus text-[16px]"></i>
-                        Nouvel Utilisateur
-                    </button>
-                </div>
-                
-                <!-- Filters -->
-                <div class="flex flex-wrap items-center gap-2">
-                    <button class="px-4 py-1.5 rounded-full text-label-sm font-bold bg-primary text-on-primary border border-primary">Tous</button>
-                    <button class="px-4 py-1.5 rounded-full text-label-sm font-bold bg-surface text-on-surface-variant border border-outline-variant hover:bg-surface-container-low transition-colors">Équipe GNS</button>
-                    <button class="px-4 py-1.5 rounded-full text-label-sm font-bold bg-surface text-on-surface-variant border border-outline-variant hover:bg-surface-container-low transition-colors">Banques</button>
-                    <button class="px-4 py-1.5 rounded-full text-label-sm font-bold bg-surface text-on-surface-variant border border-outline-variant hover:bg-surface-container-low transition-colors">DBS</button>
-                    <button class="px-4 py-1.5 rounded-full text-label-sm font-bold bg-surface text-on-surface-variant border border-outline-variant hover:bg-surface-container-low transition-colors">Universités</button>
-                </div>
-            </div>
-            <div class="flex-1 overflow-y-auto">
-                <table class="w-full text-left">
-                    <thead class="bg-surface-container-low sticky top-0 border-b border-outline-variant z-10">
-                        <tr>
-                            <th class="px-gutter py-3 font-label-md text-label-md text-on-surface-variant uppercase">Utilisateur</th>
-                            <th class="px-gutter py-3 font-label-md text-label-md text-on-surface-variant uppercase">Entité</th>
-                            <th class="px-gutter py-3 font-label-md text-label-md text-on-surface-variant uppercase">Rôle</th>
-                            <th class="px-gutter py-3 font-label-md text-label-md text-on-surface-variant uppercase">Statut</th>
-                            <th class="px-gutter py-3 font-label-md text-label-md text-on-surface-variant uppercase text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-outline-variant">
-                        <!-- GNS Admin -->
-                        <tr class="hover:bg-surface-container-low transition-colors">
-                            <td class="px-gutter py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-error-container text-on-error-container flex items-center justify-center font-bold text-xs">MA</div>
-                                    <div>
-                                        <p class="font-body-md font-bold text-on-surface">Moussa AW</p>
-                                        <p class="text-label-sm text-on-surface-variant">moussa.aw&#64;gns.sn</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-gutter py-4">
-                                <span class="flex items-center gap-1.5 text-on-surface font-label-md">
-                                    <i class="pi pi-shield text-primary"></i> GNS Admin
-                                </span>
-                            </td>
-                            <td class="px-gutter py-4">
-                                <span class="px-2 py-1 bg-error/10 text-error text-[10px] font-bold rounded">SUPER ADMIN</span>
-                            </td>
-                            <td class="px-gutter py-4">
-                                <span class="flex items-center gap-1.5 text-green-600 font-label-md">
-                                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Actif
-                                </span>
-                            </td>
-                            <td class="px-gutter py-4 text-right">
-                                <button class="text-on-surface-variant hover:text-primary transition-colors"><i class="pi pi-ellipsis-v"></i></button>
-                            </td>
-                        </tr>
-                        
-                        <!-- Bank Manager -->
-                        <tr class="hover:bg-surface-container-low transition-colors">
-                            <td class="px-gutter py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs">JB</div>
-                                    <div>
-                                        <p class="font-body-md font-bold text-on-surface">Jean BADO</p>
-                                        <p class="text-label-sm text-on-surface-variant">j.bado&#64;utb.tg</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-gutter py-4">
-                                <span class="flex items-center gap-1.5 text-on-surface font-label-md">
-                                    <i class="pi pi-building text-blue-600"></i> Banque (UTB)
-                                </span>
-                            </td>
-                            <td class="px-gutter py-4">
-                                <span class="px-2 py-1 bg-blue-100 text-blue-700 text-[10px] font-bold rounded">MANAGER BANQUE</span>
-                            </td>
-                            <td class="px-gutter py-4">
-                                <span class="flex items-center gap-1.5 text-green-600 font-label-md">
-                                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Actif
-                                </span>
-                            </td>
-                            <td class="px-gutter py-4 text-right">
-                                <button class="text-on-surface-variant hover:text-primary transition-colors"><i class="pi pi-ellipsis-v"></i></button>
-                            </td>
-                        </tr>
-                        
-                        <!-- DBS Agent -->
-                        <tr class="hover:bg-surface-container-low transition-colors">
-                            <td class="px-gutter py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-xs">AT</div>
-                                    <div>
-                                        <p class="font-body-md font-bold text-on-surface">Aminata TRAORÉ</p>
-                                        <p class="text-label-sm text-on-surface-variant">aminata.t&#64;dbs.sn</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-gutter py-4">
-                                <span class="flex items-center gap-1.5 text-on-surface font-label-md">
-                                    <i class="pi pi-briefcase text-purple-600"></i> DBS
-                                </span>
-                            </td>
-                            <td class="px-gutter py-4">
-                                <span class="px-2 py-1 bg-purple-100 text-purple-700 text-[10px] font-bold rounded">CHEF DBS</span>
-                            </td>
-                            <td class="px-gutter py-4">
-                                <span class="flex items-center gap-1.5 text-green-600 font-label-md">
-                                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Actif
-                                </span>
-                            </td>
-                            <td class="px-gutter py-4 text-right">
-                                <button class="text-on-surface-variant hover:text-primary transition-colors"><i class="pi pi-ellipsis-v"></i></button>
-                            </td>
-                        </tr>
-                        
-                        <!-- Univ Agent -->
-                        <tr class="hover:bg-surface-container-low transition-colors">
-                            <td class="px-gutter py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs">RD</div>
-                                    <div>
-                                        <p class="font-body-md font-bold text-on-surface">Registrariat UCAD</p>
-                                        <p class="text-label-sm text-on-surface-variant">inscription&#64;ucad.sn</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-gutter py-4">
-                                <span class="flex items-center gap-1.5 text-on-surface font-label-md">
-                                    <i class="pi pi-graduation-cap text-amber-600"></i> Univ (UCAD)
-                                </span>
-                            </td>
-                            <td class="px-gutter py-4">
-                                <span class="px-2 py-1 bg-amber-100 text-amber-700 text-[10px] font-bold rounded">LECTURE SEULE</span>
-                            </td>
-                            <td class="px-gutter py-4">
-                                <span class="flex items-center gap-1.5 text-on-surface-variant opacity-60 font-label-md">
-                                    <span class="w-1.5 h-1.5 bg-on-surface-variant rounded-full"></span> Inactif
-                                </span>
-                            </td>
-                            <td class="px-gutter py-4 text-right">
-                                <button class="text-on-surface-variant hover:text-primary transition-colors"><i class="pi pi-ellipsis-v"></i></button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
         </div>
 
         <!-- Section 4: Paramètres Plateforme -->
-        <div class="p-panel-padding h-full overflow-y-auto" [class.hidden]="activeTab() !== 'plateforme'">
-            <h3 class="font-headline-sm text-headline-sm mb-stack-lg text-on-surface">Configuration de la Plateforme</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
-                <!-- Financial Rules -->
-                <div class="p-panel-padding bg-surface-container-low border border-outline-variant rounded-xl shadow-sm space-y-4">
-                    <div class="flex items-center gap-2 text-primary font-bold">
+        <div class="p-8 h-full overflow-y-auto" [class.hidden]="activeTab() !== 'plateforme'">
+            <header class="mb-10">
+                <h3 class="text-2xl font-black text-slate-800 tracking-tight">Configuration Plateforme</h3>
+                <p class="text-sm text-slate-500 font-medium">Paramètres globaux du système StudCash.</p>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-6">
+                    <div class="flex items-center gap-3 text-indigo-600">
                         <i class="pi pi-money-bill text-xl"></i>
-                        <span class="font-label-md uppercase tracking-wider">Paramètres Financiers</span>
+                        <span class="text-xs font-black uppercase tracking-widest">Finances</span>
                     </div>
-                    <div class="space-y-3">
-                        <div class="space-y-1">
-                            <label class="text-label-sm text-on-surface-variant">Montant mensuel bourse (XOF)</label>
-                            <input class="w-full border-outline-variant rounded-lg font-data-tabular" type="number" value="40000"/>
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-label-sm text-on-surface-variant">Plafond prêt étudiant (XOF)</label>
-                            <input class="w-full border-outline-variant rounded-lg font-data-tabular" type="number" value="150000"/>
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-label-sm text-on-surface-variant">Frais de service plateforme (%)</label>
-                            <input class="w-full border-outline-variant rounded-lg font-data-tabular" type="number" value="1.5"/>
-                        </div>
+                    <div class="space-y-5">
+                        @for (config of configs(); track config.trackingId) {
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ config.description }}</label>
+                                <div class="flex gap-3">
+                                    <input class="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-black text-slate-700 focus:ring-2 focus:ring-primary/20 outline-none transition-all" 
+                                           [(ngModel)]="config.valeur"/>
+                                    <button pButton icon="pi pi-check" class="p-button-rounded p-button-primary p-button-sm shadow-md" (click)="updateConfig(config.cle, config.valeur)"></button>
+                                </div>
+                            </div>
+                        } @empty {
+                            @if (isLoading()) {
+                                <p-skeleton width="100%" height="3rem"></p-skeleton>
+                                <p-skeleton width="100%" height="3rem" styleClass="mt-4"></p-skeleton>
+                            }
+                        }
                     </div>
                 </div>
                 
-                <!-- System Toggles -->
-                <div class="p-panel-padding bg-surface-container-low border border-outline-variant rounded-xl shadow-sm space-y-4">
-                    <div class="flex items-center gap-2 text-primary font-bold">
+                <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-6 opacity-50">
+                    <div class="flex items-center gap-3 text-slate-600">
                         <i class="pi pi-server text-xl"></i>
-                        <span class="font-label-md uppercase tracking-wider">État du Système</span>
+                        <span class="text-xs font-black uppercase tracking-widest">État Système</span>
                     </div>
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="font-body-md font-bold text-on-surface">Mode Maintenance</p>
-                                <p class="text-[11px] text-on-surface-variant">Désactive l'accès étudiant</p>
-                            </div>
-                            <button class="w-10 h-5 bg-outline-variant rounded-full relative p-0.5">
-                                <div class="w-4 h-4 bg-white rounded-full"></div>
-                            </button>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="font-body-md font-bold text-on-surface">Nouveaux Enrôlements</p>
-                                <p class="text-[11px] text-on-surface-variant">Permettre l'ouverture de comptes</p>
-                            </div>
-                            <button class="w-10 h-5 bg-green-500 rounded-full relative p-0.5">
-                                <div class="w-4 h-4 bg-white rounded-full translate-x-5"></div>
-                            </button>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="font-body-md font-bold text-on-surface">Paiements Automatisés</p>
-                                <p class="text-[11px] text-on-surface-variant">Validation auto des bourses</p>
-                            </div>
-                            <button class="w-10 h-5 bg-green-500 rounded-full relative p-0.5">
-                                <div class="w-4 h-4 bg-white rounded-full translate-x-5"></div>
-                            </button>
-                        </div>
-                    </div>
+                    <p class="text-xs italic text-slate-500">Options de maintenance bientôt disponibles...</p>
                 </div>
             </div>
         </div>
 
-        <!-- Section 5: Logs -->
-        <div class="flex flex-col h-full overflow-hidden" [class.hidden]="activeTab() !== 'logs'">
-            <div class="p-panel-padding flex items-center justify-between border-b border-outline-variant">
-                <h3 class="font-headline-sm text-headline-sm text-on-surface">Logs d'audit système</h3>
-                <button class="flex items-center gap-2 px-3 py-1.5 border border-outline-variant rounded-lg text-label-md text-on-surface hover:bg-surface-container-low transition-colors">
-                    <i class="pi pi-download text-[14px]"></i>
-                    Exporter .CSV
-                </button>
-            </div>
-            <div class="flex-1 overflow-y-auto">
-                <table class="w-full text-left text-body-sm font-body-sm">
-                    <thead class="bg-surface-container-low sticky top-0 border-b border-outline-variant">
-                        <tr>
-                            <th class="px-gutter py-3 font-label-md text-label-md text-on-surface-variant uppercase">Date &amp; Heure</th>
-                            <th class="px-gutter py-3 font-label-md text-label-md text-on-surface-variant uppercase">Acteur</th>
-                            <th class="px-gutter py-3 font-label-md text-label-md text-on-surface-variant uppercase">Action</th>
-                            <th class="px-gutter py-3 font-label-md text-label-md text-on-surface-variant uppercase">Impact</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-outline-variant font-data-tabular">
-                        <tr class="text-on-surface">
-                            <td class="px-gutter py-2.5 whitespace-nowrap">2023-10-24 14:32:01</td>
-                            <td class="px-gutter py-2.5">Super Admin (ST-AD-001)</td>
-                            <td class="px-gutter py-2.5">Modification Plafond Prêt</td>
-                            <td class="px-gutter py-2.5"><span class="text-primary font-bold">150K → 180K XOF</span></td>
-                        </tr>
-                        <tr class="text-on-surface">
-                            <td class="px-gutter py-2.5 whitespace-nowrap">2023-10-24 12:15:44</td>
-                            <td class="px-gutter py-2.5">Admin GNS (ST-AD-004)</td>
-                            <td class="px-gutter py-2.5">Accès Database Wallets</td>
-                            <td class="px-gutter py-2.5 text-on-surface-variant">Consultation seule</td>
-                        </tr>
-                        <tr class="text-on-surface">
-                            <td class="px-gutter py-2.5 whitespace-nowrap">2023-10-24 09:02:12</td>
-                            <td class="px-gutter py-2.5">System (Auto-Task)</td>
-                            <td class="px-gutter py-2.5">Génération Bourses Mensuelles</td>
-                            <td class="px-gutter py-2.5 text-green-600">14,204 transactions générées</td>
-                        </tr>
-                        <tr class="text-on-surface">
-                            <td class="px-gutter py-2.5 whitespace-nowrap">2023-10-23 23:55:00</td>
-                            <td class="px-gutter py-2.5">Super Admin (ST-AD-001)</td>
-                            <td class="px-gutter py-2.5">Login Session</td>
-                            <td class="px-gutter py-2.5 text-on-surface-variant">Dakar / IP: 192.168.1.45</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
-        <!-- Notifications - Placeholder as it was not detailed in HTML but exists in tabs -->
-        <div class="p-panel-padding h-full overflow-y-auto" [class.hidden]="activeTab() !== 'notifications'">
-            <h3 class="font-headline-sm text-headline-sm mb-stack-lg text-on-surface">Notifications</h3>
-            <div class="flex items-center justify-center h-48 text-on-surface-variant">
-                <p>Aucune nouvelle notification.</p>
-            </div>
-        </div>
-        
-        <!-- Aide & Support - Placeholder -->
-        <div class="p-panel-padding h-full overflow-y-auto" [class.hidden]="activeTab() !== 'aide'">
-            <h3 class="font-headline-sm text-headline-sm mb-stack-lg text-on-surface">Aide &amp; Support</h3>
-            <div class="flex items-center justify-center h-48 text-on-surface-variant">
-                <p>Centre de support en construction.</p>
+        <!-- Other sections kept as static for now as requested for finish -->
+        <div class="p-8 flex items-center justify-center h-full text-slate-300 italic" [class.hidden]="activeTab() === 'mon-profil' || activeTab() === 'plateforme'">
+            <div class="text-center">
+                <i class="pi pi-lock text-4xl mb-4"></i>
+                <p>Cette section est protégée ou en cours de développement.</p>
             </div>
         </div>
     </div>

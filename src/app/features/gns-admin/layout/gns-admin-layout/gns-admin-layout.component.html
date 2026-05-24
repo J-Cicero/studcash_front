@@ -1,97 +1,109 @@
-<div class="flex h-screen overflow-hidden text-on-surface antialiased">
+<div class="flex h-screen overflow-hidden bg-[var(--bg-main)] text-[var(--text-main)] antialiased font-sans">
     <!-- SideNavBar -->
-    <aside class="fixed left-0 top-0 h-full w-[240px] bg-primary dark:bg-inverse-surface flex flex-col py-6 px-4 z-50">
-        <div class="mb-10 px-4">
-            <div class="flex items-center gap-3">
-                <img alt="StudCash GNS Logo" class="w-8 h-8 invert" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOJTwmLxaqJgFUCnpxKqwJK10s-EiEu9kxhw2ZeoQkbj8gwlgz97ASX8gn6p3jj0gHli5qu0UfSU3vee38OMvcLGXNZ6yu6BKa5AbD0oBYy16tSsjqYWJoWEAbxorp-uOAXrKIBXaRDUD0ViDKAjamETUXqdErsIwca0IahAuW-YK78rfhXd7drngvfbazKqQULcQKDfb5SiYEQtIg-FSbEKiynsFp-j5-DtSc3iACIeAcoCxtQ7HfHWe8yu_fhxhOktLFIJR40zzt"/>
-                <div>
-                    <h1 class="font-headline-sm text-headline-sm font-bold text-on-primary dark:text-inverse-on-surface leading-none">StudCash GNS</h1>
-                    <p class="font-label-md text-label-md text-primary-fixed-dim/70 uppercase tracking-widest mt-1">Super Admin</p>
-                </div>
+    <aside class="fixed left-0 top-0 h-full w-[260px] bg-white border-r border-[var(--border-color)] flex flex-col py-6 px-5 z-50 shadow-sm transition-all duration-300">
+        <div class="mb-10 flex items-center gap-4 px-2">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary-fixed-variant text-white flex items-center justify-center font-bold text-xl shadow-md">
+                SC
+            </div>
+            <div class="flex flex-col">
+                <span class="text-on-surface font-bold tracking-wider text-sm uppercase">StudCash</span>
+                <span class="text-primary text-[10px] font-semibold uppercase tracking-widest mt-0.5">Admin GNS</span>
             </div>
         </div>
-        <nav class="flex-1 space-y-1 custom-scrollbar overflow-y-auto">
+        <nav class="flex-1 space-y-1.5 custom-scrollbar overflow-y-auto pr-2">
             <!-- Router links -->
-            <a routerLink="/admin/dashboard" routerLinkActive="bg-on-primary-fixed-variant text-on-primary scale-[0.98]" [routerLinkActiveOptions]="{exact: true}" class="flex items-center gap-3 px-4 py-3 text-secondary-fixed-dim hover:text-on-primary hover:bg-on-primary-fixed-variant/50 transition-colors rounded-xl">
-                <i class="pi pi-home text-xl"></i>
-                <span class="font-label-md text-label-md">Dashboard</span>
+            <a routerLink="/admin/dashboard" routerLinkActive="bg-primary/10 text-primary font-medium" [routerLinkActiveOptions]="{exact: true}" class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-xl group btn-interactive">
+                <i class="pi pi-home text-[20px] group-hover:scale-110 transition-transform"></i>
+                <span class="font-label-md text-[13px]">Dashboard</span>
             </a>
-            <a routerLink="/admin/mass-actions" routerLinkActive="bg-on-primary-fixed-variant text-on-primary scale-[0.98]" class="flex items-center gap-3 px-4 py-3 text-secondary-fixed-dim hover:text-on-primary hover:bg-on-primary-fixed-variant/50 transition-colors rounded-xl">
-                <i class="pi pi-bolt text-xl"></i>
-                <span class="font-label-md text-label-md">Mass Actions</span>
+            <a routerLink="/admin/mass-actions" routerLinkActive="bg-primary/10 text-primary font-medium" class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-xl group btn-interactive">
+                <i class="pi pi-bolt text-[20px] group-hover:scale-110 transition-transform"></i>
+                <span class="font-label-md text-[13px]">Mass Actions</span>
             </a>
-            <a routerLink="/admin/wallets" routerLinkActive="bg-on-primary-fixed-variant text-on-primary scale-[0.98]" class="flex items-center gap-3 px-4 py-3 text-secondary-fixed-dim hover:text-on-primary hover:bg-on-primary-fixed-variant/50 transition-colors rounded-xl">
-                <i class="pi pi-wallet text-xl"></i>
-                <span class="font-label-md text-label-md">Wallets Monitor</span>
+            <a routerLink="/admin/wallets" routerLinkActive="bg-primary/10 text-primary font-medium" class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-xl group btn-interactive">
+                <i class="pi pi-wallet text-[20px] group-hover:scale-110 transition-transform"></i>
+                <span class="font-label-md text-[13px]">Wallets Monitor</span>
             </a>
-            <a routerLink="/admin/universities" routerLinkActive="bg-on-primary-fixed-variant text-on-primary scale-[0.98]" class="flex items-center gap-3 px-4 py-3 text-secondary-fixed-dim hover:text-on-primary hover:bg-on-primary-fixed-variant/50 transition-colors rounded-xl">
-                <i class="pi pi-building text-xl"></i>
-                <span class="font-label-md text-label-md">Universities</span>
+            <a routerLink="/admin/universities" routerLinkActive="bg-primary/10 text-primary font-medium" class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-xl group btn-interactive">
+                <i class="pi pi-building text-[20px] group-hover:scale-110 transition-transform"></i>
+                <span class="font-label-md text-[13px]">Universities</span>
             </a>
-            <a routerLink="/admin/students" routerLinkActive="bg-on-primary-fixed-variant text-on-primary scale-[0.98]" class="flex items-center gap-3 px-4 py-3 text-secondary-fixed-dim hover:text-on-primary hover:bg-on-primary-fixed-variant/50 transition-colors rounded-xl">
-                <i class="pi pi-users text-xl"></i>
-                <span class="font-label-md text-label-md">Students</span>
+            <a routerLink="/admin/students" routerLinkActive="bg-primary/10 text-primary font-medium" class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-xl group btn-interactive">
+                <i class="pi pi-users text-[20px] group-hover:scale-110 transition-transform"></i>
+                <span class="font-label-md text-[13px]">Students</span>
             </a>
-            <a routerLink="/admin/transactions" routerLinkActive="bg-on-primary-fixed-variant text-on-primary scale-[0.98]" class="flex items-center gap-3 px-4 py-3 text-secondary-fixed-dim hover:text-on-primary hover:bg-on-primary-fixed-variant/50 transition-colors rounded-xl">
-                <i class="pi pi-receipt text-xl"></i>
-                <span class="font-label-md text-label-md">Transactions</span>
+            <a routerLink="/admin/transactions" routerLinkActive="bg-primary/10 text-primary font-medium" class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-xl group btn-interactive">
+                <i class="pi pi-receipt text-[20px] group-hover:scale-110 transition-transform"></i>
+                <span class="font-label-md text-[13px]">Transactions</span>
             </a>
-            <a routerLink="/admin/settings" routerLinkActive="bg-on-primary-fixed-variant text-on-primary scale-[0.98]" class="flex items-center gap-3 px-4 py-3 text-secondary-fixed-dim hover:text-on-primary hover:bg-on-primary-fixed-variant/50 transition-colors rounded-xl">
-                <i class="pi pi-cog text-xl"></i>
-                <span class="font-label-md text-label-md">Settings</span>
+            <a routerLink="/admin/users" routerLinkActive="bg-primary/10 text-primary font-medium" class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-xl group btn-interactive">
+                <i class="pi pi-users text-[20px] group-hover:scale-110 transition-transform"></i>
+                <span class="font-label-md text-[13px]">Users &amp; Roles</span>
+            </a>
+            <a routerLink="/admin/settings" routerLinkActive="bg-primary/10 text-primary font-medium" class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-xl group btn-interactive">
+                <i class="pi pi-cog text-[20px] group-hover:scale-110 transition-transform"></i>
+                <span class="font-label-md text-[13px]">Settings</span>
             </a>
         </nav>
-        <div class="mt-auto pt-6 border-t border-on-primary/10">
-            <button class="w-full flex items-center justify-center gap-2 bg-on-primary-fixed text-primary px-4 py-3 rounded-xl font-label-md text-label-md hover:bg-white transition-colors">
-                <i class="pi pi-file text-xl"></i>
-                Generate Report
+        <div class="mt-auto pt-6 border-t border-[var(--border-color)]">
+            <button class="w-full flex items-center justify-center gap-2 bg-primary/5 text-primary border border-primary/20 px-4 py-3 rounded-xl font-label-md text-sm hover:bg-primary hover:text-white transition-all btn-interactive shadow-sm">
+                <i class="pi pi-file-export text-[18px]"></i>
+                Générer Rapport
             </button>
         </div>
     </aside>
     <!-- Main Content Area -->
-    <main class="ml-[240px] flex-1 flex flex-col min-w-0 h-full overflow-y-auto bg-background relative">
-        <!-- TopNavBar -->
-        <header class="flex justify-between items-center w-full px-gutter h-16 bg-surface-container-lowest dark:bg-surface-dim border-b border-outline-variant dark:border-outline shadow-sm sticky top-0 z-40">
-            <div class="flex items-center gap-6">
-                <div class="relative">
-                    <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-outline"></i>
-                    <input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-xl text-body-md font-body-md w-80 focus:ring-2 focus:ring-primary/20" placeholder="Rechercher un étudiant, une transaction..." type="text"/>
-                </div>
-            </div>
-            <div class="flex items-center gap-6">
-                <nav class="hidden lg:flex items-center gap-6">
-                    <a routerLink="/admin/settings" class="text-on-surface-variant font-medium font-body-md hover:text-primary transition-opacity opacity-80 cursor-pointer">Settings</a>
-                    <a class="text-on-surface-variant font-medium font-body-md hover:text-primary transition-opacity opacity-80" href="#">Support</a>
-                    <a class="text-on-surface-variant font-medium font-body-md hover:text-primary transition-opacity opacity-80" href="#">Logs</a>
-                </nav>
-                <div class="h-6 w-[1px] bg-outline-variant"></div>
-                <div class="flex items-center gap-4">
-                    <button class="text-outline hover:text-primary transition-colors relative">
-                        <i class="pi pi-bell text-xl"></i>
-                        <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border-2 border-white"></span>
-                    </button>
-                    <button class="text-outline hover:text-primary transition-colors">
-                        <i class="pi pi-question-circle text-xl"></i>
-                    </button>
-                    <div class="flex items-center gap-3 pl-2 border-l border-outline-variant">
-                        <img alt="User Profile" class="w-8 h-8 rounded-full object-cover border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBOldKdZpKjB7xzbDF_t6tDKfRKujIaEOnQHpcyZ9kIkpYFzWpu24O2qilhuBaF6HnMQ3d_XkPqkqzcqsltN799bdY8aFK3nRr9ucdCtYCjOFJ2MZ3_H_pqnYxS8IfxmVTnWs11p7Pd_vajv7jr4oGOeGn0GJwiX89kgkJdi2zJkgr3W5HUA_nBVepjJIXoswNe6XlHEnt7aBhWn3MDG8zcCZck4894vcVk7t8nK-i_gxJM-yjVn4VrRT3X-9wJTEBt8HUljIOicsR"/>
-                        <div class="text-right hidden sm:block">
-                            <p class="text-body-sm font-bold text-on-surface leading-none">Jean Dupont</p>
-                            <p class="text-label-sm text-outline">Super Admin</p>
+    <main class="ml-[260px] flex-1 flex flex-col min-w-0 h-full overflow-y-auto relative bg-[var(--bg-main)]">
+        <!-- TopNavBar (Premium Floating Style) -->
+        <div class="px-8 pt-8 pb-4 sticky top-0 z-40">
+            <header class="flex justify-between items-center w-full px-8 py-4 bg-white/90 backdrop-blur-2xl border border-slate-200/60 rounded-2xl shadow-sm transition-all">
+                
+                <!-- Ergonomic Search Bar (Left aligned) -->
+                <div class="flex-1 flex justify-start max-w-xl">
+                    <div class="relative w-full group">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                            <i class="pi pi-search text-slate-400 group-focus-within:text-primary transition-colors text-lg"></i>
+                        </div>
+                        <input class="block w-full pl-12 pr-16 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 placeholder:text-slate-400 focus:bg-white focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all duration-300 outline-none" placeholder="Rechercher un étudiant, wallet, transaction..." type="text"/>
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-2">
+                            <kbd class="hidden sm:inline-flex items-center gap-1 px-2 py-1 bg-white border border-slate-200 rounded-md shadow-sm text-[10px] font-bold text-slate-400 uppercase">
+                                <i class="pi pi-apple text-[10px]"></i> K
+                            </kbd>
                         </div>
                     </div>
                 </div>
-            </div>
-        </header>
+
+                <!-- Right Actions & Profile -->
+                <div class="flex items-center justify-end gap-5 ml-auto">
+                    <button class="relative flex items-center justify-center w-10 h-10 rounded-full bg-slate-50 border border-slate-200 text-slate-500 hover:text-primary hover:bg-primary/5 hover:border-primary/20 transition-all duration-300">
+                        <i class="pi pi-bell text-lg"></i>
+                        <!-- Dot only appears when there's an actual notification (mocked as hidden here) -->
+                        <span class="hidden absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+                    </button>
+                    
+                    <div class="flex items-center gap-3 pl-5 border-l border-slate-200 cursor-pointer group">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-bold text-slate-800 leading-tight group-hover:text-primary transition-colors">Administrateur GNS</p>
+                            <p class="text-[11px] text-slate-500 font-medium">Superviseur</p>
+                        </div>
+                        <div class="relative w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-900 to-purple-800 shadow-sm group-hover:shadow-md transition-all duration-300 transform group-hover:scale-105 flex items-center justify-center border border-white">
+                            <span class="font-bold text-sm text-white">AD</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+        </div>
 
         <!-- Router Outlet -->
-        <router-outlet></router-outlet>
+        <div class="p-8">
+            <router-outlet></router-outlet>
+        </div>
         
         <!-- Floating Action Button - Contextual -->
         <div class="fixed bottom-8 right-8 z-50">
-            <button class="group flex items-center gap-3 bg-primary text-on-primary p-4 rounded-full shadow-2xl hover:bg-on-primary-fixed-variant transition-all transform hover:scale-105">
+            <button class="group flex items-center gap-3 bg-primary text-white p-4 rounded-full shadow-lg hover:shadow-xl hover:bg-primary-fixed-variant transition-all duration-300 transform hover:-translate-y-1">
                 <i class="pi pi-plus text-xl"></i>
-                <span class="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 font-label-md whitespace-nowrap">Nouveau Ticket</span>
+                <span class="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 font-semibold text-sm whitespace-nowrap">Nouveau Ticket</span>
             </button>
         </div>
     </main>
