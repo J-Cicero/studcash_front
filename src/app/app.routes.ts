@@ -26,15 +26,23 @@ export const routes: Routes = [
         loadComponent: () => import('./features/gns-admin/pages/gns-admin-wallets-monitor/gns-admin-wallets-monitor.component').then(m => m.GnsAdminWalletsMonitorComponent)
       },
       {
+        path: 'scolarite-years',
+        loadComponent: () => import('./features/gns-admin/pages/gns-admin-scolarite-years/gns-admin-scolarite-years.component').then(m => m.GnsAdminScolariteYearsComponent)
+      },
+      {
         path: 'universities',
         loadComponent: () => import('./features/gns-admin/pages/gns-admin-universities/gns-admin-universities.component').then(m => m.GnsAdminUniversitiesComponent)
+      },
+      {
+        path: 'boutiques',
+        loadComponent: () => import('./features/gns-admin/pages/gns-admin-boutiques/gns-admin-boutiques.component').then(m => m.GnsAdminBoutiquesComponent)
       },
       {
         path: 'students',
         loadComponent: () => import('./features/gns-admin/pages/gns-admin-students/gns-admin-students.component').then(m => m.GnsAdminStudentsComponent)
       },
       {
-        path: 'transactions',
+        path: 'paiements',
         loadComponent: () => import('./features/gns-admin/pages/gns-admin-transactions/gns-admin-transactions.component').then(m => m.GnsAdminTransactionsComponent)
       },
       {

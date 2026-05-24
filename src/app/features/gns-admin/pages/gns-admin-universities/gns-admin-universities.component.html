@@ -108,29 +108,29 @@
     </div>
     
     <div class="flex-1 p-8 space-y-6">
-        <form [formGroup]="universityForm" (ngSubmit)="submitForm()" class="space-y-5" id="createUnivForm">
-            <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nom officiel</label>
-                <input pInputText formControlName="nom" placeholder="Ex: Université de Lomé" class="w-full border-slate-200 rounded-xl px-4 py-2.5">
-            </div>
+        <form [formGroup]="universityForm" (ngSubmit)="submitForm()" class="space-y-6 pt-4" id="createUnivForm">
+            <p-floatLabel>
+                <input pInputText id="nom" formControlName="nom" class="w-full" />
+                <label for="nom">Nom officiel (Ex: Université de Lomé)</label>
+            </p-floatLabel>
             
-            <div class="grid grid-cols-2 gap-4">
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Sigle (Code)</label>
-                    <input pInputText formControlName="code" placeholder="Ex: UL" class="w-full border-slate-200 rounded-xl px-4 py-2.5">
-                </div>
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Ville</label>
-                    <input pInputText formControlName="ville" placeholder="Ex: Lomé" class="w-full border-slate-200 rounded-xl px-4 py-2.5">
-                </div>
+            <div class="grid grid-cols-2 gap-6">
+                <p-floatLabel>
+                    <input pInputText id="code" formControlName="code" class="w-full" />
+                    <label for="code">Sigle / Code (Ex: UL)</label>
+                </p-floatLabel>
+                <p-floatLabel>
+                    <input pInputText id="ville" formControlName="ville" class="w-full" />
+                    <label for="ville">Ville</label>
+                </p-floatLabel>
             </div>
 
-            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+            <div class="flex items-center justify-between p-5 bg-slate-50 rounded-2xl border border-slate-100 mt-2">
                 <div>
-                    <p class="text-sm font-bold text-slate-700">Établissement Actif</p>
-                    <p class="text-[10px] text-slate-400 uppercase font-black">Disponibilité immédiate</p>
+                    <p class="font-bold text-sm text-slate-800">Établissement Actif</p>
+                    <p class="text-[10px] text-slate-400 font-black uppercase mt-1">Disponibilité immédiate</p>
                 </div>
-                <input type="checkbox" formControlName="estActive" class="w-5 h-5 rounded text-indigo-600 focus:ring-indigo-500">
+                <p-inputSwitch formControlName="estActive"></p-inputSwitch>
             </div>
         </form>
     </div>

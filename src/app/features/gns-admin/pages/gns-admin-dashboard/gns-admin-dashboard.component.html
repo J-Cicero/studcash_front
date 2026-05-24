@@ -1,156 +1,219 @@
-<div class="min-h-screen bg-[#F8FAFC] font-['Inter',sans-serif] p-6 space-y-8">
+<div class="min-h-screen bg-[#F8FAFC] font-['Inter',sans-serif] p-6 lg:p-10 space-y-8">
     
-    <!-- Header Section -->
-    <header class="flex justify-between items-center mb-8">
+    <!-- Command Center Header -->
+    <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
         <div>
-            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Tableau de bord</h1>
-            <p class="text-slate-500 font-medium mt-1">Supervision globale des flux StudCash.</p>
+            <h1 class="text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tighter">Command Center</h1>
+            <p class="text-slate-500 font-medium mt-1">Supervision globale et télémétrie des flux financiers StudCash.</p>
         </div>
-        <div class="flex gap-3">
-            <button pButton icon="pi pi-refresh" (click)="loadAllData()" class="p-button-outlined p-button-rounded border-slate-200 text-slate-600 hover:bg-slate-100"></button>
+        <div class="flex items-center gap-4">
+            <div class="bg-white border border-slate-200 px-4 py-2 rounded-xl flex items-center gap-3 shadow-sm">
+                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                <span class="text-xs font-bold text-slate-600 uppercase tracking-widest">Système Opérationnel</span>
+            </div>
+            <button pButton icon="pi pi-refresh" (click)="loadAllData()" class="p-button-outlined p-button-secondary bg-white shadow-sm rounded-xl"></button>
         </div>
     </header>
 
-    <!-- KPI Cards Row -->
-    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        @for (kpi of [
-            { label: 'Total Bourses', key: 'totalBourses', icon: 'pi-building', color: '#4F46E5', suffix: ' F' },
-            { label: 'Étudiants Actifs', key: 'totalStudents', icon: 'pi-users', color: '#10B981' },
-            { label: 'Wallets Boutiques', key: 'totalBoutiques', icon: 'pi-shop', color: '#F59E0B' },
-            { label: 'Transactions Globale', key: 'totalTransactions', icon: 'pi-arrow-right-arrow-left', color: '#6366F1' }
-        ]; track kpi.key) {
-            <div class="bg-white p-6 rounded-[16px] border border-slate-100 shadow-sm flex items-center gap-5 group hover:shadow-md transition-shadow">
-                <div class="w-[40px] h-[40px] rounded-full flex items-center justify-center text-lg transition-transform group-hover:scale-110" 
-                     [style.color]="kpi.color" [style.backgroundColor]="kpi.color + '15'">
-                    <i class="pi" [ngClass]="kpi.icon"></i>
-                </div>
-                <div class="flex flex-col">
-                    <p class="text-[0.7rem] font-bold text-slate-400 uppercase tracking-[0.1em]">{{ kpi.label }}</p>
-                    @if (isLoading()) {
-                        <p-skeleton width="100px" height="1.5rem" styleClass="mt-1"></p-skeleton>
-                    } @else {
-                        <h3 class="text-[2rem] font-black text-slate-900 leading-none mt-1">
-                            {{ (stats()?.[kpi.key] ?? 0) | number }}{{ kpi.suffix || '' }}
-                        </h3>
-                    }
+    <!-- Bento Grid Canvas -->
+    <div class="grid grid-cols-12 gap-6">
+
+        <!-- KPI 1 -->
+        <div class="col-span-12 md:col-span-6 lg:col-span-3 bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col justify-between group hover:border-indigo-200 transition-colors">
+            <div class="flex justify-between items-start mb-4">
+                <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Volume Bourses</p>
+                <div class="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <i class="pi pi-building text-sm"></i>
                 </div>
             </div>
-        }
-    </section>
+            @if (isLoading()) {
+                <p-skeleton width="120px" height="2rem"></p-skeleton>
+            } @else {
+                <div>
+                    <h3 class="text-3xl font-black text-slate-800 tracking-tighter">{{ (stats()?.[ 'totalBourses' ] ?? 0) | number }} <span class="text-lg text-slate-400">F</span></h3>
+                    <p class="text-[10px] font-bold text-emerald-500 mt-2 flex items-center gap-1"><i class="pi pi-arrow-up text-[8px]"></i> +12% ce mois</p>
+                </div>
+            }
+        </div>
 
-    <!-- Charts Row -->
-    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Main Line Chart -->
-        <div class="lg:col-span-2 bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+        <!-- KPI 2 -->
+        <div class="col-span-12 md:col-span-6 lg:col-span-3 bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col justify-between group hover:border-emerald-200 transition-colors">
+            <div class="flex justify-between items-start mb-4">
+                <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Étudiants Actifs</p>
+                <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <i class="pi pi-users text-sm"></i>
+                </div>
+            </div>
+            @if (isLoading()) {
+                <p-skeleton width="80px" height="2rem"></p-skeleton>
+            } @else {
+                <div>
+                    <h3 class="text-3xl font-black text-slate-800 tracking-tighter">{{ (stats()?.[ 'totalStudents' ] ?? 0) | number }}</h3>
+                    <p class="text-[10px] font-bold text-emerald-500 mt-2 flex items-center gap-1"><i class="pi pi-arrow-up text-[8px]"></i> +5% cette semaine</p>
+                </div>
+            }
+        </div>
+
+        <!-- KPI 3 -->
+        <div class="col-span-12 md:col-span-6 lg:col-span-3 bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col justify-between group hover:border-amber-200 transition-colors">
+            <div class="flex justify-between items-start mb-4">
+                <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Wallets Boutiques</p>
+                <div class="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <i class="pi pi-shop text-sm"></i>
+                </div>
+            </div>
+            @if (isLoading()) {
+                <p-skeleton width="80px" height="2rem"></p-skeleton>
+            } @else {
+                <div>
+                    <h3 class="text-3xl font-black text-slate-800 tracking-tighter">{{ (stats()?.[ 'totalBoutiques' ] ?? 0) | number }}</h3>
+                    <p class="text-[10px] font-bold text-slate-400 mt-2 flex items-center gap-1">Stable</p>
+                </div>
+            }
+        </div>
+
+        <!-- KPI 4 -->
+        <div class="col-span-12 md:col-span-6 lg:col-span-3 bg-indigo-600 p-6 rounded-[2rem] shadow-lg shadow-indigo-200 flex flex-col justify-between relative overflow-hidden group">
+            <div class="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+            <div class="flex justify-between items-start mb-4 relative z-10">
+                <p class="text-[11px] font-black text-indigo-200 uppercase tracking-widest">Transactions (24H)</p>
+                <div class="w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center">
+                    <i class="pi pi-bolt text-sm"></i>
+                </div>
+            </div>
+            @if (isLoading()) {
+                <p-skeleton width="100px" height="2rem" styleClass="bg-white/20"></p-skeleton>
+            } @else {
+                <div class="relative z-10">
+                    <h3 class="text-3xl font-black text-white tracking-tighter">{{ (stats()?.[ 'totalTransactions' ] ?? 0) | number }}</h3>
+                    <p class="text-[10px] font-bold text-indigo-200 mt-2 flex items-center gap-1">Flux en temps réel</p>
+                </div>
+            }
+        </div>
+
+        <!-- Main Analytics Chart -->
+        <div class="col-span-12 lg:col-span-8 bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col min-h-[400px]">
             <div class="flex justify-between items-center mb-8">
                 <div>
-                    <h4 class="text-xl font-bold text-slate-800">Flux Financiers Mensuels</h4>
-                    <p class="text-sm text-slate-500">Bourses émises vs Remboursements</p>
+                    <h3 class="text-xl font-black text-slate-800 tracking-tight">Dynamique Financière</h3>
+                    <p class="text-xs text-slate-500 font-medium mt-1">Comparaison des bourses émises et remboursements.</p>
                 </div>
+                <button class="text-slate-400 hover:text-slate-600 transition-colors"><i class="pi pi-ellipsis-h text-xl"></i></button>
             </div>
-            <div class="h-[320px]">
+            <div class="flex-1 w-full h-full relative">
                 @if (isLoading()) {
-                    <p-skeleton width="100%" height="100%"></p-skeleton>
+                    <p-skeleton width="100%" height="300px"></p-skeleton>
                 } @else {
-                    <p-chart type="line" [data]="lineData" [options]="lineOptions" height="320px"></p-chart>
+                    <p-chart type="line" [data]="lineData" [options]="lineOptions" height="300px"></p-chart>
                 }
             </div>
         </div>
 
-        <!-- Donut Chart -->
-        <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col">
-            <h4 class="text-xl font-bold text-slate-800 mb-6">Répartition Étudiants</h4>
-            <div class="flex-1 flex flex-col items-center justify-center">
-                <div class="relative w-full aspect-square max-w-[240px]">
+        <!-- Asset Allocation (Donut) -->
+        <div class="col-span-12 lg:col-span-4 bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-black text-slate-800 tracking-tight">Répartition</h3>
+                <button class="text-slate-400 hover:text-slate-600 transition-colors"><i class="pi pi-ellipsis-h text-xl"></i></button>
+            </div>
+            <div class="flex-1 flex flex-col items-center justify-center relative">
+                <div class="w-full max-w-[220px] aspect-square relative">
                     @if (isLoading()) {
                         <p-skeleton shape="circle" width="100%" height="100%"></p-skeleton>
                     } @else {
                         <p-chart type="doughnut" [data]="donutData" [options]="donutOptions"></p-chart>
                         <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                            <span class="text-3xl font-black text-slate-800">{{ stats()?.totalStudents | number }}</span>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total</span>
+                            <span class="text-3xl font-black text-slate-800 tracking-tighter">{{ stats()?.totalStudents | number }}</span>
+                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Total</span>
                         </div>
                     }
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- Tables & Alerts Row -->
-    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Recent Transactions -->
-        <div class="lg:col-span-2 bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden flex flex-col">
-            <div class="p-6 border-b border-slate-50 flex justify-between items-center">
-                <h4 class="text-xl font-bold text-slate-800">Transactions Récentes</h4>
-                <button pButton label="Voir tout" routerLink="/admin/transactions" class="p-button-text p-button-sm font-bold text-[#4F46E5]"></button>
+        <!-- Transactions Table -->
+        <div class="col-span-12 lg:col-span-8 bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+            <div class="p-8 border-b border-slate-50 flex justify-between items-center">
+                <div>
+                    <h3 class="text-xl font-black text-slate-800 tracking-tight">Dernières Opérations</h3>
+                    <p class="text-xs text-slate-500 font-medium mt-1">Les 5 dernières transactions du réseau.</p>
+                </div>
+                <button pButton label="Voir le registre" routerLink="/admin/transactions" class="p-button-text p-button-sm font-black text-indigo-600 uppercase tracking-widest text-[10px]"></button>
             </div>
-            <p-table [value]="recentTransactions()" [rows]="5" styleClass="p-datatable-sm" [loading]="isLoading()">
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
-                        <th pSortableColumn="studentName">Étudiant <p-sortIcon field="studentName"></p-sortIcon></th>
-                        <th pSortableColumn="typePaiement">Type <p-sortIcon field="typePaiement"></p-sortIcon></th>
-                        <th pSortableColumn="montantTotal">Montant <p-sortIcon field="montantTotal"></p-sortIcon></th>
-                        <th pSortableColumn="statutPaiement">Statut <p-sortIcon field="statutPaiement"></p-sortIcon></th>
-                        <th pSortableColumn="datePaiement" class="text-right">Date <p-sortIcon field="datePaiement"></p-sortIcon></th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-txn>
-                    <tr>
-                        <td class="text-xs font-mono text-slate-400">#{{ txn.trackingId.substring(0,8) }}</td>
-                        <td class="font-bold text-sm text-slate-700">{{ txn.studentName || '---' }}</td>
-                        <td>
-                            <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-tighter bg-slate-100 text-slate-500">
-                                {{ txn.typePaiement }}
-                            </span>
-                        </td>
-                        <td class="font-black text-sm text-slate-800">{{ txn.montantTotal | number }} F</td>
-                        <td>
-                            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold"
-                                  [ngClass]="txn.statutPaiement === 'SUCCESS' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'">
-                                {{ txn.statutPaiement }}
-                            </span>
-                        </td>
-                        <td class="text-xs text-slate-400 text-right font-medium">{{ txn.datePaiement | date:'dd MMM, HH:mm' }}</td>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="emptymessage">
-                    <tr>
-                        <td colspan="6" class="p-12 text-center">
-                            <div class="flex flex-col items-center justify-center opacity-30 grayscale">
-                                <i class="pi pi-inbox text-5xl mb-4"></i>
-                                <p class="text-sm font-black uppercase tracking-widest">Aucune transaction récente</p>
-                            </div>
-                        </td>
-                    </tr>
-                </ng-template>
-            </p-table>
+            <div class="p-0">
+                <p-table [value]="recentTransactions()" [rows]="5" styleClass="p-datatable-sm" [loading]="isLoading()">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th pSortableColumn="id" class="pl-8">Référence <p-sortIcon field="id"></p-sortIcon></th>
+                            <th pSortableColumn="studentName">Bénéficiaire <p-sortIcon field="studentName"></p-sortIcon></th>
+                            <th pSortableColumn="montantTotal" class="text-right">Montant <p-sortIcon field="montantTotal"></p-sortIcon></th>
+                            <th pSortableColumn="statutPaiement">Statut <p-sortIcon field="statutPaiement"></p-sortIcon></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-txn>
+                        <tr>
+                            <td class="pl-8 py-5 text-xs font-mono font-bold text-slate-400">#{{ txn.trackingId.substring(0,8) }}</td>
+                            <td class="py-5">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 text-[10px] font-black shadow-sm">
+                                        {{ txn.studentName?.charAt(0) || 'S' }}
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="font-bold text-sm text-slate-700">{{ txn.studentName || 'Système Global' }}</span>
+                                        <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest">{{ txn.typePaiement }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-5 text-right font-black text-slate-800">{{ txn.montantTotal | number }} F</td>
+                            <td class="py-5 pr-8">
+                                @if (txn.statutPaiement === 'SUCCESS') {
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[9px] font-black uppercase tracking-widest border border-emerald-100">
+                                        Complété
+                                    </span>
+                                } @else {
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-700 rounded-lg text-[9px] font-black uppercase tracking-widest border border-amber-100">
+                                        En attente
+                                    </span>
+                                }
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr><td colspan="4" class="p-16 text-center text-slate-400 font-medium italic">Aucune transaction enregistrée</td></tr>
+                    </ng-template>
+                </p-table>
+            </div>
         </div>
 
-        <!-- System Alerts (Quotas) -->
-        <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col">
-            <div class="flex items-center justify-between mb-8">
-                <h4 class="text-xl font-bold text-slate-800">Alertes Quota</h4>
-                <span class="bg-[#DC2626] text-white text-[10px] font-black px-2.5 py-1 rounded-full">{{ quotaAlerts().length }}</span>
+        <!-- Security / System Alerts -->
+        <div class="col-span-12 lg:col-span-4 bg-white rounded-[2rem] border border-slate-100 shadow-sm flex flex-col overflow-hidden">
+            <div class="p-8 border-b border-slate-50 flex items-center justify-between">
+                <h3 class="text-xl font-black text-slate-800 tracking-tight">Alertes Sécurité</h3>
+                @if (quotaAlerts().length > 0) {
+                    <span class="w-6 h-6 rounded-full bg-rose-500 text-white flex items-center justify-center text-xs font-black shadow-sm shadow-rose-200 animate-bounce">{{ quotaAlerts().length }}</span>
+                }
             </div>
             
-            <div class="space-y-4 flex-1 overflow-y-auto custom-scrollbar pr-2">
+            <div class="p-6 space-y-4 flex-1 overflow-y-auto custom-scrollbar">
                 @for (alert of quotaAlerts(); track alert.trackingId) {
-                    <div class="p-4 bg-red-50 border-l-4 border-[#DC2626] rounded-r-2xl">
+                    <div class="p-5 bg-white border border-rose-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-rose-500"></div>
                         <div class="flex justify-between items-start mb-2">
-                            <h5 class="text-sm font-black text-red-900">{{ alert.nomBoutique }}</h5>
-                            <span class="text-[10px] font-bold text-red-600 bg-red-100 px-2 py-0.5 rounded">Critique</span>
+                            <h5 class="text-sm font-black text-slate-800">{{ alert.nomBoutique }}</h5>
+                            <i class="pi pi-exclamation-triangle text-rose-500"></i>
                         </div>
-                        <p class="text-xs text-red-700 font-medium mb-4">Quota épuisé à plus de 90%. Action requise pour maintenir le service.</p>
-                        <button pButton label="Recharger Quota" class="p-button-sm p-button-danger w-full rounded-xl font-bold shadow-sm"></button>
+                        <p class="text-xs text-slate-500 font-medium mb-4 leading-relaxed">Le quota de ce wallet est épuisé à plus de 90%. Risque de blocage imminent.</p>
+                        <button pButton label="Agir maintenant" class="p-button-outlined p-button-danger p-button-sm w-full rounded-xl font-bold text-[10px] uppercase tracking-widest py-2"></button>
                     </div>
                 } @empty {
-                    <div class="flex-1 flex flex-col items-center justify-center opacity-40 grayscale">
-                        <i class="pi pi-check-circle text-4xl mb-4 text-green-600"></i>
-                        <p class="text-sm font-bold text-slate-500 uppercase tracking-widest">Tout est en ordre</p>
+                    <div class="h-full flex flex-col items-center justify-center opacity-40 grayscale py-10">
+                        <div class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4">
+                            <i class="pi pi-shield text-2xl text-slate-400"></i>
+                        </div>
+                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Système sécurisé</p>
                     </div>
                 }
             </div>
         </div>
-    </section>
+
+    </div>
 </div>

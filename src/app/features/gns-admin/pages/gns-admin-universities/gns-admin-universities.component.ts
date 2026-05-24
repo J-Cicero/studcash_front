@@ -8,11 +8,13 @@ import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { DialogModule } from 'primeng/dialog';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { InputSwitchModule } from 'primeng/inputswitch';
 
 @Component({
   selector: 'app-gns-admin-universities',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TagModule, ButtonModule, InputTextModule, DialogModule],
+  imports: [CommonModule, ReactiveFormsModule, TagModule, ButtonModule, InputTextModule, DialogModule, FloatLabelModule, InputSwitchModule],
   templateUrl: './gns-admin-universities.component.html',
   styleUrls: ['./gns-admin-universities.component.scss']
 })

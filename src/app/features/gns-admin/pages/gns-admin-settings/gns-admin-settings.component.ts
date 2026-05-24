@@ -4,11 +4,15 @@ import { UserService } from '../../../../core/services/user.service';
 import { ConfigurationService, ConfigurationGns } from '../../../../core/services/configuration.service';
 import { SkeletonModule } from 'primeng/skeleton';
 import { FormsModule } from '@angular/forms';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-gns-admin-settings',
   standalone: true,
-  imports: [CommonModule, SkeletonModule, FormsModule],
+  imports: [CommonModule, SkeletonModule, FormsModule, FloatLabelModule, InputSwitchModule, InputTextModule, ButtonModule],
   templateUrl: './gns-admin-settings.component.html',
   styleUrls: ['./gns-admin-settings.component.scss']
 })

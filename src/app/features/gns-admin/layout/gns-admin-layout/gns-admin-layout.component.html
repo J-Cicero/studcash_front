@@ -14,35 +14,43 @@
             <!-- Router links -->
             <a routerLink="/admin/dashboard" routerLinkActive="bg-primary/10 text-primary font-medium" [routerLinkActiveOptions]="{exact: true}" class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-xl group btn-interactive">
                 <i class="pi pi-home text-[20px] group-hover:scale-110 transition-transform"></i>
-                <span class="font-label-md text-[13px]">Dashboard</span>
+                <span class="font-label-md text-[13px]">Pilotage</span>
             </a>
-            <a routerLink="/admin/mass-actions" routerLinkActive="bg-primary/10 text-primary font-medium" class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-xl group btn-interactive">
-                <i class="pi pi-bolt text-[20px] group-hover:scale-110 transition-transform"></i>
-                <span class="font-label-md text-[13px]">Mass Actions</span>
-            </a>
-            <a routerLink="/admin/wallets" routerLinkActive="bg-primary/10 text-primary font-medium" class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-xl group btn-interactive">
-                <i class="pi pi-wallet text-[20px] group-hover:scale-110 transition-transform"></i>
-                <span class="font-label-md text-[13px]">Wallets Monitor</span>
+            <a routerLink="/admin/scolarite-years" routerLinkActive="bg-primary/10 text-primary font-medium" class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-xl group btn-interactive">
+                <i class="pi pi-calendar text-[20px] group-hover:scale-110 transition-transform"></i>
+                <span class="font-label-md text-[13px]">Cycles Académiques</span>
             </a>
             <a routerLink="/admin/universities" routerLinkActive="bg-primary/10 text-primary font-medium" class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-xl group btn-interactive">
                 <i class="pi pi-building text-[20px] group-hover:scale-110 transition-transform"></i>
-                <span class="font-label-md text-[13px]">Universities</span>
+                <span class="font-label-md text-[13px]">Réseau Universitaire</span>
+            </a>
+            <a routerLink="/admin/mass-actions" routerLinkActive="bg-primary/10 text-primary font-medium" class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-xl group btn-interactive">
+                <i class="pi pi-send text-[20px] group-hover:scale-110 transition-transform"></i>
+                <span class="font-label-md text-[13px]">Paiements de Masse</span>
+            </a>
+            <a routerLink="/admin/boutiques" routerLinkActive="bg-primary/10 text-primary font-medium" class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-xl group btn-interactive">
+                <i class="pi pi-shop text-[20px] group-hover:scale-110 transition-transform"></i>
+                <span class="font-label-md text-[13px]">Réseau Commerçant</span>
             </a>
             <a routerLink="/admin/students" routerLinkActive="bg-primary/10 text-primary font-medium" class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-xl group btn-interactive">
                 <i class="pi pi-users text-[20px] group-hover:scale-110 transition-transform"></i>
-                <span class="font-label-md text-[13px]">Students</span>
+                <span class="font-label-md text-[13px]">Annuaire Étudiants</span>
             </a>
-            <a routerLink="/admin/transactions" routerLinkActive="bg-primary/10 text-primary font-medium" class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-xl group btn-interactive">
-                <i class="pi pi-receipt text-[20px] group-hover:scale-110 transition-transform"></i>
-                <span class="font-label-md text-[13px]">Transactions</span>
+            <a routerLink="/admin/wallets" routerLinkActive="bg-primary/10 text-primary font-medium" class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-xl group btn-interactive">
+                <i class="pi pi-wallet text-[20px] group-hover:scale-110 transition-transform"></i>
+                <span class="font-label-md text-[13px]">Fonds & Quotas</span>
+            </a>
+            <a routerLink="/admin/paiements" routerLinkActive="bg-primary/10 text-primary font-medium" class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-xl group btn-interactive">
+                <i class="pi pi-chart-line text-[20px] group-hover:scale-110 transition-transform"></i>
+                <span class="font-label-md text-[13px]">Monitoring Flux</span>
             </a>
             <a routerLink="/admin/users" routerLinkActive="bg-primary/10 text-primary font-medium" class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-xl group btn-interactive">
-                <i class="pi pi-users text-[20px] group-hover:scale-110 transition-transform"></i>
-                <span class="font-label-md text-[13px]">Users &amp; Roles</span>
+                <i class="pi pi-shield text-[20px] group-hover:scale-110 transition-transform"></i>
+                <span class="font-label-md text-[13px]">Accès & Rôles</span>
             </a>
             <a routerLink="/admin/settings" routerLinkActive="bg-primary/10 text-primary font-medium" class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-xl group btn-interactive">
                 <i class="pi pi-cog text-[20px] group-hover:scale-110 transition-transform"></i>
-                <span class="font-label-md text-[13px]">Settings</span>
+                <span class="font-label-md text-[13px]">Paramètres</span>
             </a>
         </nav>
         <div class="mt-auto pt-6 border-t border-[var(--border-color)]">
@@ -99,12 +107,5 @@
             <router-outlet></router-outlet>
         </div>
         
-        <!-- Floating Action Button - Contextual -->
-        <div class="fixed bottom-8 right-8 z-50">
-            <button class="group flex items-center gap-3 bg-primary text-white p-4 rounded-full shadow-lg hover:shadow-xl hover:bg-primary-fixed-variant transition-all duration-300 transform hover:-translate-y-1">
-                <i class="pi pi-plus text-xl"></i>
-                <span class="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 font-semibold text-sm whitespace-nowrap">Nouveau Ticket</span>
-            </button>
-        </div>
     </main>
 </div>

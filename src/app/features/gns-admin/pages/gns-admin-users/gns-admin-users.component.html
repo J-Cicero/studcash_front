@@ -85,41 +85,45 @@
         </header>
 
         <div class="p-6 space-y-6">
-            <form [formGroup]="userForm" class="space-y-4" id="userForm">
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Prénom</label>
-                        <input pInputText formControlName="prenom" placeholder="Ex: Jean" class="w-full border-slate-200 rounded-xl px-4 py-2.5">
-                    </div>
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nom</label>
-                        <input pInputText formControlName="nom" placeholder="Ex: Dupont" class="w-full border-slate-200 rounded-xl px-4 py-2.5">
-                    </div>
+            <form [formGroup]="userForm" class="space-y-6 pt-4" id="userForm">
+                <div class="grid grid-cols-2 gap-6">
+                    <p-floatLabel>
+                        <input pInputText id="prenom" formControlName="prenom" class="w-full" />
+                        <label for="prenom">Prénom (Ex: Jean)</label>
+                    </p-floatLabel>
+                    <p-floatLabel>
+                        <input pInputText id="nom" formControlName="nom" class="w-full" />
+                        <label for="nom">Nom (Ex: Dupont)</label>
+                    </p-floatLabel>
                 </div>
 
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email professionnel</label>
-                    <input pInputText formControlName="email" placeholder="jean.dupont@institution.com" class="w-full border-slate-200 rounded-xl px-4 py-2.5">
+                <p-floatLabel>
+                    <input pInputText type="email" id="email" formControlName="email" class="w-full" />
+                    <label for="email">Email professionnel</label>
+                </p-floatLabel>
+
+                <div class="grid grid-cols-2 gap-6">
+                    <p-floatLabel>
+                        <input pInputText type="tel" id="telephone" formControlName="telephone" class="w-full" />
+                        <label for="telephone">Téléphone</label>
+                    </p-floatLabel>
+
+                    <p-floatLabel>
+                        <p-password id="motDePasse" formControlName="motDePasse" [feedback]="false" styleClass="w-full" inputStyleClass="w-full"></p-password>
+                        <label for="motDePasse">Mot de passe temporaire</label>
+                    </p-floatLabel>
                 </div>
 
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Téléphone</label>
-                    <input pInputText formControlName="telephone" placeholder="+228 90 00 00 00" class="w-full border-slate-200 rounded-xl px-4 py-2.5">
-                </div>
+                <p-floatLabel>
+                    <p-dropdown inputId="role" [options]="roles" formControlName="role" styleClass="w-full"></p-dropdown>
+                    <label for="role">Rôle Système</label>
+                </p-floatLabel>
 
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Mot de passe temporaire</label>
-                    <p-password formControlName="motDePasse" [feedback]="false" placeholder="••••••••" styleClass="w-full" inputStyleClass="w-full border-slate-200 rounded-xl px-4 py-2.5"></p-password>
-                </div>
-
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Rôle Système</label>
-                    <p-dropdown [options]="roles" formControlName="role" styleClass="w-full border-slate-200 rounded-xl"></p-dropdown>
-                </div>
-
-                <div class="flex flex-col gap-1.5" *ngIf="userForm.get('role')?.value === 'UNIVERSITY_ADMIN'">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Université rattachée</label>
-                    <p-dropdown [options]="universities()" formControlName="universiteTrackingId" placeholder="Sélectionner une université" styleClass="w-full border-slate-200 rounded-xl"></p-dropdown>
+                <div *ngIf="userForm.get('role')?.value === 'UNIVERSITY_ADMIN'">
+                    <p-floatLabel>
+                        <p-dropdown inputId="univId" [options]="universities()" formControlName="universiteTrackingId" styleClass="w-full"></p-dropdown>
+                        <label for="univId">Université rattachée</label>
+                    </p-floatLabel>
                 </div>
             </form>
         </div>

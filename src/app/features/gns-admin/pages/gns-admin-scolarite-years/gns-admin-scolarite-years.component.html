@@ -1,0 +1,87 @@
+<div class="min-h-screen bg-[#F8FAFC] font-['Inter',sans-serif] p-6 space-y-8">
+    <!-- Header Section -->
+    <header class="flex justify-between items-end mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Cycles Académiques</h1>
+            <p class="text-slate-500 font-medium mt-1">Gouvernance temporelle du système de bourses.</p>
+        </div>
+        <button pButton icon="pi pi-plus" label="Nouvelle Année" 
+                class="p-button-primary rounded-xl shadow-lg shadow-indigo-100" 
+                (click)="openCreationPanel()"></button>
+    </header>
+
+    <!-- Cycle Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Active Year Card (Bento style) -->
+        <div class="bg-indigo-600 text-white p-8 rounded-3xl border border-indigo-500 shadow-xl shadow-indigo-200 flex flex-col relative overflow-hidden group">
+            <div class="absolute top-0 right-0 p-8 opacity-20 transform group-hover:scale-110 transition-transform duration-500">
+                <i class="pi pi-calendar text-8xl"></i>
+            </div>
+            <div class="relative z-10 flex-1">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(74,222,128,0.8)]"></span>
+                    <span class="text-xs font-black uppercase tracking-widest text-indigo-200">Cycle Actif</span>
+                </div>
+                <h2 class="text-4xl font-black mb-2">2024-2025</h2>
+                <p class="text-indigo-200 font-medium text-sm">Du 01 Sept 2024 au 31 Août 2025</p>
+            </div>
+            <div class="relative z-10 mt-8 flex gap-3">
+                <button pButton label="Clôturer l'année" class="p-button-danger p-button-outlined bg-white/10 border-white/20 text-white rounded-xl font-bold flex-1"></button>
+            </div>
+        </div>
+
+        <!-- Past Year Card -->
+        <div class="bg-white text-slate-800 p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="w-3 h-3 bg-slate-300 rounded-full"></span>
+                <span class="text-xs font-black uppercase tracking-widest text-slate-400">Clôturé</span>
+            </div>
+            <h2 class="text-3xl font-black text-slate-400 mb-2">2023-2024</h2>
+            <p class="text-slate-400 font-medium text-sm">Du 01 Sept 2023 au 31 Août 2024</p>
+        </div>
+    </div>
+</div>
+
+<!-- Dialog: Create ScolariteYear -->
+<p-dialog [visible]="isCreationPanelOpen()" (visibleChange)="isCreationPanelOpen.set($event)" [modal]="true" [style]="{ width: '450px' }" [draggable]="false" [resizable]="false" [showHeader]="false">
+    <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div>
+            <h2 class="text-xl font-black text-slate-800 uppercase tracking-tight">Ouvrir un Cycle</h2>
+            <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Initialisation Année Scolaire</p>
+        </div>
+        <button pButton icon="pi pi-times" class="p-button-text p-button-rounded text-slate-400" (click)="closeCreationPanel()"></button>
+    </div>
+    
+    <div class="p-8 space-y-6">
+        <form [formGroup]="scolariteForm" class="space-y-6 pt-4" id="scolariteForm" (ngSubmit)="submitForm()">
+            <p-floatLabel>
+                <input pInputText id="libelle" formControlName="libelle" class="w-full" />
+                <label for="libelle">Libellé (Ex: 2024-2025)</label>
+            </p-floatLabel>
+
+            <div class="grid grid-cols-2 gap-6">
+                <p-floatLabel>
+                    <input pInputText type="date" id="dateDebut" formControlName="dateDebut" class="w-full" />
+                    <label for="dateDebut">Date de début</label>
+                </p-floatLabel>
+                <p-floatLabel>
+                    <input pInputText type="date" id="dateFin" formControlName="dateFin" class="w-full" />
+                    <label for="dateFin">Date de fin</label>
+                </p-floatLabel>
+            </div>
+
+            <div class="flex items-center justify-between p-5 bg-slate-50 rounded-2xl border border-slate-100 mt-2">
+                <div>
+                    <p class="font-bold text-sm text-slate-800">Activer immédiatement</p>
+                    <p class="text-[10px] text-slate-400 font-black uppercase mt-1">Rend ce cycle opérationnel</p>
+                </div>
+                <p-inputSwitch formControlName="estOuverte"></p-inputSwitch>
+            </div>
+        </form>
+    </div>
+
+    <div class="p-6 border-t border-slate-100 bg-slate-50 flex justify-center gap-4">
+        <button pButton label="Annuler" class="p-button-text p-button-secondary rounded-xl font-bold px-6" (click)="closeCreationPanel()"></button>
+        <button pButton label="Enregistrer" type="submit" form="scolariteForm" class="p-button-primary rounded-xl font-bold shadow-lg shadow-indigo-200 px-8" [disabled]="scolariteForm.invalid"></button>
+    </div>
+</p-dialog>

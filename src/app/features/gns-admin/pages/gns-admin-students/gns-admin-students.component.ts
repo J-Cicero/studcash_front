@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StudentService, StudentResponse } from '../../../../shared/services/student.service';
+import { UniversiteService } from '../../../../core/services/universite.service';
 
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -8,12 +9,14 @@ import { TagModule } from 'primeng/tag';
 import { SkeletonModule } from 'primeng/skeleton';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-gns-admin-students',
   standalone: true,
-  imports: [CommonModule, TableModule, ButtonModule, TagModule, SkeletonModule, DialogModule, InputTextModule, FormsModule],
+  imports: [CommonModule, TableModule, ButtonModule, TagModule, SkeletonModule, DialogModule, InputTextModule, FormsModule, ReactiveFormsModule, FloatLabelModule, DropdownModule],
   templateUrl: './gns-admin-students.component.html',
   styleUrls: ['./gns-admin-students.component.scss']
 })
@@ -34,11 +37,27 @@ export class GnsAdminStudentsComponent implements OnInit {
     blockedStudents: 0
   });
 
-  constructor(private studentService: StudentService) {}
+  studentForm: FormGroup;
+  universities = signal<any[]>([]);
+
+  constructor(private studentService: StudentService, private fb: FormBuilder, private univService: UniversiteService) {
+    this.studentForm = this.fb.group({
+      prenom: ['', Validators.required],
+      nom: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      telephone: ['', Validators.required],
+      dateNaissance: ['', Validators.required],
+      numEtudiantUniv: ['', Validators.required],
+      universiteTrackingId: ['', Validators.required]
+    });
+  }
 
   ngOnInit(): void {
     this.loadStudents();
     this.loadStats();
+    this.univService.getAll(0, 100).subscribe(data => {
+      this.universities.set(data.content.map(u => ({ label: u.nom, value: u.trackingId })));
+    });
   }
 
   loadStats() {
@@ -86,5 +105,13 @@ export class GnsAdminStudentsComponent implements OnInit {
 
   closeCreateStudentPanel() {
     this.isCreateStudentPanelOpen.set(false);
+  }
+
+  submitForm() {
+    if (this.studentForm.valid) {
+      // In a real app, we would call studentService.create(this.studentForm.value)
+      console.log('Student Data:', this.studentForm.value);
+      this.closeCreateStudentPanel();
+    }
   }
 }

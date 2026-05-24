@@ -1,0 +1,65 @@
+<div class="min-h-screen bg-[#F8FAFC] font-['Inter',sans-serif] p-6 space-y-8">
+    <!-- Header Section -->
+    <header class="flex justify-between items-end mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Réseau Commerçant</h1>
+            <p class="text-slate-500 font-medium mt-1">Gouvernance des boutiques partenaires et gestion des quotas.</p>
+        </div>
+        <button pButton icon="pi pi-plus" label="Nouvelle Boutique" 
+                class="p-button-primary rounded-xl shadow-lg shadow-indigo-100" 
+                (click)="openCreationPanel()"></button>
+    </header>
+
+    <!-- Placeholder Content for Grid -->
+    <div class="bg-white border border-slate-100 rounded-3xl p-10 flex flex-col items-center justify-center text-center shadow-sm">
+        <i class="pi pi-shop text-6xl text-slate-200 mb-4"></i>
+        <h3 class="text-xl font-bold text-slate-700">Aucune boutique enregistrée</h3>
+        <p class="text-sm text-slate-400 mt-2">Commencez par ajouter votre premier point de vente partenaire.</p>
+    </div>
+</div>
+
+<!-- Dialog: Create Boutique -->
+<p-dialog [visible]="isCreationPanelOpen()" (visibleChange)="isCreationPanelOpen.set($event)" [modal]="true" [style]="{ width: '450px' }" [draggable]="false" [resizable]="false" [showHeader]="false">
+    <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div>
+            <h2 class="text-xl font-black text-slate-800 uppercase tracking-tight">Ajouter une Boutique</h2>
+            <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Nouveau Partenariat Commercial</p>
+        </div>
+        <button pButton icon="pi pi-times" class="p-button-text p-button-rounded text-slate-400" (click)="closeCreationPanel()"></button>
+    </div>
+    
+    <div class="p-8 space-y-6">
+        <form [formGroup]="boutiqueForm" class="space-y-6 pt-4" id="boutiqueForm" (ngSubmit)="submitForm()">
+            <p-floatLabel>
+                <input pInputText id="nomBoutique" formControlName="nomBoutique" class="w-full" />
+                <label for="nomBoutique">Nom de la Boutique</label>
+            </p-floatLabel>
+
+            <p-floatLabel>
+                <input pInputText id="categorieShop" formControlName="categorieShop" class="w-full" />
+                <label for="categorieShop">Catégorie (Ex: Restauration)</label>
+            </p-floatLabel>
+
+            <div class="grid grid-cols-2 gap-6">
+                <p-floatLabel>
+                    <input pInputText type="number" id="latitude" formControlName="latitude" class="w-full" />
+                    <label for="latitude">Latitude</label>
+                </p-floatLabel>
+                <p-floatLabel>
+                    <input pInputText type="number" id="longitude" formControlName="longitude" class="w-full" />
+                    <label for="longitude">Longitude</label>
+                </p-floatLabel>
+            </div>
+            
+            <p-floatLabel>
+                <input pInputText type="number" id="initialQuota" formControlName="initialQuota" class="w-full" />
+                <label for="initialQuota">Quota Mensuel Alloué (F CFA)</label>
+            </p-floatLabel>
+        </form>
+    </div>
+
+    <div class="p-6 border-t border-slate-100 bg-slate-50 flex justify-center gap-4">
+        <button pButton label="Annuler" class="p-button-text p-button-secondary rounded-xl font-bold px-6" (click)="closeCreationPanel()"></button>
+        <button pButton label="Enregistrer" type="submit" form="boutiqueForm" class="p-button-primary rounded-xl font-bold shadow-lg shadow-indigo-200 px-8" [disabled]="boutiqueForm.invalid"></button>
+    </div>
+</p-dialog>

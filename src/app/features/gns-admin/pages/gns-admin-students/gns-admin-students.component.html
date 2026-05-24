@@ -133,27 +133,49 @@
     </div>
     
     <div class="p-8 space-y-6">
-        <form class="space-y-4">
-            <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Prénom & Nom</label>
-                <div class="flex gap-2">
-                    <input pInputText placeholder="Prénom" class="flex-1 border-slate-200 rounded-xl px-4 py-2.5">
-                    <input pInputText placeholder="Nom" class="flex-1 border-slate-200 rounded-xl px-4 py-2.5">
-                </div>
+        <form [formGroup]="studentForm" class="space-y-6 pt-4" id="createStudentForm">
+            <div class="grid grid-cols-2 gap-6">
+                <p-floatLabel>
+                    <input pInputText id="prenom" formControlName="prenom" class="w-full" />
+                    <label for="prenom">Prénom</label>
+                </p-floatLabel>
+                <p-floatLabel>
+                    <input pInputText id="nom" formControlName="nom" class="w-full" />
+                    <label for="nom">Nom</label>
+                </p-floatLabel>
             </div>
-            <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Universitaire</label>
-                <input pInputText type="email" placeholder="etudiant@univ.edu" class="w-full border-slate-200 rounded-xl px-4 py-2.5">
+            
+            <p-floatLabel>
+                <input pInputText type="email" id="email" formControlName="email" class="w-full" />
+                <label for="email">Email Universitaire</label>
+            </p-floatLabel>
+
+            <div class="grid grid-cols-2 gap-6">
+                <p-floatLabel>
+                    <input pInputText type="tel" id="telephone" formControlName="telephone" class="w-full" />
+                    <label for="telephone">Téléphone</label>
+                </p-floatLabel>
+                <p-floatLabel>
+                    <input pInputText type="date" id="dateNaissance" formControlName="dateNaissance" class="w-full" />
+                    <label for="dateNaissance">Date de Naissance</label>
+                </p-floatLabel>
             </div>
-            <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Matricule</label>
-                <input pInputText placeholder="Ex: 2024-UL-1234" class="w-full border-slate-200 rounded-xl px-4 py-2.5">
+
+            <div class="grid grid-cols-2 gap-6">
+                <p-floatLabel>
+                    <input pInputText id="numEtudiantUniv" formControlName="numEtudiantUniv" class="w-full" />
+                    <label for="numEtudiantUniv">Matricule (Ex: 2024-UL-1234)</label>
+                </p-floatLabel>
+                <p-floatLabel>
+                    <p-dropdown inputId="univId" [options]="universities()" formControlName="universiteTrackingId" styleClass="w-full"></p-dropdown>
+                    <label for="univId">Université Rattachée</label>
+                </p-floatLabel>
             </div>
         </form>
     </div>
 
-    <div class="p-6 border-t border-slate-100 bg-slate-50 flex gap-4">
-        <button pButton label="Annuler" class="p-button-outlined p-button-secondary flex-1 rounded-xl font-bold" (click)="closeCreateStudentPanel()"></button>
-        <button pButton label="Créer le Profil" class="p-button-primary flex-[2] rounded-xl font-bold shadow-lg shadow-indigo-200"></button>
+    <div class="p-6 border-t border-slate-100 bg-slate-50 flex justify-center gap-4">
+        <button pButton label="Annuler" class="p-button-text p-button-secondary rounded-xl font-bold px-6" (click)="closeCreateStudentPanel()"></button>
+        <button pButton label="Créer le Profil" type="submit" form="createStudentForm" class="p-button-primary rounded-xl font-bold shadow-lg shadow-indigo-200 px-8" [disabled]="studentForm.invalid"></button>
     </div>
 </p-dialog>

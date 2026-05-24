@@ -12,6 +12,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { TagModule } from 'primeng/tag';
 import { DialogModule } from 'primeng/dialog';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 @Component({
   selector: 'app-gns-admin-users',
@@ -26,7 +27,8 @@ import { DialogModule } from 'primeng/dialog';
     InputTextModule, 
     PasswordModule,
     TagModule,
-    DialogModule
+    DialogModule,
+    FloatLabelModule
   ],
   templateUrl: './gns-admin-users.component.html',
   styleUrls: ['./gns-admin-users.component.scss']
