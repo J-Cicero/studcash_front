@@ -37,8 +37,8 @@ export class GnsAdminUsersComponent implements OnInit {
   isCreationPanelOpen = signal(false);
   isLoading = signal(true);
 
-  users = signal<any[]>([]);
-  universities = signal<any[]>([]);
+  users = signal<User[]>([]);
+  universities = signal<{ label: string; value: string | undefined }[]>([]);
   
   userForm: FormGroup;
   roles = [

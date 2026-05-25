@@ -10,6 +10,8 @@ import { FormsModule } from '@angular/forms';
 import { DocumentEtudiantService } from '../../../../core/services/document-etudiant.service';
 import { InscriptionService } from '../../../../core/services/inscription.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { DocumentEtudiantResponse } from '../../../../core/models/document-etudiant.model';
+import { InscriptionAnnuelleResponse } from '../../../../core/services/inscription.service';
 
 @Component({
   selector: 'app-univ-registrations',
@@ -20,13 +22,13 @@ import { AuthService } from '../../../../core/services/auth.service';
 })
 export class UnivRegistrationsComponent implements OnInit {
   isLoading = signal(false);
-  inscriptions = signal<any[]>([]);
-  allInscriptions: any[] = [];
+  inscriptions = signal<InscriptionAnnuelleResponse[]>([]);
+  allInscriptions: InscriptionAnnuelleResponse[] = [];
   totalElements = signal(0);
-  selectedInscriptions: any[] = [];
+  selectedInscriptions: InscriptionAnnuelleResponse[] = [];
   
-  selectedDossier = signal<any | null>(null);
-  documents = signal<any[]>([]);
+  selectedDossier = signal<InscriptionAnnuelleResponse | null>(null);
+  documents = signal<DocumentEtudiantResponse[]>([]);
 
   niveaux = [
     { label: 'Tous les niveaux', value: null },
@@ -83,12 +85,12 @@ export class UnivRegistrationsComponent implements OnInit {
     this.inscriptions.set(filtered);
   }
 
-  toggleDefinitif(ins: any) {
+  toggleDefinitif(ins: InscriptionAnnuelleResponse) {
     // Dans une app réelle, appeler this.inscriptionService.markDefinitive(ins.trackingId, ins.estInscritDefinitif)
     console.log(`Statut définitif pour ${ins.studentPrenom} changé à ${ins.estInscritDefinitif}`);
   }
 
-  viewDetails(ins: any) {
+  viewDetails(ins: InscriptionAnnuelleResponse) {
     this.selectedDossier.set(ins);
     this.docService.getByInscription(ins.trackingId).subscribe({
         next: (docs) => this.documents.set(docs)

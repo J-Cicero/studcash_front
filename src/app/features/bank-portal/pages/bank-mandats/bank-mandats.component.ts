@@ -27,7 +27,7 @@ export class BankMandatsComponent implements OnInit {
 
   private bankService = inject(BankPortalService);
   private docService = inject(DocumentEtudiantService);
-  private authService = inject(AuthService);
+  public authService = inject(AuthService);
 
   ngOnInit(): void {
     this.loadMandats();
@@ -67,12 +67,15 @@ export class BankMandatsComponent implements OnInit {
   validate(valide: boolean) {
     const selectedMandat = this.selectedMandat();
     if (!selectedMandat) return;
-    
+
+    // Only bank operators may validate/reject mandats
+    if (!this.authService.hasRole(['ADMIN_BANQUE'])) return;
+
     this.bankService.validerMandat(selectedMandat.studentTrackingId, valide).subscribe({
-        next: () => {
-            this.loadMandats();
-            this.selectedMandat.set(null);
-        }
+      next: () => {
+        this.loadMandats();
+        this.selectedMandat.set(null);
+      }
     });
   }
 }

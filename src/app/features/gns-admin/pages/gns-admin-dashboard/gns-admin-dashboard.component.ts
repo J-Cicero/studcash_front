@@ -14,6 +14,10 @@ import { UniversiteService } from '../../../../core/services/universite.service'
 import { BoutiqueService } from '../../../../core/services/boutique.service';
 import { AdminGlobalStats, FluxMensuelStat, PaiementResponse, UniversiteSummaryStat, BoutiqueResponse } from '../../../../core/models/gns-admin.model';
 
+type ChartDataset = { data: number[]; label?: string; borderColor?: string; backgroundColor?: string[]; tension?: number; fill?: boolean; borderDash?: number[]; hoverBackgroundColor?: string[] };
+type ChartData = { labels: string[]; datasets: ChartDataset[] };
+type ChartOptions = Record<string, unknown>;
+
 @Component({
   selector: 'app-gns-admin-dashboard',
   standalone: true,
@@ -28,10 +32,11 @@ export class GnsAdminDashboardComponent implements OnInit {
   stats = signal<AdminGlobalStats | null>(null);
   
   // Charts
-  lineData: any;
-  lineOptions: any;
-  donutData: any;
-  donutOptions: any;
+
+  lineData: ChartData | null = null;
+  lineOptions: ChartOptions | null = null;
+  donutData: ChartData | null = null;
+  donutOptions: ChartOptions | null = null;
   
   // Tables & Alerts
   recentTransactions = signal<PaiementResponse[]>([]);

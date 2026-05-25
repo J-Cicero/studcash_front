@@ -37,7 +37,13 @@
                 </div>
                 <span class="font-black text-[10px] text-slate-400 uppercase tracking-widest block mb-1">Dernière Dotation</span>
                 @if(isLoading()) { <p-skeleton width="150px" height="2rem"></p-skeleton> }
-                @else { <h3 class="font-black text-2xl text-slate-800">{{ movements()[0]?.dateVersement | date:'dd MMM yyyy' || 'Aucune' }}</h3> }
+                @else {
+                    @if (movements().length > 0) {
+                        <h3 class="font-black text-2xl text-slate-800">{{ movements()[0].dateVersement | date:'dd MMM yyyy' }}</h3>
+                    } @else {
+                        <h3 class="font-black text-2xl text-slate-800">Aucune</h3>
+                    }
+                }
             </div>
             <div class="pt-6 border-t border-slate-50">
                 <div class="flex justify-between items-center mb-2">

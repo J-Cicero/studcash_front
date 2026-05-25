@@ -68,13 +68,13 @@
         <button pButton icon="pi pi-times" class="p-button-text p-button-rounded text-slate-400" (click)="isSidePanelOpen.set(false)"></button>
     </div>
     
-    <div class="flex-1 p-8 space-y-8" *ngIf="selectedUniv()">
+    <div class="flex-1 p-8 space-y-8" *ngIf="selectedUniv() as univ">
         <div class="flex flex-col items-center">
             <div class="w-20 h-20 rounded-3xl bg-indigo-600 flex items-center justify-center text-white font-black text-3xl shadow-xl shadow-indigo-100 mb-4">
-                {{ selectedUniv().code }}
+                {{ univ.code }}
             </div>
-            <h3 class="text-2xl font-black text-slate-800 text-center">{{ selectedUniv().nom }}</h3>
-            <p-tag [value]="selectedUniv().type" severity="info" styleClass="mt-2"></p-tag>
+            <h3 class="text-2xl font-black text-slate-800 text-center">{{ univ.nom }}</h3>
+            <p-tag [value]="univ.type || 'UNIVERSITÉ'" severity="info" styleClass="mt-2"></p-tag>
         </div>
         
         <div class="grid grid-cols-1 gap-4">
@@ -85,7 +85,7 @@
                     </div>
                     <span class="text-sm font-bold text-slate-500 uppercase tracking-widest">Inscrits GNS</span>
                 </div>
-                <span class="text-2xl font-black text-slate-800">{{ selectedUniv().students | number }}</span>
+                <span class="text-2xl font-black text-slate-800">{{ univ.students | number }}</span>
             </div>
         </div>
         
@@ -123,6 +123,27 @@
                     <label for="ville" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Ville</label>
                     <input pInputText id="ville" formControlName="ville" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
                 </div>
+            </div>
+
+            <div class="space-y-2">
+                <label for="adresse" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Adresse</label>
+                <input pInputText id="adresse" formControlName="adresse" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" placeholder="Campus, quartier, BP..." />
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label for="emailContact" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Email contact</label>
+                    <input pInputText id="emailContact" formControlName="emailContact" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" placeholder="contact@univ.tg" />
+                </div>
+                <div class="space-y-2">
+                    <label for="telephone" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Téléphone</label>
+                    <input pInputText id="telephone" formControlName="telephone" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" placeholder="+228 ..." />
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label for="walletTrackingId" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Wallet associé</label>
+                <input pInputText id="walletTrackingId" formControlName="walletTrackingId" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" placeholder="Tracking ID du wallet" />
             </div>
 
             <div class="flex items-center justify-between p-5 bg-slate-50 rounded-2xl border border-slate-100 mt-2">

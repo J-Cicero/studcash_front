@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { SkeletonModule } from 'primeng/skeleton';
 import { AuthService } from '../../../../core/services/auth.service';
 import { UserService } from '../../../../core/services/user.service';
+import { User } from '../../../../core/models/user.model';
 
 @Component({
   selector: 'app-dbs-settings',
@@ -13,7 +14,7 @@ import { UserService } from '../../../../core/services/user.service';
 })
 export class DbsSettingsComponent implements OnInit {
   isLoading = signal(true);
-  profile = signal<any>(null);
+  profile = signal<User | null>(null);
 
   private userService = inject(UserService);
 

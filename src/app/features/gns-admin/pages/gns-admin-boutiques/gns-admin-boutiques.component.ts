@@ -1,7 +1,7 @@
 import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { BoutiqueService } from '../../../../core/services/boutique.service';
+import { BoutiqueService, BoutiqueResponse } from '../../../../core/services/boutique.service';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
@@ -18,7 +18,7 @@ import { TableModule } from 'primeng/table';
 export class GnsAdminBoutiquesComponent implements OnInit {
   isCreationPanelOpen = signal(false);
   boutiqueForm: FormGroup;
-  boutiques = signal<any[]>([]);
+  boutiques = signal<BoutiqueResponse[]>([]);
   private fb = inject(FormBuilder);
   private boutiqueService = inject(BoutiqueService);
 
@@ -28,10 +28,10 @@ export class GnsAdminBoutiquesComponent implements OnInit {
 
   loadBoutiques() {
     this.boutiqueService.getAll(0, 100).subscribe({
-      next: (res: any) => {
+      next: (res) => {
         this.boutiques.set(res.content || []);
       },
-      error: (err: any) => console.error('Erreur chargement boutiques', err)
+      error: (err) => console.error('Erreur chargement boutiques', err)
     });
   }
 
@@ -63,12 +63,12 @@ export class GnsAdminBoutiquesComponent implements OnInit {
         // Optional: you can generate or assign merchant tracking ID here later.
       };
       this.boutiqueService.create(payload).subscribe({
-        next: (res: any) => {
+        next: (res) => {
           console.log('Boutique created successfully:', res);
           this.loadBoutiques();
           this.closeCreationPanel();
         },
-        error: (err: any) => {
+        error: (err) => {
           console.error('Failed to create boutique:', err);
         }
       });

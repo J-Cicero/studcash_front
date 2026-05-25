@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StudentService, StudentResponse } from '../../../../shared/services/student.service';
+import { StudentService, StudentResponse, StudentStats } from '../../../../shared/services/student.service';
 import { UniversiteService } from '../../../../core/services/universite.service';
 
 import { TableModule } from 'primeng/table';
@@ -30,7 +30,7 @@ export class GnsAdminStudentsComponent implements OnInit {
   students = signal<StudentResponse[]>([]);
   totalElements = signal<number>(0);
   
-  stats = signal<any>({
+  stats = signal<StudentStats | null>({
     totalStudents: 0,
     activeStudents: 0,
     verifiedKyc: 0,
@@ -38,7 +38,7 @@ export class GnsAdminStudentsComponent implements OnInit {
   });
 
   studentForm: FormGroup;
-  universities = signal<any[]>([]);
+  universities = signal<{ label: string; value: string | undefined }[]>([]);
 
   constructor(private studentService: StudentService, private fb: FormBuilder, private univService: UniversiteService) {
     this.studentForm = this.fb.group({

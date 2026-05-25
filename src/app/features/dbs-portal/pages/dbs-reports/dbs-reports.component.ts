@@ -6,6 +6,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 import { UniversiteService } from '../../../../core/services/universite.service';
 import { InscriptionService } from '../../../../core/services/inscription.service';
+import { UniversiteSummaryStat } from '../../../../core/models/gns-admin.model';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -17,7 +18,7 @@ import { forkJoin } from 'rxjs';
 })
 export class DbsReportsComponent implements OnInit {
   isLoading = signal(true);
-  univStats = signal<any[]>([]);
+  univStats = signal<UniversiteSummaryStat[]>([]);
 
   private univService = inject(UniversiteService);
 

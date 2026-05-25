@@ -66,12 +66,12 @@
                     </div>
 
                     <div class="space-y-3 pt-10 border-t border-slate-50">
-                        <button pButton label="VALIDER LE MANDAT" icon="pi pi-check-circle"
-                                (click)="validate(true)"
-                                class="p-button-success w-full rounded-2xl font-black text-xs uppercase tracking-widest py-4 shadow-xl shadow-emerald-200"></button>
-                        <button pButton label="REJETER" icon="pi pi-times-circle"
-                                (click)="validate(false)"
-                                class="p-button-danger p-button-text w-full font-black text-xs uppercase tracking-widest"></button>
+                        <button *ngIf="authService.hasRole(['ADMIN_BANQUE'])" pButton label="VALIDER LE MANDAT" icon="pi pi-check-circle"
+                            (click)="validate(true)"
+                            class="p-button-success w-full rounded-2xl font-black text-xs uppercase tracking-widest py-4 shadow-xl shadow-emerald-200"></button>
+                        <button *ngIf="authService.hasRole(['ADMIN_BANQUE'])" pButton label="REJETER" icon="pi pi-times-circle"
+                            (click)="validate(false)"
+                            class="p-button-danger p-button-text w-full font-black text-xs uppercase tracking-widest"></button>
                     </div>
                 </div>
             } @else {

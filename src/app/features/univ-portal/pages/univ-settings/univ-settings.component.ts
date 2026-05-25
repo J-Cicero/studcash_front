@@ -5,6 +5,8 @@ import { TagModule } from 'primeng/tag';
 import { AuthService } from '../../../../core/services/auth.service';
 import { UserService } from '../../../../core/services/user.service';
 import { UniversiteService } from '../../../../core/services/universite.service';
+import { User } from '../../../../core/models/user.model';
+import { Universite } from '../../../../core/models/universite.model';
 
 @Component({
   selector: 'app-univ-settings',
@@ -15,8 +17,8 @@ import { UniversiteService } from '../../../../core/services/universite.service'
 })
 export class UnivSettingsComponent implements OnInit {
   isLoading = signal(true);
-  profile = signal<any>(null);
-  university = signal<any>(null);
+  profile = signal<User | null>(null);
+  university = signal<Universite | null>(null);
 
   private authService = inject(AuthService);
   private userService = inject(UserService);

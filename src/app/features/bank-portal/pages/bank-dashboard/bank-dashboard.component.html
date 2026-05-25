@@ -5,7 +5,7 @@
             <h1 class="text-3xl font-black text-slate-800 uppercase tracking-tighter">Tableau de bord Banque</h1>
             <p class="text-sm font-medium text-slate-500">Gestion de la trésorerie et des liquidations StudCash.</p>
         </div>
-        <button pButton icon="pi pi-refresh" (click)="loadData()" class="p-button-text p-button-rounded text-slate-400"></button>
+        <button *ngIf="auth.isLoggedIn()" pButton icon="pi pi-refresh" (click)="loadData()" class="p-button-text p-button-rounded text-slate-400"></button>
     </header>
 
     <!-- KPI Row -->

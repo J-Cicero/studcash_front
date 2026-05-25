@@ -4,6 +4,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { ButtonModule } from 'primeng/button';
 import { AuthService } from '../../../../core/services/auth.service';
 import { UserService } from '../../../../core/services/user.service';
+import { User } from '../../../../core/models/user.model';
 
 @Component({
   selector: 'app-bank-settings',
@@ -14,7 +15,10 @@ import { UserService } from '../../../../core/services/user.service';
 })
 export class BankSettingsComponent implements OnInit {
   isLoading = signal(true);
-  profile = signal<any>(null);
+  profile = signal<User | null>(null);
+
+  // expose authService to template for role checks
+  public authService = inject(AuthService);
 
   private userService = inject(UserService);
 

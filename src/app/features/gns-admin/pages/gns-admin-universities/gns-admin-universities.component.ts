@@ -24,7 +24,7 @@ export class GnsAdminUniversitiesComponent implements OnInit {
   isLoading = signal(false);
 
   universities = signal<Universite[]>([]);
-  selectedUniv = signal<any>(null);
+  selectedUniv = signal<Universite | null>(null);
   universityForm: FormGroup;
 
   private universiteService = inject(UniversiteService);
@@ -35,7 +35,11 @@ export class GnsAdminUniversitiesComponent implements OnInit {
       nom: ['', Validators.required],
       code: ['', Validators.required],
       ville: ['', Validators.required],
-      estActive: [true]
+      estActive: [true],
+      adresse: [''],
+      emailContact: ['', Validators.email],
+      telephone: [''],
+      walletTrackingId: ['']
     });
   }
 
@@ -73,7 +77,7 @@ export class GnsAdminUniversitiesComponent implements OnInit {
     });
   }
 
-  selectUniversity(univ: any) {
+  selectUniversity(univ: Universite) {
     this.selectedUniv.set(univ);
     this.isSidePanelOpen.set(true);
   }

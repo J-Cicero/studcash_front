@@ -9,6 +9,8 @@ import { DialogModule } from 'primeng/dialog';
 import { AuthService } from '../../../../core/services/auth.service';
 import { UniversiteService } from '../../../../core/services/universite.service';
 import { VersementService } from '../../../../core/services/versement.service';
+import { Universite } from '../../../../core/models/universite.model';
+import { VersementResponse } from '../../../../core/models/gns-admin.model';
 
 @Component({
   selector: 'app-univ-portfolio',
@@ -19,8 +21,8 @@ import { VersementService } from '../../../../core/services/versement.service';
 })
 export class UnivPortfolioComponent implements OnInit {
   isLoading = signal(true);
-  univDetails = signal<any>(null);
-  movements = signal<any[]>([]);
+  univDetails = signal<Universite | null>(null);
+  movements = signal<VersementResponse[]>([]);
 
   private authService = inject(AuthService);
   private univService = inject(UniversiteService);

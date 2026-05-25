@@ -6,7 +6,7 @@
             <p class="text-slate-500 font-medium mt-1">Validation assistée par Gemini IA.</p>
         </div>
         <div class="flex gap-3">
-            <button pButton icon="pi pi-refresh" (click)="loadDossiers()" class="p-button-text p-button-rounded text-slate-400"></button>
+            <button *ngIf="authService.isLoggedIn()" pButton icon="pi pi-refresh" (click)="loadDossiers()" class="p-button-text p-button-rounded text-slate-400"></button>
         </div>
     </header>
 
@@ -43,8 +43,8 @@
                         <span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">{{ d.typeBourse }}</span>
                     </td>
                     <td class="px-8 py-5 text-right">
-                        <button pButton icon="pi pi-search" label="Analyser" (click)="viewDossier(d)"
-                                class="p-button-primary p-button-sm rounded-xl font-black text-[9px] uppercase tracking-widest py-2.5 shadow-lg shadow-indigo-100"></button>
+                        <button *ngIf="authService.hasRole(['ADMIN_DBS','ADMIN_GNS'])" pButton icon="pi pi-search" label="Analyser" (click)="viewDossier(d)"
+                            class="p-button-primary p-button-sm rounded-xl font-black text-[9px] uppercase tracking-widest py-2.5 shadow-lg shadow-indigo-100"></button>
                     </td>
                 </tr>
             </ng-template>
@@ -126,7 +126,7 @@
                             </div>
                         </div>
 
-                        <div class="pt-6 border-t border-indigo-100 flex flex-col gap-4">
+                        <div *ngIf="authService.hasRole(['ADMIN_DBS','ADMIN_GNS'])" class="pt-6 border-t border-indigo-100 flex flex-col gap-4">
                             @if(hasLowScore()) {
                                 <div class="flex items-center gap-2 mb-2 p-3 bg-red-50 rounded-xl border border-red-100">
                                     <p-checkbox [(ngModel)]="forceValidation" [binary]="true" inputId="forceVal"></p-checkbox>

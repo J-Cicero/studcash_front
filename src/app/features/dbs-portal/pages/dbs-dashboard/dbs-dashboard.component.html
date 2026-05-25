@@ -88,7 +88,7 @@
         <div class="lg:col-span-2 bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
             <div class="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/20">
                 <h4 class="text-xl font-black text-slate-800 uppercase tracking-tight">Dossiers Récents</h4>
-                <button pButton label="Analyser tout" class="p-button-text p-button-sm font-bold text-indigo-600 uppercase tracking-widest"></button>
+                <button *ngIf="authService.hasRole(['ADMIN_DBS','ADMIN_GNS'])" pButton label="Analyser tout" class="p-button-text p-button-sm font-bold text-indigo-600 uppercase tracking-widest"></button>
             </div>
             <div class="p-0">
                 <p-table [value]="univStats()" [rows]="5" styleClass="p-datatable-sm" [loading]="isLoading()">

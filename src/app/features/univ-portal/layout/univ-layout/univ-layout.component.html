@@ -1,9 +1,12 @@
-<div class="bg-slate-50 text-gray-900 min-h-screen">
+<div class="univ-portal-shell bg-slate-50 text-gray-900 min-h-screen" [class.dark-mode]="isDarkMode()">
     <!-- TopAppBar (Premium Floating) -->
     <div class="px-8 pt-8 pb-4 sticky top-0 z-50 ml-0 md:ml-[220px]">
         <header class="flex justify-between items-center w-full px-6 py-4 bg-white/80 backdrop-blur-2xl border border-slate-200/60 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all">
             <div class="flex items-center gap-4">
                 <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-900 to-blue-600 hidden md:block">Portail Université</span>
+                <span class="hidden md:inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-widest bg-blue-50 text-blue-900 border border-blue-100">
+                    {{ currentRole() || 'ROLE' }}
+                </span>
             </div>
             
             <!-- Ergonomic Centered Search -->
@@ -22,6 +25,7 @@
             </div>
 
             <div class="flex items-center gap-3">
+                <app-theme-toggle themeKey="univ-portal-theme" bodyClass="univ-portal-dark"></app-theme-toggle>
                 <button class="relative flex items-center justify-center w-10 h-10 rounded-full bg-slate-50 border border-slate-200 text-slate-500 hover:text-blue-900 hover:bg-blue-50 transition-all shadow-sm">
                     <i class="pi pi-bell"></i>
                     <span class="hidden absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>

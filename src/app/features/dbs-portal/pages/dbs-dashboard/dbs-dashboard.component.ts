@@ -10,6 +10,8 @@ import { forkJoin } from 'rxjs';
 import { AdminService } from '../../../../core/services/admin.service';
 import { UniversiteService } from '../../../../core/services/universite.service';
 import { ScolariteYearService } from '../../../../core/services/scolarite-year.service';
+import { AdminGlobalStats, UniversiteSummaryStat, ScolariteYear } from '../../../../core/models/gns-admin.model';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-dbs-dashboard',
@@ -20,10 +22,10 @@ import { ScolariteYearService } from '../../../../core/services/scolarite-year.s
 })
 export class DbsDashboardComponent implements OnInit {
   isLoading = signal(true);
-  stats = signal<any>(null);
-  activeYear = signal<any>(null);
+  stats = signal<AdminGlobalStats | null>(null);
+  activeYear = signal<ScolariteYear | null>(null);
   
-  univStats = signal<any[]>([]);
+  univStats = signal<UniversiteSummaryStat[]>([]);
 
   donutData: any;
   donutOptions: any;
@@ -31,6 +33,7 @@ export class DbsDashboardComponent implements OnInit {
   private adminService = inject(AdminService);
   private univService = inject(UniversiteService);
   private yearService = inject(ScolariteYearService);
+  public authService = inject(AuthService);
 
   ngOnInit(): void {
     this.loadAllData();

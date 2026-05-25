@@ -25,12 +25,12 @@ export class UserService {
     return this.http.post<User>(`${this.apiUrl}/register`, user);
   }
 
-  registerUniversityAdmin(admin: any): Observable<any> {
-    return this.http.post<any>(`${environment.apiUrl}/admin-university`, admin);
+  registerUniversityAdmin(admin: UserRequest & { universiteTrackingId?: string }): Observable<User> {
+    return this.http.post<User>(`${environment.apiUrl}/admin-university`, admin);
   }
 
-  registerBankOperator(operator: any): Observable<any> {
-    return this.http.post<any>(`${environment.apiUrl}/bank-operator`, operator);
+  registerBankOperator(operator: UserRequest): Observable<User> {
+    return this.http.post<User>(`${environment.apiUrl}/bank-operator`, operator);
   }
 
   updateEtat(trackingId: string, etat: boolean): Observable<User> {

@@ -12,6 +12,16 @@ import { PaiementService } from '../../../../core/services/paiement.service';
 import { ScolariteService } from '../../../../core/services/scolarite.service';
 import { StudentService } from '../../../../shared/services/student.service';
 import { InscriptionService } from '../../../../core/services/inscription.service';
+import { Universite } from '../../../../core/models/universite.model';
+import { PaiementResponse } from '../../../../core/models/gns-admin.model';
+import { InscriptionAnnuelleResponse } from '../../../../core/services/inscription.service';
+import { PretScolariteResponse } from '../../../../core/services/scolarite.service';
+
+interface UnivDashboardStats {
+  nbStudents: number;
+  totalEncaisse: number;
+  pretsEnAttente: number;
+}
 
 @Component({
   selector: 'app-univ-dashboard',
@@ -24,8 +34,8 @@ export class UnivDashboardComponent implements OnInit {
   isLoading = signal(true);
   currentDate = signal('');
   
-  univDetails = signal<any>(null);
-  stats = signal({
+  univDetails = signal<Universite | null>(null);
+  stats = signal<UnivDashboardStats>({
     nbStudents: 0,
     totalEncaisse: 0,
     pretsEnAttente: 0
@@ -34,8 +44,8 @@ export class UnivDashboardComponent implements OnInit {
   chartData: any;
   chartOptions: any;
   
-  recentTransactions = signal<any[]>([]);
-  rejectedStudents = signal<any[]>([]);
+  recentTransactions = signal<PaiementResponse[]>([]);
+  rejectedStudents = signal<InscriptionAnnuelleResponse[]>([]);
 
   private authService = inject(AuthService);
   private univService = inject(UniversiteService);
@@ -72,12 +82,12 @@ export class UnivDashboardComponent implements OnInit {
       next: (res) => {
         this.univDetails.set(res.details);
         this.recentTransactions.set(res.txns.content);
-        this.rejectedStudents.set((res.inscriptions.content || []).filter((i: any) => i.statut === 'REJETEE'));
+        this.rejectedStudents.set((res.inscriptions.content || []).filter((i) => i.statut === 'REJETEE'));
         
         this.stats.set({
             nbStudents: res.students.totalElements,
             totalEncaisse: res.details.soldeWallet || 0,
-            pretsEnAttente: res.prets.filter(p => !p.estRembourse).length
+          pretsEnAttente: (res.prets as PretScolariteResponse[]).filter(p => !p.estRembourse).length
         });
 
         this.initChart();

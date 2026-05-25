@@ -28,6 +28,24 @@ export interface Page<T> {
   number: number;
 }
 
+export interface StudentStats {
+  [key: string]: number;
+  totalStudents: number;
+  activeStudents: number;
+  verifiedKyc: number;
+  blockedStudents: number;
+}
+
+export interface StudentRequest {
+  nom: string;
+  prenom: string;
+  email: string;
+  telephone: string;
+  dateNaissance: string;
+  numEtudiantUniv: string;
+  universiteTrackingId: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -59,10 +77,10 @@ export class StudentService {
   }
 
   getStats(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/stats`);
+    return this.http.get<StudentStats>(`${this.apiUrl}/stats`);
   }
 
-  createStudent(studentData: any): Observable<StudentResponse> {
+  createStudent(studentData: StudentRequest): Observable<StudentResponse> {
     return this.http.post<StudentResponse>(this.apiUrl, studentData);
   }
 }

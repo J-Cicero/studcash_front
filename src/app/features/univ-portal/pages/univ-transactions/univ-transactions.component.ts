@@ -6,6 +6,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { ButtonModule } from 'primeng/button';
 import { PaiementService } from '../../../../core/services/paiement.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { PaiementResponse } from '../../../../core/models/gns-admin.model';
 
 @Component({
   selector: 'app-univ-transactions',
@@ -16,7 +17,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 })
 export class UnivTransactionsComponent implements OnInit {
   isLoading = signal(false);
-  transactions = signal<any[]>([]);
+  transactions = signal<PaiementResponse[]>([]);
   totalElements = signal(0);
 
   private paiementService = inject(PaiementService);

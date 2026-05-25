@@ -17,11 +17,11 @@ export class DocumentEtudiantService {
     );
   }
 
-  valider(trackingId: string): Observable<any> {
-      return this.http.put(`${this.apiUrl}/${trackingId}`, { statut: 'VALIDE' });
-  }
+    valider(trackingId: string): Observable<DocumentEtudiantResponse> {
+      return this.http.put<DocumentEtudiantResponse>(`${this.apiUrl}/${trackingId}`, { statut: 'VALIDE' });
+    }
 
-  rejeter(trackingId: string, commentaire: string): Observable<any> {
-      return this.http.put(`${this.apiUrl}/${trackingId}`, { statut: 'REJETE', commentaireRejet: commentaire });
-  }
+    rejeter(trackingId: string, commentaire: string): Observable<DocumentEtudiantResponse> {
+      return this.http.put<DocumentEtudiantResponse>(`${this.apiUrl}/${trackingId}`, { statut: 'REJETE', commentaireRejet: commentaire });
+    }
 }

@@ -1,42 +1,33 @@
-import { Component, OnInit, OnDestroy, Renderer2, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
+import { ThemeToggleComponent } from '../../../../shared/components/theme-toggle/theme-toggle.component';
+import { Subscription } from 'rxjs';
+import { ThemeService } from '../../../../core/services/theme.service';
 
 @Component({
   selector: 'app-gns-admin-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule, ButtonModule],
+  imports: [CommonModule, RouterModule, ButtonModule, ThemeToggleComponent],
   templateUrl: './gns-admin-layout.component.html',
   styleUrls: ['./gns-admin-layout.component.scss']
 })
 export class GnsAdminLayoutComponent implements OnInit, OnDestroy {
   isDarkMode = signal(false);
 
-  private renderer = inject(Renderer2);
+  private subs: Subscription | null = null;
+  private theme = inject(ThemeService);
 
   ngOnInit(): void {
-    const savedTheme = localStorage.getItem('gns-admin-theme');
-    this.isDarkMode.set(savedTheme === 'dark');
-    this.syncBodyTheme();
+    // initialize and subscribe to theme changes for admin key
+    this.theme.init('gns-admin-theme', 'gns-admin-dark');
+    this.subs = this.theme.changes().subscribe(evt => {
+      if (evt.key === 'gns-admin-theme') this.isDarkMode.set(evt.isDark);
+    });
   }
 
   ngOnDestroy(): void {
-    this.renderer.removeClass(document.body, 'gns-admin-dark');
-  }
-
-  toggleTheme(): void {
-    const nextTheme = this.isDarkMode() ? 'light' : 'dark';
-    this.isDarkMode.set(!this.isDarkMode());
-    localStorage.setItem('gns-admin-theme', nextTheme);
-    this.syncBodyTheme();
-  }
-
-  private syncBodyTheme(): void {
-    if (this.isDarkMode()) {
-      this.renderer.addClass(document.body, 'gns-admin-dark');
-    } else {
-      this.renderer.removeClass(document.body, 'gns-admin-dark');
-    }
+    this.subs?.unsubscribe();
   }
 }
