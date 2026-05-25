@@ -46,4 +46,8 @@ export class InscriptionService {
   updateStatus(trackingId: string, statut: string): Observable<InscriptionAnnuelleResponse> {
     return this.http.put<InscriptionAnnuelleResponse>(`${this.apiUrl}/${trackingId}`, { statut });
   }
+
+  updateDefinitif(trackingId: string, estInscritDefinitif: boolean): Observable<InscriptionAnnuelleResponse> {
+    return this.http.patch<InscriptionAnnuelleResponse>(`${this.apiUrl}/${trackingId}/definitif`, { estInscritDefinitif });
+  }
 }

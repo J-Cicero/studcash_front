@@ -6,7 +6,7 @@
             <p class="text-slate-500 font-medium mt-1">Annuaire centralisé et contrôle des accès.</p>
         </div>
         <button pButton icon="pi pi-plus" label="Ajouter un étudiant" 
-                class="p-button-primary rounded-xl shadow-lg shadow-indigo-100" 
+            class="p-button-primary inline-flex items-center gap-2 rounded-2xl px-5 py-3.5 font-bold shadow-lg shadow-indigo-100/80 hover:shadow-xl hover:shadow-indigo-100 transition-all" 
                 (click)="openCreateStudentPanel()"></button>
     </header>
 
@@ -123,8 +123,8 @@
 </p-dialog>
 
 <!-- Create Student Dialog -->
-<p-dialog [visible]="isCreateStudentPanelOpen()" (visibleChange)="isCreateStudentPanelOpen.set($event)" [modal]="true" [style]="{ width: '500px' }" [draggable]="false" [resizable]="false" [showHeader]="false">
-    <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+<p-dialog [visible]="isCreateStudentPanelOpen()" (visibleChange)="isCreateStudentPanelOpen.set($event)" [modal]="true" [style]="{ width: '560px' }" [draggable]="false" [resizable]="false" [showHeader]="false">
+    <div class="p-6 border-b border-slate-200 flex items-center justify-between bg-white">
         <div>
             <h2 class="text-xl font-black text-slate-800 uppercase tracking-tight">Inscrire un Étudiant</h2>
             <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Nouveau Profil GNS</p>
@@ -132,50 +132,50 @@
         <button pButton icon="pi pi-times" class="p-button-text p-button-rounded text-slate-400" (click)="closeCreateStudentPanel()"></button>
     </div>
     
-    <div class="p-8 space-y-6">
-        <form [formGroup]="studentForm" class="space-y-6 pt-4" id="createStudentForm">
+    <div class="p-8 space-y-6 bg-white">
+        <form [formGroup]="studentForm" class="space-y-6" id="createStudentForm">
             <div class="grid grid-cols-2 gap-6">
-                <p-floatLabel>
-                    <input pInputText id="prenom" formControlName="prenom" class="w-full" />
-                    <label for="prenom">Prénom</label>
-                </p-floatLabel>
-                <p-floatLabel>
-                    <input pInputText id="nom" formControlName="nom" class="w-full" />
-                    <label for="nom">Nom</label>
-                </p-floatLabel>
+                <div class="space-y-2">
+                    <label for="prenom" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Prénom</label>
+                    <input pInputText id="prenom" formControlName="prenom" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
+                </div>
+                <div class="space-y-2">
+                    <label for="nom" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Nom</label>
+                    <input pInputText id="nom" formControlName="nom" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
+                </div>
             </div>
             
-            <p-floatLabel>
-                <input pInputText type="email" id="email" formControlName="email" class="w-full" />
-                <label for="email">Email Universitaire</label>
-            </p-floatLabel>
-
-            <div class="grid grid-cols-2 gap-6">
-                <p-floatLabel>
-                    <input pInputText type="tel" id="telephone" formControlName="telephone" class="w-full" />
-                    <label for="telephone">Téléphone</label>
-                </p-floatLabel>
-                <p-floatLabel>
-                    <input pInputText type="date" id="dateNaissance" formControlName="dateNaissance" class="w-full" />
-                    <label for="dateNaissance">Date de Naissance</label>
-                </p-floatLabel>
+            <div class="space-y-2">
+                <label for="email" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Email universitaire</label>
+                <input pInputText type="email" id="email" formControlName="email" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
             </div>
 
             <div class="grid grid-cols-2 gap-6">
-                <p-floatLabel>
-                    <input pInputText id="numEtudiantUniv" formControlName="numEtudiantUniv" class="w-full" />
-                    <label for="numEtudiantUniv">Matricule (Ex: 2024-UL-1234)</label>
-                </p-floatLabel>
-                <p-floatLabel>
+                <div class="space-y-2">
+                    <label for="telephone" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Téléphone</label>
+                    <input pInputText type="tel" id="telephone" formControlName="telephone" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
+                </div>
+                <div class="space-y-2">
+                    <label for="dateNaissance" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Date de naissance</label>
+                    <input pInputText type="date" id="dateNaissance" formControlName="dateNaissance" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label for="numEtudiantUniv" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Matricule</label>
+                    <input pInputText id="numEtudiantUniv" formControlName="numEtudiantUniv" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
+                </div>
+                <div class="space-y-2">
+                    <label for="univId" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Université rattachée</label>
                     <p-dropdown inputId="univId" [options]="universities()" formControlName="universiteTrackingId" styleClass="w-full"></p-dropdown>
-                    <label for="univId">Université Rattachée</label>
-                </p-floatLabel>
+                </div>
             </div>
         </form>
     </div>
 
-    <div class="p-6 border-t border-slate-100 bg-slate-50 flex justify-center gap-4">
-        <button pButton label="Annuler" class="p-button-text p-button-secondary rounded-xl font-bold px-6" (click)="closeCreateStudentPanel()"></button>
-        <button pButton label="Créer le Profil" type="submit" form="createStudentForm" class="p-button-primary rounded-xl font-bold shadow-lg shadow-indigo-200 px-8" [disabled]="studentForm.invalid"></button>
+    <div class="p-6 border-t border-slate-200 bg-white flex justify-center gap-4">
+        <button pButton label="Annuler" class="p-button-text p-button-secondary rounded-2xl font-bold px-6 py-3" (click)="closeCreateStudentPanel()"></button>
+        <button pButton label="Créer le Profil" type="submit" form="createStudentForm" class="p-button-primary rounded-2xl font-black shadow-lg shadow-indigo-200/70 px-8 py-3.5" [disabled]="studentForm.invalid"></button>
     </div>
 </p-dialog>

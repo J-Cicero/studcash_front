@@ -12,6 +12,7 @@ import { AdminService } from '../../../../core/services/admin.service';
 import { PaiementService } from '../../../../core/services/paiement.service';
 import { UniversiteService } from '../../../../core/services/universite.service';
 import { BoutiqueService } from '../../../../core/services/boutique.service';
+import { AdminGlobalStats, FluxMensuelStat, PaiementResponse, UniversiteSummaryStat, BoutiqueResponse } from '../../../../core/models/gns-admin.model';
 
 @Component({
   selector: 'app-gns-admin-dashboard',
@@ -24,7 +25,7 @@ export class GnsAdminDashboardComponent implements OnInit {
   isLoading = signal(true);
   
   // KPI Data
-  stats = signal<any>(null);
+  stats = signal<AdminGlobalStats | null>(null);
   
   // Charts
   lineData: any;
@@ -33,8 +34,8 @@ export class GnsAdminDashboardComponent implements OnInit {
   donutOptions: any;
   
   // Tables & Alerts
-  recentTransactions = signal<any[]>([]);
-  quotaAlerts = signal<any[]>([]);
+  recentTransactions = signal<PaiementResponse[]>([]);
+  quotaAlerts = signal<BoutiqueResponse[]>([]);
 
   private adminService = inject(AdminService);
   private paiementService = inject(PaiementService);
@@ -74,7 +75,7 @@ export class GnsAdminDashboardComponent implements OnInit {
     });
   }
 
-  initLineChart(fluxData: any[]) {
+  initLineChart(fluxData: FluxMensuelStat[]) {
     this.lineData = {
       labels: fluxData.map(d => d.mois),
       datasets: [
@@ -107,7 +108,7 @@ export class GnsAdminDashboardComponent implements OnInit {
     };
   }
 
-  initDonutChart(univStats: any[]) {
+  initDonutChart(univStats: UniversiteSummaryStat[]) {
     this.donutData = {
       labels: univStats.map(u => u.code),
       datasets: [{

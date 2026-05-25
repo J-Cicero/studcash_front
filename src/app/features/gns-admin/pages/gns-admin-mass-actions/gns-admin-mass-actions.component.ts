@@ -1,9 +1,12 @@
 import { Component, OnInit, OnDestroy, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
 import { UniversiteService } from '../../../../core/services/universite.service';
 import { ScolariteYearService, ScolariteYear } from '../../../../core/services/scolarite-year.service';
 import { VersementService } from '../../../../core/services/versement.service';
@@ -11,13 +14,15 @@ import { VersementService } from '../../../../core/services/versement.service';
 @Component({
   selector: 'app-gns-admin-mass-actions',
   standalone: true,
-  imports: [CommonModule, TableModule, TagModule, ButtonModule, SkeletonModule],
+  imports: [CommonModule, FormsModule, TableModule, TagModule, ButtonModule, SkeletonModule, DialogModule, InputTextModule],
   templateUrl: './gns-admin-mass-actions.component.html',
   styleUrls: ['./gns-admin-mass-actions.component.scss']
 })
 export class GnsAdminMassActionsComponent implements OnInit, OnDestroy {
   progress = signal(0);
   isLoading = signal(false);
+  isConfirmDialogOpen = signal(false);
+  montantFixe = signal<number | null>(null);
   
   univStats = signal<any[]>([]);
   schoolYears = signal<ScolariteYear[]>([]);
@@ -52,11 +57,26 @@ export class GnsAdminMassActionsComponent implements OnInit, OnDestroy {
 
   triggerMassDisbursement() {
     if (!this.activeYear()) return;
-    
+    this.montantFixe.set(null);
+    this.isConfirmDialogOpen.set(true);
+  }
+
+  cancelMassDisbursement() {
+    this.isConfirmDialogOpen.set(false);
+  }
+
+  confirmMassDisbursement() {
+    if (!this.activeYear()) return;
+    const montant = this.montantFixe();
+    if (montant === null || montant <= 0) {
+      return;
+    }
+
+    this.isConfirmDialogOpen.set(false);
     this.isLoading.set(true);
     this.progress.set(10);
     
-    this.versementService.disburseMassStudents(this.activeYear()!.trackingId).subscribe({
+    this.versementService.disburseMassStudents(this.activeYear()!.trackingId, montant).subscribe({
         next: (res) => {
             this.progress.set(100);
             this.isLoading.set(false);

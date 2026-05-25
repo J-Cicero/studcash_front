@@ -6,7 +6,7 @@
             <p class="text-slate-500 font-medium mt-1">Gouvernance temporelle du système de bourses.</p>
         </div>
         <button pButton icon="pi pi-plus" label="Nouvelle Année" 
-                class="p-button-primary rounded-xl shadow-lg shadow-indigo-100" 
+            class="p-button-primary inline-flex items-center gap-2 rounded-2xl px-5 py-3.5 font-bold shadow-lg shadow-indigo-100/80 hover:shadow-xl hover:shadow-indigo-100 transition-all" 
                 (click)="openCreationPanel()"></button>
     </header>
 
@@ -48,8 +48,8 @@
 </div>
 
 <!-- Dialog: Create ScolariteYear -->
-<p-dialog [visible]="isCreationPanelOpen()" (visibleChange)="isCreationPanelOpen.set($event)" [modal]="true" [style]="{ width: '450px' }" [draggable]="false" [resizable]="false" [showHeader]="false">
-    <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+<p-dialog [visible]="isCreationPanelOpen()" (visibleChange)="isCreationPanelOpen.set($event)" [modal]="true" [style]="{ width: '560px' }" [draggable]="false" [resizable]="false" [showHeader]="false">
+    <div class="p-6 border-b border-slate-200 flex items-center justify-between bg-white">
         <div>
             <h2 class="text-xl font-black text-slate-800 uppercase tracking-tight">Ouvrir un Cycle</h2>
             <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Initialisation Année Scolaire</p>
@@ -57,22 +57,22 @@
         <button pButton icon="pi pi-times" class="p-button-text p-button-rounded text-slate-400" (click)="closeCreationPanel()"></button>
     </div>
     
-    <div class="p-8 space-y-6">
-        <form [formGroup]="scolariteForm" class="space-y-6 pt-4" id="scolariteForm" (ngSubmit)="submitForm()">
-            <p-floatLabel>
-                <input pInputText id="libelle" formControlName="libelle" class="w-full" />
-                <label for="libelle">Libellé (Ex: 2024-2025)</label>
-            </p-floatLabel>
+    <div class="p-8 space-y-6 bg-white">
+        <form [formGroup]="scolariteForm" class="space-y-6" id="scolariteForm" (ngSubmit)="submitForm()">
+            <div class="space-y-2">
+                <label for="libelle" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Libellé</label>
+                <input pInputText id="libelle" formControlName="libelle" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" placeholder="Ex: 2024-2025" />
+            </div>
 
             <div class="grid grid-cols-2 gap-6">
-                <p-floatLabel>
-                    <input pInputText type="date" id="dateDebut" formControlName="dateDebut" class="w-full" />
-                    <label for="dateDebut">Date de début</label>
-                </p-floatLabel>
-                <p-floatLabel>
-                    <input pInputText type="date" id="dateFin" formControlName="dateFin" class="w-full" />
-                    <label for="dateFin">Date de fin</label>
-                </p-floatLabel>
+                <div class="space-y-2">
+                    <label for="dateDebut" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Date de début</label>
+                    <input pInputText type="date" id="dateDebut" formControlName="dateDebut" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
+                </div>
+                <div class="space-y-2">
+                    <label for="dateFin" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Date de fin</label>
+                    <input pInputText type="date" id="dateFin" formControlName="dateFin" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
+                </div>
             </div>
 
             <div class="flex items-center justify-between p-5 bg-slate-50 rounded-2xl border border-slate-100 mt-2">
@@ -85,8 +85,8 @@
         </form>
     </div>
 
-    <div class="p-6 border-t border-slate-100 bg-slate-50 flex justify-center gap-4">
-        <button pButton label="Annuler" class="p-button-text p-button-secondary rounded-xl font-bold px-6" (click)="closeCreationPanel()"></button>
-        <button pButton label="Enregistrer" type="submit" form="scolariteForm" class="p-button-primary rounded-xl font-bold shadow-lg shadow-indigo-200 px-8" [disabled]="scolariteForm.invalid"></button>
+    <div class="p-6 border-t border-slate-200 bg-white flex justify-center gap-4">
+        <button pButton label="Annuler" class="p-button-text p-button-secondary rounded-2xl font-bold px-6 py-3" (click)="closeCreationPanel()"></button>
+        <button pButton label="Enregistrer" type="submit" form="scolariteForm" class="p-button-primary rounded-2xl font-black shadow-lg shadow-indigo-200/70 px-8 py-3.5" [disabled]="scolariteForm.invalid"></button>
     </div>
 </p-dialog>

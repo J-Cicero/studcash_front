@@ -5,7 +5,7 @@
             <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Utilisateurs & Rôles</h1>
             <p class="text-slate-500 font-medium mt-1">Gérez les accès des administrateurs et partenaires institutionnels.</p>
         </div>
-        <button pButton icon="pi pi-plus" label="Nouvel Utilisateur" class="p-button-primary rounded-xl shadow-lg shadow-indigo-200" (click)="openCreationPanel()"></button>
+        <button pButton icon="pi pi-plus" label="Nouvel Utilisateur" class="p-button-primary inline-flex items-center gap-2 rounded-2xl px-5 py-3.5 font-bold shadow-lg shadow-indigo-200/70 hover:shadow-xl hover:shadow-indigo-200 transition-all" (click)="openCreationPanel()"></button>
     </div>
 
     <!-- Main Table Card -->
@@ -75,8 +75,8 @@
     </div>
 
     <!-- Create User Dialog -->
-    <p-dialog [visible]="isCreationPanelOpen()" (visibleChange)="isCreationPanelOpen.set($event)" [modal]="true" [style]="{ width: '500px' }" [draggable]="false" [resizable]="false" [closable]="false" [showHeader]="false">
-        <header class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+    <p-dialog [visible]="isCreationPanelOpen()" (visibleChange)="isCreationPanelOpen.set($event)" [modal]="true" [style]="{ width: '560px' }" [draggable]="false" [resizable]="false" [closable]="false" [showHeader]="false">
+        <header class="p-6 border-b border-slate-200 flex justify-between items-center bg-white">
             <div>
                 <h2 class="text-xl font-black text-slate-800 uppercase tracking-tight">Nouvel Utilisateur</h2>
                 <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Accès Institutionnel</p>
@@ -84,53 +84,53 @@
             <button pButton icon="pi pi-times" class="p-button-text p-button-rounded text-slate-400" (click)="closeCreationPanel()"></button>
         </header>
 
-        <div class="p-6 space-y-6">
-            <form [formGroup]="userForm" class="space-y-6 pt-4" id="userForm">
+        <div class="p-8 space-y-6 bg-white">
+            <form [formGroup]="userForm" class="space-y-6" id="userForm">
                 <div class="grid grid-cols-2 gap-6">
-                    <p-floatLabel>
-                        <input pInputText id="prenom" formControlName="prenom" class="w-full" />
-                        <label for="prenom">Prénom (Ex: Jean)</label>
-                    </p-floatLabel>
-                    <p-floatLabel>
-                        <input pInputText id="nom" formControlName="nom" class="w-full" />
-                        <label for="nom">Nom (Ex: Dupont)</label>
-                    </p-floatLabel>
+                    <div class="space-y-2">
+                        <label for="prenom" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Prénom</label>
+                        <input pInputText id="prenom" formControlName="prenom" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
+                    </div>
+                    <div class="space-y-2">
+                        <label for="nom" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Nom</label>
+                        <input pInputText id="nom" formControlName="nom" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
+                    </div>
                 </div>
 
-                <p-floatLabel>
-                    <input pInputText type="email" id="email" formControlName="email" class="w-full" />
-                    <label for="email">Email professionnel</label>
-                </p-floatLabel>
-
-                <div class="grid grid-cols-2 gap-6">
-                    <p-floatLabel>
-                        <input pInputText type="tel" id="telephone" formControlName="telephone" class="w-full" />
-                        <label for="telephone">Téléphone</label>
-                    </p-floatLabel>
-
-                    <p-floatLabel>
-                        <p-password id="motDePasse" formControlName="motDePasse" [feedback]="false" styleClass="w-full" inputStyleClass="w-full"></p-password>
-                        <label for="motDePasse">Mot de passe temporaire</label>
-                    </p-floatLabel>
+                <div class="space-y-2">
+                    <label for="email" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Email professionnel</label>
+                    <input pInputText type="email" id="email" formControlName="email" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
                 </div>
 
-                <p-floatLabel>
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label for="telephone" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Téléphone</label>
+                        <input pInputText type="tel" id="telephone" formControlName="telephone" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="motDePasse" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Mot de passe temporaire</label>
+                        <p-password id="motDePasse" formControlName="motDePasse" [feedback]="false" styleClass="w-full" inputStyleClass="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300"></p-password>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="role" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Rôle système</label>
                     <p-dropdown inputId="role" [options]="roles" formControlName="role" styleClass="w-full"></p-dropdown>
-                    <label for="role">Rôle Système</label>
-                </p-floatLabel>
+                </div>
 
                 <div *ngIf="userForm.get('role')?.value === 'UNIVERSITY_ADMIN'">
-                    <p-floatLabel>
+                    <div class="space-y-2">
+                        <label for="univId" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Université rattachée</label>
                         <p-dropdown inputId="univId" [options]="universities()" formControlName="universiteTrackingId" styleClass="w-full"></p-dropdown>
-                        <label for="univId">Université rattachée</label>
-                    </p-floatLabel>
+                    </div>
                 </div>
             </form>
         </div>
 
-        <footer class="p-6 border-t border-slate-100 bg-slate-50 flex gap-4">
-            <button pButton label="Annuler" class="p-button-outlined p-button-secondary flex-1 rounded-xl font-bold" (click)="closeCreationPanel()"></button>
-            <button pButton label="Créer le compte" class="p-button-primary flex-1 rounded-xl font-bold" (click)="submitForm()" [disabled]="userForm.invalid"></button>
+        <footer class="p-6 border-t border-slate-200 bg-white flex gap-4">
+            <button pButton label="Annuler" class="p-button-outlined p-button-secondary flex-1 rounded-2xl py-3 font-bold" (click)="closeCreationPanel()"></button>
+            <button pButton label="Créer le compte" class="p-button-primary flex-1 rounded-2xl py-3.5 font-black shadow-lg shadow-indigo-200/70" (click)="submitForm()" [disabled]="userForm.invalid"></button>
         </footer>
     </p-dialog>
 </div>

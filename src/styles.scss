@@ -19,6 +19,16 @@
   --card-bg: rgba(255, 255, 255, 0.95);
 }
 
+.gns-admin-shell.dark-mode {
+  --bg-main: #020617;
+  --text-main: #e2e8f0;
+  --text-muted: #94a3b8;
+  --border-color: #334155;
+  --card-bg: rgba(15, 23, 42, 0.92);
+  --color-primary: #93c5fd;
+  --primary-light: #60a5fa;
+}
+
 html, body {
   height: 100%;
   margin: 0;
@@ -72,6 +82,115 @@ html, body {
   border-color: var(--primary-light);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+}
+
+.gns-admin-shell.dark-mode {
+  background:
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.14), transparent 28%),
+    radial-gradient(circle at top right, rgba(14, 165, 233, 0.12), transparent 22%),
+    linear-gradient(180deg, #020617 0%, #0f172a 100%);
+}
+
+.gns-admin-shell.dark-mode main,
+.gns-admin-shell.dark-mode aside,
+.gns-admin-shell.dark-mode header,
+.gns-admin-shell.dark-mode .bg-white,
+.gns-admin-shell.dark-mode .bg-slate-50,
+.gns-admin-shell.dark-mode .bg-slate-100,
+.gns-admin-shell.dark-mode .bg-slate-200 {
+  color: var(--text-main) !important;
+}
+
+.gns-admin-shell.dark-mode .bg-white {
+  background-color: #0f172a !important;
+}
+
+.gns-admin-shell.dark-mode .bg-slate-50,
+.gns-admin-shell.dark-mode .bg-slate-100 {
+  background-color: #111827 !important;
+}
+
+.gns-admin-shell.dark-mode .bg-slate-200 {
+  background-color: #1f2937 !important;
+}
+
+.gns-admin-shell.dark-mode .text-slate-900,
+.gns-admin-shell.dark-mode .text-slate-800,
+.gns-admin-shell.dark-mode .text-slate-700,
+.gns-admin-shell.dark-mode .text-slate-600,
+.gns-admin-shell.dark-mode .text-slate-500,
+.gns-admin-shell.dark-mode .text-slate-400 {
+  color: var(--text-main) !important;
+}
+
+.gns-admin-shell.dark-mode .text-slate-500,
+.gns-admin-shell.dark-mode .text-slate-400 {
+  color: var(--text-muted) !important;
+}
+
+.gns-admin-shell.dark-mode .border-slate-50,
+.gns-admin-shell.dark-mode .border-slate-100,
+.gns-admin-shell.dark-mode .border-slate-200 {
+  border-color: var(--border-color) !important;
+}
+
+.gns-admin-shell.dark-mode .shadow-sm,
+.gns-admin-shell.dark-mode .shadow-lg,
+.gns-admin-shell.dark-mode .shadow-xl {
+  box-shadow: 0 18px 40px rgba(2, 6, 23, 0.35) !important;
+}
+
+.gns-admin-shell.dark-mode .p-inputtext,
+.gns-admin-shell.dark-mode .p-dropdown,
+.gns-admin-shell.dark-mode .p-password input,
+.gns-admin-shell.dark-mode input,
+.gns-admin-shell.dark-mode textarea,
+.gns-admin-shell.dark-mode .p-component {
+  background-color: #0b1220 !important;
+  color: #e2e8f0 !important;
+  border-color: #334155 !important;
+}
+
+.gns-admin-shell.dark-mode .p-datatable .p-datatable-thead > tr > th {
+  background-color: #111827;
+  color: #cbd5e1;
+  border-bottom-color: #334155;
+}
+
+.gns-admin-shell.dark-mode .p-datatable .p-datatable-tbody > tr > td {
+  background-color: #0f172a;
+  color: #e2e8f0;
+  border-bottom-color: #1f2937;
+}
+
+.gns-admin-shell.dark-mode .p-datatable .p-datatable-tbody > tr:hover > td {
+  background-color: #111c33;
+}
+
+.gns-admin-shell.dark-mode .p-skeleton {
+  background-color: #1e293b !important;
+}
+
+.gns-admin-shell.dark-mode .p-skeleton::after {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent) !important;
+}
+
+.gns-admin-shell.dark-mode .p-button.p-button-text,
+.gns-admin-shell.dark-mode .p-button.p-button-outlined {
+  color: #e2e8f0;
+  border-color: #334155;
+}
+
+.gns-admin-shell.dark-mode .p-button.p-button-text:hover,
+.gns-admin-shell.dark-mode .p-button.p-button-outlined:hover {
+  background-color: rgba(148, 163, 184, 0.12) !important;
+}
+
+.gns-admin-shell.dark-mode .p-float-label > label,
+.gns-admin-shell.dark-mode p-floatlabel > label,
+.gns-admin-shell.dark-mode p-floatLabel > label {
+  background: #0f172a !important;
+  color: #94a3b8 !important;
 }
 
 /* PrimeNG Overrides for modern look */

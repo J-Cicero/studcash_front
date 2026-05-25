@@ -6,7 +6,7 @@
             <p class="text-slate-500 font-medium mt-1">Gestion des établissements et suivi des allocations boursières.</p>
         </div>
         <button pButton icon="pi pi-plus" label="Ajouter une université" 
-                class="p-button-primary rounded-xl shadow-lg shadow-indigo-100" 
+            class="p-button-primary inline-flex items-center gap-2 rounded-2xl px-5 py-3.5 font-bold shadow-lg shadow-indigo-100/80 hover:shadow-xl hover:shadow-indigo-100 transition-all" 
                 (click)="openCreationPanel()"></button>
     </div>
     
@@ -98,8 +98,8 @@
 </p-dialog>
 
 <!-- Create University Form Dialog -->
-<p-dialog [visible]="isCreationPanelOpen()" (visibleChange)="isCreationPanelOpen.set($event)" [modal]="true" [style]="{ width: '500px' }" [draggable]="false" [resizable]="false" [closable]="false" [showHeader]="false">
-    <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+<p-dialog [visible]="isCreationPanelOpen()" (visibleChange)="isCreationPanelOpen.set($event)" [modal]="true" [style]="{ width: '560px' }" [draggable]="false" [resizable]="false" [closable]="false" [showHeader]="false">
+    <div class="p-6 border-b border-slate-200 flex items-center justify-between bg-white">
         <div>
             <h2 class="text-xl font-black text-slate-800 uppercase tracking-tight">Ajouter une Université</h2>
             <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Nouveau Partenariat</p>
@@ -107,22 +107,22 @@
         <button pButton icon="pi pi-times" class="p-button-text p-button-rounded text-slate-400" (click)="closeCreationPanel()"></button>
     </div>
     
-    <div class="flex-1 p-8 space-y-6">
-        <form [formGroup]="universityForm" (ngSubmit)="submitForm()" class="space-y-6 pt-4" id="createUnivForm">
-            <p-floatLabel>
-                <input pInputText id="nom" formControlName="nom" class="w-full" />
-                <label for="nom">Nom officiel (Ex: Université de Lomé)</label>
-            </p-floatLabel>
+    <div class="flex-1 p-8 space-y-6 bg-white">
+        <form [formGroup]="universityForm" (ngSubmit)="submitForm()" class="space-y-6" id="createUnivForm">
+            <div class="space-y-2">
+                <label for="nom" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Nom officiel</label>
+                <input pInputText id="nom" formControlName="nom" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" placeholder="Ex: Université de Lomé" />
+            </div>
             
             <div class="grid grid-cols-2 gap-6">
-                <p-floatLabel>
-                    <input pInputText id="code" formControlName="code" class="w-full" />
-                    <label for="code">Sigle / Code (Ex: UL)</label>
-                </p-floatLabel>
-                <p-floatLabel>
-                    <input pInputText id="ville" formControlName="ville" class="w-full" />
-                    <label for="ville">Ville</label>
-                </p-floatLabel>
+                <div class="space-y-2">
+                    <label for="code" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Sigle / code</label>
+                    <input pInputText id="code" formControlName="code" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" placeholder="Ex: UL" />
+                </div>
+                <div class="space-y-2">
+                    <label for="ville" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Ville</label>
+                    <input pInputText id="ville" formControlName="ville" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
+                </div>
             </div>
 
             <div class="flex items-center justify-between p-5 bg-slate-50 rounded-2xl border border-slate-100 mt-2">
@@ -135,8 +135,8 @@
         </form>
     </div>
     
-    <div class="p-6 border-t border-slate-100 bg-slate-50 flex gap-4">
-        <button pButton label="Annuler" class="p-button-outlined p-button-secondary flex-1 rounded-xl font-bold" (click)="closeCreationPanel()"></button>
-        <button pButton label="Enregistrer" class="p-button-primary flex-[2] rounded-xl font-bold shadow-lg shadow-indigo-200" type="submit" form="createUnivForm" [disabled]="universityForm.invalid || isLoading()"></button>
+    <div class="p-6 border-t border-slate-200 bg-white flex gap-4">
+        <button pButton label="Annuler" class="p-button-outlined p-button-secondary flex-1 rounded-2xl py-3 font-bold" (click)="closeCreationPanel()"></button>
+        <button pButton label="Enregistrer" class="p-button-primary flex-[2] rounded-2xl py-3.5 font-black shadow-lg shadow-indigo-200/70" type="submit" form="createUnivForm" [disabled]="universityForm.invalid || isLoading()"></button>
     </div>
 </p-dialog>

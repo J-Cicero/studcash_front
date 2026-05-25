@@ -2,15 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { WalletResponse } from '../models/gns-admin.model';
 
-export interface WalletResponse {
-  trackingId: string;
-  typeWallet: string;
-  statutWallet: string;
-  solde: number;
-  plafond: number;
-  dateCreation: string;
-}
+export type { WalletResponse } from '../models/gns-admin.model';
 
 @Injectable({
   providedIn: 'root'

@@ -8,6 +8,8 @@ import { ImageModule } from 'primeng/image';
 import { BankPortalService } from '../../../../core/services/bank-portal.service';
 import { DocumentEtudiantService } from '../../../../core/services/document-etudiant.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { StudentLiquidationInfo } from '../../../../core/models/bank-portal.model';
+import { DocumentEtudiantResponse } from '../../../../core/models/document-etudiant.model';
 
 @Component({
   selector: 'app-bank-mandats',
@@ -18,9 +20,9 @@ import { AuthService } from '../../../../core/services/auth.service';
 })
 export class BankMandatsComponent implements OnInit {
   isLoading = signal(true);
-  mandats = signal<any[]>([]);
+  mandats = signal<StudentLiquidationInfo[]>([]);
   
-  selectedMandat = signal<any>(null);
+  selectedMandat = signal<StudentLiquidationInfo | null>(null);
   documentImage = signal<string | null>(null);
 
   private bankService = inject(BankPortalService);
@@ -52,20 +54,21 @@ export class BankMandatsComponent implements OnInit {
     });
   }
 
-  viewMandat(mandat: any) {
+  viewMandat(mandat: StudentLiquidationInfo) {
     this.selectedMandat.set(mandat);
     this.docService.getByInscription(mandat.studentTrackingId).subscribe({
         next: (docs) => {
-            const doc = docs.find(d => d.type === 'SOUCHE_TAMPONNEE');
+            const doc = docs.find((d: DocumentEtudiantResponse) => d.type === 'SOUCHE_TAMPONNEE');
             this.documentImage.set(doc ? doc.cheminFichier : null);
         }
     });
   }
 
   validate(valide: boolean) {
-    if (!this.selectedMandat()) return;
+    const selectedMandat = this.selectedMandat();
+    if (!selectedMandat) return;
     
-    this.bankService.validerMandat(this.selectedMandat().studentTrackingId, valide).subscribe({
+    this.bankService.validerMandat(selectedMandat.studentTrackingId, valide).subscribe({
         next: () => {
             this.loadMandats();
             this.selectedMandat.set(null);

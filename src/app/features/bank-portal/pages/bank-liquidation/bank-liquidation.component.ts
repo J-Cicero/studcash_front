@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ButtonModule } from 'primeng/button';
-import { BankPortalService, StudentLiquidationInfo } from '../../../../core/services/bank-portal.service';
+import { BankPortalService } from '../../../../core/services/bank-portal.service';
+import { StudentLiquidationInfo } from '../../../../core/models/bank-portal.model';
 
 @Component({
   selector: 'app-bank-liquidation',

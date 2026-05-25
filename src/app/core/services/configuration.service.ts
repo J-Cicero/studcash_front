@@ -2,14 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { ConfigurationGns } from '../models/gns-admin.model';
 
-export interface ConfigurationGns {
-  trackingId: string;
-  cle: string;
-  valeur: string;
-  description: string;
-  estModifiable: boolean;
-}
+export type { ConfigurationGns } from '../models/gns-admin.model';
 
 @Injectable({
   providedIn: 'root'
