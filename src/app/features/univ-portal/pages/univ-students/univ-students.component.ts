@@ -7,10 +7,12 @@ import { ButtonModule } from 'primeng/button';
 import { StudentService, StudentResponse } from '../../../../shared/services/student.service';
 import { AuthService } from '../../../../core/services/auth.service';
 
+import { DialogModule } from 'primeng/dialog';
+
 @Component({
   selector: 'app-univ-students',
   standalone: true,
-  imports: [CommonModule, TableModule, SkeletonModule, TagModule, ButtonModule],
+  imports: [CommonModule, TableModule, SkeletonModule, TagModule, ButtonModule, DialogModule],
   templateUrl: './univ-students.component.html',
   styleUrls: ['./univ-students.component.scss']
 })

@@ -24,4 +24,8 @@ export class ScolariteYearService {
   getActive(): Observable<ScolariteYear> {
     return this.http.get<ScolariteYear>(`${this.apiUrl}/active`);
   }
+
+  create(scolariteYear: any): Observable<ScolariteYear> {
+    return this.http.post<ScolariteYear>(this.apiUrl, scolariteYear);
+  }
 }

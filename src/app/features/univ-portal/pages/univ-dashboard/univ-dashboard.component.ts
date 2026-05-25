@@ -10,6 +10,8 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { UniversiteService } from '../../../../core/services/universite.service';
 import { PaiementService } from '../../../../core/services/paiement.service';
 import { ScolariteService } from '../../../../core/services/scolarite.service';
+import { StudentService } from '../../../../shared/services/student.service';
+import { InscriptionService } from '../../../../core/services/inscription.service';
 
 @Component({
   selector: 'app-univ-dashboard',
@@ -33,11 +35,14 @@ export class UnivDashboardComponent implements OnInit {
   chartOptions: any;
   
   recentTransactions = signal<any[]>([]);
+  rejectedStudents = signal<any[]>([]);
 
   private authService = inject(AuthService);
   private univService = inject(UniversiteService);
   private paiementService = inject(PaiementService);
   private scolariteService = inject(ScolariteService);
+  private studentService = inject(StudentService);
+  private inscriptionService = inject(InscriptionService);
 
   ngOnInit(): void {
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long' };
@@ -58,16 +63,19 @@ export class UnivDashboardComponent implements OnInit {
     const requests = {
       details: this.univService.getByTrackingId(univId),
       txns: this.paiementService.getByUniversite(univId, 0, 5),
-      prets: this.scolariteService.getByUniversite(univId)
+      prets: this.scolariteService.getByUniversite(univId),
+      students: this.studentService.getStudentsByUniversite(univId, 0, 1),
+      inscriptions: this.inscriptionService.getByUniversite(univId, 0, 50)
     };
 
     forkJoin(requests).subscribe({
       next: (res) => {
         this.univDetails.set(res.details);
         this.recentTransactions.set(res.txns.content);
+        this.rejectedStudents.set((res.inscriptions.content || []).filter((i: any) => i.statut === 'REJETEE'));
         
         this.stats.set({
-            nbStudents: 0, // Placeholder
+            nbStudents: res.students.totalElements,
             totalEncaisse: res.details.soldeWallet || 0,
             pretsEnAttente: res.prets.filter(p => !p.estRembourse).length
         });

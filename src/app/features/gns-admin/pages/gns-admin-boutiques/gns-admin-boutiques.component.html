@@ -10,11 +10,39 @@
                 (click)="openCreationPanel()"></button>
     </header>
 
-    <!-- Placeholder Content for Grid -->
-    <div class="bg-white border border-slate-100 rounded-3xl p-10 flex flex-col items-center justify-center text-center shadow-sm">
-        <i class="pi pi-shop text-6xl text-slate-200 mb-4"></i>
-        <h3 class="text-xl font-bold text-slate-700">Aucune boutique enregistrée</h3>
-        <p class="text-sm text-slate-400 mt-2">Commencez par ajouter votre premier point de vente partenaire.</p>
+    <!-- Content Grid / Table -->
+    <div class="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
+        <div *ngIf="boutiques().length === 0" class="flex flex-col items-center justify-center text-center p-10">
+            <i class="pi pi-shop text-6xl text-slate-200 mb-4"></i>
+            <h3 class="text-xl font-bold text-slate-700">Aucune boutique enregistrée</h3>
+            <p class="text-sm text-slate-400 mt-2">Commencez par ajouter votre premier point de vente partenaire.</p>
+        </div>
+
+        <p-table *ngIf="boutiques().length > 0" [value]="boutiques()" [paginator]="true" [rows]="10" styleClass="p-datatable-sm" class="w-full">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="text-xs uppercase tracking-wider text-slate-500 font-bold">Nom</th>
+                    <th class="text-xs uppercase tracking-wider text-slate-500 font-bold">Catégorie</th>
+                    <th class="text-xs uppercase tracking-wider text-slate-500 font-bold">Statut KYC</th>
+                    <th class="text-xs uppercase tracking-wider text-slate-500 font-bold text-right">Actions</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-boutique>
+                <tr class="border-b border-slate-50 hover:bg-slate-50/50">
+                    <td class="font-semibold text-slate-800">{{ boutique.nomBoutique }}</td>
+                    <td class="text-slate-500">{{ boutique.categorieShop }}</td>
+                    <td>
+                        <span class="px-2 py-1 rounded-full text-xs font-bold" 
+                              [ngClass]="{'bg-green-100 text-green-700': boutique.statutKYC === 'VALIDE', 'bg-orange-100 text-orange-700': boutique.statutKYC !== 'VALIDE'}">
+                            {{ boutique.statutKYC || 'EN_ATTENTE' }}
+                        </span>
+                    </td>
+                    <td class="text-right">
+                        <button pButton icon="pi pi-pencil" class="p-button-text p-button-rounded text-slate-400 hover:text-indigo-600"></button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
     </div>
 </div>
 

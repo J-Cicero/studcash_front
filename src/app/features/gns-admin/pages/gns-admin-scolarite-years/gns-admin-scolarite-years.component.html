@@ -12,32 +12,37 @@
 
     <!-- Cycle Cards Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Active Year Card (Bento style) -->
-        <div class="bg-indigo-600 text-white p-8 rounded-3xl border border-indigo-500 shadow-xl shadow-indigo-200 flex flex-col relative overflow-hidden group">
-            <div class="absolute top-0 right-0 p-8 opacity-20 transform group-hover:scale-110 transition-transform duration-500">
-                <i class="pi pi-calendar text-8xl"></i>
-            </div>
-            <div class="relative z-10 flex-1">
-                <div class="flex items-center gap-3 mb-4">
-                    <span class="w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(74,222,128,0.8)]"></span>
-                    <span class="text-xs font-black uppercase tracking-widest text-indigo-200">Cycle Actif</span>
-                </div>
-                <h2 class="text-4xl font-black mb-2">2024-2025</h2>
-                <p class="text-indigo-200 font-medium text-sm">Du 01 Sept 2024 au 31 Août 2025</p>
-            </div>
-            <div class="relative z-10 mt-8 flex gap-3">
-                <button pButton label="Clôturer l'année" class="p-button-danger p-button-outlined bg-white/10 border-white/20 text-white rounded-xl font-bold flex-1"></button>
-            </div>
+        <div *ngIf="scolariteYears().length === 0" class="col-span-full bg-white border border-slate-100 rounded-3xl p-10 flex flex-col items-center justify-center text-center shadow-sm">
+            <i class="pi pi-calendar text-6xl text-slate-200 mb-4"></i>
+            <h3 class="text-xl font-bold text-slate-700">Aucune année scolaire</h3>
+            <p class="text-sm text-slate-400 mt-2">Commencez par ouvrir un nouveau cycle académique.</p>
         </div>
 
-        <!-- Past Year Card -->
-        <div class="bg-white text-slate-800 p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all">
-            <div class="flex items-center gap-3 mb-4">
-                <span class="w-3 h-3 bg-slate-300 rounded-full"></span>
-                <span class="text-xs font-black uppercase tracking-widest text-slate-400">Clôturé</span>
+        <!-- Dynamic Year Cards -->
+        <div *ngFor="let year of scolariteYears()" 
+             [ngClass]="year.estOuverte ? 'bg-indigo-600 text-white border-indigo-500 shadow-xl shadow-indigo-200' : 'bg-white text-slate-800 border-slate-200 shadow-sm grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all'"
+             class="p-8 rounded-3xl border flex flex-col relative overflow-hidden group">
+            
+            <div *ngIf="year.estOuverte" class="absolute top-0 right-0 p-8 opacity-20 transform group-hover:scale-110 transition-transform duration-500">
+                <i class="pi pi-calendar text-8xl"></i>
             </div>
-            <h2 class="text-3xl font-black text-slate-400 mb-2">2023-2024</h2>
-            <p class="text-slate-400 font-medium text-sm">Du 01 Sept 2023 au 31 Août 2024</p>
+
+            <div class="relative z-10 flex-1">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="w-3 h-3 rounded-full" [ngClass]="year.estOuverte ? 'bg-green-400 animate-pulse shadow-[0_0_10px_rgba(74,222,128,0.8)]' : 'bg-slate-300'"></span>
+                    <span class="text-xs font-black uppercase tracking-widest" [ngClass]="year.estOuverte ? 'text-indigo-200' : 'text-slate-400'">
+                        {{ year.estOuverte ? 'Cycle Actif' : 'Clôturé' }}
+                    </span>
+                </div>
+                <h2 class="text-4xl font-black mb-2" [ngClass]="year.estOuverte ? '' : 'text-slate-400'">{{ year.libelle }}</h2>
+                <p class="font-medium text-sm" [ngClass]="year.estOuverte ? 'text-indigo-200' : 'text-slate-400'">
+                    Du {{ year.dateDebut | date:'dd MMM yyyy' }} au {{ year.dateFin | date:'dd MMM yyyy' }}
+                </p>
+            </div>
+            
+            <div *ngIf="year.estOuverte" class="relative z-10 mt-8 flex gap-3">
+                <button pButton label="Clôturer l'année" class="p-button-danger p-button-outlined bg-white/10 border-white/20 text-white rounded-xl font-bold flex-1"></button>
+            </div>
         </div>
     </div>
 </div>

@@ -81,22 +81,22 @@
                     
                     <div class="space-y-5">
                         <p-floatLabel>
-                            <input pInputText id="prenom" [value]="profile()?.prenom" class="w-full" readonly/>
+                            <input pInputText id="prenom" [ngModel]="profile()?.prenom" class="w-full font-semibold" readonly/>
                             <label for="prenom">Prénom</label>
                         </p-floatLabel>
 
                         <p-floatLabel>
-                            <input pInputText id="nom" [value]="profile()?.nom" class="w-full" readonly/>
+                            <input pInputText id="nom" [ngModel]="profile()?.nom" class="w-full font-semibold" readonly/>
                             <label for="nom">Nom</label>
                         </p-floatLabel>
 
                         <p-floatLabel>
-                            <input pInputText id="email" type="email" [value]="profile()?.email" class="w-full bg-slate-50 text-slate-500" readonly/>
+                            <input pInputText id="email" type="email" [ngModel]="profile()?.email" class="w-full bg-slate-50 text-slate-500 font-semibold" readonly/>
                             <label for="email">Adresse Email</label>
                         </p-floatLabel>
                         
                         <p-floatLabel>
-                            <input pInputText id="role" [value]="profile()?.role" class="w-full bg-slate-50 text-slate-500 font-bold uppercase" readonly/>
+                            <input pInputText id="role" [ngModel]="profile()?.role" class="w-full bg-slate-50 text-slate-500 font-bold uppercase" readonly/>
                             <label for="role">Rôle assigné</label>
                         </p-floatLabel>
                     </div>
@@ -123,11 +123,11 @@
                     
                     <div class="space-y-5">
                         <p-floatLabel>
-                            <input pInputText id="current_pwd" type="password" class="w-full" />
+                            <input pInputText id="current_pwd" type="password" [ngModel]="''" class="w-full" />
                             <label for="current_pwd">Mot de passe actuel</label>
                         </p-floatLabel>
                         <p-floatLabel>
-                            <input pInputText id="new_pwd" type="password" class="w-full" />
+                            <input pInputText id="new_pwd" type="password" [ngModel]="''" class="w-full" />
                             <label for="new_pwd">Nouveau mot de passe</label>
                         </p-floatLabel>
                         <button pButton label="Mettre à jour" class="p-button-primary w-full rounded-xl font-bold py-3 mt-2"></button>

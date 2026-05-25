@@ -61,4 +61,8 @@ export class StudentService {
   getStats(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/stats`);
   }
+
+  createStudent(studentData: any): Observable<StudentResponse> {
+    return this.http.post<StudentResponse>(this.apiUrl, studentData);
+  }
 }

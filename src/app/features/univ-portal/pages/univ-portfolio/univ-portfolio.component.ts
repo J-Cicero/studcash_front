@@ -5,6 +5,7 @@ import { TableModule } from 'primeng/table';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
 import { AuthService } from '../../../../core/services/auth.service';
 import { UniversiteService } from '../../../../core/services/universite.service';
 import { VersementService } from '../../../../core/services/versement.service';
@@ -12,7 +13,7 @@ import { VersementService } from '../../../../core/services/versement.service';
 @Component({
   selector: 'app-univ-portfolio',
   standalone: true,
-  imports: [CommonModule, RouterModule, TableModule, SkeletonModule, TagModule, ButtonModule],
+  imports: [CommonModule, RouterModule, TableModule, SkeletonModule, TagModule, ButtonModule, DialogModule],
   templateUrl: './univ-portfolio.component.html',
   styleUrls: ['./univ-portfolio.component.scss']
 })

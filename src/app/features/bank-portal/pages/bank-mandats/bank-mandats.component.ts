@@ -4,6 +4,7 @@ import { TableModule } from 'primeng/table';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
+import { ImageModule } from 'primeng/image';
 import { BankPortalService } from '../../../../core/services/bank-portal.service';
 import { DocumentEtudiantService } from '../../../../core/services/document-etudiant.service';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -11,7 +12,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 @Component({
   selector: 'app-bank-mandats',
   standalone: true,
-  imports: [CommonModule, TableModule, SkeletonModule, ButtonModule, TagModule],
+  imports: [CommonModule, TableModule, SkeletonModule, ButtonModule, TagModule, ImageModule],
   templateUrl: './bank-mandats.component.html',
   styleUrls: ['./bank-mandats.component.scss']
 })

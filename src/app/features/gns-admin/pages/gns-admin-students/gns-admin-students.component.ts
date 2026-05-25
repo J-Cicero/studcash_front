@@ -109,9 +109,21 @@ export class GnsAdminStudentsComponent implements OnInit {
 
   submitForm() {
     if (this.studentForm.valid) {
-      // In a real app, we would call studentService.create(this.studentForm.value)
-      console.log('Student Data:', this.studentForm.value);
-      this.closeCreateStudentPanel();
+      this.isLoading.set(true);
+      const payload = { ...this.studentForm.value };
+      
+      this.studentService.createStudent(payload).subscribe({
+        next: (res) => {
+          console.log('Student created successfully:', res);
+          this.loadStudents();
+          this.loadStats();
+          this.closeCreateStudentPanel();
+        },
+        error: (err) => {
+          console.error('Error creating student', err);
+          this.isLoading.set(false);
+        }
+      });
     }
   }
 }

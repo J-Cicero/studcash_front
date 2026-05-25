@@ -42,4 +42,8 @@ export class InscriptionService {
       .set('size', size.toString());
     return this.http.get<any>(`${this.apiUrl}/statut/${statut}`, { params });
   }
+
+  updateStatus(trackingId: string, statut: string): Observable<InscriptionAnnuelleResponse> {
+    return this.http.put<InscriptionAnnuelleResponse>(`${this.apiUrl}/${trackingId}`, { statut });
+  }
 }

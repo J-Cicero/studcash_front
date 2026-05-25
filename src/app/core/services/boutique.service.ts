@@ -52,4 +52,8 @@ export class BoutiqueService {
   getById(trackingId: string): Observable<BoutiqueResponse> {
     return this.http.get<BoutiqueResponse>(`${this.apiUrl}/${trackingId}`);
   }
+
+  create(boutique: any): Observable<BoutiqueResponse> {
+    return this.http.post<BoutiqueResponse>(this.apiUrl, boutique);
+  }
 }

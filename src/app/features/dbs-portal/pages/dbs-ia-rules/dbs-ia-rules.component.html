@@ -7,6 +7,7 @@
         </div>
         <div class="flex gap-3">
             <button pButton icon="pi pi-refresh" (click)="loadData()" class="p-button-text p-button-rounded text-slate-400"></button>
+            <button pButton label="Nouvelle Règle" icon="pi pi-plus" (click)="openNewRuleDialog()" class="p-button-primary rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-200"></button>
         </div>
     </header>
 
@@ -35,8 +36,21 @@
                     </div>
 
                     <div>
-                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">{{ rule.typeRegle }}</h3>
+                        <div class="flex justify-between items-center mb-1">
+                            <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">{{ rule.typeRegle }}</h3>
+                            <span class="text-[10px] font-bold text-indigo-500 bg-indigo-50 px-2 py-1 rounded">{{ rule.codeRegle }}</span>
+                        </div>
                         <p class="text-sm font-medium text-slate-500 leading-relaxed">{{ rule.description }}</p>
+                        
+                        <div class="mt-2 flex items-center gap-2 text-xs font-semibold text-slate-600">
+                            <i class="pi pi-money-bill text-emerald-500"></i>
+                            <span>{{ rule.montantBourse | number }} FCFA</span>
+                            @if(rule.anneeApplication) {
+                                <span class="mx-1 text-slate-300">•</span>
+                                <i class="pi pi-calendar text-blue-400"></i>
+                                <span>{{ rule.anneeApplication }}</span>
+                            }
+                        </div>
                     </div>
 
                     <div class="relative">
@@ -69,4 +83,47 @@
             }
         }
     </div>
+
+    <!-- Create Rule Dialog -->
+    <p-dialog header="Nouvelle Règle IA" [modal]="true" [(visible)]="isRuleDialogOpen" [style]="{ width: '40rem' }" [draggable]="false" [resizable]="false">
+        <form [formGroup]="ruleForm" (ngSubmit)="submitRule()" class="space-y-6 pt-4">
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-black text-slate-700 uppercase tracking-widest">Code Règle</label>
+                    <input pInputText formControlName="codeRegle" placeholder="ex: L1_EXCELLENCE" class="p-inputtext-sm" />
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-black text-slate-700 uppercase tracking-widest">Type</label>
+                    <p-dropdown formControlName="typeRegle" [options]="ruleTypes" optionLabel="label" optionValue="value" placeholder="Sélectionner le type" styleClass="w-full"></p-dropdown>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-black text-slate-700 uppercase tracking-widest">Valeur Critère</label>
+                    <input pInputText type="number" formControlName="valeurCritere" placeholder="ex: 14" class="p-inputtext-sm" />
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-black text-slate-700 uppercase tracking-widest">Montant Bourse (FCFA)</label>
+                    <input pInputText type="number" formControlName="montantBourse" placeholder="ex: 60000" class="p-inputtext-sm" />
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label class="text-xs font-black text-slate-700 uppercase tracking-widest">Année Application</label>
+                <input pInputText formControlName="anneeApplication" placeholder="ex: 2025-2026" class="p-inputtext-sm" />
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label class="text-xs font-black text-slate-700 uppercase tracking-widest">Description</label>
+                <input pInputText formControlName="description" placeholder="Description de la règle" class="p-inputtext-sm" />
+            </div>
+
+            <div class="flex justify-end gap-3 mt-8">
+                <button pButton type="button" label="Annuler" (click)="hideDialog()" class="p-button-text text-slate-500"></button>
+                <button pButton type="submit" label="Créer la Règle" [disabled]="ruleForm.invalid" class="p-button-primary px-8"></button>
+            </div>
+        </form>
+    </p-dialog>
 </div>
