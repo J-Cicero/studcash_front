@@ -7,7 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
-import { UniversiteService } from '../../../../core/services/universite.service';
+
 import { ScolariteYearService, ScolariteYear } from '../../../../core/services/scolarite-year.service';
 import { VersementService } from '../../../../core/services/versement.service';
 
@@ -27,12 +27,12 @@ export class GnsAdminMassActionsComponent implements OnInit, OnDestroy {
   montantQuota = signal<number | null>(null);
   seuilBoutique = signal<number | null>(null);
   
-  univStats = signal<any[]>([]);
+
   schoolYears = signal<ScolariteYear[]>([]);
   activeYear = signal<ScolariteYear | null>(null);
   disbursementHistory = signal<any[]>([]);
 
-  private univService = inject(UniversiteService);
+
   private yearService = inject(ScolariteYearService);
   private versementService = inject(VersementService);
 
@@ -44,7 +44,6 @@ export class GnsAdminMassActionsComponent implements OnInit, OnDestroy {
   }
 
   loadData() {
-    this.univService.getSummaryStats().subscribe(data => this.univStats.set(data));
     this.yearService.getAll().subscribe(years => {
         this.schoolYears.set(years);
         this.activeYear.set(years.find(y => y.estOuverte) || null);

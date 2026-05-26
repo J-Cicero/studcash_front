@@ -34,42 +34,9 @@
                 Si aucun montant fixe n'est passé, le calcul se fait côté serveur à partir des règles et de l'éligibilité.
             </p>
         </div>
-        <button pButton label="Exécuter TOUTES les universités" icon="pi pi-bolt" 
+        <button pButton label="Verser Bourses Étudiants" icon="pi pi-bolt" 
                 class="p-button-danger rounded-[1.5rem] px-10 py-4 font-black text-xs uppercase tracking-widest shadow-xl shadow-rose-200"
                 (click)="triggerMassDisbursement()" [disabled]="isLoading() || !activeYear()"></button>
-    </div>
-    
-    <!-- University Cards Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-        @for (stat of univStats(); track stat.trackingId) {
-            <div class="bg-white border border-slate-100 rounded-[2rem] p-8 hover:shadow-2xl transition-all duration-500 group relative overflow-hidden flex flex-col">
-                <div class="flex justify-between items-start mb-8">
-                    <div class="flex items-center gap-5">
-                        <div class="w-16 h-16 bg-indigo-600 text-white rounded-2xl flex items-center justify-center font-black text-2xl shadow-xl shadow-indigo-100">{{ stat.code }}</div>
-                        <div>
-                            <h3 class="text-xl font-black text-slate-800 tracking-tight">{{ stat.nom }}</h3>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Prêt pour exécution</p>
-                        </div>
-                    </div>
-                    <p-tag value="READY" severity="success" styleClass="text-[9px] font-black px-3 rounded-lg"></p-tag>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4 mb-8">
-                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-50">
-                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Étudiants</p>
-                        <p class="text-2xl font-black text-slate-800 tabular-nums">{{ stat.nbEtudiants }}</p>
-                    </div>
-                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-50">
-                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Estimation</p>
-                        <p class="text-sm font-bold text-indigo-600 mt-1 uppercase">Calcul...</p>
-                    </div>
-                </div>
-
-                <button pButton label="Lancer versement" icon="pi pi-send"
-                        class="p-button-primary w-full rounded-2xl font-black text-xs uppercase tracking-widest py-4 mt-auto group-hover:shadow-xl transition-all"
-                        (click)="triggerMassDisbursement()" [disabled]="isLoading()"></button>
-            </div>
-        }
     </div>
     
     <!-- Boutiques Action Section -->
