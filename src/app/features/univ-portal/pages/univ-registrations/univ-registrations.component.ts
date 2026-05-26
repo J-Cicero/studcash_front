@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { DocumentEtudiantService } from '../../../../core/services/document-etudiant.service';
 import { InscriptionService } from '../../../../core/services/inscription.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { forkJoin } from 'rxjs';
 import { DocumentEtudiantResponse } from '../../../../core/models/document-etudiant.model';
 import { InscriptionAnnuelleResponse } from '../../../../core/services/inscription.service';
 
@@ -85,9 +86,11 @@ export class UnivRegistrationsComponent implements OnInit {
     this.inscriptions.set(filtered);
   }
 
-  toggleDefinitif(ins: InscriptionAnnuelleResponse) {
-    // Dans une app réelle, appeler this.inscriptionService.markDefinitive(ins.trackingId, ins.estInscritDefinitif)
-    console.log(`Statut définitif pour ${ins.studentPrenom} changé à ${ins.estInscritDefinitif}`);
+  toggleDefinitif(ins: any) {
+    this.inscriptionService.updateDefinitif(ins.trackingId, ins.estInscritDefinitif).subscribe({
+        next: () => console.log(`Statut définitif mis à jour pour ${ins.studentPrenom}`),
+        error: (err) => console.error('Erreur lors de la mise à jour', err)
+    });
   }
 
   viewDetails(ins: InscriptionAnnuelleResponse) {
@@ -119,14 +122,22 @@ export class UnivRegistrationsComponent implements OnInit {
     const selected = this.selectedInscriptions;
     if (selected.length === 0) return;
     
-    // Simulate mass update
-    selected.forEach(ins => {
+    this.isLoading.set(true);
+    const requests = selected.map(ins => {
         ins.estInscritDefinitif = true;
-        this.toggleDefinitif(ins);
+        return this.inscriptionService.updateDefinitif(ins.trackingId, true);
     });
     
-    this.selectedInscriptions = [];
-    // Reload or refresh UI
-    this.inscriptions.update(ins => [...ins]);
+    forkJoin(requests).subscribe({
+        next: () => {
+            this.selectedInscriptions = [];
+            this.isLoading.set(false);
+            this.inscriptions.update(ins => [...ins]);
+        },
+        error: (err) => {
+            console.error('Erreur lors de la validation massive', err);
+            this.isLoading.set(false);
+        }
+    });
   }
 }

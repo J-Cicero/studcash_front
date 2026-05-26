@@ -39,12 +39,7 @@ export class BankMandatsComponent implements OnInit {
 
     this.bankService.getStudents(operatorId).subscribe({
       next: (students) => {
-        // Here we map students to mandats for simulation as we lack a direct mandat endpoint
-        this.mandats.set(students.map(s => ({
-            ...s,
-            status: 'PENDING',
-            date: '23 Mai 2026'
-        })));
+        this.mandats.set(students);
         this.isLoading.set(false);
       },
       error: (err) => {
