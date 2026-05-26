@@ -45,10 +45,12 @@ export class InscriptionService {
   }
 
   updateStatus(trackingId: string, statut: string): Observable<InscriptionAnnuelleResponse> {
-    return this.http.put<InscriptionAnnuelleResponse>(`${this.apiUrl}/${trackingId}`, { statut });
+    const params = new HttpParams().set('statut', statut);
+    return this.http.patch<InscriptionAnnuelleResponse>(`${this.apiUrl}/${trackingId}/statut`, null, { params });
   }
 
   updateDefinitif(trackingId: string, estInscritDefinitif: boolean): Observable<InscriptionAnnuelleResponse> {
-    return this.http.patch<InscriptionAnnuelleResponse>(`${this.apiUrl}/${trackingId}/definitif`, { estInscritDefinitif });
+    const params = new HttpParams().set('estInscritDefinitif', estInscritDefinitif.toString());
+    return this.http.patch<InscriptionAnnuelleResponse>(`${this.apiUrl}/${trackingId}/definitif`, null, { params });
   }
 }
