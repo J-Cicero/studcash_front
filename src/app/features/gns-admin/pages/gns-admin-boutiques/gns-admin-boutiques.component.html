@@ -5,9 +5,6 @@
             <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Réseau Commerçant</h1>
             <p class="text-slate-500 font-medium mt-1">Gouvernance des boutiques partenaires et gestion des quotas.</p>
         </div>
-        <button pButton icon="pi pi-plus" label="Nouvelle Boutique" 
-            class="p-button-primary inline-flex items-center gap-2 rounded-2xl px-5 py-3.5 font-bold shadow-lg shadow-indigo-100/80 hover:shadow-xl hover:shadow-indigo-100 transition-all" 
-                (click)="openCreationPanel()"></button>
     </header>
 
     <!-- Content Grid / Table -->
@@ -46,48 +43,4 @@
     </div>
 </div>
 
-<!-- Dialog: Create Boutique -->
-<p-dialog [visible]="isCreationPanelOpen()" (visibleChange)="isCreationPanelOpen.set($event)" [modal]="true" [style]="{ width: '560px' }" [draggable]="false" [resizable]="false" [showHeader]="false">
-    <div class="p-6 border-b border-slate-200 flex items-center justify-between bg-white">
-        <div>
-            <h2 class="text-xl font-black text-slate-800 uppercase tracking-tight">Ajouter une Boutique</h2>
-            <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Nouveau Partenariat Commercial</p>
-        </div>
-        <button pButton icon="pi pi-times" class="p-button-text p-button-rounded text-slate-400" (click)="closeCreationPanel()"></button>
-    </div>
-    
-    <div class="p-8 space-y-6 bg-white">
-        <form [formGroup]="boutiqueForm" class="space-y-6" id="boutiqueForm" (ngSubmit)="submitForm()">
-            <div class="space-y-2">
-                <label for="nomBoutique" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Nom de la boutique</label>
-                <input pInputText id="nomBoutique" formControlName="nomBoutique" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
-            </div>
 
-            <div class="space-y-2">
-                <label for="categorieShop" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Catégorie</label>
-                <input pInputText id="categorieShop" formControlName="categorieShop" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
-            </div>
-
-            <div class="grid grid-cols-2 gap-6">
-                <div class="space-y-2">
-                    <label for="latitude" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Latitude</label>
-                    <input pInputText type="number" id="latitude" formControlName="latitude" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
-                </div>
-                <div class="space-y-2">
-                    <label for="longitude" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Longitude</label>
-                    <input pInputText type="number" id="longitude" formControlName="longitude" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
-                </div>
-            </div>
-            
-            <div class="space-y-2">
-                <label for="initialQuota" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Quota mensuel alloué</label>
-                <input pInputText type="number" id="initialQuota" formControlName="initialQuota" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
-            </div>
-        </form>
-    </div>
-
-    <div class="p-6 border-t border-slate-200 bg-white flex justify-center gap-4">
-        <button pButton label="Annuler" class="p-button-text p-button-secondary rounded-2xl font-bold px-6 py-3" (click)="closeCreationPanel()"></button>
-        <button pButton label="Enregistrer" type="submit" form="boutiqueForm" class="p-button-primary rounded-2xl font-black shadow-lg shadow-indigo-200/70 px-8 py-3.5" [disabled]="boutiqueForm.invalid"></button>
-    </div>
-</p-dialog>
