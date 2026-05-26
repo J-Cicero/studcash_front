@@ -35,7 +35,7 @@ export class BankMandatsComponent implements OnInit {
 
   loadMandats() {
     this.isLoading.set(true);
-    const operatorId = "79633e9d-72e7-4953-b295-5853507d3913"; // Simulation
+    const operatorId = this.authService.userTrackingId() || "79633e9d-72e7-4953-b295-5853507d3913";
 
     this.bankService.getStudents(operatorId).subscribe({
       next: (students) => {

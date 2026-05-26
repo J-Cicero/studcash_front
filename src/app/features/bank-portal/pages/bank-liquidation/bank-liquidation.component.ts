@@ -5,6 +5,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { ButtonModule } from 'primeng/button';
 import { BankPortalService } from '../../../../core/services/bank-portal.service';
 import { StudentLiquidationInfo } from '../../../../core/models/bank-portal.model';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-bank-liquidation',
@@ -18,6 +19,7 @@ export class BankLiquidationComponent implements OnInit {
   students = signal<StudentLiquidationInfo[]>([]);
 
   private bankService = inject(BankPortalService);
+  private authService = inject(AuthService);
 
   ngOnInit(): void {
     this.loadStudents();
@@ -27,7 +29,7 @@ export class BankLiquidationComponent implements OnInit {
 
   loadStudents() {
     this.isLoading.set(true);
-    const operatorId = "79633e9d-72e7-4953-b295-5853507d3913"; // Simulation
+    const operatorId = this.authService.userTrackingId() || "79633e9d-72e7-4953-b295-5853507d3913";
     
     this.bankService.getStudents(operatorId).subscribe({
       next: (data) => {

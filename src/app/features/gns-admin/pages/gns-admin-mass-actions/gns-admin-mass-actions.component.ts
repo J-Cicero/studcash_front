@@ -22,7 +22,10 @@ export class GnsAdminMassActionsComponent implements OnInit, OnDestroy {
   progress = signal(0);
   isLoading = signal(false);
   isConfirmDialogOpen = signal(false);
+  isConfirmBoutiqueDialogOpen = signal(false);
   montantFixe = signal<number | null>(null);
+  montantQuota = signal<number | null>(null);
+  seuilBoutique = signal<number | null>(null);
   
   univStats = signal<any[]>([]);
   schoolYears = signal<ScolariteYear[]>([]);
@@ -90,12 +93,44 @@ export class GnsAdminMassActionsComponent implements OnInit, OnDestroy {
         }
     });
 
-    // Simple fake progress animation
+  // Simple fake progress animation
     this.progressInterval = setInterval(() => {
         if (this.progress() < 90) {
             this.progress.update(v => v + 5);
         }
     }, 1000);
+  }
+
+  triggerMassBoutiqueRecharge() {
+    this.montantQuota.set(null);
+    this.seuilBoutique.set(null);
+    this.isConfirmBoutiqueDialogOpen.set(true);
+  }
+
+  cancelMassBoutiqueRecharge() {
+    this.isConfirmBoutiqueDialogOpen.set(false);
+  }
+
+  confirmMassBoutiqueRecharge() {
+    const montant = this.montantQuota();
+    const seuil = this.seuilBoutique();
+    if (!montant || montant <= 0 || !seuil || seuil <= 0) {
+      return;
+    }
+
+    this.isConfirmBoutiqueDialogOpen.set(false);
+    this.isLoading.set(true);
+    
+    this.versementService.rechargeMassBoutiques(seuil, montant).subscribe({
+        next: (res) => {
+            this.isLoading.set(false);
+            this.loadHistory();
+        },
+        error: (err) => {
+            console.error('Error in mass boutique recharge', err);
+            this.isLoading.set(false);
+        }
+    });
   }
 
   ngOnDestroy() {

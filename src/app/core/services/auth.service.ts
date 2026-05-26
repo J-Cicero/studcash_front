@@ -10,6 +10,7 @@ export class AuthService {
   // Signal to track the current user's role
   currentUserRole = signal<UserRole | null>(this.getRoleFromStorage());
   universityId = signal<string | null>(localStorage.getItem('university_id'));
+  userTrackingId = signal<string | null>(localStorage.getItem('user_tracking_id'));
 
   constructor(private router: Router) {}
 
@@ -17,11 +18,15 @@ export class AuthService {
     return localStorage.getItem('user_role') as UserRole | null;
   }
 
-  login(role: UserRole, univId?: string) {
+  login(role: UserRole, univId?: string, trackingId?: string) {
     localStorage.setItem('user_role', role);
     if (univId) {
         localStorage.setItem('university_id', univId);
         this.universityId.set(univId);
+    }
+    if (trackingId) {
+        localStorage.setItem('user_tracking_id', trackingId);
+        this.userTrackingId.set(trackingId);
     }
     this.currentUserRole.set(role);
   }
@@ -29,8 +34,10 @@ export class AuthService {
   logout() {
     localStorage.removeItem('user_role');
     localStorage.removeItem('university_id');
+    localStorage.removeItem('user_tracking_id');
     this.currentUserRole.set(null);
     this.universityId.set(null);
+    this.userTrackingId.set(null);
     this.router.navigate(['/login']);
   }
 
