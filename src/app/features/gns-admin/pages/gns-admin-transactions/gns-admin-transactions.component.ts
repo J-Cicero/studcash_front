@@ -5,6 +5,8 @@ import { TagModule } from 'primeng/tag';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ButtonModule } from 'primeng/button';
 import { PaiementService } from '../../../../core/services/paiement.service';
+import { AdminService } from '../../../../core/services/admin.service';
+import { AdminGlobalStats } from '../../../../core/models/gns-admin.model';
 
 @Component({
   selector: 'app-gns-admin-transactions',
@@ -17,11 +19,21 @@ export class GnsAdminTransactionsComponent implements OnInit {
   isLoading = signal(false);
   transactions = signal<any[]>([]);
   totalElements = signal(0);
+  stats = signal<AdminGlobalStats | null>(null);
 
   private paiementService = inject(PaiementService);
+  private adminService = inject(AdminService);
 
   ngOnInit(): void {
     this.loadTransactions();
+    this.loadStats();
+  }
+
+  loadStats() {
+    this.adminService.getGlobalStats().subscribe({
+      next: (data) => this.stats.set(data),
+      error: (err) => console.error('Error fetching global stats', err)
+    });
   }
 
   loadTransactions(page: number = 0, size: number = 20) {

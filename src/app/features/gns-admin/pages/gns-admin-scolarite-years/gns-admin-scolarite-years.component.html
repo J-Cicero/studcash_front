@@ -47,8 +47,8 @@
     </div>
 </div>
 
-<!-- Dialog: Create ScolariteYear -->
-<p-dialog [visible]="isCreationPanelOpen()" (visibleChange)="isCreationPanelOpen.set($event)" [modal]="true" [style]="{ width: '560px' }" [draggable]="false" [resizable]="false" [showHeader]="false">
+<!-- Dialog: Create ScolariteYear Stepper -->
+<p-dialog [visible]="isCreationPanelOpen()" (visibleChange)="isCreationPanelOpen.set($event)" [modal]="true" [style]="{ width: '600px' }" [draggable]="false" [resizable]="false" [showHeader]="false">
     <div class="p-6 border-b border-slate-200 flex items-center justify-between bg-white">
         <div>
             <h2 class="text-xl font-black text-slate-800 uppercase tracking-tight">Ouvrir un Cycle</h2>
@@ -57,36 +57,123 @@
         <button pButton icon="pi pi-times" class="p-button-text p-button-rounded text-slate-400" (click)="closeCreationPanel()"></button>
     </div>
     
-    <div class="p-8 space-y-6 bg-white">
-        <form [formGroup]="scolariteForm" class="space-y-6" id="scolariteForm" (ngSubmit)="submitForm()">
-            <div class="space-y-2">
-                <label for="libelle" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Libellé</label>
-                <input pInputText id="libelle" formControlName="libelle" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" placeholder="Ex: 2024-2025" />
+    <div class="p-8 space-y-6 bg-white min-h-[300px]">
+        
+        <!-- STEPPER HEADER -->
+        <div class="flex items-center justify-center mb-8">
+            <div class="flex items-center gap-4">
+                <div class="flex flex-col items-center">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center font-black text-sm transition-colors"
+                         [ngClass]="currentStep() >= 1 ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-slate-100 text-slate-400'">1</div>
+                    <span class="text-[10px] font-bold uppercase mt-2 text-slate-500">Dates</span>
+                </div>
+                <div class="w-16 h-1 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-indigo-600 transition-all duration-500" [style.width]="currentStep() >= 2 ? '100%' : '0%'"></div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center font-black text-sm transition-colors"
+                         [ngClass]="currentStep() >= 2 ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-slate-100 text-slate-400'">2</div>
+                    <span class="text-[10px] font-bold uppercase mt-2 text-slate-500">Commission</span>
+                </div>
+                <div class="w-16 h-1 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-emerald-500 transition-all duration-500" [style.width]="currentStep() === 3 ? '100%' : '0%'"></div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center font-black text-sm transition-colors"
+                         [ngClass]="currentStep() === 3 ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200' : 'bg-slate-100 text-slate-400'">
+                         <i class="pi pi-check"></i>
+                    </div>
+                    <span class="text-[10px] font-bold uppercase mt-2 text-slate-500">Succès</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 1: DATES -->
+        <div *ngIf="currentStep() === 1" class="animate-fadein">
+            <form [formGroup]="scolariteForm" class="space-y-6">
+                <div class="space-y-2">
+                    <label for="libelle" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Libellé</label>
+                    <input pInputText id="libelle" formControlName="libelle" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" placeholder="Ex: 2024-2025" />
+                </div>
+
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label for="dateDebut" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Date de début</label>
+                        <input pInputText type="date" id="dateDebut" formControlName="dateDebut" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
+                    </div>
+                    <div class="space-y-2">
+                        <label for="dateFin" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Date de fin</label>
+                        <input pInputText type="date" id="dateFin" formControlName="dateFin" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between p-5 bg-slate-50 rounded-2xl border border-slate-100 mt-2">
+                    <div>
+                        <p class="font-bold text-sm text-slate-800">Activer immédiatement</p>
+                        <p class="text-[10px] text-slate-400 font-black uppercase mt-1">Rend ce cycle opérationnel</p>
+                    </div>
+                    <p-inputSwitch formControlName="estOuverte"></p-inputSwitch>
+                </div>
+            </form>
+        </div>
+
+        <!-- STEP 2: COMMISSION -->
+        <div *ngIf="currentStep() === 2" class="animate-fadein">
+            <div class="bg-indigo-50 border border-indigo-100 p-5 rounded-2xl mb-6">
+                <h3 class="text-indigo-800 font-black text-sm flex items-center gap-2 mb-2">
+                    <i class="pi pi-lock"></i> Verrouillage de la Commission
+                </h3>
+                <p class="text-xs text-indigo-600/80 font-medium">
+                    Définissez la commission GNS pour cette année scolaire. Une fois validée, cette valeur sera appliquée à toutes les transactions et ne devrait plus être modifiée.
+                </p>
             </div>
 
-            <div class="grid grid-cols-2 gap-6">
+            <form [formGroup]="commissionForm" class="space-y-6">
                 <div class="space-y-2">
-                    <label for="dateDebut" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Date de début</label>
-                    <input pInputText type="date" id="dateDebut" formControlName="dateDebut" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
+                    <label for="commission" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Taux de Commission (%)</label>
+                    <div class="relative">
+                        <input pInputText id="commission" formControlName="valeurParametre" type="number" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300 font-black text-xl text-slate-800" />
+                        <span class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 font-black">%</span>
+                    </div>
                 </div>
-                <div class="space-y-2">
-                    <label for="dateFin" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Date de fin</label>
-                    <input pInputText type="date" id="dateFin" formControlName="dateFin" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
+                
+                <div class="space-y-2 hidden">
+                    <label for="desc" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Description</label>
+                    <input pInputText id="desc" formControlName="description" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5" />
                 </div>
-            </div>
+            </form>
+        </div>
 
-            <div class="flex items-center justify-between p-5 bg-slate-50 rounded-2xl border border-slate-100 mt-2">
+        <!-- STEP 3: SUCCESS & NOTIFICATION -->
+        <div *ngIf="currentStep() === 3" class="animate-fadein flex flex-col items-center text-center py-6">
+            <div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-6">
+                <i class="pi pi-check text-4xl text-emerald-500"></i>
+            </div>
+            <h3 class="text-2xl font-black text-slate-800 mb-2">Année Initialisée</h3>
+            <p class="text-sm text-slate-500 font-medium max-w-sm mb-6">
+                L'année scolaire et la commission GNS ont été configurées avec succès. 
+            </p>
+            <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl w-full flex items-start gap-4 text-left">
+                <i class="pi pi-bell text-amber-500 mt-1"></i>
                 <div>
-                    <p class="font-bold text-sm text-slate-800">Activer immédiatement</p>
-                    <p class="text-[10px] text-slate-400 font-black uppercase mt-1">Rend ce cycle opérationnel</p>
+                    <h4 class="font-bold text-amber-800 text-sm">Action Requise par DBS</h4>
+                    <p class="text-xs text-amber-700/80 mt-1">Une alerte est générée. Le département DBS doit maintenant configurer les <span class="font-bold">Règles de Bourse</span> pour l'année {{ scolariteForm.value.libelle }}.</p>
                 </div>
-                <p-inputSwitch formControlName="estOuverte"></p-inputSwitch>
             </div>
-        </form>
+        </div>
+
     </div>
 
-    <div class="p-6 border-t border-slate-200 bg-white flex justify-center gap-4">
-        <button pButton label="Annuler" class="p-button-text p-button-secondary rounded-2xl font-bold px-6 py-3" (click)="closeCreationPanel()"></button>
-        <button pButton label="Enregistrer" type="submit" form="scolariteForm" class="p-button-primary rounded-2xl font-black shadow-lg shadow-indigo-200/70 px-8 py-3.5" [disabled]="scolariteForm.invalid"></button>
+    <!-- FOOTER ACTIONS -->
+    <div class="p-6 border-t border-slate-200 bg-white flex justify-between items-center">
+        <button *ngIf="currentStep() < 3" pButton label="Annuler" class="p-button-text p-button-secondary rounded-2xl font-bold px-6 py-3" (click)="closeCreationPanel()"></button>
+        <div *ngIf="currentStep() === 3"></div> <!-- spacer -->
+
+        <div class="flex gap-3">
+            <button *ngIf="currentStep() === 2" pButton label="Retour" class="p-button-outlined p-button-secondary rounded-2xl font-bold px-6 py-3" (click)="goBackToStep1()"></button>
+            <button *ngIf="currentStep() === 1" pButton label="Suivant" class="p-button-primary rounded-2xl font-black shadow-lg shadow-indigo-200/70 px-8 py-3.5" [disabled]="scolariteForm.invalid" (click)="goToStep2()"></button>
+            <button *ngIf="currentStep() === 2" pButton label="Valider l'Année" class="p-button-success rounded-2xl font-black shadow-lg shadow-emerald-200/70 px-8 py-3.5 bg-emerald-500 border-emerald-500 hover:bg-emerald-600" [disabled]="commissionForm.invalid" (click)="submitAll()"></button>
+            <button *ngIf="currentStep() === 3" pButton label="Fermer" class="p-button-primary rounded-2xl font-black shadow-lg shadow-indigo-200/70 px-8 py-3.5" (click)="closeCreationPanel()"></button>
+        </div>
     </div>
 </p-dialog>

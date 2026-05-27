@@ -67,7 +67,7 @@ export class DbsDashboardComponent implements OnInit {
     this.donutData = {
       labels: univs.map(u => u.code),
       datasets: [{
-        data: univs.map(u => u.nbEtudiants),
+        data: univs.map(u => u.nbEligibles || 0),
         backgroundColor: ['#4F46E5', '#7C3AED', '#EC4899', '#F59E0B', '#10B981'],
         hoverOffset: 4
       }]

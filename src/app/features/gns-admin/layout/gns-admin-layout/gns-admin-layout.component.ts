@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { ThemeToggleComponent } from '../../../../shared/components/theme-toggle/theme-toggle.component';
 import { Subscription } from 'rxjs';
 import { ThemeService } from '../../../../core/services/theme.service';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-gns-admin-layout',
@@ -18,6 +19,8 @@ export class GnsAdminLayoutComponent implements OnInit, OnDestroy {
 
   private subs: Subscription | null = null;
   private theme = inject(ThemeService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
   ngOnInit(): void {
     // initialize and subscribe to theme changes for admin key
@@ -29,5 +32,10 @@ export class GnsAdminLayoutComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subs?.unsubscribe();
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/auth/login']);
   }
 }

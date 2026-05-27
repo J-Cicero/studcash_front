@@ -5,8 +5,7 @@
             <p class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mt-2">Bilan consolidé par établissement</p>
         </div>
         <div class="flex gap-4">
-            <button pButton label="Exporter PDF" icon="pi pi-file-pdf" class="p-button-danger p-button-sm rounded-xl font-bold px-6"></button>
-            <button pButton label="Exporter Excel" icon="pi pi-file-excel" class="p-button-success p-button-sm rounded-xl font-bold px-6"></button>
+            <!-- Les boutons d'exportation seront ajoutés lorsque l'API les supportera -->
         </div>
     </header>
 
@@ -17,8 +16,7 @@
                     <th pSortableColumn="code">Code <p-sortIcon field="code"></p-sortIcon></th>
                     <th pSortableColumn="nom">Université <p-sortIcon field="nom"></p-sortIcon></th>
                     <th pSortableColumn="nbEtudiants" class="text-right">Total Étudiants <p-sortIcon field="nbEtudiants"></p-sortIcon></th>
-                    <th class="text-right">Eligibles (%)</th>
-                    <th class="text-right">Budget Alloué</th>
+                    <th class="text-right">Eligibles <p-sortIcon field="nbEligibles"></p-sortIcon></th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-stat>
@@ -31,17 +29,15 @@
                     <td class="px-10 py-8 font-black text-slate-700 text-lg tracking-tight">{{ stat.nom }}</td>
                     <td class="px-10 py-8 text-right font-black text-slate-800">{{ stat.nbEtudiants | number }}</td>
                     <td class="px-10 py-8 text-right">
-                        <span class="text-emerald-600 font-black text-lg">--- %</span>
+                        <span class="text-emerald-600 font-black text-lg">{{ stat.nbEligibles | number }}</span>
                     </td>
-                    <td class="px-10 py-8 text-right font-black text-indigo-600">Calcul...</td>
                 </tr>
             </ng-template>
             <ng-template pTemplate="footer">
                 <tr class="bg-slate-900 text-white">
-                    <td colspan="2" class="px-10 py-6 font-black uppercase tracking-widest text-xs">Total Consolidé</td>
-                    <td class="px-10 py-6 text-right font-black text-xl">---</td>
-                    <td class="px-10 py-6 text-right">---</td>
-                    <td class="px-10 py-6 text-right font-black text-xl text-emerald-400">--- FCFA</td>
+                    <td colspan="2" class="px-10 py-6 font-black uppercase tracking-widest text-xs">Total des établissements : {{ univStats().length }}</td>
+                    <td class="px-10 py-6 text-right font-black text-xl"></td>
+                    <td class="px-10 py-6 text-right"></td>
                 </tr>
             </ng-template>
         </p-table>

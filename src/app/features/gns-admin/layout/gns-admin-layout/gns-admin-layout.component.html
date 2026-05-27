@@ -2,9 +2,7 @@
     <!-- SideNavBar -->
     <aside class="fixed left-0 top-0 h-full w-[260px] bg-white border-r border-[var(--border-color)] flex flex-col py-6 px-5 z-50 shadow-sm transition-all duration-300">
         <div class="mb-10 flex items-center gap-4 px-2">
-            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary-fixed-variant text-white flex items-center justify-center font-bold text-xl shadow-md">
-                SC
-            </div>
+            <img src="/logo-studcash.png" alt="StudCash" class="w-12 h-12 rounded-xl shadow-md object-cover border border-slate-100 bg-white" />
             <div class="flex flex-col">
                 <span class="text-on-surface font-bold tracking-wider text-sm uppercase">StudCash</span>
                 <span class="text-primary text-[10px] font-semibold uppercase tracking-widest mt-0.5">Admin GNS</span>
@@ -95,10 +93,13 @@
                             <p class="text-sm font-bold text-slate-800 leading-tight group-hover:text-primary transition-colors">Administrateur GNS</p>
                             <p class="text-[11px] text-slate-500 font-medium">Superviseur</p>
                         </div>
-                        <div class="relative w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-900 to-purple-800 shadow-sm group-hover:shadow-md transition-all duration-300 transform group-hover:scale-105 flex items-center justify-center border border-white">
-                            <span class="font-bold text-sm text-white">AD</span>
+                        <div class="relative w-10 h-10 rounded-xl bg-slate-100 shadow-inner flex items-center justify-center border border-slate-200 group-hover:border-primary/50 transition-all duration-300 overflow-hidden">
+                            <i class="pi pi-user text-slate-500 text-lg group-hover:text-primary transition-colors"></i>
                         </div>
                     </div>
+                    <button (click)="logout()" class="relative flex items-center justify-center w-10 h-10 rounded-full bg-rose-50 border border-rose-200 text-rose-500 hover:text-white hover:bg-rose-500 transition-all shadow-sm ml-2" title="Déconnexion">
+                        <i class="pi pi-power-off text-lg"></i>
+                    </button>
                 </div>
             </header>
         </div>

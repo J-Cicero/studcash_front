@@ -33,8 +33,7 @@ export class BankLiquidationComponent implements OnInit {
     
     this.bankService.getStudents(operatorId).subscribe({
       next: (data) => {
-        // Filtrer ceux qui n'ont pas encore été traités si le backend ne le fait pas
-        this.students.set(data);
+        this.students.set(data.filter(s => !s.virementEffectue));
         this.isLoading.set(false);
       },
       error: (err) => {

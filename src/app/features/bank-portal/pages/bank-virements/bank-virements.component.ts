@@ -29,9 +29,7 @@ export class BankVirementsComponent implements OnInit {
     
     this.bankService.getStudents(operatorId).subscribe({
       next: (data) => {
-        // In a real app we'd have a separate endpoint for history
-        // For now we show all but label them as processed for UI simulation
-        this.processedStudents.set(data);
+        this.processedStudents.set(data.filter(s => s.virementEffectue));
         this.isLoading.set(false);
       },
       error: (err) => {

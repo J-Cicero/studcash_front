@@ -87,12 +87,25 @@
                 </div>
                 <span class="text-2xl font-black text-slate-800">{{ univ.students | number }}</span>
             </div>
+
+            <div class="flex items-center justify-between p-5 bg-emerald-50 rounded-2xl border border-emerald-100">
+                <div class="flex flex-col">
+                    <div class="flex items-center gap-2 mb-1">
+                        <i class="pi pi-wallet text-emerald-600"></i>
+                        <span class="text-sm font-bold text-emerald-800 uppercase tracking-widest">Wallet Université</span>
+                    </div>
+                    <span class="text-[10px] text-emerald-600/70 font-mono">{{ univ.walletTrackingId || 'Aucun wallet' }}</span>
+                </div>
+                <span class="text-2xl font-black text-emerald-700">{{ univ.soldeWallet || 0 | number }} <span class="text-sm">FCFA</span></span>
+            </div>
         </div>
         
         <div class="space-y-4">
-            <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100 pb-2">Actions Rapides</h4>
-            <button pButton label="Lancer versement bourse" class="p-button-primary w-full rounded-xl font-bold py-3 shadow-lg shadow-indigo-100"></button>
-            <button pButton label="Désactiver l'établissement" class="p-button-danger p-button-text w-full font-bold"></button>
+            <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100 pb-2">État des Fonds</h4>
+            <div class="p-4 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
+                <span class="text-sm font-bold text-slate-600">Statut du retrait</span>
+                <p-tag [value]="(univ.soldeWallet && univ.soldeWallet > 0) ? 'NON RETIRÉ' : 'RETIRÉ'" [severity]="(univ.soldeWallet && univ.soldeWallet > 0) ? 'warn' : 'success'"></p-tag>
+            </div>
         </div>
     </div>
 </p-dialog>
@@ -139,11 +152,6 @@
                     <label for="telephone" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Téléphone</label>
                     <input pInputText id="telephone" formControlName="telephone" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" placeholder="+228 ..." />
                 </div>
-            </div>
-
-            <div class="space-y-2">
-                <label for="walletTrackingId" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Wallet associé</label>
-                <input pInputText id="walletTrackingId" formControlName="walletTrackingId" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" placeholder="Tracking ID du wallet" />
             </div>
 
             <div class="flex items-center justify-between p-5 bg-slate-50 rounded-2xl border border-slate-100 mt-2">

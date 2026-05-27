@@ -5,6 +5,9 @@
             <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Réseau Commerçant</h1>
             <p class="text-slate-500 font-medium mt-1">Gouvernance des boutiques partenaires et gestion des quotas.</p>
         </div>
+        <button pButton icon="pi pi-plus" label="Ajouter une boutique" 
+            class="p-button-primary inline-flex items-center gap-2 rounded-2xl px-5 py-3.5 font-bold shadow-lg shadow-indigo-100/80 hover:shadow-xl hover:shadow-indigo-100 transition-all" 
+                (click)="openCreatePanel()"></button>
     </header>
 
     <!-- Content Grid / Table -->
@@ -42,5 +45,44 @@
         </p-table>
     </div>
 </div>
+
+<!-- Create Boutique Dialog -->
+<p-dialog [visible]="isCreateBoutiquePanelOpen()" (visibleChange)="isCreateBoutiquePanelOpen.set($event)" [modal]="true" [style]="{ width: '560px' }" [draggable]="false" [resizable]="false" [showHeader]="false">
+    <div class="p-6 border-b border-slate-200 flex items-center justify-between bg-white">
+        <div>
+            <h2 class="text-xl font-black text-slate-800 uppercase tracking-tight">Nouvelle Boutique</h2>
+            <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Ajout au réseau marchand</p>
+        </div>
+        <button pButton icon="pi pi-times" class="p-button-text p-button-rounded text-slate-400" (click)="closeCreatePanel()"></button>
+    </div>
+    
+    <div class="p-8 space-y-6 bg-white">
+        <form [formGroup]="boutiqueForm" class="space-y-6" id="createBoutiqueForm">
+            <div class="space-y-2">
+                <label for="nomBoutique" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Nom de la boutique</label>
+                <input pInputText id="nomBoutique" formControlName="nomBoutique" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" placeholder="Ex: Campus Snack" />
+            </div>
+            
+            <div class="grid grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label for="categorieShop" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Catégorie</label>
+                    <input pInputText id="categorieShop" formControlName="categorieShop" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" placeholder="Ex: Restauration" />
+                </div>
+                <div class="space-y-2">
+                    <label for="initialQuota" class="block text-[11px] font-black uppercase tracking-widest text-slate-500">Quota Initial (FCFA)</label>
+                    <input pInputText type="number" id="initialQuota" formControlName="initialQuota" class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5 shadow-sm focus:border-indigo-300" />
+                </div>
+            </div>
+            <p class="text-[11px] font-medium text-slate-500 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100 mt-2">
+                En créant la boutique, le système lui assignera automatiquement un Wallet. Le quota initial défini ci-dessus sera attribué au nouveau Wallet.
+            </p>
+        </form>
+    </div>
+
+    <div class="p-6 border-t border-slate-200 bg-white flex justify-center gap-4">
+        <button pButton label="Annuler" class="p-button-text p-button-secondary rounded-2xl font-bold px-6 py-3" (click)="closeCreatePanel()"></button>
+        <button pButton label="Ajouter la Boutique" type="submit" form="createBoutiqueForm" class="p-button-primary rounded-2xl font-black shadow-lg shadow-indigo-200/70 px-8 py-3.5" [disabled]="boutiqueForm.invalid || isLoading()" (click)="submitForm()"></button>
+    </div>
+</p-dialog>
 
 

@@ -33,18 +33,18 @@ export class UnivRegistrationsComponent implements OnInit {
 
   niveaux = [
     { label: 'Tous les niveaux', value: null },
-    { label: 'LICENCE 1', value: 'L1' },
-    { label: 'LICENCE 2', value: 'L2' },
-    { label: 'LICENCE 3', value: 'L3' },
-    { label: 'MASTER 1', value: 'M1' },
-    { label: 'MASTER 2', value: 'M2' }
+    { label: 'LICENCE 1', value: 'L1_ANNEE' },
+    { label: 'LICENCE 2', value: 'L2_ANNEE' },
+    { label: 'LICENCE 3', value: 'L3_ANNEE' },
+    { label: 'LICENCE 4 (Recyclage)', value: 'L4_ANNEE' },
+    { label: 'LICENCE 5 (Recyclage)', value: 'L5_ANNEE' }
   ];
   selectedNiveau: string | null = null;
 
   typesBourse = [
     { label: 'Toutes les bourses', value: null },
-    { label: 'ENTIERE', value: 'ENTIERE' },
-    { label: 'DEMI', value: 'DEMI' }
+    { label: 'Bourse 36 000 FCFA', value: 'BOURSE_DBS_36k' },
+    { label: 'Bourse 54 000 FCFA', value: 'BOURSE_DBS_54k' }
   ];
   selectedBourse: string | null = null;
 

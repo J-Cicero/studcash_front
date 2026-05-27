@@ -1,7 +1,8 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../../../core/services/user.service';
-import { ConfigurationService, ConfigurationGns } from '../../../../core/services/configuration.service';
+import { ParametreGnsService } from '../../../../core/services/parametre-gns.service';
+import { ParametreGnsResponse, ParametreGnsRequest, TypeParametreGns } from '../../../../core/models/gns-admin.model';
 import { SkeletonModule } from 'primeng/skeleton';
 import { FormsModule } from '@angular/forms';
 import { FloatLabelModule } from 'primeng/floatlabel';
@@ -17,14 +18,16 @@ import { ButtonModule } from 'primeng/button';
   styleUrls: ['./gns-admin-settings.component.scss']
 })
 export class GnsAdminSettingsComponent implements OnInit {
-  activeTab = signal<string>('mon-profil');
+  activeTab = signal<string>('plateforme');
   isLoading = signal(true);
   
   profile = signal<any>(null);
-  configs = signal<ConfigurationGns[]>([]);
+  configs = signal<ParametreGnsResponse[]>([]);
+  
+  newParam = signal({ nomParametre: '', valeurParametre: '', description: '', estActif: true });
 
   private userService = inject(UserService);
-  private configService = inject(ConfigurationService);
+  private parametreService = inject(ParametreGnsService);
 
   ngOnInit(): void {
     this.loadData();
@@ -37,9 +40,9 @@ export class GnsAdminSettingsComponent implements OnInit {
       error: (err) => console.error('Error fetching profile', err)
     });
 
-    this.configService.getAll().subscribe({
+    this.parametreService.getAll(0, 100).subscribe({
       next: (data) => {
-        this.configs.set(data);
+        this.configs.set(data.content || []);
         this.isLoading.set(false);
       },
       error: (err) => {
@@ -53,10 +56,36 @@ export class GnsAdminSettingsComponent implements OnInit {
     this.activeTab.set(tabId);
   }
 
-  updateConfig(cle: string, valeur: string) {
-    this.configService.update(cle, valeur).subscribe({
+  updateConfig(config: ParametreGnsResponse) {
+    const request = {
+      nomParametre: config.nomParametre,
+      valeurParametre: config.valeurParametre,
+      description: config.description,
+      estActif: config.estActif
+    };
+    this.parametreService.saveOrUpdate(request).subscribe({
         next: () => console.log('Config updated'),
         error: (err) => console.error('Update failed', err)
+    });
+  }
+
+  createConfig() {
+    const p = this.newParam();
+    if (!p.nomParametre || !p.valeurParametre) return;
+    
+    const request: ParametreGnsRequest = {
+      nomParametre: p.nomParametre as TypeParametreGns,
+      valeurParametre: p.valeurParametre,
+      description: p.description,
+      estActif: p.estActif
+    };
+
+    this.parametreService.saveOrUpdate(request).subscribe({
+        next: () => {
+            this.newParam.set({ nomParametre: '', valeurParametre: '', description: '', estActif: true });
+            this.loadData();
+        },
+        error: (err) => console.error('Create param failed', err)
     });
   }
 }

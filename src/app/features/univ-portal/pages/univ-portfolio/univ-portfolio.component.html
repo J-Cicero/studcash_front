@@ -23,9 +23,6 @@
                     <span class="font-bold text-[10px] text-indigo-200 uppercase tracking-widest opacity-60">ID Portefeuille</span>
                     <span class="font-mono text-sm text-white font-medium">#{{ univDetails()?.walletTrackingId?.substring(0,12) || '---' }}</span>
                 </div>
-                <button pButton label="Demander un virement" icon="pi pi-external-link" 
-                        class="p-button-secondary bg-white/10 border-white/20 text-white rounded-xl px-8 py-4 font-black text-xs uppercase tracking-widest hover:bg-white/20 transition-all"
-                        (click)="openTransferModal()"></button>
             </div>
         </div>
 
@@ -92,35 +89,4 @@
     </div>
 </div>
 
-<!-- Transfer Request Dialog -->
-<p-dialog [visible]="isTransferModalOpen()" (visibleChange)="isTransferModalOpen.set($event)" [modal]="true" [style]="{ width: '500px' }" [draggable]="false" [resizable]="false" [showHeader]="false">
-    <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-        <div>
-            <h2 class="text-xl font-black text-slate-800 uppercase tracking-tight">Demander un virement</h2>
-            <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Saisie du montant</p>
-        </div>
-        <button pButton icon="pi pi-times" class="p-button-text p-button-rounded text-slate-400" (click)="closeTransferModal()"></button>
-    </div>
-    
-    <div class="p-8">
-        <div class="flex flex-col gap-4">
-            <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-5 flex items-start gap-4 mb-4">
-                <i class="pi pi-info-circle text-indigo-600 text-xl"></i>
-                <div>
-                    <h4 class="text-xs font-black text-indigo-800 uppercase tracking-widest mb-1">Information</h4>
-                    <p class="text-sm text-indigo-600 font-medium">Les demandes de virement sont sujettes à validation par l'administration centrale GNS.</p>
-                </div>
-            </div>
-            
-            <div class="flex flex-col gap-2">
-                <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Montant souhaité (FCFA)</label>
-                <input type="number" class="w-full p-4 text-2xl font-black text-slate-800 border-2 border-slate-200 rounded-xl focus:border-indigo-500 focus:ring-0 transition-colors" placeholder="0" />
-            </div>
-        </div>
-    </div>
 
-    <div class="p-6 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
-        <button pButton label="Annuler" class="p-button-text p-button-secondary font-bold" (click)="closeTransferModal()"></button>
-        <button pButton label="Confirmer" class="p-button-primary rounded-xl font-bold px-6 shadow-lg shadow-indigo-100"></button>
-    </div>
-</p-dialog>

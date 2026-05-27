@@ -66,15 +66,4 @@ export class UnivPortfolioComponent implements OnInit {
     });
   }
 
-  isTransferModalOpen = signal(false);
-
-  openTransferModal() {
-    this.isTransferModalOpen.set(true);
-    document.body.style.overflow = 'hidden';
-  }
-
-  closeTransferModal() {
-    this.isTransferModalOpen.set(false);
-    document.body.style.overflow = 'auto';
-  }
 }

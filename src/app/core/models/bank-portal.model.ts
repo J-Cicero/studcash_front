@@ -6,5 +6,6 @@ export interface StudentLiquidationInfo {
   bourseTotale: number;
   depensesStudCash: number;
   resteAPayer: number;
+  virementEffectue: boolean;
   date?: string;
 }

@@ -41,9 +41,6 @@ export class UnivDashboardComponent implements OnInit {
     pretsEnAttente: 0
   });
 
-  chartData: any;
-  chartOptions: any;
-  
   recentTransactions = signal<PaiementResponse[]>([]);
   rejectedStudents = signal<InscriptionAnnuelleResponse[]>([]);
 
@@ -87,10 +84,9 @@ export class UnivDashboardComponent implements OnInit {
         this.stats.set({
             nbStudents: res.students.totalElements,
             totalEncaisse: res.details.soldeWallet || 0,
-          pretsEnAttente: (res.prets as PretScolariteResponse[]).filter(p => !p.estRembourse).length
+            pretsEnAttente: (res.prets as PretScolariteResponse[]).filter(p => !p.estRembourse).length
         });
 
-        this.initChart();
         this.isLoading.set(false);
       },
       error: (err) => {
@@ -100,21 +96,4 @@ export class UnivDashboardComponent implements OnInit {
     });
   }
 
-  initChart() {
-    this.chartData = {
-        labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
-        datasets: [
-            {
-                label: 'Encaissements Scolarité',
-                data: [45, 52, 48, 61, 58, 74],
-                borderColor: '#4F46E5',
-                tension: 0.4
-            }
-        ]
-    };
-    this.chartOptions = {
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } }
-    };
-  }
 }

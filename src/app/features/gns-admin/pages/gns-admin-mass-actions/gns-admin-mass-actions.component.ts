@@ -23,7 +23,10 @@ export class GnsAdminMassActionsComponent implements OnInit, OnDestroy {
   isLoading = signal(false);
   isConfirmDialogOpen = signal(false);
   isConfirmBoutiqueDialogOpen = signal(false);
+  
   montantFixe = signal<number | null>(null);
+  
+  // Parameters from DB (Used as default values but user can change them)
   montantQuota = signal<number | null>(null);
   seuilBoutique = signal<number | null>(null);
   
@@ -59,7 +62,7 @@ export class GnsAdminMassActionsComponent implements OnInit, OnDestroy {
 
   triggerMassDisbursement() {
     if (!this.activeYear()) return;
-    this.montantFixe.set(null);
+    this.montantFixe.set(null); // Force user to enter
     this.isConfirmDialogOpen.set(true);
   }
 
@@ -70,29 +73,29 @@ export class GnsAdminMassActionsComponent implements OnInit, OnDestroy {
   confirmMassDisbursement() {
     if (!this.activeYear()) return;
     const montant = this.montantFixe();
-    if (montant === null || montant <= 0) {
-      return;
-    }
+    if (!montant || montant <= 0) return;
 
     this.isConfirmDialogOpen.set(false);
     this.isLoading.set(true);
     this.progress.set(10);
     
+    // Pass the inputted amount to backend
     this.versementService.disburseMassStudents(this.activeYear()!.trackingId, montant).subscribe({
         next: (res) => {
             this.progress.set(100);
             this.isLoading.set(false);
-            // Re-load stats to see changes if any
-            this.loadData();
+            this.loadHistory();
+            clearInterval(this.progressInterval);
         },
         error: (err) => {
             console.error('Error in mass disbursement', err);
             this.isLoading.set(false);
             this.progress.set(0);
+            clearInterval(this.progressInterval);
         }
     });
 
-  // Simple fake progress animation
+  // Simple fake progress animation until SSE is implemented
     this.progressInterval = setInterval(() => {
         if (this.progress() < 90) {
             this.progress.update(v => v + 5);
@@ -101,8 +104,6 @@ export class GnsAdminMassActionsComponent implements OnInit, OnDestroy {
   }
 
   triggerMassBoutiqueRecharge() {
-    this.montantQuota.set(null);
-    this.seuilBoutique.set(null);
     this.isConfirmBoutiqueDialogOpen.set(true);
   }
 
@@ -113,10 +114,8 @@ export class GnsAdminMassActionsComponent implements OnInit, OnDestroy {
   confirmMassBoutiqueRecharge() {
     const montant = this.montantQuota();
     const seuil = this.seuilBoutique();
-    if (!montant || montant <= 0 || !seuil || seuil <= 0) {
-      return;
-    }
-
+    if (!montant || montant <= 0 || !seuil || seuil < 0) return;
+    
     this.isConfirmBoutiqueDialogOpen.set(false);
     this.isLoading.set(true);
     

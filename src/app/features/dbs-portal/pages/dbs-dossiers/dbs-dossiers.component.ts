@@ -92,7 +92,7 @@ export class DbsDossiersComponent implements OnInit {
     const dossier = this.selectedDossier();
     if (dossier) {
       if (!this.authService.hasRole(['ADMIN_DBS', 'ADMIN_GNS'])) return;
-      this.inscriptionService.updateStatus(dossier.trackingId, 'VALIDEE').subscribe({
+      this.inscriptionService.updateStatus(dossier.trackingId, 'ACTIVE').subscribe({
         next: () => {
           this.selectedDossier.set(null);
           this.loadDossiers();

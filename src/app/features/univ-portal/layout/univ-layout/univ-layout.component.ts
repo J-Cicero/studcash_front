@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ThemeService } from '../../../../core/services/theme.service';
@@ -19,6 +19,7 @@ export class UnivLayoutComponent implements OnInit, OnDestroy {
 
   private authService = inject(AuthService);
   private themeService = inject(ThemeService);
+  private router = inject(Router);
   private sub: Subscription | null = null;
 
   ngOnInit(): void {
@@ -33,5 +34,10 @@ export class UnivLayoutComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/auth/login']);
   }
 }

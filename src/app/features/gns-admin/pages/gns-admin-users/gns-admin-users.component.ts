@@ -83,7 +83,8 @@ export class GnsAdminUsersComponent implements OnInit {
     this.isLoading.set(true);
     this.userService.getAll(0, 100).subscribe({
       next: (data) => {
-        this.users.set(data.content);
+        const adminRoles = ['ADMIN_GNS', 'ADMIN_BANQUE', 'ADMIN_DBS', 'UNIVERSITY_ADMIN'];
+        this.users.set(data.content.filter(u => adminRoles.includes(u.role)));
         this.isLoading.set(false);
       },
       error: (err) => {
@@ -117,7 +118,7 @@ export class GnsAdminUsersComponent implements OnInit {
       } else if (role === 'ADMIN_BANQUE') {
         request = this.userService.registerBankOperator(this.userForm.value);
       } else {
-        request = this.userService.register(this.userForm.value);
+        request = this.userService.registerAdmin(this.userForm.value);
       }
 
       request.subscribe({

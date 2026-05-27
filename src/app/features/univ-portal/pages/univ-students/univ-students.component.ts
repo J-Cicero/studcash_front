@@ -46,15 +46,4 @@ export class UnivStudentsComponent implements OnInit {
     });
   }
 
-  isBulkUploadModalOpen = signal(false);
-
-  openBulkUploadModal() {
-    this.isBulkUploadModalOpen.set(true);
-    document.body.style.overflow = 'hidden';
-  }
-
-  closeBulkUploadModal() {
-    this.isBulkUploadModalOpen.set(false);
-    document.body.style.overflow = 'auto';
-  }
 }

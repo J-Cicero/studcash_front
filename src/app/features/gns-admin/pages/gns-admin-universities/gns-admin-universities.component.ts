@@ -38,8 +38,7 @@ export class GnsAdminUniversitiesComponent implements OnInit {
       estActive: [true],
       adresse: [''],
       emailContact: ['', Validators.email],
-      telephone: [''],
-      walletTrackingId: ['']
+      telephone: ['']
     });
   }
 
@@ -61,8 +60,8 @@ export class GnsAdminUniversitiesComponent implements OnInit {
             type: u.estActive ? 'Active' : 'Inactive',
             location: u.ville || 'Togo',
             students: s ? s['nbEtudiants'] : 0,
-            wallets: 0,
-            bourses: 'Calcul...',
+            wallets: u.soldeWallet || 0,
+            bourses: u.soldeWallet || 0,
             bgColor: ['bg-primary-container', 'bg-tertiary-fixed', 'bg-secondary-fixed'][index % 3],
             textColor: ['text-on-primary-container', 'text-on-tertiary-fixed', 'text-on-secondary-fixed'][index % 3]
           };

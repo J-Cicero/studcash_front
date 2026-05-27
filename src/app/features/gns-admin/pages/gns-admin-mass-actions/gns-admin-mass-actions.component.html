@@ -30,8 +30,7 @@
                 <i class="pi pi-chevron-down absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-sm"></i>
             </div>
             <p class="mt-3 text-[11px] font-medium text-slate-500 leading-relaxed max-w-xl">
-                Aucun formulaire n'est nécessaire ici: le backend exécute le versement sur l'année active.
-                Si aucun montant fixe n'est passé, le calcul se fait côté serveur à partir des règles et de l'éligibilité.
+                Sélectionnez l'année active. Vous gardez le contrôle total : vous devrez définir manuellement le montant à verser.
             </p>
         </div>
         <button pButton label="Verser Bourses Étudiants" icon="pi pi-bolt" 
@@ -114,32 +113,28 @@
             <p class="text-base text-slate-600 mt-1">{{ activeYear()?.libelle }}</p>
         </div>
         <div class="space-y-2">
-            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Montant fixe à verser</label>
+            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Montant exact à verser (FCFA)</label>
             <input
                 pInputText
                 type="number"
                 min="1"
-                placeholder="Ex: 50000"
-                class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:ring-4 focus:ring-indigo-500/10"
+                placeholder="Ex: 54000"
+                class="w-full bg-white border-2 border-indigo-200 rounded-xl px-4 py-3 text-lg font-black text-indigo-900 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all"
                 [ngModel]="montantFixe()"
                 (ngModelChange)="montantFixe.set($event)"
             />
             <p class="text-[11px] font-medium text-slate-500 leading-relaxed">
-                Ce montant est obligatoire. Le backend le versera à chaque étudiant éligible de l'année sélectionnée.
+                Ce montant sera appliqué de manière stricte à tous les étudiants éligibles.
             </p>
         </div>
-        <p class="text-sm text-slate-600 leading-relaxed">
-            Cette action lancera les versements pour les étudiants éligibles de l'année sélectionnée.
-            Le montant doit être saisi manuellement avant confirmation.
-        </p>
         <p class="text-sm font-semibold text-rose-700 bg-rose-50 border border-rose-100 rounded-2xl p-4 leading-relaxed">
-            Vérifie l'année active avant de confirmer. Cette opération peut créer plusieurs écritures financières en une seule exécution.
+            Vérifiez l'année active et le montant saisi avant de confirmer. Cette opération est irréversible.
         </p>
     </div>
 
     <div class="p-6 border-t border-slate-100 bg-slate-50 flex gap-4">
         <button pButton label="Annuler" class="p-button-outlined p-button-secondary flex-1 rounded-xl font-bold" (click)="cancelMassDisbursement()"></button>
-        <button pButton label="Confirmer le versement" class="p-button-danger flex-[2] rounded-xl font-black shadow-lg shadow-rose-200" (click)="confirmMassDisbursement()" [disabled]="isLoading() || montantFixe() === null || montantFixe()! <= 0"></button>
+        <button pButton label="Confirmer le versement" class="p-button-danger flex-[2] rounded-xl font-black shadow-lg shadow-rose-200" (click)="confirmMassDisbursement()" [disabled]="isLoading() || !montantFixe() || montantFixe()! <= 0"></button>
     </div>
 </p-dialog>
 
@@ -155,33 +150,31 @@
 
     <div class="p-8 space-y-5">
         <div class="space-y-2">
-            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Seuil de déclenchement</label>
+            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Seuil de déclenchement (FCFA)</label>
             <input
                 pInputText
                 type="number"
                 min="0"
-                placeholder="Ex: 50000"
-                class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:ring-4 focus:ring-amber-500/10"
+                class="w-full bg-white border-2 border-amber-200 rounded-xl px-4 py-3 text-base font-black text-amber-900 outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all"
                 [ngModel]="seuilBoutique()"
                 (ngModelChange)="seuilBoutique.set($event)"
             />
             <p class="text-[11px] font-medium text-slate-500 leading-relaxed">
-                Seules les boutiques avec un solde inférieur à ce seuil seront rechargées.
+                Recharger uniquement les boutiques dont le solde est inférieur à ce montant.
             </p>
         </div>
         <div class="space-y-2 mt-4">
-            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Montant Quota à verser</label>
+            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Montant Quota à verser (FCFA)</label>
             <input
                 pInputText
                 type="number"
                 min="1"
-                placeholder="Ex: 200000"
-                class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:ring-4 focus:ring-amber-500/10"
+                class="w-full bg-white border-2 border-amber-200 rounded-xl px-4 py-3 text-base font-black text-amber-900 outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all"
                 [ngModel]="montantQuota()"
                 (ngModelChange)="montantQuota.set($event)"
             />
             <p class="text-[11px] font-medium text-slate-500 leading-relaxed">
-                Ce montant sera versé aux boutiques éligibles.
+                C'est le montant qui sera transféré à chaque boutique éligible.
             </p>
         </div>
     </div>

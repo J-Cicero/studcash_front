@@ -25,12 +25,19 @@ export class UserService {
     return this.http.post<User>(`${this.apiUrl}/register`, user);
   }
 
-  registerUniversityAdmin(admin: UserRequest & { universiteTrackingId?: string }): Observable<User> {
-    return this.http.post<User>(`${environment.apiUrl}/admin-university`, admin);
+  registerAdmin(admin: any): Observable<User> {
+    const payload = { ...admin, password: admin.motDePasse };
+    return this.http.post<User>(`${environment.apiUrl}/admins`, payload);
   }
 
-  registerBankOperator(operator: UserRequest): Observable<User> {
-    return this.http.post<User>(`${environment.apiUrl}/bank-operator`, operator);
+  registerUniversityAdmin(admin: any): Observable<User> {
+    const payload = { ...admin, password: admin.motDePasse };
+    return this.http.post<User>(`${environment.apiUrl}/admin-university`, payload);
+  }
+
+  registerBankOperator(operator: any): Observable<User> {
+    const payload = { ...operator, password: operator.motDePasse };
+    return this.http.post<User>(`${environment.apiUrl}/bank-operator`, payload);
   }
 
   updateEtat(trackingId: string, etat: boolean): Observable<User> {

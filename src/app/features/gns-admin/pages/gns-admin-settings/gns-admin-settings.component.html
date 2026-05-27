@@ -1,166 +1,81 @@
 <div class="flex-1 flex max-w-[1440px] mx-auto w-full p-gutter gap-gutter h-full font-['Inter',sans-serif]">
-    <!-- Internal Left Menu (Fixed 280px) -->
-    <aside class="w-[280px] flex flex-col shrink-0 gap-stack-md">
-        <div class="bg-white rounded-[2rem] border border-slate-100 overflow-hidden flex flex-col shadow-sm">
-            <button class="group flex items-center gap-4 px-8 py-5 text-left transition-all hover:bg-slate-50 border-l-[3px]" 
-                [ngClass]="activeTab() === 'mon-profil' ? 'border-indigo-600 bg-indigo-50/30 text-indigo-700 font-bold' : 'border-transparent text-slate-500'"
-                (click)="switchTab('mon-profil')">
-                <i class="pi pi-user text-lg transition-transform group-hover:scale-110"></i>
-                <span class="text-sm">Mon profil</span>
-            </button>
-            <button class="group flex items-center gap-4 px-8 py-5 text-left transition-all hover:bg-slate-50 border-l-[3px]" 
-                [ngClass]="activeTab() === 'securite' ? 'border-indigo-600 bg-indigo-50/30 text-indigo-700 font-bold' : 'border-transparent text-slate-500'"
-                (click)="switchTab('securite')">
-                <i class="pi pi-shield text-lg transition-transform group-hover:scale-110"></i>
-                <span class="text-sm">Sécurité &amp; Accès</span>
-            </button>
-            <button class="group flex items-center gap-4 px-8 py-5 text-left transition-all hover:bg-slate-50 border-l-[3px]" 
-                [ngClass]="activeTab() === 'plateforme' ? 'border-indigo-600 bg-indigo-50/30 text-indigo-700 font-bold' : 'border-transparent text-slate-500'"
-                (click)="switchTab('plateforme')">
-                <i class="pi pi-cog text-lg transition-transform group-hover:scale-110"></i>
-                <span class="text-sm">Configuration Globale</span>
-            </button>
-            <button class="group flex items-center gap-4 px-8 py-5 text-left transition-all hover:bg-slate-50 border-l-[3px]" 
-                [ngClass]="activeTab() === 'logs' ? 'border-indigo-600 bg-indigo-50/30 text-indigo-700 font-bold' : 'border-transparent text-slate-500'"
-                (click)="switchTab('logs')">
-                <i class="pi pi-history text-lg transition-transform group-hover:scale-110"></i>
-                <span class="text-sm">Logs &amp; Audit</span>
-            </button>
-        </div>
-        <div class="mt-auto">
-            <button class="w-full flex items-center justify-center gap-3 py-4 px-4 bg-white rounded-2xl border border-red-100 text-red-500 font-black hover:bg-red-50 transition-colors shadow-sm">
-                <i class="pi pi-sign-out"></i>
-                <span class="text-xs uppercase tracking-widest">Se déconnecter</span>
-            </button>
-        </div>
-    </aside>
-
     <!-- Dynamic Content Canvas -->
     <div class="flex-1 overflow-y-auto min-h-[600px] pb-10">
-        
-        <!-- Section 1: Mon Profil -->
-        @if (activeTab() === 'mon-profil') {
+        <!-- Configuration Globale -->
         <div class="space-y-8">
             <header>
-                <h2 class="text-3xl font-black text-slate-800 tracking-tighter">Mon Profil</h2>
-                <p class="text-sm text-slate-500 font-medium mt-1">Gérez vos informations personnelles et préférences.</p>
+                <h2 class="text-3xl font-black text-slate-800 tracking-tighter">Paramètres & Profil</h2>
+                <p class="text-sm text-slate-500 font-medium mt-1">Gérez vos informations et les paramètres techniques de StudCash.</p>
             </header>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Profile Identity Card -->
-                <div class="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center space-y-6">
-                    <div class="relative">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Section Profil -->
+                <div class="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col space-y-6">
+                    <div class="flex items-center gap-3 text-indigo-600 mb-2">
+                        <i class="pi pi-user text-xl"></i>
+                        <span class="text-xs font-black uppercase tracking-widest">Informations du Profil</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-6 pb-6 border-b border-slate-100">
                         @if (isLoading()) {
-                            <p-skeleton shape="circle" size="7rem"></p-skeleton>
+                            <p-skeleton shape="circle" size="5rem"></p-skeleton>
                         } @else {
-                            <div class="w-28 h-28 rounded-full bg-gradient-to-tr from-indigo-600 to-indigo-400 flex items-center justify-center text-white font-black text-4xl shadow-xl shadow-indigo-200 border-4 border-white">
+                            <div class="w-20 h-20 rounded-[1.5rem] bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white font-black text-3xl shadow-lg shadow-indigo-100">
                                 {{ (profile()?.nom?.charAt(0) || 'A') }}{{ (profile()?.prenom?.charAt(0) || 'D') }}
                             </div>
-                            <button class="absolute bottom-0 right-0 w-8 h-8 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-500 shadow-sm hover:text-indigo-600 hover:border-indigo-200 transition-colors">
-                                <i class="pi pi-pencil text-xs"></i>
-                            </button>
                         }
+                        <div>
+                            @if (isLoading()) {
+                                <p-skeleton width="150px" height="1.5rem"></p-skeleton>
+                                <p-skeleton width="100px" height="1rem" styleClass="mt-2"></p-skeleton>
+                            } @else {
+                                <h3 class="text-xl font-black text-slate-800 tracking-tight">{{ profile()?.prenom }} {{ profile()?.nom }}</h3>
+                                <span class="inline-block mt-1 px-2.5 py-1 bg-purple-50 rounded-lg text-[10px] font-black tracking-widest uppercase text-purple-700">{{ profile()?.role }}</span>
+                            }
+                        </div>
                     </div>
-                    <div>
-                        @if (isLoading()) {
-                            <p-skeleton width="150px" height="2rem" styleClass="mx-auto"></p-skeleton>
-                            <p-skeleton width="100px" height="1.2rem" styleClass="mx-auto mt-2"></p-skeleton>
-                        } @else {
-                            <h3 class="text-2xl font-black text-slate-800 tracking-tight">{{ profile()?.prenom }} {{ profile()?.nom }}</h3>
-                            <span class="inline-block mt-2 px-3 py-1 bg-slate-50 rounded-lg border border-slate-200 text-[10px] font-black tracking-widest uppercase text-slate-500">ID: {{ profile()?.trackingId?.substring(0,8) }}</span>
-                        }
+                    
+                    <div class="space-y-5 pt-2">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Email</span>
+                            <span class="text-sm font-semibold text-slate-800">{{ profile()?.email || 'N/A' }}</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Identifiant Système</span>
+                            <span class="text-sm font-mono text-slate-600">{{ profile()?.trackingId || 'N/A' }}</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Account Preferences Card -->
+                <!-- Section Création Paramètre -->
                 <div class="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm space-y-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <i class="pi pi-id-card text-indigo-600 text-xl"></i>
-                        <h4 class="text-lg font-black text-slate-800 tracking-tight">Détails du compte</h4>
+                    <div class="flex items-center gap-3 text-emerald-600 mb-2">
+                        <i class="pi pi-cog text-xl"></i>
+                        <span class="text-xs font-black uppercase tracking-widest">Nouveau Paramètre</span>
                     </div>
+                    <p class="text-xs text-slate-500 font-medium">Créer une nouvelle configuration globale (ex: COMMISSION_GNS).</p>
                     
-                    <div class="space-y-5">
+                    <div class="space-y-4 pt-4">
                         <p-floatLabel>
-                            <input pInputText id="prenom" [ngModel]="profile()?.prenom" class="w-full font-semibold" readonly/>
-                            <label for="prenom">Prénom</label>
+                            <input pInputText id="new_nom" [(ngModel)]="newParam().nomParametre" class="w-full font-bold uppercase text-sm" />
+                            <label for="new_nom">Nom du paramètre (ex: COMMISSION)</label>
                         </p-floatLabel>
-
                         <p-floatLabel>
-                            <input pInputText id="nom" [ngModel]="profile()?.nom" class="w-full font-semibold" readonly/>
-                            <label for="nom">Nom</label>
+                            <input pInputText id="new_val" [(ngModel)]="newParam().valeurParametre" class="w-full font-bold text-sm" />
+                            <label for="new_val">Valeur</label>
                         </p-floatLabel>
-
                         <p-floatLabel>
-                            <input pInputText id="email" type="email" [ngModel]="profile()?.email" class="w-full bg-slate-50 text-slate-500 font-semibold" readonly/>
-                            <label for="email">Adresse Email</label>
+                            <input pInputText id="new_desc" [(ngModel)]="newParam().description" class="w-full text-sm" />
+                            <label for="new_desc">Description</label>
                         </p-floatLabel>
                         
-                        <p-floatLabel>
-                            <input pInputText id="role" [ngModel]="profile()?.role" class="w-full bg-slate-50 text-slate-500 font-bold uppercase" readonly/>
-                            <label for="role">Rôle assigné</label>
-                        </p-floatLabel>
+                        <button pButton label="CRÉER LE PARAMÈTRE" icon="pi pi-plus" (click)="createConfig()" [disabled]="!newParam().nomParametre || !newParam().valeurParametre" class="p-button-success w-full rounded-xl font-black text-xs py-3 mt-4"></button>
                     </div>
                 </div>
             </div>
-        </div>
-        }
 
-        <!-- Section 2: Sécurité & Accès -->
-        @if (activeTab() === 'securite') {
-        <div class="space-y-8">
-            <header>
-                <h2 class="text-3xl font-black text-slate-800 tracking-tighter">Sécurité & Accès</h2>
-                <p class="text-sm text-slate-500 font-medium mt-1">Protégez votre compte administrateur.</p>
-            </header>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm space-y-6">
-                    <div class="flex items-center gap-3 mb-2">
-                        <i class="pi pi-key text-indigo-600 text-xl"></i>
-                        <h4 class="text-lg font-black text-slate-800 tracking-tight">Mot de passe</h4>
-                    </div>
-                    <p class="text-xs text-slate-500 font-medium mb-4">Mettez à jour votre mot de passe régulièrement pour plus de sécurité.</p>
-                    
-                    <div class="space-y-5">
-                        <p-floatLabel>
-                            <input pInputText id="current_pwd" type="password" [ngModel]="''" class="w-full" />
-                            <label for="current_pwd">Mot de passe actuel</label>
-                        </p-floatLabel>
-                        <p-floatLabel>
-                            <input pInputText id="new_pwd" type="password" [ngModel]="''" class="w-full" />
-                            <label for="new_pwd">Nouveau mot de passe</label>
-                        </p-floatLabel>
-                        <button pButton label="Mettre à jour" class="p-button-primary w-full rounded-xl font-bold py-3 mt-2"></button>
-                    </div>
-                </div>
-
-                <div class="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm space-y-6">
-                    <div class="flex items-center gap-3 mb-2">
-                        <i class="pi pi-shield text-emerald-600 text-xl"></i>
-                        <h4 class="text-lg font-black text-slate-800 tracking-tight">Authentification</h4>
-                    </div>
-                    
-                    <div class="flex items-center justify-between p-5 bg-slate-50 rounded-2xl border border-slate-100">
-                        <div>
-                            <p class="font-bold text-sm text-slate-800">Alertes Connexion</p>
-                            <p class="text-xs text-slate-500 mt-1">M'avertir lors d'une connexion suspecte.</p>
-                        </div>
-                        <p-inputSwitch [ngModel]="true"></p-inputSwitch>
-                    </div>
-                </div>
-            </div>
-        </div>
-        }
-
-        <!-- Section 3: Paramètres Plateforme -->
-        @if (activeTab() === 'plateforme') {
-        <div class="space-y-8">
-            <header>
-                <h2 class="text-3xl font-black text-slate-800 tracking-tighter">Configuration Globale</h2>
-                <p class="text-sm text-slate-500 font-medium mt-1">Gérez les paramètres techniques de StudCash.</p>
-            </header>
-
-            <div class="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm space-y-8 max-w-2xl">
+            <!-- Liste des Paramètres -->
+            <div class="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm space-y-8">
                 <div class="flex items-center gap-3 text-indigo-600">
                     <i class="pi pi-money-bill text-xl"></i>
                     <span class="text-xs font-black uppercase tracking-widest">Paramètres Financiers</span>
@@ -171,11 +86,11 @@
                         <div class="flex items-end gap-4">
                             <div class="flex-1">
                                 <p-floatLabel>
-                                    <input pInputText [id]="config.cle" [(ngModel)]="config.valeur" class="w-full font-black text-slate-700"/>
-                                    <label [for]="config.cle">{{ config.description }}</label>
+                                    <input pInputText [id]="config.nomParametre" [(ngModel)]="config.valeurParametre" class="w-full font-black text-slate-700"/>
+                                    <label [for]="config.nomParametre">{{ config.description }}</label>
                                 </p-floatLabel>
                             </div>
-                            <button pButton icon="pi pi-save" label="Sauver" class="p-button-outlined p-button-secondary rounded-xl font-bold shrink-0" (click)="updateConfig(config.cle, config.valeur)"></button>
+                            <button pButton icon="pi pi-save" label="Sauver" class="p-button-outlined p-button-secondary rounded-xl font-bold shrink-0" (click)="updateConfig(config)"></button>
                         </div>
                     } @empty {
                         @if (isLoading()) {
@@ -186,17 +101,5 @@
                 </div>
             </div>
         </div>
-        }
-
-        <!-- Section 4: Logs (En construction) -->
-        @if (activeTab() === 'logs') {
-        <div class="flex flex-col items-center justify-center h-[500px] text-center">
-            <div class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-6">
-                <i class="pi pi-server text-4xl text-slate-300"></i>
-            </div>
-            <h3 class="text-xl font-black text-slate-800 tracking-tight">Audit & Logs Système</h3>
-            <p class="text-sm text-slate-500 mt-2 max-w-md">Cette interface est actuellement en cours de développement. Elle permettra de tracer toutes les actions administrateur.</p>
-        </div>
-        }
     </div>
 </div>

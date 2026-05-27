@@ -22,12 +22,25 @@ export interface ScolariteYearRequest {
   estOuverte: boolean;
 }
 
-export interface ConfigurationGns {
+export enum TypeParametreGns {
+  TAUX_COMMISSION_PAIEMENT = 'TAUX_COMMISSION_PAIEMENT',
+  MONTANT_DEFAUT_WALLET = 'MONTANT_DEFAUT_WALLET',
+  FRAIS_CREATION_CARTE = 'FRAIS_CREATION_CARTE'
+}
+
+export interface ParametreGnsResponse {
   trackingId: string;
-  cle: string;
-  valeur: string;
+  nomParametre: TypeParametreGns;
+  valeurParametre: string;
   description: string;
-  estModifiable: boolean;
+  estActif: boolean;
+}
+
+export interface ParametreGnsRequest {
+  nomParametre: TypeParametreGns;
+  valeurParametre: string;
+  description: string;
+  estActif: boolean;
 }
 
 export interface BoutiqueResponse {

@@ -45,7 +45,7 @@ export class LoginComponent {
         univId = 'default-univ-id'; // To be replaced by actual data later
       } else if (this.email.includes('@dbs.sn')) {
         role = 'ADMIN_DBS';
-        targetPath = '/dbs/dashboard';
+        targetPath = '/dbs/dossiers';
       }
 
       this.authService.login(role, univId);

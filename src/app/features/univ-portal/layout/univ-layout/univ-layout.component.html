@@ -33,6 +33,9 @@
                 <div class="w-10 h-10 rounded-full bg-blue-100 overflow-hidden border border-blue-200 shadow-sm cursor-pointer hover:shadow-md transition-all">
                     <img alt="User profile photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDr2yRMnVNvMvZzGlI9KAcDPS-QcBeC5jcZ_Vc7JY9l0vtlPOOPKqnFrO0faYMu9ziSUEDkNV00m2jLLwgjY_IOXK4RbvHehcKcTypAQ9tH1W31cD1cgA5WIiHIvl4aclosx_gzXfsQ6QjWJ9qJhB2PeyQXexISKpfDvpQVjHCbw-OLT1zVlleAlH_D2-gcT5Vatj-0kuzPqBNyBo3LJJlQqk9MjFbZ80zXhjDHCtkS3yGcVkaLgL6NmbWs7VaokN2HVql3an5qoC3z"/>
                 </div>
+                <button (click)="logout()" class="relative flex items-center justify-center w-10 h-10 rounded-full bg-rose-50 border border-rose-200 text-rose-500 hover:text-white hover:bg-rose-500 transition-all shadow-sm ml-1" title="Déconnexion">
+                    <i class="pi pi-power-off text-lg"></i>
+                </button>
             </div>
         </header>
     </div>
@@ -65,16 +68,16 @@
                 <i class="pi pi-receipt text-lg group-hover:scale-110 transition-transform"></i>
                 <span class="font-medium text-[13px]">Transactions</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-blue-900 hover:bg-blue-50/80 rounded-xl transition-all cursor-pointer group" routerLink="/univ/students" routerLinkActive="!bg-blue-50 !text-blue-900 !font-bold">
-                <i class="pi pi-users text-lg group-hover:scale-110 transition-transform"></i>
-                <span class="font-medium text-[13px]">Étudiants</span>
-            </a>
         </nav>
         <div class="mt-auto pt-6 border-t border-slate-200">
             <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all cursor-pointer group" routerLink="/univ/settings" routerLinkActive="!bg-slate-100 !text-slate-900 !font-bold">
                 <i class="pi pi-cog text-lg group-hover:rotate-90 transition-transform duration-300"></i>
                 <span class="font-medium text-[13px]">Paramètres</span>
             </a>
+            <button (click)="logout()" class="flex w-full items-center gap-3 px-4 py-3 mt-2 text-rose-500 hover:text-white hover:bg-rose-500 rounded-xl transition-all cursor-pointer group">
+                <i class="pi pi-power-off text-lg group-hover:scale-110 transition-transform duration-300"></i>
+                <span class="font-medium text-[13px]">Déconnexion</span>
+            </button>
         </div>
     </aside>
 
@@ -96,10 +99,6 @@
         <button class="flex flex-col items-center gap-1 text-gray-500" routerLink="/univ/transactions">
             <i class="pi pi-receipt text-[20px]"></i>
             <span class="text-[10px] font-medium">Transac.</span>
-        </button>
-        <button class="flex flex-col items-center gap-1 text-gray-500" routerLink="/univ/students">
-            <i class="pi pi-users text-[20px]"></i>
-            <span class="text-[10px] font-medium">Étudiants</span>
         </button>
         <button class="flex flex-col items-center gap-1 text-gray-500" routerLink="/univ/settings">
             <i class="pi pi-user text-[20px]"></i>

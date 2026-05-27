@@ -14,10 +14,14 @@ export class VersementService {
 
   constructor(private http: HttpClient) {}
 
-  disburseMassStudents(yearTrackingId: string, montantFixe: number): Observable<VersementResponse> {
-    const params = new HttpParams()
-      .set('scolariteYearTrackingId', yearTrackingId)
-      .set('montantFixe', montantFixe.toString());
+  disburseMassStudents(yearTrackingId: string, montantFixe?: number | null): Observable<VersementResponse> {
+    let params = new HttpParams()
+      .set('scolariteYearTrackingId', yearTrackingId);
+    
+    if (montantFixe != null && montantFixe > 0) {
+      params = params.set('montantFixe', montantFixe.toString());
+    }
+    
     return this.http.post<VersementResponse>(`${this.apiUrl}/masse/etudiants`, null, { params });
   }
 
