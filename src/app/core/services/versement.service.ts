@@ -29,19 +29,35 @@ export class VersementService {
 
   constructor(private http: HttpClient) {}
 
-  masseEtudiants(request: MassVersementEtudiantRequest): Observable<string> {
-    return this.http.post(`${this.apiUrl}/masse/etudiants`, request, { responseType: 'text' });
+  create(payload: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, payload);
   }
 
-  masseBoutiques(request: MassVersementBoutiqueRequest): Observable<string> {
-    return this.http.post(`${this.apiUrl}/masse/boutiques`, request, { responseType: 'text' });
+  masseEtudiants(request: MassVersementEtudiantRequest): Observable<any> {
+    const params: any = { scolariteYearTrackingId: request.scolariteYearTrackingId };
+    if (request.montantFixe) params.montantFixe = request.montantFixe;
+    return this.http.post(`${this.apiUrl}/masse/etudiants`, null, { params });
   }
 
-  resetMasseEtudiants(request: MassResetEtudiantRequest): Observable<string> {
-    return this.http.post(`${this.apiUrl}/masse/reset/etudiants`, request, { responseType: 'text' });
+  masseBoutiques(request: MassVersementBoutiqueRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/masse/boutiques`, null, { params: request as any });
   }
 
-  resetMasseBoutiques(request: MassResetBoutiqueRequest): Observable<string> {
-    return this.http.post(`${this.apiUrl}/masse/reset/boutiques`, request, { responseType: 'text' });
+  previewMasseEtudiants(scolariteYearTrackingId: string): Observable<any> {
+    const params = { scolariteYearTrackingId };
+    return this.http.get<any>(`${this.apiUrl}/masse/preview/etudiants`, { params });
+  }
+
+  previewMasseBoutiques(seuil: number): Observable<any> {
+    const params = { seuil: seuil.toString() };
+    return this.http.get<any>(`${this.apiUrl}/masse/preview/boutiques`, { params });
+  }
+
+  resetMasseEtudiants(request: MassResetEtudiantRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/masse/reset/etudiants`, null, { params: request as any });
+  }
+
+  resetMasseBoutiques(request: MassResetBoutiqueRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/masse/reset/boutiques`, null, { params: request as any });
   }
 }

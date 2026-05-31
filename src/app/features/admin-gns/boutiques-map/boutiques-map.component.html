@@ -1,0 +1,48 @@
+<div class="mb-8 animate-fade-in-up">
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Carte des Boutiques</h1>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">
+        Vue d'ensemble géographique des marchands ayant configuré leur position.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="glass-panel rounded-2xl overflow-hidden animate-fade-in-up border border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40 relative shadow-xl">
+  
+  <!-- Map Container -->
+  <div id="map" class="w-full h-[650px] z-0"></div>
+
+  <!-- Loading Overlay -->
+  <div *ngIf="isLoading" class="absolute inset-0 z-10 flex flex-col justify-center items-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm">
+    <div class="relative w-16 h-16 mb-4">
+      <div class="absolute inset-0 rounded-full border-4 border-indigo-100 dark:border-slate-800"></div>
+      <div class="absolute inset-0 rounded-full border-4 border-indigo-600 dark:border-indigo-400 border-t-transparent animate-spin"></div>
+    </div>
+    <p class="text-slate-800 dark:text-white font-bold animate-pulse">Chargement des positions...</p>
+  </div>
+
+  <!-- Error Overlay -->
+  <div *ngIf="errorMessage && !isLoading" class="absolute inset-0 z-10 flex flex-col justify-center items-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm p-8 text-center">
+    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 mb-4">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    </div>
+    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Erreur de chargement</h3>
+    <p class="text-slate-600 dark:text-slate-400 font-medium max-w-md">{{ errorMessage }}</p>
+  </div>
+  
+  <!-- Info panel overlaid on map -->
+  <div class="absolute top-4 right-4 z-10 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-4 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 max-w-xs">
+    <h4 class="text-sm font-bold text-slate-900 dark:text-white flex items-center mb-2">
+      <svg class="w-4 h-4 mr-1.5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      Informations
+    </h4>
+    <p class="text-xs text-slate-600 dark:text-slate-400">
+      Seules les boutiques ayant enregistré leurs coordonnées géographiques s'affichent sur cette carte. Cliquez sur un marqueur pour voir les détails.
+    </p>
+  </div>
+
+</div>

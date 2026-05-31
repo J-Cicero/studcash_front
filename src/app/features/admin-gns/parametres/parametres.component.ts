@@ -1,35 +1,96 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ParametresService, Parametre } from '../../../core/services/parametres.service';
+import { DocumentRequisService } from '../../../core/services/document-requis.service';
+import { ScolariteYearService, ScolariteYear } from '../../../core/services/scolarite-year.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { LoginResponse } from '../../../core/models/auth.model';
 
 @Component({
   selector: 'app-parametres-gns',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './parametres.component.html',
   styleUrls: ['./parametres.component.scss']
 })
 export class ParametresGnsComponent implements OnInit {
+  activeTab: 'global' | 'kyc' | 'scolarite' = 'global';
+
+  // Global Parameters
   parametres: Parametre[] = [];
   isLoading = false;
   successMessage = '';
   errorMessage = '';
 
   editingParam: Parametre | null = null;
-  editValue = '';
+  paramForm: FormGroup;
+  isParamModalOpen = false;
+  paramOptions = ['TAUX_COMMISSION_PAIEMENT', 'FRAIS_CREATION_CARTE', 'RETENUE_BOURSE_ETUDIANT'];
 
-  constructor(private parametresService: ParametresService) {}
+  // KYC Documents
+  documentsRequis: any[] = [];
+  isLoadingDocs = false;
+  isCreatingDoc = false;
+  docCreateForm: FormGroup;
+  isDocModalOpen = false;
+
+  niveaux = ['L1_ANNEE', 'L2_ANNEE', 'L3_ANNEE', 'L4_ANNEE', 'L5_ANNEE', 'M1_ANNEE', 'M2_ANNEE', 'M3_ANNEE'];
+  typesDocument = ['RELEVE_BAC', 'SOUCHE_TAMPONNEE', 'RELEVE_NOTES', 'FICHE_UE', 'PIECE_IDENTITE'];
+
+  // Scolarite Year
+  activeYear: ScolariteYear | null = null;
+  isLoadingYear = false;
+  isCreatingYear = false;
+  scolariteForm: FormGroup;
+  isYearModalOpen = false;
+
+  currentUser: LoginResponse | null = null;
+
+  constructor(
+    private parametresService: ParametresService,
+    private documentRequisService: DocumentRequisService,
+    private scolariteYearService: ScolariteYearService,
+    private authService: AuthService,
+    private fb: FormBuilder
+  ) {
+    this.docCreateForm = this.fb.group({
+      niveau: ['L1_ANNEE', Validators.required],
+      typeDocument: ['RELEVE_BAC', Validators.required],
+      obligatoire: [true],
+      estActif: [true]
+    });
+    this.scolariteForm = this.fb.group({
+      libelle: ['', Validators.required],
+      dateDebut: ['', Validators.required],
+      dateFin: ['', Validators.required]
+    });
+    this.paramForm = this.fb.group({
+      nomParametre: ['TAUX_COMMISSION_PAIEMENT', Validators.required],
+      valeurParametre: ['', Validators.required],
+      description: ['']
+    });
+  }
 
   ngOnInit(): void {
+    this.currentUser = this.authService.currentUserValue;
     this.loadParametres();
+    this.loadDocumentsRequis();
+    this.loadScolariteYear();
+  }
+
+  setTab(tab: 'global' | 'kyc' | 'scolarite') {
+    this.activeTab = tab;
+    this.successMessage = '';
+    this.errorMessage = '';
   }
 
   loadParametres() {
     this.isLoading = true;
     this.parametresService.getParametresGns().subscribe({
       next: (res) => {
-        this.parametres = res.content || [];
+        const hiddenParams = ['MONTANT_DEFAUT_WALLET', 'QUOTA_DEFAUT_BOUTIQUE'];
+        this.parametres = (res.content || []).filter((p: Parametre) => !hiddenParams.includes(p.nomParametre));
         this.isLoading = false;
       },
       error: (err) => {
@@ -39,25 +100,51 @@ export class ParametresGnsComponent implements OnInit {
     });
   }
 
-  startEdit(param: Parametre) {
-    this.editingParam = param;
-    this.editValue = param.valeurParametre;
+  openParamModal(param?: Parametre) {
     this.successMessage = '';
     this.errorMessage = '';
+    if (param) {
+      this.editingParam = param;
+      this.paramForm.patchValue({
+        nomParametre: param.nomParametre,
+        valeurParametre: param.valeurParametre,
+        description: param.description || ''
+      });
+      // Disable editing name if it's an update
+      this.paramForm.get('nomParametre')?.disable();
+    } else {
+      this.editingParam = null;
+      this.paramForm.reset({ nomParametre: 'TAUX_COMMISSION_PAIEMENT' });
+      this.paramForm.get('nomParametre')?.enable();
+    }
+    this.isParamModalOpen = true;
   }
 
-  cancelEdit() {
+  closeParamModal() {
+    this.isParamModalOpen = false;
     this.editingParam = null;
-    this.editValue = '';
+    this.paramForm.reset();
   }
 
-  saveEdit() {
-    if (!this.editingParam) return;
+  saveParam() {
+    if (this.paramForm.invalid) return;
     this.isLoading = true;
-    this.parametresService.saveParametreGns(this.editingParam.nomParametre, this.editValue).subscribe({
+    
+    // Get raw value in case nomParametre is disabled
+    const formVal = this.paramForm.getRawValue();
+    
+    const updatedParam: Parametre = {
+      ...(this.editingParam || {}),
+      nomParametre: formVal.nomParametre,
+      valeurParametre: formVal.valeurParametre,
+      description: formVal.description,
+      estActif: true
+    };
+
+    this.parametresService.saveParametreGns(updatedParam).subscribe({
       next: (res) => {
-        this.successMessage = 'Paramètre mis à jour avec succès.';
-        this.editingParam = null;
+        this.successMessage = this.editingParam ? 'Paramètre mis à jour avec succès.' : 'Paramètre ajouté avec succès.';
+        this.closeParamModal();
         this.loadParametres();
       },
       error: (err) => {
@@ -66,4 +153,139 @@ export class ParametresGnsComponent implements OnInit {
       }
     });
   }
+
+  // --- KYC Documents ---
+
+  loadDocumentsRequis() {
+    this.isLoadingDocs = true;
+    this.documentRequisService.findAll().subscribe({
+      next: (res) => {
+        this.documentsRequis = res;
+        this.isLoadingDocs = false;
+      },
+      error: (err) => {
+        this.errorMessage = 'Erreur lors du chargement des exigences KYC.';
+        this.isLoadingDocs = false;
+      }
+    });
+  }
+
+  openDocModal() {
+    this.successMessage = '';
+    this.errorMessage = '';
+    this.docCreateForm.reset({ niveau: 'L1_ANNEE', typeDocument: 'RELEVE_BAC', obligatoire: true, estActif: true });
+    this.isDocModalOpen = true;
+  }
+
+  closeDocModal() {
+    this.isDocModalOpen = false;
+  }
+
+  onSubmitDoc() {
+    if (this.docCreateForm.invalid) return;
+    
+    this.isCreatingDoc = true;
+    this.successMessage = '';
+    this.errorMessage = '';
+
+    this.documentRequisService.create(this.docCreateForm.value).subscribe({
+      next: (res) => {
+        this.successMessage = 'Règle de document ajoutée avec succès.';
+        this.isCreatingDoc = false;
+        this.closeDocModal();
+        this.loadDocumentsRequis();
+      },
+      error: (err) => {
+        this.errorMessage = 'Erreur lors de l\'ajout de la règle.';
+        this.isCreatingDoc = false;
+      }
+    });
+  }
+
+  deleteDoc(trackingId: string) {
+    if(confirm('Voulez-vous vraiment supprimer cette exigence ?')) {
+      this.documentRequisService.delete(trackingId).subscribe({
+        next: () => {
+          this.successMessage = 'Règle supprimée.';
+          this.loadDocumentsRequis();
+        },
+        error: () => {
+          this.errorMessage = 'Erreur lors de la suppression.';
+        }
+      });
+    }
+  }
+
+  // --- Scolarite Year ---
+  loadScolariteYear() {
+    this.isLoadingYear = true;
+    this.scolariteYearService.getActiveYear().subscribe({
+      next: (res) => {
+        this.activeYear = res;
+        this.isLoadingYear = false;
+      },
+      error: (err) => {
+        if(err.status === 404) {
+          this.activeYear = null;
+        } else {
+          this.errorMessage = 'Erreur lors du chargement de l\'année scolaire.';
+        }
+        this.isLoadingYear = false;
+      }
+    });
+  }
+
+  openYearModal() {
+    this.successMessage = '';
+    this.errorMessage = '';
+    this.scolariteForm.reset();
+    this.isYearModalOpen = true;
+  }
+
+  closeYearModal() {
+    this.isYearModalOpen = false;
+  }
+
+  onSubmitYear() {
+    if (this.scolariteForm.invalid) return;
+    
+    const confirmMsg = this.activeYear ? 'Voulez-vous vraiment clôturer l\'année en cours et en démarrer une nouvelle ?' : 'Voulez-vous créer cette première année scolaire ?';
+    if (!confirm(confirmMsg)) return;
+
+    this.isCreatingYear = true;
+    this.successMessage = '';
+    this.errorMessage = '';
+
+    const req = this.scolariteForm.value;
+
+    if (this.activeYear && this.activeYear.trackingId) {
+      this.scolariteYearService.cloturerEtOuvrirNouvelle(this.activeYear.trackingId, req).subscribe({
+        next: (res) => {
+          this.successMessage = 'Année scolaire précédente clôturée et nouvelle année créée.';
+          this.isCreatingYear = false;
+          this.closeYearModal();
+          this.loadScolariteYear();
+        },
+        error: (err) => {
+          this.errorMessage = 'Erreur lors de la création de la nouvelle année.';
+          this.isCreatingYear = false;
+        }
+      });
+    } else {
+      this.scolariteYearService.create(req).subscribe({
+        next: (res) => {
+          this.successMessage = 'Première année scolaire créée avec succès.';
+          this.isCreatingYear = false;
+          this.closeYearModal();
+          this.loadScolariteYear();
+        },
+        error: (err) => {
+          this.errorMessage = 'Erreur lors de la création de l\'année.';
+          this.isCreatingYear = false;
+        }
+      });
+    }
+  }
 }
+
+

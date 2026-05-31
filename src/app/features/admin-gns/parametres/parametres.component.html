@@ -1,60 +1,379 @@
-<div class="space-y-6">
-  <div class="flex justify-between items-center">
-    <h2 class="text-2xl font-bold text-gray-900">Paramètres Système GNS</h2>
-    <button (click)="loadParametres()" class="btn-primary text-sm">Rafraîchir</button>
-  </div>
+<div class="mb-10 animate-fade-in-up">
+  <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Paramètres du Système</h1>
+  <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Gérez la configuration globale GNS, les années scolaires et les documents (KYC).</p>
+</div>
 
-  <div *ngIf="successMessage" class="p-4 bg-green-50 text-green-700 rounded-lg">
-    {{ successMessage }}
+<!-- Profile Header -->
+<div *ngIf="currentUser" class="mb-8 rounded-2xl glass-panel p-6 flex items-center justify-between animate-fade-in-up">
+  <div class="flex items-center">
+    <div class="h-16 w-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-2xl font-extrabold shadow-lg shadow-indigo-500/30 mr-6">
+      {{ currentUser.lastName ? currentUser.lastName.substring(0, 1) : 'A' }}{{ currentUser.firstName ? currentUser.firstName.substring(0, 1) : '' }}
+    </div>
+    <div>
+      <h2 class="text-xl font-bold text-slate-900 dark:text-white">{{ currentUser.firstName }} {{ currentUser.lastName }}</h2>
+      <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">{{ currentUser.email }}</p>
+    </div>
   </div>
-  <div *ngIf="errorMessage" class="p-4 bg-red-50 text-red-700 rounded-lg">
-    {{ errorMessage }}
+  <div class="hidden sm:block">
+    <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/50">
+      <svg class="mr-1.5 h-4 w-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+      </svg>
+      ADMINISTRATEUR GNS
+    </span>
   </div>
+</div>
 
-  <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-    <table class="min-w-full divide-y divide-gray-200">
-      <thead class="bg-gray-50">
-        <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Paramètre</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valeur Actuelle</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-          <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-        </tr>
-      </thead>
-      <tbody class="bg-white divide-y divide-gray-200">
-        <tr *ngFor="let param of parametres">
-          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-            {{ param.nomParametre }}
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-            <div *ngIf="editingParam?.nomParametre !== param.nomParametre">
-              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+<!-- Tabs -->
+<div class="mb-8 border-b border-slate-200 dark:border-slate-800 animate-fade-in-up" style="animation-delay: 100ms;">
+  <nav class="-mb-px flex space-x-8 overflow-x-auto pb-1">
+    <button (click)="setTab('global')" [class]="activeTab === 'global' ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:hover:text-slate-300'" class="whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm transition-colors">
+      Paramètres Globaux
+    </button>
+    <button (click)="setTab('kyc')" [class]="activeTab === 'kyc' ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:hover:text-slate-300'" class="whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm transition-colors">
+      Exigences Documents KYC
+    </button>
+    <button (click)="setTab('scolarite')" [class]="activeTab === 'scolarite' ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:hover:text-slate-300'" class="whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm transition-colors">
+      Année Scolaire Active
+    </button>
+  </nav>
+</div>
+
+<!-- Messages -->
+<div *ngIf="successMessage" class="rounded-xl bg-emerald-50/80 dark:bg-emerald-900/20 backdrop-blur-sm border border-emerald-200 dark:border-emerald-800 p-4 mb-8 animate-fade-in-up">
+  <div class="flex items-center">
+    <div class="flex-shrink-0">
+      <svg class="h-6 w-6 text-emerald-500 dark:text-emerald-400" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+      </svg>
+    </div>
+    <div class="ml-4 flex-1">
+      <p class="text-sm font-bold text-emerald-700 dark:text-emerald-400">{{ successMessage }}</p>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="errorMessage" class="rounded-xl bg-red-50/80 dark:bg-red-900/20 backdrop-blur-sm border border-red-200 dark:border-red-800 p-4 mb-8 animate-fade-in-up">
+  <div class="flex items-center">
+    <div class="flex-shrink-0">
+      <svg class="h-6 w-6 text-red-500 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </div>
+    <div class="ml-4 flex-1">
+      <p class="text-sm font-bold text-red-700 dark:text-red-400">{{ errorMessage }}</p>
+    </div>
+  </div>
+</div>
+
+<!-- TAB GLOBAL PARAMETERS -->
+<div *ngIf="activeTab === 'global'" class="animate-fade-in-up" style="animation-delay: 200ms;">
+  <div class="glass-panel rounded-2xl overflow-hidden">
+    <div class="px-6 py-5 border-b border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40 flex justify-between items-center">
+      <h3 class="text-lg font-bold text-slate-900 dark:text-white">Variables Globales</h3>
+      <div class="flex space-x-3">
+        <button (click)="loadParametres()" class="px-4 py-2 text-sm font-bold text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 rounded-xl transition-colors">Rafraîchir</button>
+        <button *ngIf="!activeYear" (click)="openParamModal()" class="px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 rounded-xl shadow-lg shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
+          + Ajouter
+        </button>
+      </div>
+    </div>
+
+    <!-- Active Year Lock Warning -->
+    <div *ngIf="activeYear" class="bg-amber-50/80 dark:bg-amber-900/20 px-6 py-3 border-b border-amber-200 dark:border-amber-800/50 flex items-center">
+      <svg class="h-5 w-5 text-amber-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+      </svg>
+      <p class="text-sm font-bold text-amber-800 dark:text-amber-400">Verrouillage de sécurité : impossible de modifier les paramètres pendant une année scolaire active.</p>
+    </div>
+
+    <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+      <div class="relative w-10 h-10">
+        <div class="absolute inset-0 rounded-full border-4 border-indigo-100 dark:border-slate-800"></div>
+        <div class="absolute inset-0 rounded-full border-4 border-indigo-600 dark:border-indigo-400 border-t-transparent animate-spin"></div>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoading" class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
+        <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
+          <tr>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Paramètre</th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Valeur</th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Description</th>
+            <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Action</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
+          <tr *ngFor="let param of parametres" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+            <td class="px-6 py-5 whitespace-nowrap">
+              <div class="text-sm font-bold text-slate-900 dark:text-white">{{ param.nomParametre }}</div>
+            </td>
+            <td class="px-6 py-5 whitespace-nowrap">
+              <span class="px-3 py-1 inline-flex text-sm font-bold rounded-full bg-blue-100/80 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
                 {{ param.valeurParametre }}
               </span>
+            </td>
+            <td class="px-6 py-5 text-sm text-slate-500 dark:text-slate-400 font-medium max-w-xs truncate">
+              {{ param.description }}
+            </td>
+            <td class="px-6 py-5 whitespace-nowrap text-right text-sm font-medium">
+              <button *ngIf="!activeYear" (click)="openParamModal(param)" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 hover:underline">
+                Modifier
+              </button>
+              <div *ngIf="activeYear" class="inline-flex items-center text-slate-400 dark:text-slate-500 cursor-not-allowed" title="Impossible de modifier pendant l'année scolaire active">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                <span class="text-xs font-bold">Verrouillé</span>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="parametres.length === 0">
+            <td colspan="4" class="px-6 py-12 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">
+              Aucun paramètre configuré.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- TAB KYC DOCUMENTS -->
+<div *ngIf="activeTab === 'kyc'" class="animate-fade-in-up" style="animation-delay: 200ms;">
+  <div class="glass-panel rounded-2xl overflow-hidden">
+    <div class="px-6 py-5 border-b border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40 flex justify-between items-center">
+      <h3 class="text-lg font-bold text-slate-900 dark:text-white">Exigences Configurées</h3>
+      <button (click)="openDocModal()" class="px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 rounded-xl shadow-lg shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
+        + Nouvelle Règle
+      </button>
+    </div>
+
+      <div *ngIf="isLoadingDocs" class="flex justify-center items-center py-12">
+        <div class="relative w-10 h-10">
+          <div class="absolute inset-0 rounded-full border-4 border-indigo-100 dark:border-slate-800"></div>
+          <div class="absolute inset-0 rounded-full border-4 border-indigo-600 dark:border-indigo-400 border-t-transparent animate-spin"></div>
+        </div>
+      </div>
+
+      <div *ngIf="!isLoadingDocs" class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
+          <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
+            <tr>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Niveau</th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Document</th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Obligatoire</th>
+              <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
+            <tr *ngFor="let doc of documentsRequis" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+              <td class="px-6 py-5 whitespace-nowrap text-sm font-bold text-slate-900 dark:text-white">{{doc.niveau}}</td>
+              <td class="px-6 py-5 whitespace-nowrap text-sm font-medium text-slate-700 dark:text-slate-300">{{doc.typeDocument}}</td>
+              <td class="px-6 py-5 whitespace-nowrap">
+                <span *ngIf="doc.obligatoire" class="px-2 py-1 text-xs font-bold rounded bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400">Oui</span>
+                <span *ngIf="!doc.obligatoire" class="px-2 py-1 text-xs font-bold rounded bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400">Non</span>
+              </td>
+              <td class="px-6 py-5 whitespace-nowrap text-right text-sm">
+                <button (click)="deleteDoc(doc.trackingId)" class="text-red-600 hover:text-red-900 dark:text-red-400 hover:underline font-medium">Supprimer</button>
+              </td>
+            </tr>
+            <tr *ngIf="documentsRequis.length === 0">
+              <td colspan="4" class="px-6 py-12 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">Aucune règle définie.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+
+<!-- TAB SCOLARITE YEAR -->
+<div *ngIf="activeTab === 'scolarite'" class="animate-fade-in-up flex justify-center" style="animation-delay: 200ms;">
+  
+  <div class="w-full max-w-3xl">
+    <div class="glass-panel rounded-2xl p-8 relative overflow-hidden h-full">
+      <div class="absolute -right-8 -top-8 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
+      
+      <div class="flex items-center mb-6">
+        <div class="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl mr-4 shadow-lg shadow-blue-500/30">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white">Année Scolaire Courante</h3>
+          <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">L'année qui centralise toutes les transactions et inscriptions actuelles.</p>
+        </div>
+      </div>
+
+      <div *ngIf="isLoadingYear" class="flex justify-center items-center py-8">
+        <div class="relative w-8 h-8">
+          <div class="absolute inset-0 rounded-full border-4 border-blue-100 dark:border-slate-800"></div>
+          <div class="absolute inset-0 rounded-full border-4 border-blue-600 border-t-transparent animate-spin"></div>
+        </div>
+      </div>
+
+      <div *ngIf="!isLoadingYear && activeYear" class="bg-white/50 dark:bg-slate-800/50 rounded-2xl p-6 border border-blue-100 dark:border-slate-700 shadow-sm relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-4">
+          <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-400">
+            <span class="w-2 h-2 mr-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+            ACTIVE
+          </span>
+        </div>
+        
+        <h4 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 tracking-tight mb-6">
+          {{ activeYear.libelle }}
+        </h4>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-4">
+            <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Début</p>
+            <p class="text-sm font-bold text-slate-900 dark:text-white">{{ activeYear.dateDebut | date:'dd MMM yyyy' }}</p>
+          </div>
+          <div class="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-4">
+            <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Fin</p>
+            <p class="text-sm font-bold text-slate-900 dark:text-white">{{ activeYear.dateFin | date:'dd MMM yyyy' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!isLoadingYear && activeYear" class="mt-8">
+        <button (click)="openYearModal()" class="w-full inline-flex justify-center items-center py-3 px-4 border border-transparent shadow-lg shadow-rose-500/30 text-sm font-bold rounded-xl text-white bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 transition-all hover:-translate-y-0.5">
+          Clôturer l'année en cours et en ouvrir une nouvelle
+        </button>
+      </div>
+
+      <div *ngIf="!isLoadingYear && !activeYear" class="bg-amber-50/80 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-2xl p-8 text-center mt-6">
+        <svg class="w-16 h-16 text-amber-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+        <h4 class="text-xl font-bold text-amber-800 dark:text-amber-400 mb-2">Le système est inactif</h4>
+        <p class="text-sm text-amber-700 dark:text-amber-500/80 mb-6">Aucune année scolaire n'est actuellement configurée. Les inscriptions et paiements ne peuvent pas aboutir.</p>
+        <button (click)="openYearModal()" class="inline-flex justify-center items-center py-3 px-8 border border-transparent shadow-lg shadow-indigo-500/30 text-sm font-bold rounded-xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all hover:-translate-y-0.5">
+          Démarrer la première année
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================== -->
+<!-- MODALS -->
+<!-- ============================================== -->
+
+<!-- ParamModal -->
+<div *ngIf="isParamModalOpen" class="fixed inset-0 z-50 overflow-y-auto">
+  <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 transition-opacity bg-slate-900/60 backdrop-blur-sm" (click)="closeParamModal()"></div>
+    <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+    <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-200 dark:border-slate-800">
+      <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ editingParam ? 'Modifier le Paramètre' : 'Ajouter un Paramètre' }}</h3>
+      </div>
+      <div class="p-6">
+        <form [formGroup]="paramForm" (ngSubmit)="saveParam()" class="space-y-5">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Nom du paramètre</label>
+            <select formControlName="nomParametre" class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white">
+              <option *ngFor="let opt of paramOptions" [value]="opt">{{opt}}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Valeur</label>
+            <input type="text" formControlName="valeurParametre" class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Description (Optionnelle)</label>
+            <textarea formControlName="description" rows="2" class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white"></textarea>
+          </div>
+          <div class="pt-4 flex justify-end space-x-3">
+            <button type="button" (click)="closeParamModal()" class="px-4 py-2 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 rounded-xl transition-colors">Annuler</button>
+            <button type="submit" [disabled]="paramForm.invalid || isLoading" class="px-4 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-colors disabled:opacity-50">Valider</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DocModal -->
+<div *ngIf="isDocModalOpen" class="fixed inset-0 z-50 overflow-y-auto">
+  <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 transition-opacity bg-slate-900/60 backdrop-blur-sm" (click)="closeDocModal()"></div>
+    <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+    <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full border border-slate-200 dark:border-slate-800">
+      <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Nouvelle Exigence Documentaire</h3>
+      </div>
+      <div class="p-6">
+        <form [formGroup]="docCreateForm" (ngSubmit)="onSubmitDoc()" class="space-y-5">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Niveau d'Études</label>
+            <select formControlName="niveau" class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white">
+              <option *ngFor="let niv of niveaux" [value]="niv">{{niv}}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Type de Document</label>
+            <select formControlName="typeDocument" class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white">
+              <option *ngFor="let doc of typesDocument" [value]="doc">{{doc}}</option>
+            </select>
+          </div>
+          <div class="flex items-center mt-4">
+            <input id="obligatoire" type="checkbox" formControlName="obligatoire" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 rounded">
+            <label for="obligatoire" class="ml-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Document Obligatoire</label>
+          </div>
+          <div class="flex items-center mt-2 mb-4">
+            <input id="docActif" type="checkbox" formControlName="estActif" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 rounded">
+            <label for="docActif" class="ml-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Règle Active</label>
+          </div>
+          <div class="pt-4 flex justify-end space-x-3">
+            <button type="button" (click)="closeDocModal()" class="px-4 py-2 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 rounded-xl transition-colors">Annuler</button>
+            <button type="submit" [disabled]="docCreateForm.invalid || isCreatingDoc" class="px-4 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-colors disabled:opacity-50">Ajouter</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- YearModal -->
+<div *ngIf="isYearModalOpen" class="fixed inset-0 z-50 overflow-y-auto">
+  <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 transition-opacity bg-slate-900/60 backdrop-blur-sm" (click)="closeYearModal()"></div>
+    <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+    <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full border border-slate-200 dark:border-slate-800">
+      <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-800" [ngClass]="activeYear ? 'bg-rose-50 dark:bg-rose-900/20' : 'bg-slate-50 dark:bg-slate-800/50'">
+        <h3 class="text-lg font-bold" [ngClass]="activeYear ? 'text-rose-700 dark:text-rose-400' : 'text-slate-900 dark:text-white'">
+          {{ activeYear ? 'Clôturer & Ouvrir Nouvelle Année' : 'Créer la Première Année' }}
+        </h3>
+      </div>
+      <div class="p-6">
+        <p *ngIf="activeYear" class="text-xs font-bold text-rose-600 dark:text-rose-400 mb-5 p-3 rounded-lg border border-rose-200 dark:border-rose-800/50 bg-white dark:bg-slate-900">
+          ⚠️ Cette action clôturera définitivement l'année "{{ activeYear.libelle }}".
+        </p>
+
+        <form [formGroup]="scolariteForm" (ngSubmit)="onSubmitYear()" class="space-y-5">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Nom de la nouvelle année</label>
+            <input type="text" formControlName="libelle" placeholder="Ex: Année 2026-2027" class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white">
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Début</label>
+              <input type="date" formControlName="dateDebut" class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white">
             </div>
-            <div *ngIf="editingParam?.nomParametre === param.nomParametre">
-              <input type="text" [(ngModel)]="editValue" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm sm:text-sm">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Fin</label>
+              <input type="date" formControlName="dateFin" class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white">
             </div>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-            {{ param.description }}
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-            <button *ngIf="editingParam?.nomParametre !== param.nomParametre" (click)="startEdit(param)" class="text-indigo-600 hover:text-indigo-900">
-              Modifier
+          </div>
+
+          <div class="pt-4 flex justify-end space-x-3">
+            <button type="button" (click)="closeYearModal()" class="px-4 py-2 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 rounded-xl transition-colors">Annuler</button>
+            <button type="submit" [disabled]="scolariteForm.invalid || isCreatingYear" class="px-4 py-2 text-sm font-bold text-white rounded-xl transition-colors disabled:opacity-50" [ngClass]="activeYear ? 'bg-rose-600 hover:bg-rose-700' : 'bg-indigo-600 hover:bg-indigo-700'">
+              {{ activeYear ? 'Clôturer et Créer' : 'Créer l\'année' }}
             </button>
-            <div *ngIf="editingParam?.nomParametre === param.nomParametre" class="flex justify-end space-x-2">
-              <button (click)="saveEdit()" class="text-green-600 hover:text-green-900 font-bold" [disabled]="isLoading">Valider</button>
-              <button (click)="cancelEdit()" class="text-gray-600 hover:text-gray-900" [disabled]="isLoading">Annuler</button>
-            </div>
-          </td>
-        </tr>
-        <tr *ngIf="parametres.length === 0 && !isLoading">
-          <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">
-            Aucun paramètre trouvé.
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </div>

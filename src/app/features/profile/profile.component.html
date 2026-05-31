@@ -6,8 +6,8 @@
 <div class="bg-white shadow-sm rounded-xl border border-slate-200 overflow-hidden max-w-4xl">
   
   <div class="p-6 sm:p-8 border-b border-slate-200 flex items-center space-x-6">
-    <div class="h-24 w-24 rounded-full bg-slate-900 text-white flex items-center justify-center text-3xl font-bold">
-      {{ user?.firstName?.charAt(0) || 'A' }}
+    <div class="h-24 w-24 rounded-full bg-slate-900 text-white flex items-center justify-center text-3xl font-bold" translate="no">
+      {{ user?.firstName?.charAt(0) || 'U' }}
     </div>
     <div>
       <h2 class="text-xl font-bold text-slate-900">{{ user?.firstName }} {{ user?.lastName }}</h2>
@@ -63,14 +63,7 @@
           </div>
         </div>
 
-        <!-- Country -->
-        <div>
-          <label for="country" class="block text-sm font-medium text-slate-700">Pays</label>
-          <div class="mt-1">
-            <input type="text" id="country" formControlName="country" class="shadow-sm focus:ring-slate-900 focus:border-slate-900 block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border transition-colors">
-          </div>
         </div>
-      </div>
 
       <!-- Messages -->
       <div *ngIf="successMessage" class="rounded-md bg-green-50 p-4">

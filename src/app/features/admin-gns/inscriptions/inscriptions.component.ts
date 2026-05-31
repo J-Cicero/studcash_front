@@ -1,65 +1,114 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-interface Inscription {
-  trackingId: string;
-  studentName: string;
-  universityName: string;
-  amount: number;
-  status: string;
-  date: Date;
-}
+import { StudentService, StudentResponse, DocumentResponse } from '../../../core/services/student.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-inscriptions',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './inscriptions.component.html',
   styleUrls: ['./inscriptions.component.scss']
 })
 export class InscriptionsComponent implements OnInit {
-  inscriptions: Inscription[] = [];
+  students: StudentResponse[] = [];
+  filteredStudents: StudentResponse[] = [];
+  
+  // Pagination / Filter
   isLoading = true;
-  isActionLoading = false;
-  actionMessage = '';
+  errorMessage = '';
+  searchQuery = '';
+  filterKyc: string = 'ALL';
 
-  constructor() {}
+  // Details Modal/Sidebar
+  selectedStudent: StudentResponse | null = null;
+  studentDocuments: DocumentResponse[] = [];
+  isLoadingDocs = false;
+
+  constructor(private studentService: StudentService) {}
 
   ngOnInit(): void {
-    // Simulation API Call
-    setTimeout(() => {
-      this.inscriptions = [
-        { trackingId: 'ins-001', studentName: 'Alice Dupont', universityName: 'Université de Douala', amount: 50000, status: 'EN_ATTENTE', date: new Date() },
-        { trackingId: 'ins-002', studentName: 'Marc Ndongo', universityName: 'Université de Yaoundé I', amount: 50000, status: 'VALIDEE', date: new Date(Date.now() - 86400000) },
-        { trackingId: 'ins-003', studentName: 'Sophie Mbarga', universityName: 'Université de Dschang', amount: 50000, status: 'REJETEE', date: new Date(Date.now() - 172800000) },
-      ];
-      this.isLoading = false;
-    }, 1000);
+    this.loadStudents();
   }
 
-  validerInscription(id: string) {
-    this.isActionLoading = true;
-    this.actionMessage = '';
+  loadStudents() {
+    this.isLoading = true;
+    this.errorMessage = '';
     
-    // Simulation API
-    setTimeout(() => {
-      const ins = this.inscriptions.find(i => i.trackingId === id);
-      if (ins) ins.status = 'VALIDEE';
-      this.isActionLoading = false;
-      this.actionMessage = `L'inscription ${id} a été validée avec succès.`;
-    }, 800);
+    if (this.filterKyc !== 'ALL') {
+      this.studentService.findByStatutKYC(this.filterKyc).subscribe({
+        next: (res) => {
+          this.students = res.content || [];
+          this.applyFilter();
+          this.isLoading = false;
+        },
+        error: (err) => {
+          this.students = [];
+          this.applyFilter();
+          this.isLoading = false;
+        }
+      });
+    } else {
+      this.studentService.findAll().subscribe({
+        next: (res) => {
+          this.students = res.content || [];
+          this.applyFilter();
+          this.isLoading = false;
+        },
+        error: (err) => {
+          this.students = [];
+          this.applyFilter();
+          this.isLoading = false;
+        }
+      });
+    }
   }
 
-  rejeterInscription(id: string) {
-    this.isActionLoading = true;
-    this.actionMessage = '';
+  applyFilter() {
+    if (!this.searchQuery) {
+      this.filteredStudents = this.students;
+      return;
+    }
+    const q = this.searchQuery.toLowerCase();
+    this.filteredStudents = this.students.filter(s => 
+      (s.nom && s.nom.toLowerCase().includes(q)) || 
+      (s.prenom && s.prenom.toLowerCase().includes(q)) || 
+      (s.email && s.email.toLowerCase().includes(q))
+    );
+  }
+
+  setKycFilter(statut: string) {
+    this.filterKyc = statut;
+    this.loadStudents();
+  }
+
+  viewDetails(student: StudentResponse) {
+    this.selectedStudent = student;
+    this.studentDocuments = [];
+    this.isLoadingDocs = true;
     
-    // Simulation API
-    setTimeout(() => {
-      const ins = this.inscriptions.find(i => i.trackingId === id);
-      if (ins) ins.status = 'REJETEE';
-      this.isActionLoading = false;
-      this.actionMessage = `L'inscription ${id} a été rejetée.`;
-    }, 800);
+    this.studentService.getDocuments(student.trackingId).subscribe({
+      next: (res) => {
+        this.studentDocuments = res.content || [];
+        this.isLoadingDocs = false;
+      },
+      error: (err) => {
+        if(err.status !== 404) {
+          console.error("Erreur docs", err);
+        }
+        this.isLoadingDocs = false;
+      }
+    });
+  }
+
+  closeDetails() {
+    this.selectedStudent = null;
+    this.studentDocuments = [];
+  }
+
+  getShortId(id: string): string {
+    if (!id) return '';
+    return id.substring(0, 8).toUpperCase();
   }
 }
+

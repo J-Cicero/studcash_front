@@ -25,8 +25,7 @@ export class ProfileComponent implements OnInit {
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       phone: ['', Validators.required],
-      email: [{value: '', disabled: true}],
-      country: ['']
+      email: [{value: '', disabled: true}]
     });
   }
 
@@ -38,8 +37,7 @@ export class ProfileComponent implements OnInit {
           firstName: user.firstName,
           lastName: user.lastName,
           phone: user.phone,
-          email: user.email,
-          country: user.country
+          email: user.email
         });
       }
     });

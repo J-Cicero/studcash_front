@@ -1,119 +1,251 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { VersementService } from '../../../core/services/versement.service';
+import { WalletService, WalletResponse } from '../../../core/services/wallet.service';
+import { ScolariteYearService } from '../../../core/services/scolarite-year.service';
 
 @Component({
   selector: 'app-versements',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './versements.component.html',
   styleUrls: ['./versements.component.scss']
 })
 export class VersementsComponent implements OnInit {
-  isProcessing = false;
-  successMessage = '';
+  // Table state
+  wallets: WalletResponse[] = [];
+  isLoading = false;
   errorMessage = '';
+
+  // Filters
+  filterType: string = 'ALL';
+  filterNiveau: string = 'ALL';
+
+  // Manual Versement state
+  showManualVersementModal = false;
+  selectedWalletForManual: WalletResponse | null = null;
+  manualVersementForm: FormGroup;
+  isProcessingManual = false;
+
+  // Mass Versement state
+  showMassVersementModal = false;
+  massVersementForm: FormGroup;
+  massStep: 1 | 2 = 1;
+  massPreviewCount = 0;
+  massPreviewNames: string[] = [];
+  isProcessingMass = false;
   
-  versementForm: FormGroup;
-  resetForm: FormGroup;
+  // Data for forms
+  scolariteYears: any[] = [];
 
-  activeTab: 'versement' | 'reset' = 'versement';
+  constructor(
+    private fb: FormBuilder, 
+    private versementService: VersementService,
+    private walletService: WalletService,
+    private scolariteYearService: ScolariteYearService
+  ) {
+    this.manualVersementForm = this.fb.group({
+      montant: [null, [Validators.required, Validators.min(1)]]
+    });
 
-  constructor(private fb: FormBuilder, private versementService: VersementService) {
-    this.versementForm = this.fb.group({
-      target: ['students', Validators.required],
+    this.massVersementForm = this.fb.group({
+      target: ['BOUTIQUE', Validators.required],
       scolariteYearTrackingId: [''],
-      montantFixe: [null],
       seuil: [null],
-      montantQuota: [null]
-    });
-
-    this.resetForm = this.fb.group({
-      target: ['students', Validators.required],
-      scolariteYearTrackingId: ['']
+      montantQuota: [null],
+      montantFixe: [null]
     });
   }
 
-  ngOnInit(): void {}
-
-  setTab(tab: 'versement' | 'reset') {
-    this.activeTab = tab;
-    this.successMessage = '';
-    this.errorMessage = '';
+  ngOnInit(): void {
+    this.loadScolariteYears();
+    this.loadWallets();
   }
 
-  onVersementSubmit() {
-    if (this.versementForm.invalid) return;
-    this.isProcessing = true;
-    this.successMessage = '';
+  loadScolariteYears() {
+    this.scolariteYearService.getAll().subscribe({
+      next: (res) => {
+        this.scolariteYears = res.content || [];
+      },
+      error: (err) => console.error('Erreur chargement années scolaires', err)
+    });
+  }
+
+  loadWallets() {
+    this.isLoading = true;
     this.errorMessage = '';
     
-    const val = this.versementForm.value;
+    this.walletService.filterWallets(this.filterType, this.filterNiveau, 0, 50).subscribe({
+      next: (res) => {
+        this.wallets = res.content || [];
+        this.isLoading = false;
+      },
+      error: (err) => {
+        if(err.status === 404) this.wallets = [];
+        else this.errorMessage = 'Erreur lors du chargement des portefeuilles.';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  setFilterType(type: string) {
+    this.filterType = type;
+    this.loadWallets();
+  }
+
+  setFilterNiveau(niveau: string) {
+    this.filterNiveau = niveau;
+    this.loadWallets();
+  }
+
+  getShortId(id: string): string {
+    if (!id) return '';
+    return id.substring(0, 8).toUpperCase();
+  }
+
+  formatNumber(value: number): string {
+    if (!value && value !== 0) return '0';
+    return new Intl.NumberFormat('fr-FR').format(value);
+  }
+
+  // --- Manual Versement ---
+  openManualVersement(wallet: WalletResponse) {
+    if (wallet.typeWallet !== 'BOUTIQUE') return;
+    this.selectedWalletForManual = wallet;
+    this.manualVersementForm.reset();
+    this.showManualVersementModal = true;
+  }
+
+  closeManualVersement() {
+    this.showManualVersementModal = false;
+    this.selectedWalletForManual = null;
+  }
+
+  submitManualVersement() {
+    if (this.manualVersementForm.invalid || !this.selectedWalletForManual) return;
     
-    if (val.target === 'students') {
-      this.versementService.masseEtudiants({
-        scolariteYearTrackingId: val.scolariteYearTrackingId,
-        montantFixe: val.montantFixe
-      }).subscribe({
+    this.isProcessingManual = true;
+    const montant = this.manualVersementForm.value.montant;
+
+    const payload = {
+      trackingWalletId: this.selectedWalletForManual.trackingId,
+      montantVerse: montant,
+      typeVersement: 'TRANSFERT_MANUEL',
+      statut: 'VALIDEE'
+    };
+
+    this.versementService.create(payload).subscribe({
+      next: () => {
+        this.isProcessingManual = false;
+        this.closeManualVersement();
+        this.loadWallets(); // Refresh table
+      },
+      error: () => {
+        this.isProcessingManual = false;
+        alert("Erreur lors du versement.");
+      }
+    });
+  }
+
+  // --- Mass Versement ---
+  openMassVersement() {
+    this.massVersementForm.reset({ target: 'BOUTIQUE' });
+    this.massStep = 1;
+    this.showMassVersementModal = true;
+  }
+
+  closeMassVersement() {
+    this.showMassVersementModal = false;
+    this.massStep = 1;
+  }
+
+  previewMassVersement() {
+    if (this.massVersementForm.invalid) return;
+    
+    this.isProcessingMass = true;
+    const val = this.massVersementForm.value;
+
+    if (val.target === 'BOUTIQUE') {
+      if (!val.seuil) {
+        alert("Veuillez définir un seuil.");
+        this.isProcessingMass = false;
+        return;
+      }
+      this.versementService.previewMasseBoutiques(val.seuil).subscribe({
         next: (res) => {
-          this.isProcessing = false;
-          this.successMessage = res || 'Versement étudiant effectué.';
+          this.massPreviewCount = res.count;
+          this.massPreviewNames = res.names || [];
+          this.massStep = 2;
+          this.isProcessingMass = false;
         },
-        error: (err) => {
-          this.isProcessing = false;
-          this.errorMessage = 'Erreur lors du versement.';
+        error: () => {
+          this.isProcessingMass = false;
+          alert("Erreur lors de la prévisualisation.");
         }
       });
-    } else {
-      this.versementService.masseBoutiques({
-        seuil: val.seuil,
-        montantQuota: val.montantQuota
-      }).subscribe({
+    } else if (val.target === 'ETUDIANT') {
+      if (!val.scolariteYearTrackingId) {
+        alert("Veuillez sélectionner une année académique.");
+        this.isProcessingMass = false;
+        return;
+      }
+      this.versementService.previewMasseEtudiants(val.scolariteYearTrackingId).subscribe({
         next: (res) => {
-          this.isProcessing = false;
-          this.successMessage = res || 'Recharge boutique effectuée.';
+          this.massPreviewCount = res.count;
+          this.massPreviewNames = res.names || [];
+          this.massStep = 2;
+          this.isProcessingMass = false;
         },
-        error: (err) => {
-          this.isProcessing = false;
-          this.errorMessage = 'Erreur lors de la recharge.';
+        error: () => {
+          this.isProcessingMass = false;
+          alert("Erreur lors de la prévisualisation.");
         }
       });
     }
   }
 
-  onResetSubmit() {
-    if (this.resetForm.invalid) return;
-    this.isProcessing = true;
-    this.successMessage = '';
-    this.errorMessage = '';
+  submitMassVersement() {
+    const val = this.massVersementForm.value;
+    this.isProcessingMass = true;
 
-    const val = this.resetForm.value;
-    
-    if (val.target === 'students') {
-      this.versementService.resetMasseEtudiants({
-        scolariteYearTrackingId: val.scolariteYearTrackingId
+    if (val.target === 'BOUTIQUE') {
+      if (!val.montantQuota) {
+        alert("Montant requis.");
+        this.isProcessingMass = false;
+        return;
+      }
+      this.versementService.masseBoutiques({
+        seuil: val.seuil,
+        montantQuota: val.montantQuota
       }).subscribe({
-        next: (res) => {
-          this.isProcessing = false;
-          this.successMessage = res || 'Remise à zéro étudiants effectuée.';
+        next: () => {
+          this.isProcessingMass = false;
+          this.closeMassVersement();
+          this.loadWallets();
         },
-        error: (err) => {
-          this.isProcessing = false;
-          this.errorMessage = 'Erreur lors de la remise à zéro.';
+        error: () => {
+          this.isProcessingMass = false;
+          alert("Erreur lors du versement en masse.");
         }
       });
     } else {
-      this.versementService.resetMasseBoutiques({
-        scolariteYearTrackingId: val.scolariteYearTrackingId
+      // ETUDIANT
+      if (!val.montantFixe && val.montantFixe !== 0) {
+        // Optionnel : montantFixe peut être vide si on veut utiliser le plafond
+      }
+      this.versementService.masseEtudiants({
+        scolariteYearTrackingId: val.scolariteYearTrackingId,
+        montantFixe: val.montantFixe || 0
       }).subscribe({
-        next: (res) => {
-          this.isProcessing = false;
-          this.successMessage = res || 'Remise à zéro boutiques effectuée.';
+        next: () => {
+          this.isProcessingMass = false;
+          this.closeMassVersement();
+          this.loadWallets();
         },
-        error: (err) => {
-          this.isProcessing = false;
-          this.errorMessage = 'Erreur lors de la remise à zéro.';
+        error: () => {
+          this.isProcessingMass = false;
+          alert("Erreur lors du versement en masse.");
         }
       });
     }

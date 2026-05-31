@@ -1,12 +1,76 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ScolariteYearService } from '../../../core/services/scolarite-year.service';
 
 @Component({
   selector: 'app-scolarite-years',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './scolarite-years.component.html',
-  styleUrl: './scolarite-years.component.scss'
+  styleUrls: []
 })
-export class ScolariteYearsComponent {
+export class ScolariteYearsComponent implements OnInit {
+  scolariteYears: any[] = [];
+  isLoading = false;
+  isCreating = false;
+  
+  successMessage = '';
+  errorMessage = '';
+  
+  createForm: FormGroup;
 
+  constructor(
+    private fb: FormBuilder,
+    private scolariteYearService: ScolariteYearService
+  ) {
+    this.createForm = this.fb.group({
+      debutAnnee: [null, [Validators.required, Validators.min(2000)]],
+      finAnnee: [null, [Validators.required, Validators.min(2000)]],
+      fraisScolariteDefaut: [0, Validators.required],
+      plafondPretDefaut: [0, Validators.required]
+    });
+  }
+
+  ngOnInit(): void {
+    this.loadYears();
+  }
+
+  loadYears() {
+    this.isLoading = true;
+    this.scolariteYearService.getAll().subscribe({
+      next: (res) => {
+        this.scolariteYears = res.content || [];
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.isLoading = false;
+        this.errorMessage = "Erreur lors du chargement des années scolaires.";
+      }
+    });
+  }
+
+  onSubmit() {
+    if (this.createForm.invalid) return;
+
+    this.isCreating = true;
+    this.successMessage = '';
+    this.errorMessage = '';
+
+    const payload = this.createForm.value;
+
+    this.scolariteYearService.create(payload).subscribe({
+      next: (res) => {
+        this.isCreating = false;
+        this.successMessage = `Année ${res.libelle} créée avec succès.`;
+        this.createForm.reset({ fraisScolariteDefaut: 0, plafondPretDefaut: 0 });
+        this.loadYears();
+      },
+      error: (err) => {
+        this.isCreating = false;
+        this.errorMessage = "Erreur lors de la création de l'année scolaire.";
+      }
+    });
+  }
 }

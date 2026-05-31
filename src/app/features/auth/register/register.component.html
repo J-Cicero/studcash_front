@@ -1,0 +1,100 @@
+<div class="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+  <!-- Background Decoration -->
+  <div class="absolute inset-0 z-0 overflow-hidden">
+    <div class="absolute -top-40 -right-40 w-96 h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70"></div>
+    <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-slate-200 rounded-full mix-blend-multiply filter blur-3xl opacity-70"></div>
+  </div>
+
+  <div class="max-w-md w-full bg-white rounded-2xl shadow-xl z-10 p-8 border border-slate-100">
+    <div class="text-center mb-8">
+      <div class="flex justify-center mb-4">
+        <div class="w-16 h-16 bg-slate-900 rounded-xl flex items-center justify-center shadow-lg">
+          <span class="text-white font-bold text-2xl tracking-tighter">SC</span>
+        </div>
+      </div>
+      <h2 class="text-2xl font-bold text-slate-900">Créer un compte</h2>
+      <p class="text-sm text-slate-500 mt-2">Rejoignez studCASH en quelques clics</p>
+    </div>
+
+    <!-- Alert Messages -->
+    <div *ngIf="successMessage" class="mb-4 p-4 rounded-lg bg-green-50 text-green-800 border border-green-200">
+      {{ successMessage }}
+    </div>
+    <div *ngIf="errorMessage" class="mb-4 p-4 rounded-lg bg-red-50 text-red-800 border border-red-200">
+      {{ errorMessage }}
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-4">
+      
+      <div class="grid grid-cols-2 gap-4">
+        <!-- Nom Field -->
+        <div>
+          <label for="nom" class="block text-sm font-medium text-slate-700 mb-1">Nom</label>
+          <input id="nom" type="text" formControlName="nom" 
+                 class="block w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-slate-900 focus:border-slate-900 sm:text-sm placeholder-slate-400 transition-colors" 
+                 placeholder="Dupont">
+        </div>
+
+        <!-- Prenom Field -->
+        <div>
+          <label for="prenom" class="block text-sm font-medium text-slate-700 mb-1">Prénom</label>
+          <input id="prenom" type="text" formControlName="prenom" 
+                 class="block w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-slate-900 focus:border-slate-900 sm:text-sm placeholder-slate-400 transition-colors" 
+                 placeholder="Jean">
+        </div>
+      </div>
+
+      <!-- Email Field -->
+      <div>
+        <label for="email" class="block text-sm font-medium text-slate-700 mb-1">Adresse Email</label>
+        <input id="email" type="email" formControlName="email" 
+               class="block w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-slate-900 focus:border-slate-900 sm:text-sm placeholder-slate-400 transition-colors" 
+               placeholder="vous@exemple.com">
+      </div>
+
+      <!-- Telephone Field -->
+      <div>
+        <label for="telephone" class="block text-sm font-medium text-slate-700 mb-1">Téléphone</label>
+        <input id="telephone" type="tel" formControlName="telephone" 
+               class="block w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-slate-900 focus:border-slate-900 sm:text-sm placeholder-slate-400 transition-colors" 
+               placeholder="+33600000000">
+      </div>
+
+      <!-- Password Field -->
+      <div>
+        <label for="motDePasse" class="block text-sm font-medium text-slate-700 mb-1">Mot de passe</label>
+        <input id="motDePasse" type="password" formControlName="motDePasse" 
+               class="block w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-slate-900 focus:border-slate-900 sm:text-sm placeholder-slate-400 transition-colors" 
+               placeholder="••••••••">
+      </div>
+
+      <!-- Role Field -->
+      <div>
+        <label for="role" class="block text-sm font-medium text-slate-700 mb-1">Type de compte</label>
+        <select id="role" formControlName="role" 
+                class="block w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-slate-900 focus:border-slate-900 sm:text-sm bg-white transition-colors">
+          <option *ngFor="let role of roles" [value]="role.value">{{ role.label }}</option>
+        </select>
+      </div>
+
+      <div class="pt-2">
+        <button type="submit" [disabled]="isLoading" 
+                class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 transition-colors disabled:opacity-70 disabled:cursor-not-allowed">
+          <svg *ngIf="isLoading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span *ngIf="!isLoading">S'inscrire</span>
+          <span *ngIf="isLoading">Création en cours...</span>
+        </button>
+      </div>
+      
+      <div class="text-center mt-4">
+        <p class="text-sm text-slate-600">
+          Déjà un compte ? 
+          <a routerLink="/login" class="font-medium text-slate-900 hover:underline">Se connecter</a>
+        </p>
+      </div>
+    </form>
+  </div>
+</div>

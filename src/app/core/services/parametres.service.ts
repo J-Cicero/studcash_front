@@ -4,9 +4,11 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface Parametre {
+  trackingId?: string;
   nomParametre: string;
   valeurParametre: string;
   description: string;
+  estActif?: boolean;
 }
 
 export interface PaginatedResponse<T> {
@@ -28,15 +30,15 @@ export class ParametresService {
     return this.http.get<PaginatedResponse<Parametre>>(`${environment.apiUrl}/parametres-gns?size=100`);
   }
 
-  saveParametreGns(nomParametre: string, valeurParametre: string): Observable<Parametre> {
-    return this.http.post<Parametre>(`${environment.apiUrl}/parametres-gns`, { nomParametre, valeurParametre });
+  saveParametreGns(param: Parametre): Observable<Parametre> {
+    return this.http.post<Parametre>(`${environment.apiUrl}/parametres-gns`, param);
   }
 
   getParametresDbs(): Observable<PaginatedResponse<Parametre>> {
     return this.http.get<PaginatedResponse<Parametre>>(`${environment.apiUrl}/parametres-dbs?size=100`);
   }
 
-  saveParametreDbs(nomParametre: string, valeurParametre: string): Observable<Parametre> {
-    return this.http.post<Parametre>(`${environment.apiUrl}/parametres-dbs`, { nomParametre, valeurParametre });
+  saveParametreDbs(param: Parametre): Observable<Parametre> {
+    return this.http.post<Parametre>(`${environment.apiUrl}/parametres-dbs`, param);
   }
 }

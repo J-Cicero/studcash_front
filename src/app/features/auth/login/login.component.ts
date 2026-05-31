@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
@@ -42,9 +42,15 @@ export class LoginComponent {
         // Redirection logic based on roles
         if (this.authService.hasRole('ADMIN_GNS')) {
           this.router.navigate(['/admin-gns/dashboard']);
+        } else if (this.authService.hasRole('ADMIN_DBS')) {
+          this.router.navigate(['/admin-dbs/dashboard']);
+        } else if (this.authService.hasRole('ADMIN_BANQUE')) {
+          this.router.navigate(['/bank-portal/dashboard']);
+        } else if (this.authService.hasRole('UNIVERSITY_ADMIN')) {
+          this.router.navigate(['/admin-university/dashboard']);
         } else {
-          // Default fallback
-          this.router.navigate(['/admin-gns/dashboard']);
+          // Default fallback if role doesn't have a dashboard yet
+          this.router.navigate(['/']);
         }
       },
       error: (err) => {

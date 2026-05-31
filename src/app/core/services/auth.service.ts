@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { LoginRequest, LoginResponse } from '../models/auth.model';
+import { LoginRequest, LoginResponse, RegisterRequest } from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +34,10 @@ export class AuthService {
       );
   }
 
+  register(request: RegisterRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register`, request);
+  }
+
   logout(): void {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('token');
@@ -53,6 +57,7 @@ export class AuthService {
 
   public hasRole(role: string): boolean {
     const user = this.currentUserValue;
-    return !!user && user.rolesList.includes(role);
+    if (!user || !user.rolesList) return false;
+    return user.rolesList.includes(role) || user.rolesList.includes(`ROLE_${role}`);
   }
 }

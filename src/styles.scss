@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Leaflet Map Styles */
+@import "leaflet/dist/leaflet.css";
+
 /* Fonts */
 
 /* PrimeNG Core */
@@ -19,7 +22,7 @@
   --card-bg: rgba(255, 255, 255, 0.95);
 }
 
-.gns-admin-shell.dark-mode {
+.gns-admin-shell.dark {
   --bg-main: #020617;
   --text-main: #e2e8f0;
   --text-muted: #94a3b8;
@@ -29,7 +32,7 @@
   --primary-light: #60a5fa;
 }
 
-.univ-portal-shell.dark-mode {
+.univ-portal-shell.dark {
   --bg-main: #020617;
   --text-main: #e2e8f0;
   --text-muted: #94a3b8;
@@ -94,220 +97,220 @@ html, body {
   transition: all 0.3s ease;
 }
 
-.gns-admin-shell.dark-mode {
+.gns-admin-shell.dark {
   background:
     radial-gradient(circle at top left, rgba(59, 130, 246, 0.14), transparent 28%),
     radial-gradient(circle at top right, rgba(14, 165, 233, 0.12), transparent 22%),
     linear-gradient(180deg, #020617 0%, #0f172a 100%);
 }
 
-.univ-portal-shell.dark-mode {
+.univ-portal-shell.dark {
   background:
     radial-gradient(circle at top left, rgba(59, 130, 246, 0.14), transparent 28%),
     radial-gradient(circle at top right, rgba(14, 165, 233, 0.12), transparent 22%),
     linear-gradient(180deg, #020617 0%, #0f172a 100%);
 }
 
-.univ-portal-shell.dark-mode main,
-.univ-portal-shell.dark-mode aside,
-.univ-portal-shell.dark-mode header,
-.univ-portal-shell.dark-mode .bg-white,
-.univ-portal-shell.dark-mode .bg-slate-50,
-.univ-portal-shell.dark-mode .bg-slate-100,
-.univ-portal-shell.dark-mode .bg-slate-200 {
+.univ-portal-shell.dark main,
+.univ-portal-shell.dark aside,
+.univ-portal-shell.dark header,
+.univ-portal-shell.dark .bg-white,
+.univ-portal-shell.dark .bg-slate-50,
+.univ-portal-shell.dark .bg-slate-100,
+.univ-portal-shell.dark .bg-slate-200 {
   color: var(--text-main) !important;
 }
 
-.univ-portal-shell.dark-mode .bg-white {
+.univ-portal-shell.dark .bg-white {
   background-color: #0f172a !important;
 }
 
-.univ-portal-shell.dark-mode .bg-slate-50,
-.univ-portal-shell.dark-mode .bg-slate-100 {
+.univ-portal-shell.dark .bg-slate-50,
+.univ-portal-shell.dark .bg-slate-100 {
   background-color: #111827 !important;
 }
 
-.univ-portal-shell.dark-mode .bg-slate-200 {
+.univ-portal-shell.dark .bg-slate-200 {
   background-color: #1f2937 !important;
 }
 
-.univ-portal-shell.dark-mode .text-slate-900,
-.univ-portal-shell.dark-mode .text-slate-800,
-.univ-portal-shell.dark-mode .text-slate-700,
-.univ-portal-shell.dark-mode .text-slate-600,
-.univ-portal-shell.dark-mode .text-slate-500,
-.univ-portal-shell.dark-mode .text-slate-400 {
+.univ-portal-shell.dark .text-slate-900,
+.univ-portal-shell.dark .text-slate-800,
+.univ-portal-shell.dark .text-slate-700,
+.univ-portal-shell.dark .text-slate-600,
+.univ-portal-shell.dark .text-slate-500,
+.univ-portal-shell.dark .text-slate-400 {
   color: var(--text-main) !important;
 }
 
-.univ-portal-shell.dark-mode .text-slate-500,
-.univ-portal-shell.dark-mode .text-slate-400 {
+.univ-portal-shell.dark .text-slate-500,
+.univ-portal-shell.dark .text-slate-400 {
   color: var(--text-muted) !important;
 }
 
-.univ-portal-shell.dark-mode .border-slate-50,
-.univ-portal-shell.dark-mode .border-slate-100,
-.univ-portal-shell.dark-mode .border-slate-200 {
+.univ-portal-shell.dark .border-slate-50,
+.univ-portal-shell.dark .border-slate-100,
+.univ-portal-shell.dark .border-slate-200 {
   border-color: var(--border-color) !important;
 }
 
-.univ-portal-shell.dark-mode .shadow-sm,
-.univ-portal-shell.dark-mode .shadow-lg,
-.univ-portal-shell.dark-mode .shadow-xl {
+.univ-portal-shell.dark .shadow-sm,
+.univ-portal-shell.dark .shadow-lg,
+.univ-portal-shell.dark .shadow-xl {
   box-shadow: 0 18px 40px rgba(2, 6, 23, 0.35) !important;
 }
 
-.univ-portal-shell.dark-mode .p-inputtext,
-.univ-portal-shell.dark-mode .p-dropdown,
-.univ-portal-shell.dark-mode .p-password input,
-.univ-portal-shell.dark-mode input,
-.univ-portal-shell.dark-mode textarea,
-.univ-portal-shell.dark-mode .p-component {
+.univ-portal-shell.dark .p-inputtext,
+.univ-portal-shell.dark .p-dropdown,
+.univ-portal-shell.dark .p-password input,
+.univ-portal-shell.dark input,
+.univ-portal-shell.dark textarea,
+.univ-portal-shell.dark .p-component {
   background-color: #0b1220 !important;
   color: #e2e8f0 !important;
   border-color: #334155 !important;
 }
 
-.univ-portal-shell.dark-mode .p-datatable .p-datatable-thead > tr > th {
+.univ-portal-shell.dark .p-datatable .p-datatable-thead > tr > th {
   background-color: #111827;
   color: #cbd5e1;
   border-bottom-color: #334155;
 }
 
-.univ-portal-shell.dark-mode .p-datatable .p-datatable-tbody > tr > td {
+.univ-portal-shell.dark .p-datatable .p-datatable-tbody > tr > td {
   background-color: #0f172a;
   color: #e2e8f0;
   border-bottom-color: #1f2937;
 }
 
-.univ-portal-shell.dark-mode .p-datatable .p-datatable-tbody > tr:hover > td {
+.univ-portal-shell.dark .p-datatable .p-datatable-tbody > tr:hover > td {
   background-color: #111c33;
 }
 
-.univ-portal-shell.dark-mode .p-skeleton {
+.univ-portal-shell.dark .p-skeleton {
   background-color: #1e293b !important;
 }
 
-.univ-portal-shell.dark-mode .p-skeleton::after {
+.univ-portal-shell.dark .p-skeleton::after {
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent) !important;
 }
 
-.univ-portal-shell.dark-mode .p-button.p-button-text,
-.univ-portal-shell.dark-mode .p-button.p-button-outlined {
+.univ-portal-shell.dark .p-button.p-button-text,
+.univ-portal-shell.dark .p-button.p-button-outlined {
   color: #e2e8f0;
   border-color: #334155;
 }
 
-.univ-portal-shell.dark-mode .p-button.p-button-text:hover,
-.univ-portal-shell.dark-mode .p-button.p-button-outlined:hover {
+.univ-portal-shell.dark .p-button.p-button-text:hover,
+.univ-portal-shell.dark .p-button.p-button-outlined:hover {
   background-color: rgba(148, 163, 184, 0.12) !important;
 }
 
-.univ-portal-shell.dark-mode .p-float-label > label,
-.univ-portal-shell.dark-mode p-floatlabel > label,
-.univ-portal-shell.dark-mode p-floatLabel > label {
+.univ-portal-shell.dark .p-float-label > label,
+.univ-portal-shell.dark p-floatlabel > label,
+.univ-portal-shell.dark p-floatLabel > label {
   background: #0f172a !important;
   color: #94a3b8 !important;
 }
 
-.gns-admin-shell.dark-mode main,
-.gns-admin-shell.dark-mode aside,
-.gns-admin-shell.dark-mode header,
-.gns-admin-shell.dark-mode .bg-white,
-.gns-admin-shell.dark-mode .bg-slate-50,
-.gns-admin-shell.dark-mode .bg-slate-100,
-.gns-admin-shell.dark-mode .bg-slate-200 {
+.gns-admin-shell.dark main,
+.gns-admin-shell.dark aside,
+.gns-admin-shell.dark header,
+.gns-admin-shell.dark .bg-white,
+.gns-admin-shell.dark .bg-slate-50,
+.gns-admin-shell.dark .bg-slate-100,
+.gns-admin-shell.dark .bg-slate-200 {
   color: var(--text-main) !important;
 }
 
-.gns-admin-shell.dark-mode .bg-white {
+.gns-admin-shell.dark .bg-white {
   background-color: #0f172a !important;
 }
 
-.gns-admin-shell.dark-mode .bg-slate-50,
-.gns-admin-shell.dark-mode .bg-slate-100 {
+.gns-admin-shell.dark .bg-slate-50,
+.gns-admin-shell.dark .bg-slate-100 {
   background-color: #111827 !important;
 }
 
-.gns-admin-shell.dark-mode .bg-slate-200 {
+.gns-admin-shell.dark .bg-slate-200 {
   background-color: #1f2937 !important;
 }
 
-.gns-admin-shell.dark-mode .text-slate-900,
-.gns-admin-shell.dark-mode .text-slate-800,
-.gns-admin-shell.dark-mode .text-slate-700,
-.gns-admin-shell.dark-mode .text-slate-600,
-.gns-admin-shell.dark-mode .text-slate-500,
-.gns-admin-shell.dark-mode .text-slate-400 {
+.gns-admin-shell.dark .text-slate-900,
+.gns-admin-shell.dark .text-slate-800,
+.gns-admin-shell.dark .text-slate-700,
+.gns-admin-shell.dark .text-slate-600,
+.gns-admin-shell.dark .text-slate-500,
+.gns-admin-shell.dark .text-slate-400 {
   color: var(--text-main) !important;
 }
 
-.gns-admin-shell.dark-mode .text-slate-500,
-.gns-admin-shell.dark-mode .text-slate-400 {
+.gns-admin-shell.dark .text-slate-500,
+.gns-admin-shell.dark .text-slate-400 {
   color: var(--text-muted) !important;
 }
 
-.gns-admin-shell.dark-mode .border-slate-50,
-.gns-admin-shell.dark-mode .border-slate-100,
-.gns-admin-shell.dark-mode .border-slate-200 {
+.gns-admin-shell.dark .border-slate-50,
+.gns-admin-shell.dark .border-slate-100,
+.gns-admin-shell.dark .border-slate-200 {
   border-color: var(--border-color) !important;
 }
 
-.gns-admin-shell.dark-mode .shadow-sm,
-.gns-admin-shell.dark-mode .shadow-lg,
-.gns-admin-shell.dark-mode .shadow-xl {
+.gns-admin-shell.dark .shadow-sm,
+.gns-admin-shell.dark .shadow-lg,
+.gns-admin-shell.dark .shadow-xl {
   box-shadow: 0 18px 40px rgba(2, 6, 23, 0.35) !important;
 }
 
-.gns-admin-shell.dark-mode .p-inputtext,
-.gns-admin-shell.dark-mode .p-dropdown,
-.gns-admin-shell.dark-mode .p-password input,
-.gns-admin-shell.dark-mode input,
-.gns-admin-shell.dark-mode textarea,
-.gns-admin-shell.dark-mode .p-component {
+.gns-admin-shell.dark .p-inputtext,
+.gns-admin-shell.dark .p-dropdown,
+.gns-admin-shell.dark .p-password input,
+.gns-admin-shell.dark input,
+.gns-admin-shell.dark textarea,
+.gns-admin-shell.dark .p-component {
   background-color: #0b1220 !important;
   color: #e2e8f0 !important;
   border-color: #334155 !important;
 }
 
-.gns-admin-shell.dark-mode .p-datatable .p-datatable-thead > tr > th {
+.gns-admin-shell.dark .p-datatable .p-datatable-thead > tr > th {
   background-color: #111827;
   color: #cbd5e1;
   border-bottom-color: #334155;
 }
 
-.gns-admin-shell.dark-mode .p-datatable .p-datatable-tbody > tr > td {
+.gns-admin-shell.dark .p-datatable .p-datatable-tbody > tr > td {
   background-color: #0f172a;
   color: #e2e8f0;
   border-bottom-color: #1f2937;
 }
 
-.gns-admin-shell.dark-mode .p-datatable .p-datatable-tbody > tr:hover > td {
+.gns-admin-shell.dark .p-datatable .p-datatable-tbody > tr:hover > td {
   background-color: #111c33;
 }
 
-.gns-admin-shell.dark-mode .p-skeleton {
+.gns-admin-shell.dark .p-skeleton {
   background-color: #1e293b !important;
 }
 
-.gns-admin-shell.dark-mode .p-skeleton::after {
+.gns-admin-shell.dark .p-skeleton::after {
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent) !important;
 }
 
-.gns-admin-shell.dark-mode .p-button.p-button-text,
-.gns-admin-shell.dark-mode .p-button.p-button-outlined {
+.gns-admin-shell.dark .p-button.p-button-text,
+.gns-admin-shell.dark .p-button.p-button-outlined {
   color: #e2e8f0;
   border-color: #334155;
 }
 
-.gns-admin-shell.dark-mode .p-button.p-button-text:hover,
-.gns-admin-shell.dark-mode .p-button.p-button-outlined:hover {
+.gns-admin-shell.dark .p-button.p-button-text:hover,
+.gns-admin-shell.dark .p-button.p-button-outlined:hover {
   background-color: rgba(148, 163, 184, 0.12) !important;
 }
 
-.gns-admin-shell.dark-mode .p-float-label > label,
-.gns-admin-shell.dark-mode p-floatlabel > label,
-.gns-admin-shell.dark-mode p-floatLabel > label {
+.gns-admin-shell.dark .p-float-label > label,
+.gns-admin-shell.dark p-floatlabel > label,
+.gns-admin-shell.dark p-floatLabel > label {
   background: #0f172a !important;
   color: #94a3b8 !important;
 }
@@ -469,4 +472,75 @@ p-floatLabel input:not(:placeholder-shown) ~ label {
   border-radius: 4px !important;
   margin-top: 0 !important;
   height: max-content !important;
+}
+
+/* =========================================
+   PREMIUM DESIGN SYSTEM (studCASH)
+   ========================================= */
+
+/* Typography & Gradients */
+.text-gradient-primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+}
+
+.dark .glass-panel {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.3);
+}
+
+.glass-sidebar {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.dark .glass-sidebar {
+  background: rgba(2, 6, 23, 0.75);
+  border-right: 1px solid rgba(51, 65, 85, 0.4);
+}
+
+/* Micro-animations */
+.hover-lift {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+}
+
+.dark .hover-lift:hover {
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+}
+
+.nav-item-active {
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, transparent 100%);
+  border-left: 3px solid #3b82f6;
+}
+
+.icon-gradient {
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  border-radius: 0.75rem;
+}
+
+.dark .icon-gradient {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
 }

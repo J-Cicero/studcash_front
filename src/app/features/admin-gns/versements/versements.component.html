@@ -1,126 +1,299 @@
-<div class="mb-8">
-  <h1 class="text-2xl font-bold text-slate-900">Bourses & Versements en Masse</h1>
-  <p class="text-sm text-slate-500 mt-1">Gérez le décaissement des bourses et le rechargement des quotas boutiques.</p>
+<div class="mb-8 animate-fade-in-up">
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Portefeuilles & Versements</h1>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Rechargez les portefeuilles des Boutiques ou distribuez les bourses aux Étudiants.</p>
+    </div>
+    <div>
+      <button (click)="openMassVersement()" class="inline-flex items-center justify-center px-4 py-2.5 text-sm font-bold text-white transition-all bg-indigo-600 border border-transparent rounded-xl shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        Versements en Masse
+      </button>
+    </div>
+  </div>
 </div>
 
-<div class="bg-white shadow-sm rounded-xl border border-slate-200 overflow-hidden max-w-4xl">
-  
-  <!-- Tabs -->
-  <div class="border-b border-slate-200">
-    <nav class="-mb-px flex space-x-8 px-6" aria-label="Tabs">
-      <button (click)="setTab('versement')" [class.border-slate-900]="activeTab === 'versement'" [class.text-slate-900]="activeTab === 'versement'" class="border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
-        Nouveau Versement
-      </button>
-      <button (click)="setTab('reset')" [class.border-slate-900]="activeTab === 'reset'" [class.text-slate-900]="activeTab === 'reset'" class="border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
-        Remise à Zéro
-      </button>
-    </nav>
+<div class="glass-panel rounded-2xl overflow-hidden animate-fade-in-up border border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40">
+  <!-- Header & Filters -->
+  <div class="p-6 border-b border-slate-200/50 dark:border-slate-700/50 bg-white/60 dark:bg-slate-900/60">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <h3 class="text-lg font-bold text-slate-900 dark:text-white">Liste des Portefeuilles</h3>
+      
+      <div class="flex flex-wrap gap-2">
+        <select [ngModel]="filterType" (ngModelChange)="setFilterType($event)" 
+                class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 font-medium shadow-sm transition-all">
+          <option value="ALL">Tous les types</option>
+          <option value="BOUTIQUE">Boutiques</option>
+          <option value="ETUDIANT">Étudiants</option>
+          <option value="UNIVERSITE">Universités</option>
+        </select>
+        
+        <select [ngModel]="filterNiveau" (ngModelChange)="setFilterNiveau($event)" 
+                class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 font-medium shadow-sm transition-all">
+          <option value="ALL">Tous les niveaux</option>
+          <option value="CRITIQUE">Critique</option>
+          <option value="BAS">Bas</option>
+          <option value="NORMAL">Normal</option>
+          <option value="ELEVE">Élevé</option>
+        </select>
+      </div>
+    </div>
   </div>
 
-  <div class="p-6 sm:p-8">
-
-    <!-- Messages -->
-    <div *ngIf="successMessage" class="rounded-md bg-green-50 p-4 mb-6">
-      <div class="flex">
-        <div class="flex-shrink-0">
-          <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-          </svg>
-        </div>
-        <div class="ml-3 flex-1 md:flex md:justify-between">
-          <p class="text-sm text-green-700">{{ successMessage }}</p>
-        </div>
-      </div>
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex justify-center items-center py-20 bg-white/20 dark:bg-slate-900/20">
+    <div class="relative w-12 h-12">
+      <div class="absolute inset-0 rounded-full border-4 border-indigo-100 dark:border-slate-800"></div>
+      <div class="absolute inset-0 rounded-full border-4 border-indigo-600 dark:border-indigo-400 border-t-transparent animate-spin"></div>
     </div>
+  </div>
 
-    <div *ngIf="errorMessage" class="rounded-md bg-red-50 p-4 mb-6">
-      <div class="flex">
-        <div class="flex-shrink-0">
-          <svg class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </div>
-        <div class="ml-3 flex-1 md:flex md:justify-between">
-          <p class="text-sm text-red-700">{{ errorMessage }}</p>
-        </div>
-      </div>
+  <!-- Error State -->
+  <div *ngIf="errorMessage && !isLoading" class="p-8 text-center bg-white/20 dark:bg-slate-900/20">
+    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 mb-4">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
     </div>
+    <p class="text-slate-600 dark:text-slate-400 font-medium">{{ errorMessage }}</p>
+  </div>
 
-    <!-- VERSEMENT TAB -->
-    <form *ngIf="activeTab === 'versement'" [formGroup]="versementForm" (ngSubmit)="onVersementSubmit()" class="space-y-6">
-      <div>
-        <label class="block text-sm font-medium text-slate-700">Type de Cible</label>
-        <select formControlName="target" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-slate-900 focus:border-slate-900 sm:text-sm rounded-md transition-colors">
-          <option value="students">Bourses Étudiants</option>
-          <option value="merchants">Quotas Boutiques</option>
-        </select>
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && !errorMessage && wallets.length === 0" class="p-12 text-center bg-white/20 dark:bg-slate-900/20">
+    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 mb-4">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+    </div>
+    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Aucun portefeuille trouvé</h3>
+    <p class="text-slate-500 dark:text-slate-400 max-w-md mx-auto">Veuillez ajuster vos filtres de recherche.</p>
+  </div>
+
+  <!-- Table -->
+  <div class="overflow-x-auto" *ngIf="!isLoading && !errorMessage && wallets.length > 0">
+    <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
+      <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
+        <tr>
+          <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest whitespace-nowrap">Propriétaire</th>
+          <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Type</th>
+          <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest whitespace-nowrap">Solde Actuel</th>
+          <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Niveau</th>
+          <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-200/50 dark:divide-slate-700/50 bg-white/20 dark:bg-slate-900/20">
+        <tr *ngFor="let w of wallets" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group">
+          
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center"
+                   [ngClass]="{
+                     'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400': w.typeWallet === 'BOUTIQUE',
+                     'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400': w.typeWallet === 'ETUDIANT',
+                     'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400': w.typeWallet === 'UNIVERSITE'
+                   }">
+                <svg *ngIf="w.typeWallet === 'BOUTIQUE'" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <svg *ngIf="w.typeWallet === 'ETUDIANT'" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                <svg *ngIf="w.typeWallet === 'UNIVERSITE'" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+              </div>
+              <div class="ml-4">
+                <div class="text-sm font-bold text-slate-900 dark:text-white">{{ w.ownerName }}</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono uppercase tracking-wider">{{ getShortId(w.trackingId) }}</div>
+              </div>
+            </div>
+          </td>
+
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-md">
+              {{ w.typeWallet }}
+            </span>
+          </td>
+
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm font-black" [ngClass]="{'text-red-500': w.solde === 0, 'text-slate-900 dark:text-white': w.solde > 0}">
+              {{ formatNumber(w.solde) }} <span class="text-xs font-bold text-slate-500">FCFA</span>
+            </div>
+            <div *ngIf="w.plafond" class="text-xs text-slate-400 mt-1">
+              / {{ formatNumber(w.plafond) }} FCFA
+            </div>
+          </td>
+
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span *ngIf="w.niveauSolde === 'CRITIQUE'" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100/80 text-red-700 dark:bg-red-900/40 dark:text-red-400 border border-red-200 dark:border-red-800">
+              Critique
+            </span>
+            <span *ngIf="w.niveauSolde === 'BAS'" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-100/80 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400 border border-orange-200 dark:border-orange-800">
+              Bas
+            </span>
+            <span *ngIf="w.niveauSolde === 'NORMAL' || w.niveauSolde === 'ELEVE'" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100/80 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+              {{ w.niveauSolde }}
+            </span>
+            <span *ngIf="w.niveauSolde === 'INCONNU' || !w.niveauSolde" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100/80 text-slate-700 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+              {{ w.niveauSolde || 'Non défini' }}
+            </span>
+          </td>
+
+          <td class="px-6 py-4 whitespace-nowrap text-right">
+            <!-- Seulement possible pour les BOUTIQUES -->
+            <button *ngIf="w.typeWallet === 'BOUTIQUE'" (click)="openManualVersement(w)" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 font-bold text-sm bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/50 px-3 py-1.5 rounded-lg transition-colors">
+              Recharger
+            </button>
+            <span *ngIf="w.typeWallet !== 'BOUTIQUE'" class="text-slate-400 text-xs italic">
+              Non autorisé
+            </span>
+          </td>
+          
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal: Versement Manuel (Boutique) -->
+<div *ngIf="showManualVersementModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm transition-opacity" (click)="closeManualVersement()"></div>
+    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+    <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+      <div class="px-6 py-6 border-b border-slate-200 dark:border-slate-700">
+        <h3 class="text-xl leading-6 font-black text-slate-900 dark:text-white" id="modal-title">Recharger Boutique</h3>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Versement individuel pour <strong>{{ selectedWalletForManual?.ownerName }}</strong>.</p>
       </div>
+      <form [formGroup]="manualVersementForm" (ngSubmit)="submitManualVersement()">
+        <div class="px-6 py-6 space-y-4">
+          <div>
+            <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Montant à verser (FCFA)</label>
+            <input type="number" formControlName="montant" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all font-bold text-lg" placeholder="0">
+          </div>
+        </div>
+        <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 flex justify-end gap-3 rounded-b-2xl">
+          <button type="button" (click)="closeManualVersement()" class="px-4 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors">
+            Annuler
+          </button>
+          <button type="submit" [disabled]="manualVersementForm.invalid || isProcessingManual" class="px-4 py-2 text-sm font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center">
+            <svg *ngIf="isProcessingManual" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            Valider le versement
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
-      <!-- If Target is Students -->
-      <div *ngIf="versementForm.get('target')?.value === 'students'" class="space-y-6 bg-slate-50 p-4 rounded-lg border border-slate-100">
-        <div>
-          <label class="block text-sm font-medium text-slate-700">Année Scolaire ID (scolariteYearTrackingId)</label>
-          <input type="text" formControlName="scolariteYearTrackingId" class="mt-1 shadow-sm focus:ring-slate-900 focus:border-slate-900 block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border transition-colors" placeholder="Ex: e2e65c... (UUID)">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-slate-700">Montant Fixe (Optionnel)</label>
-          <input type="number" formControlName="montantFixe" class="mt-1 shadow-sm focus:ring-slate-900 focus:border-slate-900 block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border transition-colors" placeholder="Laisser vide pour utiliser le plafond">
-        </div>
+<!-- Modal: Versement Masse -->
+<div *ngIf="showMassVersementModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm transition-opacity" (click)="closeMassVersement()"></div>
+    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+    <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl w-full">
+      <div class="px-6 py-6 border-b border-slate-200 dark:border-slate-700">
+        <h3 class="text-xl leading-6 font-black text-slate-900 dark:text-white">Versement en Masse</h3>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Étape {{ massStep }} sur 2 : {{ massStep === 1 ? 'Critères de sélection' : 'Prévisualisation & Validation' }}</p>
       </div>
-
-      <!-- If Target is Merchants -->
-      <div *ngIf="versementForm.get('target')?.value === 'merchants'" class="space-y-6 bg-slate-50 p-4 rounded-lg border border-slate-100">
-        <div>
-          <label class="block text-sm font-medium text-slate-700">Seuil de Déclenchement</label>
-          <input type="number" formControlName="seuil" class="mt-1 shadow-sm focus:ring-slate-900 focus:border-slate-900 block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border transition-colors" placeholder="Ex: 5000">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-slate-700">Montant du Quota</label>
-          <input type="number" formControlName="montantQuota" class="mt-1 shadow-sm focus:ring-slate-900 focus:border-slate-900 block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border transition-colors" placeholder="Ex: 1000000">
-        </div>
-      </div>
-
-      <div class="pt-5 flex justify-end">
-        <button type="submit" [disabled]="isProcessing" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-slate-900 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 disabled:opacity-70">
-          <span *ngIf="!isProcessing">Exécuter le Versement en Masse</span>
-          <span *ngIf="isProcessing">Traitement...</span>
-        </button>
-      </div>
-    </form>
-
-    <!-- RESET TAB -->
-    <form *ngIf="activeTab === 'reset'" [formGroup]="resetForm" (ngSubmit)="onResetSubmit()" class="space-y-6">
       
-      <div class="bg-red-50 p-4 rounded-lg border border-red-100 mb-6">
-        <h3 class="text-sm font-medium text-red-800">Zone de Danger</h3>
-        <p class="mt-2 text-sm text-red-700">
-          Cette action va remettre à zéro les portefeuilles cibles. Cette action est irréversible.
-        </p>
-      </div>
+      <!-- Étape 1 : Critères -->
+      <form *ngIf="massStep === 1" [formGroup]="massVersementForm" (ngSubmit)="previewMassVersement()">
+        <div class="px-6 py-6 space-y-6">
+          <div>
+            <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-3">Cible du versement</label>
+            <div class="grid grid-cols-2 gap-4">
+              <label class="relative flex cursor-pointer rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow-sm hover:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500">
+                <input type="radio" formControlName="target" value="BOUTIQUE" class="sr-only">
+                <span class="flex flex-1">
+                  <span class="flex flex-col">
+                    <span class="block text-sm font-bold text-slate-900 dark:text-white" [ngClass]="{'text-indigo-600 dark:text-indigo-400': massVersementForm.get('target')?.value === 'BOUTIQUE'}">Boutiques</span>
+                    <span class="mt-1 flex items-center text-xs text-slate-500 dark:text-slate-400">Recharger le quota</span>
+                  </span>
+                </span>
+                <svg *ngIf="massVersementForm.get('target')?.value === 'BOUTIQUE'" class="h-5 w-5 text-indigo-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+              </label>
 
-      <div>
-        <label class="block text-sm font-medium text-slate-700">Type de Cible</label>
-        <select formControlName="target" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-slate-900 focus:border-slate-900 sm:text-sm rounded-md transition-colors">
-          <option value="students">Portefeuilles Étudiants</option>
-          <option value="merchants">Quotas Boutiques</option>
-        </select>
-      </div>
+              <label class="relative flex cursor-pointer rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow-sm hover:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500">
+                <input type="radio" formControlName="target" value="ETUDIANT" class="sr-only">
+                <span class="flex flex-1">
+                  <span class="flex flex-col">
+                    <span class="block text-sm font-bold text-slate-900 dark:text-white" [ngClass]="{'text-indigo-600 dark:text-indigo-400': massVersementForm.get('target')?.value === 'ETUDIANT'}">Étudiants</span>
+                    <span class="mt-1 flex items-center text-xs text-slate-500 dark:text-slate-400">Distribuer les bourses</span>
+                  </span>
+                </span>
+                <svg *ngIf="massVersementForm.get('target')?.value === 'ETUDIANT'" class="h-5 w-5 text-indigo-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+              </label>
+            </div>
+          </div>
 
-      <!-- If Target is Students -->
-      <div *ngIf="resetForm.get('target')?.value === 'students'" class="space-y-6 bg-slate-50 p-4 rounded-lg border border-slate-100">
-        <div>
-          <label class="block text-sm font-medium text-slate-700">Année Scolaire ID (scolariteYearTrackingId)</label>
-          <input type="text" formControlName="scolariteYearTrackingId" class="mt-1 shadow-sm focus:ring-red-500 focus:border-red-500 block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border transition-colors" placeholder="Ex: e2e65c... (UUID)">
+          <!-- Fields for BOUTIQUE -->
+          <div *ngIf="massVersementForm.get('target')?.value === 'BOUTIQUE'" class="animate-fade-in-up">
+            <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Seuil de déclenchement (Solde <= X)</label>
+            <input type="number" formControlName="seuil" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500" placeholder="Ex: 5000">
+            <p class="text-xs text-slate-500 mt-1">Seules les boutiques ayant un solde inférieur ou égal à ce seuil seront rechargées.</p>
+          </div>
+
+          <!-- Fields for ETUDIANT -->
+          <div *ngIf="massVersementForm.get('target')?.value === 'ETUDIANT'" class="animate-fade-in-up">
+            <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Année Académique</label>
+            <select formControlName="scolariteYearTrackingId" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500">
+              <option value="">Sélectionnez une année</option>
+              <option *ngFor="let year of scolariteYears" [value]="year.trackingId">{{ year.libelle }}</option>
+            </select>
+          </div>
         </div>
-      </div>
+        
+        <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 flex justify-end gap-3 rounded-b-2xl">
+          <button type="button" (click)="closeMassVersement()" class="px-4 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors">
+            Annuler
+          </button>
+          <button type="submit" [disabled]="massVersementForm.invalid || isProcessingMass" class="px-4 py-2 text-sm font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-500/30 transition-all disabled:opacity-50 inline-flex items-center">
+            <svg *ngIf="isProcessingMass" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            Prévisualiser
+          </button>
+        </div>
+      </form>
 
-      <div class="pt-5 flex justify-end">
-        <button type="submit" [disabled]="isProcessing" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-70">
-          <span *ngIf="!isProcessing">Confirmer la Remise à Zéro</span>
-          <span *ngIf="isProcessing">Traitement...</span>
-        </button>
-      </div>
-    </form>
+      <!-- Étape 2 : Prévisualisation & Montant -->
+      <form *ngIf="massStep === 2" [formGroup]="massVersementForm" (ngSubmit)="submitMassVersement()">
+        <div class="px-6 py-6 space-y-6">
+          
+          <div class="bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800 rounded-xl p-4 flex items-start">
+            <div class="flex-shrink-0">
+              <svg class="h-6 w-6 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-bold text-indigo-800 dark:text-indigo-300">Cibles identifiées</h3>
+              <div class="mt-2 text-sm text-indigo-700 dark:text-indigo-200">
+                L'opération affectera <strong>{{ massPreviewCount }}</strong> {{ massVersementForm.get('target')?.value === 'BOUTIQUE' ? 'boutiques' : 'étudiants' }}.
+              </div>
+            </div>
+          </div>
 
+          <div *ngIf="massPreviewCount > 0 && massPreviewNames.length > 0" class="max-h-32 overflow-y-auto bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3">
+            <ul class="list-disc list-inside text-xs text-slate-600 dark:text-slate-400 space-y-1 font-medium">
+              <li *ngFor="let name of massPreviewNames">{{ name }}</li>
+            </ul>
+          </div>
+
+          <!-- Montant à verser (Boutique) -->
+          <div *ngIf="massVersementForm.get('target')?.value === 'BOUTIQUE'">
+            <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Montant du Quota (FCFA)</label>
+            <input type="number" formControlName="montantQuota" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 font-bold text-lg" placeholder="Ex: 50000">
+          </div>
+
+          <!-- Montant à verser (Etudiant) -->
+          <div *ngIf="massVersementForm.get('target')?.value === 'ETUDIANT'">
+            <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Montant Fixe (FCFA) - Optionnel</label>
+            <input type="number" formControlName="montantFixe" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 font-bold text-lg" placeholder="Laisser vide pour utiliser le plafond">
+            <p class="text-xs text-slate-500 mt-1">Si laissé vide, chaque étudiant recevra son plafond autorisé.</p>
+          </div>
+
+        </div>
+
+        <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 flex justify-end gap-3 rounded-b-2xl">
+          <button type="button" (click)="massStep = 1" class="px-4 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors">
+            Retour
+          </button>
+          <button type="submit" [disabled]="massPreviewCount === 0 || isProcessingMass" class="px-4 py-2 text-sm font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-500/30 transition-all disabled:opacity-50 inline-flex items-center">
+            <svg *ngIf="isProcessingMass" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            Confirmer le Versement
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>

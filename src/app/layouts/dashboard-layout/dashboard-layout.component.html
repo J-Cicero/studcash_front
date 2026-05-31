@@ -1,99 +1,175 @@
-<div class="min-h-screen bg-slate-50 flex">
+<div class="gns-admin-shell min-h-screen bg-slate-50 dark:bg-slate-950 flex font-sans transition-colors duration-300 relative z-0" [class.dark]="themeService.isDarkTheme$ | async">
   
-  <!-- Sidebar -->
-  <aside class="w-64 bg-slate-900 text-white flex flex-col hidden md:flex">
+  <!-- Floating Glass Sidebar -->
+  <aside class="w-72 my-4 ml-4 rounded-2xl glass-sidebar flex-col hidden md:flex overflow-hidden shadow-xl z-20">
     <!-- Logo Area -->
-    <div class="h-16 flex items-center px-6 bg-slate-950 border-b border-slate-800">
-      <div class="w-8 h-8 bg-white text-slate-900 rounded flex items-center justify-center font-bold mr-3">
+    <div class="h-20 flex items-center px-8 border-b border-slate-200 dark:border-slate-800/50">
+      <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-xl flex items-center justify-center font-bold text-lg shadow-lg shadow-blue-500/30 mr-4">
         SC
       </div>
-      <span class="font-bold text-lg tracking-wide">studCASH</span>
+      <span class="font-extrabold text-xl tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">studCASH</span>
     </div>
 
     <!-- Navigation -->
-    <nav class="flex-1 py-6 px-3 space-y-1">
-      <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">GNS Admin</p>
+    <nav class="flex-1 py-8 px-4 space-y-2 overflow-y-auto custom-scrollbar">
+      <p class="px-4 text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4">Portail GNS</p>
       
-      <a routerLink="/admin-gns/dashboard" routerLinkActive="bg-slate-800 text-white" class="text-slate-300 hover:bg-slate-800 hover:text-white group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors">
-        <svg class="text-slate-400 group-hover:text-white mr-3 flex-shrink-0 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-        </svg>
+      <a routerLink="/admin-gns/dashboard" routerLinkActive="nav-item-active text-blue-700 dark:text-blue-400 font-semibold" class="text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800/50 hover:text-blue-700 dark:hover:text-blue-400 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200">
+        <div class="icon-gradient p-2 mr-3 group-hover:scale-110 transition-transform">
+          <svg class="h-5 w-5 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          </svg>
+        </div>
         Tableau de bord
       </a>
 
-      <a routerLink="/admin-gns/inscriptions" routerLinkActive="bg-white/10" class="flex items-center px-6 py-3 text-white/80 hover:bg-white/10 hover:text-white transition-colors">
-        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-        </svg>
+      <a routerLink="/admin-gns/inscriptions" routerLinkActive="nav-item-active text-blue-700 dark:text-blue-400 font-semibold" class="text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800/50 hover:text-blue-700 dark:hover:text-blue-400 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200">
+        <div class="icon-gradient p-2 mr-3 group-hover:scale-110 transition-transform">
+          <svg class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+        </div>
         Inscriptions
       </a>
-      <a routerLink="/admin-gns/parametres" routerLinkActive="bg-white/10" class="flex items-center px-6 py-3 text-white/80 hover:bg-white/10 hover:text-white transition-colors">
-        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-        </svg>
-        Paramètres Système
+
+      <a routerLink="/admin-gns/universites" routerLinkActive="nav-item-active text-blue-700 dark:text-blue-400 font-semibold" class="text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800/50 hover:text-blue-700 dark:hover:text-blue-400 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 hover:translate-x-1">
+        <div class="icon-gradient p-2 mr-3 group-hover:scale-110 transition-transform">
+          <svg class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+          </svg>
+        </div>
+        Universités
       </a>
 
-      <a routerLink="/admin-gns/versements" routerLinkActive="bg-slate-800 text-white" class="text-slate-300 hover:bg-slate-800 hover:text-white group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors mt-2">
-        <svg class="text-slate-400 group-hover:text-white mr-3 flex-shrink-0 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
+      <a routerLink="/admin-gns/versements" routerLinkActive="nav-item-active text-blue-700 dark:text-blue-400 font-semibold" class="text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800/50 hover:text-blue-700 dark:hover:text-blue-400 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 hover:translate-x-1">
+        <div class="icon-gradient p-2 mr-3 group-hover:scale-110 transition-transform">
+          <svg class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
         Bourses & Versements
       </a>
 
-      <a routerLink="/admin-gns/profile" routerLinkActive="bg-slate-800 text-white" class="text-slate-300 hover:bg-slate-800 hover:text-white group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors mt-2">
-        <svg class="text-slate-400 group-hover:text-white mr-3 flex-shrink-0 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-        </svg>
-        Mon Profil
+      <a routerLink="/admin-gns/transactions" routerLinkActive="nav-item-active text-blue-700 dark:text-blue-400 font-semibold" class="text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800/50 hover:text-blue-700 dark:hover:text-blue-400 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 hover:translate-x-1">
+        <div class="icon-gradient p-2 mr-3 group-hover:scale-110 transition-transform">
+          <svg class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z"></path>
+          </svg>
+        </div>
+        Transactions
+      </a>
+
+      <a routerLink="/admin-gns/utilisateurs" routerLinkActive="nav-item-active text-blue-700 dark:text-blue-400 font-semibold" class="text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800/50 hover:text-blue-700 dark:hover:text-blue-400 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 hover:translate-x-1">
+        <div class="icon-gradient p-2 mr-3 group-hover:scale-110 transition-transform">
+          <svg class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+          </svg>
+        </div>
+        Utilisateurs
+      </a>
+
+      <a routerLink="/admin-gns/carte-boutiques" routerLinkActive="nav-item-active text-blue-700 dark:text-blue-400 font-semibold" class="text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800/50 hover:text-blue-700 dark:hover:text-blue-400 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 hover:translate-x-1">
+        <div class="icon-gradient p-2 mr-3 group-hover:scale-110 transition-transform">
+          <svg class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+          </svg>
+        </div>
+        Carte Boutiques
+      </a>
+
+      <a routerLink="/admin-gns/parametres" routerLinkActive="nav-item-active text-blue-700 dark:text-blue-400 font-semibold" class="text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800/50 hover:text-blue-700 dark:hover:text-blue-400 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 hover:translate-x-1 mt-6">
+        <div class="icon-gradient p-2 mr-3 group-hover:scale-110 transition-transform">
+           <svg class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        </div>
+        Paramètres Système
       </a>
     </nav>
 
-    <!-- User & Logout -->
-    <div class="p-4 bg-slate-950 border-t border-slate-800">
-      <div class="flex items-center">
-        <div class="flex-shrink-0">
-          <div class="h-8 w-8 rounded-full bg-slate-700 flex items-center justify-center text-sm font-medium">
-            {{ (authService.currentUser$ | async)?.firstName?.charAt(0) || 'A' }}
+    <!-- User Profile & Settings -->
+    <div class="p-6 mt-auto border-t border-slate-200 dark:border-slate-800/50">
+      <div class="flex items-center hover:bg-slate-100 dark:hover:bg-slate-800/50 p-2 rounded-xl cursor-pointer transition-colors" routerLink="/admin-gns/profile">
+        <div class="relative">
+          <div class="h-10 w-10 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md" translate="no">
+            {{ (authService.currentUser$ | async)?.firstName?.charAt(0) || 'U' }}
           </div>
+          <div class="absolute bottom-0 right-0 h-3 w-3 bg-green-400 border-2 border-white dark:border-slate-900 rounded-full"></div>
         </div>
-        <div class="ml-3 flex-1">
-          <p class="text-sm font-medium text-white">{{ (authService.currentUser$ | async)?.firstName }} {{ (authService.currentUser$ | async)?.lastName }}</p>
-          <p class="text-xs font-medium text-slate-400 group-hover:text-slate-300">Administrateur GNS</p>
+        <div class="ml-3 flex-1 overflow-hidden">
+          <p class="text-sm font-bold text-slate-900 dark:text-white truncate">{{ (authService.currentUser$ | async)?.firstName }} {{ (authService.currentUser$ | async)?.lastName }}</p>
+          <p class="text-xs font-medium text-slate-500 dark:text-slate-400 truncate">Administrateur GNS</p>
         </div>
-        <button (click)="themeService.toggleTheme()" class="ml-auto p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors" title="Changer le thème">
-          <!-- Soleil (affiche en mode dark) -->
-          <svg *ngIf="themeService.isDarkTheme$ | async" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+      </div>
+      
+      <div class="mt-6">
+        <button (click)="logout()" class="w-full flex items-center justify-center py-2.5 px-4 text-sm font-bold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 border border-red-100 dark:border-red-900/50 rounded-xl transition-all duration-200 hover:-translate-y-0.5">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
           </svg>
-          <!-- Lune (affiche en mode light) -->
-          <svg *ngIf="!(themeService.isDarkTheme$ | async)" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-          </svg>
+          Déconnexion
         </button>
       </div>
-      <button (click)="logout()" class="mt-4 w-full flex justify-center items-center px-4 py-2 border border-slate-700 rounded-md text-sm font-medium text-slate-300 hover:bg-slate-800 focus:outline-none transition-colors">
-        Déconnexion
-      </button>
     </div>
   </aside>
 
-  <!-- Main Content -->
-  <main class="flex-1 flex flex-col overflow-hidden">
-    <!-- Top header (Mobile only) -->
-    <header class="bg-white shadow-sm md:hidden h-16 flex items-center justify-between px-4">
-      <div class="font-bold text-lg text-slate-900">studCASH</div>
-      <button class="text-slate-500 hover:text-slate-700">
-        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
+  <!-- Main Content Wrapper -->
+  <main class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+    
+    <!-- Top Header (Floating) -->
+    <header class="h-20 flex items-center justify-between px-8 z-10 sticky top-0 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50 md:mx-4 md:mt-4 md:rounded-2xl shadow-sm">
+      <div class="flex items-center md:hidden">
+        <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-lg flex items-center justify-center font-bold mr-3 shadow-lg shadow-blue-500/30">
+          SC
+        </div>
+        <span class="font-extrabold text-lg text-slate-900 dark:text-white">studCASH</span>
+      </div>
+      
+      <!-- Search Bar -->
+      <div class="hidden md:flex flex-1 max-w-md">
+        <div class="relative w-full">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <input type="text" class="block w-full pl-10 pr-3 py-2.5 border-none rounded-xl bg-white dark:bg-slate-900 shadow-sm text-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white transition-shadow hover:shadow-md" placeholder="Rechercher des étudiants, versements...">
+        </div>
+      </div>
+      
+      <div class="flex items-center space-x-4 ml-auto">
+        <!-- Theme Toggle -->
+        <button (click)="themeService.toggleTheme()" class="relative p-2 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors hover-lift" title="Changer le thème">
+          <svg *ngIf="themeService.isDarkTheme$ | async" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          <svg *ngIf="!(themeService.isDarkTheme$ | async)" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        </button>
+
+        <!-- Notifications -->
+        <button class="relative p-2 text-slate-400 hover:text-blue-600 transition-colors hover-lift">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+          </svg>
+          <span class="absolute top-1.5 right-1.5 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white dark:ring-slate-950"></span>
+        </button>
+        
+        <!-- Mobile Menu Toggle -->
+        <button class="md:hidden p-2 text-slate-400 hover:text-slate-600 transition-colors">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
     </header>
 
     <!-- Content Area -->
-    <div class="flex-1 overflow-auto bg-slate-50 dark:bg-slate-900 transition-colors p-6">
+    <div class="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-8 z-0">
       <router-outlet></router-outlet>
     </div>
+    
   </main>
 </div>

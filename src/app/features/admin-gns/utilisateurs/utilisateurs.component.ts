@@ -1,0 +1,152 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { UserService } from '../../../core/services/user.service';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
+export interface UserResponse {
+  trackingId: string;
+  email: string;
+  nom: string;
+  prenom: string;
+  role: string;
+  telephone?: string;
+  dateInscription: string;
+  estActif: boolean;
+}
+
+@Component({
+  selector: 'app-utilisateurs',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './utilisateurs.component.html',
+  styleUrls: ['./utilisateurs.component.scss']
+})
+export class UtilisateursComponent implements OnInit {
+  users: UserResponse[] = [];
+  isLoading = false;
+  errorMessage = '';
+
+  filterRole = 'ALL';
+  roles = ['ALL', 'ADMIN_GNS', 'ADMIN_DBS', 'ADMIN_UL', 'COMMERCANT', 'ETUDIANT'];
+
+  get filteredUsers() {
+    if (this.filterRole === 'ALL') return this.users;
+    return this.users.filter(u => u.role === this.filterRole);
+  }
+
+  // Pagination
+  currentPage = 0;
+  pageSize = 50;
+  totalElements = 0;
+
+  // Search
+  searchQuery = '';
+  searchSubject = new Subject<string>();
+
+  // Modals
+  userToDelete: UserResponse | null = null;
+  showDeleteModal = false;
+  isProcessingDelete = false;
+
+  constructor(private userService: UserService) {
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(query => {
+      if (query.trim()) {
+        this.searchUsers(query);
+      } else {
+        this.loadUsers();
+      }
+    });
+  }
+
+  ngOnInit(): void {
+    this.loadUsers();
+  }
+
+  loadUsers() {
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.userService.getAllUsers(this.currentPage, this.pageSize).subscribe({
+      next: (res) => {
+        this.users = res.content || [];
+        this.totalElements = res.totalElements || 0;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        if(err.status === 404) this.users = [];
+        else this.errorMessage = 'Erreur lors du chargement des utilisateurs.';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  onSearchChange(query: string) {
+    this.searchQuery = query;
+    this.searchSubject.next(query);
+  }
+
+  searchUsers(query: string) {
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.userService.searchUsers(query).subscribe({
+      next: (res) => {
+        this.users = res || [];
+        this.isLoading = false;
+      },
+      error: (err) => {
+        if(err.status === 404) this.users = [];
+        else this.errorMessage = 'Erreur lors de la recherche.';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  // --- Deletion ---
+  confirmDelete(user: UserResponse) {
+    this.userToDelete = user;
+    this.showDeleteModal = true;
+  }
+
+  closeDeleteModal() {
+    this.showDeleteModal = false;
+    this.userToDelete = null;
+  }
+
+  executeDelete() {
+    if (!this.userToDelete) return;
+    this.isProcessingDelete = true;
+    
+    this.userService.deleteUser(this.userToDelete.trackingId).subscribe({
+      next: () => {
+        this.isProcessingDelete = false;
+        this.closeDeleteModal();
+        
+        // Refresh based on search state
+        if (this.searchQuery.trim()) {
+          this.searchUsers(this.searchQuery);
+        } else {
+          this.loadUsers();
+        }
+      },
+      error: () => {
+        this.isProcessingDelete = false;
+        alert("Erreur lors de la suppression de l'utilisateur.");
+      }
+    });
+  }
+
+  getRoleColorClass(role: string): string {
+    switch(role) {
+      case 'ADMIN_GNS': return 'bg-indigo-100 text-indigo-700 border-indigo-200 dark:bg-indigo-900/40 dark:text-indigo-400 dark:border-indigo-800';
+      case 'ADMIN_DBS': return 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/40 dark:text-blue-400 dark:border-blue-800';
+      case 'ADMIN_UL': return 'bg-teal-100 text-teal-700 border-teal-200 dark:bg-teal-900/40 dark:text-teal-400 dark:border-teal-800';
+      case 'COMMERCANT': return 'bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/40 dark:text-purple-400 dark:border-purple-800';
+      case 'ETUDIANT': return 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/40 dark:text-orange-400 dark:border-orange-800';
+      default: return 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700';
+    }
+  }
+}

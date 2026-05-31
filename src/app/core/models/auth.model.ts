@@ -16,3 +16,12 @@ export interface LoginResponse {
   country: string;
   active: boolean;
 }
+
+export interface RegisterRequest {
+  nom: string;
+  prenom: string;
+  email: string;
+  telephone: string;
+  motDePasse: string;
+  role: string;
+}
