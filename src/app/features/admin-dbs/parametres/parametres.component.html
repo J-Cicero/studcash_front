@@ -104,7 +104,7 @@
       <div *ngIf="!isLoading" class="space-y-4">
         <div *ngFor="let param of parametres" class="p-4 rounded-xl border border-slate-200/50 dark:border-slate-700/50 bg-white/60 dark:bg-slate-800/60 transition-all hover:border-indigo-300 dark:hover:border-indigo-700/50">
           
-          <div *ngIf="editingParam?.trackingId !== param.trackingId" class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div *ngIf="editingParam?.nomParametre !== param.nomParametre" class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div class="flex-1">
               <h4 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 {{ param.nomParametre }}
@@ -123,7 +123,7 @@
           </div>
 
           <!-- Mode Édition -->
-          <div *ngIf="editingParam?.trackingId === param.trackingId" class="animate-fade-in-up">
+          <div *ngIf="editingParam?.nomParametre === param.nomParametre" class="animate-fade-in-up">
             <div class="mb-4">
               <h4 class="font-bold text-slate-900 dark:text-white">{{ param.nomParametre }}</h4>
               <p class="text-sm text-slate-500 dark:text-slate-400">{{ param.description }}</p>
