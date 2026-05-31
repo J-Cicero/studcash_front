@@ -1,38 +1,40 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
-export interface ThemeEvent {
-  key: string;
-  bodyClass: string;
-  isDark: boolean;
-}
-
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class ThemeService {
-  private subject = new BehaviorSubject<ThemeEvent>({ key: 'app-theme', bodyClass: 'app-dark', isDark: false });
+  private isDarkTheme = new BehaviorSubject<boolean>(false);
+  isDarkTheme$ = this.isDarkTheme.asObservable();
 
-  changes(): Observable<ThemeEvent> {
-    return this.subject.asObservable();
+  constructor() {
+    this.initTheme();
   }
 
-  init(themeKey = 'app-theme', bodyClass = 'app-dark') {
-    const saved = localStorage.getItem(themeKey);
-    const isDark = saved === 'dark';
-    this.syncBody(bodyClass, isDark);
-    this.subject.next({ key: themeKey, bodyClass, isDark });
+  private initTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+      this.setDarkTheme(true);
+    } else {
+      this.setDarkTheme(false);
+    }
   }
 
-  toggle(themeKey = 'app-theme', bodyClass = 'app-dark') {
-    const current = localStorage.getItem(themeKey) === 'dark';
-    const next = current ? 'light' : 'dark';
-    localStorage.setItem(themeKey, next);
-    const isDark = next === 'dark';
-    this.syncBody(bodyClass, isDark);
-    this.subject.next({ key: themeKey, bodyClass, isDark });
+  toggleTheme() {
+    this.setDarkTheme(!this.isDarkTheme.value);
   }
 
-  private syncBody(bodyClass: string, isDark: boolean) {
-    if (isDark) document.body.classList.add(bodyClass);
-    else document.body.classList.remove(bodyClass);
+  private setDarkTheme(isDark: boolean) {
+    this.isDarkTheme.next(isDark);
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
   }
 }

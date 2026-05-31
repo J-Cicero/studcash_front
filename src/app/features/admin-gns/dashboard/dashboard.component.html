@@ -1,0 +1,144 @@
+<div class="mb-8">
+  <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Tableau de bord Global</h1>
+  <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Supervision de l'infrastructure studCASH</p>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="isLoading" class="flex justify-center items-center py-20">
+  <svg class="animate-spin h-8 w-8 text-slate-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+  </svg>
+</div>
+
+<div *ngIf="!isLoading">
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    
+    <!-- Total Students -->
+    <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-sm rounded-xl border border-slate-200 dark:border-slate-700">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 bg-blue-50 rounded-md p-3">
+            <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-slate-500 dark:text-slate-400 truncate">Total Étudiants</dt>
+              <dd class="flex items-baseline">
+                <div class="text-2xl font-bold text-slate-900 dark:text-white">{{stats.totalStudents | number}}</div>
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Merchants -->
+    <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-sm rounded-xl border border-slate-200 dark:border-slate-700">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 bg-emerald-50 rounded-md p-3">
+            <svg class="h-6 w-6 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-slate-500 dark:text-slate-400 truncate">Total Boutiques</dt>
+              <dd class="flex items-baseline">
+                <div class="text-2xl font-bold text-slate-900 dark:text-white">{{stats.totalMerchants | number}}</div>
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Universities -->
+    <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-sm rounded-xl border border-slate-200 dark:border-slate-700">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 bg-purple-50 rounded-md p-3">
+            <svg class="h-6 w-6 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path d="M12 14l9-5-9-5-9 5 9 5z" />
+              <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-slate-500 dark:text-slate-400 truncate">Universités Partenaires</dt>
+              <dd class="flex items-baseline">
+                <div class="text-2xl font-bold text-slate-900 dark:text-white">{{stats.totalUniversities}}</div>
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Global Transaction Volume -->
+    <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-sm rounded-xl border border-slate-200 dark:border-slate-700">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 bg-slate-100 rounded-md p-3">
+            <svg class="h-6 w-6 text-slate-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-slate-500 dark:text-slate-400 truncate">Volume Transigé (XOF)</dt>
+              <dd class="flex items-baseline">
+                <div class="text-2xl font-bold text-slate-900 dark:text-white">{{stats.globalTransactionVolume | number}}</div>
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Recent Activity Table Placeholder -->
+  <div class="mt-8">
+    <div class="bg-white dark:bg-slate-800 shadow-sm rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+        <h3 class="text-lg leading-6 font-medium text-slate-900 dark:text-white">Activité Récente du Système</h3>
+        <button class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium">Voir tout</button>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+          <thead class="bg-slate-50 dark:bg-slate-900">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Entité</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Type d'Action</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Date</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Statut</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 dark:text-white">Bourse DBS</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">Versement en masse (4500 étudiants)</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">Aujourd'hui, 14:30</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">Succès</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 dark:text-white">Université de Douala</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">Nouvelle affiliation configurée</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">Hier, 09:15</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">Succès</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

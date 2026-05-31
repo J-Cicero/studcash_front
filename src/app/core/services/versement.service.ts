@@ -1,10 +1,25 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Page, VersementResponse } from '../models/gns-admin.model';
 
-export type { Page, VersementResponse } from '../models/gns-admin.model';
+export interface MassVersementEtudiantRequest {
+  scolariteYearTrackingId: string;
+  montantFixe?: number;
+}
+
+export interface MassVersementBoutiqueRequest {
+  seuil: number;
+  montantQuota: number;
+}
+
+export interface MassResetEtudiantRequest {
+  scolariteYearTrackingId: string;
+}
+
+export interface MassResetBoutiqueRequest {
+  scolariteYearTrackingId: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -14,35 +29,19 @@ export class VersementService {
 
   constructor(private http: HttpClient) {}
 
-  disburseMassStudents(yearTrackingId: string, montantFixe?: number | null): Observable<VersementResponse> {
-    let params = new HttpParams()
-      .set('scolariteYearTrackingId', yearTrackingId);
-    
-    if (montantFixe != null && montantFixe > 0) {
-      params = params.set('montantFixe', montantFixe.toString());
-    }
-    
-    return this.http.post<VersementResponse>(`${this.apiUrl}/masse/etudiants`, null, { params });
+  masseEtudiants(request: MassVersementEtudiantRequest): Observable<string> {
+    return this.http.post(`${this.apiUrl}/masse/etudiants`, request, { responseType: 'text' });
   }
 
-  rechargeMassBoutiques(seuil: number, montantQuota: number): Observable<VersementResponse> {
-    const params = new HttpParams()
-      .set('seuil', seuil.toString())
-      .set('montantQuota', montantQuota.toString());
-    return this.http.post<VersementResponse>(`${this.apiUrl}/masse/boutiques`, null, { params });
+  masseBoutiques(request: MassVersementBoutiqueRequest): Observable<string> {
+    return this.http.post(`${this.apiUrl}/masse/boutiques`, request, { responseType: 'text' });
   }
 
-  getAll(page: number = 0, size: number = 10): Observable<Page<VersementResponse>> {
-    const params = new HttpParams()
-      .set('page', page.toString())
-      .set('size', size.toString());
-    return this.http.get<Page<VersementResponse>>(this.apiUrl, { params });
+  resetMasseEtudiants(request: MassResetEtudiantRequest): Observable<string> {
+    return this.http.post(`${this.apiUrl}/masse/reset/etudiants`, request, { responseType: 'text' });
   }
 
-  getByWallet(walletId: string, page: number = 0, size: number = 10): Observable<Page<VersementResponse>> {
-    const params = new HttpParams()
-      .set('page', page.toString())
-      .set('size', size.toString());
-    return this.http.get<Page<VersementResponse>>(`${this.apiUrl}/wallet/${walletId}`, { params });
+  resetMasseBoutiques(request: MassResetBoutiqueRequest): Observable<string> {
+    return this.http.post(`${this.apiUrl}/masse/reset/boutiques`, request, { responseType: 'text' });
   }
 }

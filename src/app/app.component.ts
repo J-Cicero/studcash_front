@@ -1,13 +1,17 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ThemeService } from './core/services/theme.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  template: `<router-outlet></router-outlet>`,
 })
 export class AppComponent {
-  title = 'gns-front';
+  title = 'studcash-front';
+
+  constructor(private themeService: ThemeService) {
+    // Le constructeur du ThemeService s'occupe d'initialiser le thème !
+  }
 }

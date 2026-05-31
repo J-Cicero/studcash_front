@@ -1,0 +1,126 @@
+<div class="mb-8">
+  <h1 class="text-2xl font-bold text-slate-900">Bourses & Versements en Masse</h1>
+  <p class="text-sm text-slate-500 mt-1">Gérez le décaissement des bourses et le rechargement des quotas boutiques.</p>
+</div>
+
+<div class="bg-white shadow-sm rounded-xl border border-slate-200 overflow-hidden max-w-4xl">
+  
+  <!-- Tabs -->
+  <div class="border-b border-slate-200">
+    <nav class="-mb-px flex space-x-8 px-6" aria-label="Tabs">
+      <button (click)="setTab('versement')" [class.border-slate-900]="activeTab === 'versement'" [class.text-slate-900]="activeTab === 'versement'" class="border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+        Nouveau Versement
+      </button>
+      <button (click)="setTab('reset')" [class.border-slate-900]="activeTab === 'reset'" [class.text-slate-900]="activeTab === 'reset'" class="border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+        Remise à Zéro
+      </button>
+    </nav>
+  </div>
+
+  <div class="p-6 sm:p-8">
+
+    <!-- Messages -->
+    <div *ngIf="successMessage" class="rounded-md bg-green-50 p-4 mb-6">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3 flex-1 md:flex md:justify-between">
+          <p class="text-sm text-green-700">{{ successMessage }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="rounded-md bg-red-50 p-4 mb-6">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </div>
+        <div class="ml-3 flex-1 md:flex md:justify-between">
+          <p class="text-sm text-red-700">{{ errorMessage }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- VERSEMENT TAB -->
+    <form *ngIf="activeTab === 'versement'" [formGroup]="versementForm" (ngSubmit)="onVersementSubmit()" class="space-y-6">
+      <div>
+        <label class="block text-sm font-medium text-slate-700">Type de Cible</label>
+        <select formControlName="target" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-slate-900 focus:border-slate-900 sm:text-sm rounded-md transition-colors">
+          <option value="students">Bourses Étudiants</option>
+          <option value="merchants">Quotas Boutiques</option>
+        </select>
+      </div>
+
+      <!-- If Target is Students -->
+      <div *ngIf="versementForm.get('target')?.value === 'students'" class="space-y-6 bg-slate-50 p-4 rounded-lg border border-slate-100">
+        <div>
+          <label class="block text-sm font-medium text-slate-700">Année Scolaire ID (scolariteYearTrackingId)</label>
+          <input type="text" formControlName="scolariteYearTrackingId" class="mt-1 shadow-sm focus:ring-slate-900 focus:border-slate-900 block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border transition-colors" placeholder="Ex: e2e65c... (UUID)">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700">Montant Fixe (Optionnel)</label>
+          <input type="number" formControlName="montantFixe" class="mt-1 shadow-sm focus:ring-slate-900 focus:border-slate-900 block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border transition-colors" placeholder="Laisser vide pour utiliser le plafond">
+        </div>
+      </div>
+
+      <!-- If Target is Merchants -->
+      <div *ngIf="versementForm.get('target')?.value === 'merchants'" class="space-y-6 bg-slate-50 p-4 rounded-lg border border-slate-100">
+        <div>
+          <label class="block text-sm font-medium text-slate-700">Seuil de Déclenchement</label>
+          <input type="number" formControlName="seuil" class="mt-1 shadow-sm focus:ring-slate-900 focus:border-slate-900 block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border transition-colors" placeholder="Ex: 5000">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700">Montant du Quota</label>
+          <input type="number" formControlName="montantQuota" class="mt-1 shadow-sm focus:ring-slate-900 focus:border-slate-900 block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border transition-colors" placeholder="Ex: 1000000">
+        </div>
+      </div>
+
+      <div class="pt-5 flex justify-end">
+        <button type="submit" [disabled]="isProcessing" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-slate-900 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 disabled:opacity-70">
+          <span *ngIf="!isProcessing">Exécuter le Versement en Masse</span>
+          <span *ngIf="isProcessing">Traitement...</span>
+        </button>
+      </div>
+    </form>
+
+    <!-- RESET TAB -->
+    <form *ngIf="activeTab === 'reset'" [formGroup]="resetForm" (ngSubmit)="onResetSubmit()" class="space-y-6">
+      
+      <div class="bg-red-50 p-4 rounded-lg border border-red-100 mb-6">
+        <h3 class="text-sm font-medium text-red-800">Zone de Danger</h3>
+        <p class="mt-2 text-sm text-red-700">
+          Cette action va remettre à zéro les portefeuilles cibles. Cette action est irréversible.
+        </p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-slate-700">Type de Cible</label>
+        <select formControlName="target" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-slate-900 focus:border-slate-900 sm:text-sm rounded-md transition-colors">
+          <option value="students">Portefeuilles Étudiants</option>
+          <option value="merchants">Quotas Boutiques</option>
+        </select>
+      </div>
+
+      <!-- If Target is Students -->
+      <div *ngIf="resetForm.get('target')?.value === 'students'" class="space-y-6 bg-slate-50 p-4 rounded-lg border border-slate-100">
+        <div>
+          <label class="block text-sm font-medium text-slate-700">Année Scolaire ID (scolariteYearTrackingId)</label>
+          <input type="text" formControlName="scolariteYearTrackingId" class="mt-1 shadow-sm focus:ring-red-500 focus:border-red-500 block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border transition-colors" placeholder="Ex: e2e65c... (UUID)">
+        </div>
+      </div>
+
+      <div class="pt-5 flex justify-end">
+        <button type="submit" [disabled]="isProcessing" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-70">
+          <span *ngIf="!isProcessing">Confirmer la Remise à Zéro</span>
+          <span *ngIf="isProcessing">Traitement...</span>
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>

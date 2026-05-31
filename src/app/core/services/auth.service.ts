@@ -1,52 +1,58 @@
-import { Injectable, signal } from '@angular/core';
-import { Router } from '@angular/router';
-
-export type UserRole = 'ADMIN_GNS' | 'ADMIN_BANQUE' | 'ADMIN_DBS' | 'UNIVERSITY_ADMIN' | 'ETUDIANT' | 'COMMERCANT';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { LoginRequest, LoginResponse } from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  // Signal to track the current user's role
-  currentUserRole = signal<UserRole | null>(this.getRoleFromStorage());
-  universityId = signal<string | null>(localStorage.getItem('university_id'));
-  userTrackingId = signal<string | null>(localStorage.getItem('user_tracking_id'));
+  // Configured correctly with backend API
+  private apiUrl = 'http://localhost:8080/api/users';
+  
+  private currentUserSubject = new BehaviorSubject<LoginResponse | null>(null);
+  public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private router: Router) {}
-
-  private getRoleFromStorage(): UserRole | null {
-    return localStorage.getItem('user_role') as UserRole | null;
+  constructor(private http: HttpClient) {
+    this.loadUserFromStorage();
   }
 
-  login(role: UserRole, univId?: string, trackingId?: string) {
-    localStorage.setItem('user_role', role);
-    if (univId) {
-        localStorage.setItem('university_id', univId);
-        this.universityId.set(univId);
+  public get currentUserValue(): LoginResponse | null {
+    return this.currentUserSubject.value;
+  }
+
+  login(request: LoginRequest): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, request)
+      .pipe(
+        tap(response => {
+          if (response && response.token) {
+            localStorage.setItem('currentUser', JSON.stringify(response));
+            localStorage.setItem('token', response.token);
+            this.currentUserSubject.next(response);
+          }
+        })
+      );
+  }
+
+  logout(): void {
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('token');
+    this.currentUserSubject.next(null);
+  }
+
+  private loadUserFromStorage(): void {
+    const userJson = localStorage.getItem('currentUser');
+    if (userJson) {
+      this.currentUserSubject.next(JSON.parse(userJson));
     }
-    if (trackingId) {
-        localStorage.setItem('user_tracking_id', trackingId);
-        this.userTrackingId.set(trackingId);
-    }
-    this.currentUserRole.set(role);
   }
 
-  logout() {
-    localStorage.removeItem('user_role');
-    localStorage.removeItem('university_id');
-    localStorage.removeItem('user_tracking_id');
-    this.currentUserRole.set(null);
-    this.universityId.set(null);
-    this.userTrackingId.set(null);
-    this.router.navigate(['/login']);
+  public getToken(): string | null {
+    return localStorage.getItem('token');
   }
 
-  hasRole(expectedRoles: UserRole[]): boolean {
-    const role = this.currentUserRole();
-    return role ? expectedRoles.includes(role) : false;
-  }
-
-  isLoggedIn(): boolean {
-    return this.currentUserRole() !== null;
+  public hasRole(role: string): boolean {
+    const user = this.currentUserValue;
+    return !!user && user.rolesList.includes(role);
   }
 }

@@ -1,0 +1,105 @@
+<div class="mb-8">
+  <h1 class="text-2xl font-bold text-slate-900">Mon Profil</h1>
+  <p class="text-sm text-slate-500 mt-1">Gérez vos informations personnelles et paramètres de compte.</p>
+</div>
+
+<div class="bg-white shadow-sm rounded-xl border border-slate-200 overflow-hidden max-w-4xl">
+  
+  <div class="p-6 sm:p-8 border-b border-slate-200 flex items-center space-x-6">
+    <div class="h-24 w-24 rounded-full bg-slate-900 text-white flex items-center justify-center text-3xl font-bold">
+      {{ user?.firstName?.charAt(0) || 'A' }}
+    </div>
+    <div>
+      <h2 class="text-xl font-bold text-slate-900">{{ user?.firstName }} {{ user?.lastName }}</h2>
+      <p class="text-sm font-medium text-slate-500 mb-2">{{ user?.email }}</p>
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200">
+        {{ user?.rolesList?.join(', ') || 'Administrateur GNS' }}
+      </span>
+    </div>
+  </div>
+
+  <div class="p-6 sm:p-8">
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      
+      <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+        <!-- First Name -->
+        <div>
+          <label for="firstName" class="block text-sm font-medium text-slate-700">Prénom</label>
+          <div class="mt-1">
+            <input type="text" id="firstName" formControlName="firstName" class="shadow-sm focus:ring-slate-900 focus:border-slate-900 block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border transition-colors">
+          </div>
+          <p *ngIf="profileForm.get('firstName')?.touched && profileForm.get('firstName')?.invalid" class="mt-1 text-xs text-red-500">Le prénom est requis.</p>
+        </div>
+
+        <!-- Last Name -->
+        <div>
+          <label for="lastName" class="block text-sm font-medium text-slate-700">Nom</label>
+          <div class="mt-1">
+            <input type="text" id="lastName" formControlName="lastName" class="shadow-sm focus:ring-slate-900 focus:border-slate-900 block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border transition-colors">
+          </div>
+          <p *ngIf="profileForm.get('lastName')?.touched && profileForm.get('lastName')?.invalid" class="mt-1 text-xs text-red-500">Le nom est requis.</p>
+        </div>
+
+        <!-- Email (Disabled) -->
+        <div class="sm:col-span-2">
+          <label for="email" class="block text-sm font-medium text-slate-700">Adresse Email</label>
+          <div class="mt-1 relative rounded-md shadow-sm">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg class="h-5 w-5 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+              </svg>
+            </div>
+            <input type="email" id="email" formControlName="email" class="bg-slate-50 text-slate-500 focus:ring-slate-500 focus:border-slate-500 block w-full pl-10 sm:text-sm border-slate-300 rounded-md py-2 px-3 border cursor-not-allowed">
+          </div>
+          <p class="mt-1 text-xs text-slate-500">L'adresse email ne peut pas être modifiée directement.</p>
+        </div>
+
+        <!-- Phone -->
+        <div>
+          <label for="phone" class="block text-sm font-medium text-slate-700">Téléphone</label>
+          <div class="mt-1">
+            <input type="text" id="phone" formControlName="phone" class="shadow-sm focus:ring-slate-900 focus:border-slate-900 block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border transition-colors">
+          </div>
+        </div>
+
+        <!-- Country -->
+        <div>
+          <label for="country" class="block text-sm font-medium text-slate-700">Pays</label>
+          <div class="mt-1">
+            <input type="text" id="country" formControlName="country" class="shadow-sm focus:ring-slate-900 focus:border-slate-900 block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border transition-colors">
+          </div>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div *ngIf="successMessage" class="rounded-md bg-green-50 p-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="ml-3 flex-1 md:flex md:justify-between">
+            <p class="text-sm text-green-700">{{ successMessage }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="pt-5 flex justify-end">
+        <button type="button" class="bg-white py-2 px-4 border border-slate-300 rounded-md shadow-sm text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900">
+          Annuler
+        </button>
+        <button type="submit" [disabled]="isSaving || profileForm.invalid" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-slate-900 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 disabled:opacity-70 disabled:cursor-not-allowed">
+          <svg *ngIf="isSaving" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Enregistrer
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
