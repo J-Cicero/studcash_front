@@ -40,6 +40,7 @@ export class ParametresGnsComponent implements OnInit {
 
   // Scolarite Year
   activeYear: ScolariteYear | null = null;
+  scolariteYears: ScolariteYear[] = [];
   isLoadingYear = false;
   isCreatingYear = false;
   scolariteForm: FormGroup;
@@ -219,17 +220,27 @@ export class ParametresGnsComponent implements OnInit {
   // --- Scolarite Year ---
   loadScolariteYear() {
     this.isLoadingYear = true;
+    
+    // Get active year
     this.scolariteYearService.getActiveYear().subscribe({
       next: (res) => {
         this.activeYear = res;
-        this.isLoadingYear = false;
       },
       error: (err) => {
         if(err.status === 404) {
           this.activeYear = null;
-        } else {
-          this.errorMessage = 'Erreur lors du chargement de l\'année scolaire.';
         }
+      }
+    });
+
+    // Get all years for history
+    this.scolariteYearService.getAll().subscribe({
+      next: (res) => {
+        this.scolariteYears = res.content || [];
+        this.isLoadingYear = false;
+      },
+      error: (err) => {
+        this.errorMessage = 'Erreur lors du chargement des années scolaires.';
         this.isLoadingYear = false;
       }
     });
@@ -256,7 +267,7 @@ export class ParametresGnsComponent implements OnInit {
     this.successMessage = '';
     this.errorMessage = '';
 
-    const req = this.scolariteForm.value;
+    const req = { ...this.scolariteForm.value, estOuverte: true };
 
     if (this.activeYear && this.activeYear.trackingId) {
       this.scolariteYearService.cloturerEtOuvrirNouvelle(this.activeYear.trackingId, req).subscribe({

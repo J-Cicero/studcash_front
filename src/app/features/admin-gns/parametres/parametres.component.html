@@ -250,6 +250,35 @@
           Démarrer la première année
         </button>
       </div>
+
+      <!-- Historical Years -->
+      <div *ngIf="!isLoadingYear && scolariteYears && scolariteYears.length > 0" class="mt-8 border-t border-slate-200/50 dark:border-slate-700/50 pt-8">
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Historique des Années Scolaires</h3>
+        <div class="overflow-x-auto rounded-xl border border-slate-200/50 dark:border-slate-700/50">
+          <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50 bg-white/40 dark:bg-slate-900/40">
+            <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
+              <tr>
+                <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Libellé</th>
+                <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Période</th>
+                <th scope="col" class="px-4 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Statut</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
+              <tr *ngFor="let year of scolariteYears" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                <td class="px-4 py-4 whitespace-nowrap text-sm font-bold text-slate-900 dark:text-white">{{ year.libelle }}</td>
+                <td class="px-4 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-400">
+                  {{ year.dateDebut | date:'dd MMM yyyy' }} - {{ year.dateFin | date:'dd MMM yyyy' }}
+                </td>
+                <td class="px-4 py-4 whitespace-nowrap text-center">
+                  <span *ngIf="year.estOuverte" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">Active</span>
+                  <span *ngIf="year.estCloturee" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400 border border-rose-200 dark:border-rose-800">Clôturée</span>
+                  <span *ngIf="!year.estOuverte && !year.estCloturee" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700">Inactive</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -377,3 +406,4 @@
     </div>
   </div>
 </div>
+étudiants
