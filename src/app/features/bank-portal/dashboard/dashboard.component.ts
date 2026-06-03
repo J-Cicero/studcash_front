@@ -6,7 +6,8 @@ import {
   BankPortalService, 
   StudentLiquidationInfo, 
   UniversityReversementInfo, 
-  BanqueInfo 
+  BanqueInfo,
+  BankFinancialSummary
 } from '../../../core/services/bank-portal.service';
 
 @Component({
@@ -17,12 +18,13 @@ import {
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  activeTab: 'liquidation' | 'reversements' | 'banque' = 'liquidation';
+  activeTab: 'liquidation' | 'reversements' | 'resume' | 'banque' = 'liquidation';
   
   // States
   students: StudentLiquidationInfo[] = [];
   reversements: UniversityReversementInfo[] = [];
   banqueInfo: BanqueInfo | null = null;
+  financialSummary: BankFinancialSummary | null = null;
   walletsFrozen = false;
   
   isLoading = true;
@@ -70,6 +72,9 @@ export class DashboardComponent implements OnInit {
 
         // Load reversements
         this.loadReversements(operatorId);
+
+        // Load financial summary
+        this.loadFinancialSummary(operatorId);
       },
       error: (err) => {
         this.errorMessage = "Impossible de récupérer les informations de votre banque partenaire.";
@@ -104,6 +109,17 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  loadFinancialSummary(operatorId: string): void {
+    this.bankPortalService.getFinancialSummary(operatorId).subscribe({
+      next: (data) => {
+        this.financialSummary = data;
+      },
+      error: (err) => {
+        console.error("Erreur lors du chargement du résumé financier.", err);
+      }
+    });
+  }
+
   get filteredStudents(): StudentLiquidationInfo[] {
     if (!this.searchTerm.trim()) {
       return this.students;
@@ -129,10 +145,34 @@ export class DashboardComponent implements OnInit {
         const operatorId = this.authService.currentUserValue?.trackingId;
         if (operatorId) {
           this.loadStudents(operatorId);
+          this.loadFinancialSummary(operatorId);
         }
       },
       error: (err) => {
         this.errorMessage = "Échec de la liquidation du reliquat. Veuillez réessayer.";
+        this.isActionLoading = false;
+        console.error(err);
+      }
+    });
+  }
+
+  validateMandate(studentTrackingId: string, valide: boolean, studentName: string): void {
+    this.isActionLoading = true;
+    this.successMessage = '';
+    this.errorMessage = '';
+
+    this.bankPortalService.validerMandat(studentTrackingId, valide).subscribe({
+      next: () => {
+        this.successMessage = `Le mandat de prélèvement de l'étudiant ${studentName} a été ${valide ? 'validé' : 'rejeté'} avec succès.`;
+        this.isActionLoading = false;
+        // Refresh student list
+        const operatorId = this.authService.currentUserValue?.trackingId;
+        if (operatorId) {
+          this.loadStudents(operatorId);
+        }
+      },
+      error: (err) => {
+        this.errorMessage = "Échec de la validation du mandat. Veuillez réessayer.";
         this.isActionLoading = false;
         console.error(err);
       }
