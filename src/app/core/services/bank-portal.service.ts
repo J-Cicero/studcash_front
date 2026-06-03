@@ -14,6 +14,8 @@ export interface StudentLiquidationInfo {
   virementEffectue: boolean;
   typeBourse: string;
   urlSoucheTamponnee: string;
+  inscritAnnuel: boolean;
+  inscritDefinitif: boolean;
 }
 
 export interface UniversityReversementInfo {
