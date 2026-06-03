@@ -139,66 +139,109 @@ export class PaiementsComponent implements OnInit {
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
     // Header bar
-    doc.setFillColor(99, 102, 241);
+    doc.setFillColor(79, 70, 229); // Indigo 600
     doc.rect(0, 0, 210, 30, 'F');
 
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(18);
+    doc.setFontSize(22);
     doc.setFont('helvetica', 'bold');
-    doc.text('StudCash', 14, 18);
+    doc.text('StudCash', 14, 20);
 
+    // Placeholder image base64 (User will replace this later)
+    // A simple 1x1 purple pixel for StudCash
+    const studCashLogoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXY3jP4PgfAAWgA3Qn+3SBAAAAAElFTkSuQmCC';
+    doc.addImage(studCashLogoBase64, 'PNG', 50, 12, 10, 10);
+
+    doc.setTextColor(255, 255, 255);
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
     doc.text('Reçu de Paiement de Scolarité', 210 - 14, 18, { align: 'right' });
+    doc.text(`Émis le : ${new Date().toLocaleDateString('fr-FR')}`, 210 - 14, 24, { align: 'right' });
 
     // University & date
-    doc.setTextColor(50, 50, 50);
-    doc.setFontSize(12);
+    doc.setTextColor(30, 41, 59); // slate-800
+    doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text(this.universite?.nom || 'Université', 14, 42);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
-    doc.text(`Date : ${new Date(p.date).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}`, 14, 48);
-    doc.text(`Référence : ${p.trackingId}`, 14, 53);
+    
+    // Placeholder image base64 for University (User will replace this later)
+    // A simple 1x1 gray pixel for Univ
+    const univLogoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXY3h/f/9/AAWgA3TuE1S2AAAAAElFTkSuQmCC';
+    doc.addImage(univLogoBase64, 'PNG', 14, 40, 16, 16);
 
-    // Student info
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Informations Étudiant', 14, 65);
+    doc.text(this.universite?.nom || 'Université', 34, 48);
+    
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
-    doc.text(`Nom & Prénom : ${p.studentNom || '-'} ${p.studentPrenom || ''}`, 14, 73);
-    doc.text(`Matricule : ${p.studentMatricule || 'N/A'}`, 14, 79);
-    doc.text(`Banque : ${p.banqueNom || 'N/A'}`, 14, 85);
+    doc.setTextColor(100, 116, 139); // slate-500
+    doc.text(`Date de transaction : ${new Date(p.date).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}`, 14, 65);
+    doc.text(`Référence : ${p.trackingId}`, 14, 71);
 
-    // Amount
+    // Divider
+    doc.setDrawColor(226, 232, 240); // slate-200
+    doc.line(14, 76, 196, 76);
+
+    // Student info
+    doc.setTextColor(30, 41, 59);
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Informations de l\'Étudiant', 14, 86);
+    
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text(`Nom & Prénom : ${p.studentNom || '-'} ${p.studentPrenom || ''}`, 14, 94);
+    doc.text(`Matricule : ${p.studentMatricule || 'N/A'}`, 14, 100);
+    doc.text(`Banque partenaire : ${p.banqueNom || 'N/A'}`, 14, 106);
+
+    // Amount Table
     autoTable(doc, {
-      startY: 96,
+      startY: 115,
       head: [['Description', 'Montant (FCFA)']],
       body: [
-        ['Frais de scolarité', `${(p.montantDebite || 0).toLocaleString('fr-FR')}`],
-        ['Commission plateforme', `${(p.commission || 0).toLocaleString('fr-FR')}`],
+        ['Frais de scolarité encaissés', `${(p.montantDebite || 0).toLocaleString('fr-FR')}`],
+        ['Commission plateforme (StudCash)', `${(p.commission || 0).toLocaleString('fr-FR')}`],
         ['Montant net université', `${(p.montantNetBoutique || 0).toLocaleString('fr-FR')}`]
       ],
-      headStyles: { fillColor: [99, 102, 241], textColor: 255 },
-      alternateRowStyles: { fillColor: [245, 245, 255] },
-      styles: { fontSize: 10 }
+      headStyles: { fillColor: [79, 70, 229], textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [248, 250, 252] }, // slate-50
+      styles: { fontSize: 10, cellPadding: 6 },
+      columnStyles: {
+        0: { cellWidth: 120 },
+        1: { halign: 'right' }
+      }
     });
 
     // Statut
-    const finalY = (doc as any).lastAutoTable.finalY + 10;
-    doc.setFillColor(p.statutPaiement === 'VALIDE' ? 16 : 239, p.statutPaiement === 'VALIDE' ? 185 : 68, p.statutPaiement === 'VALIDE' ? 129 : 68);
-    doc.roundedRect(14, finalY, 50, 8, 2, 2, 'F');
-    doc.setTextColor(255);
+    const finalY = (doc as any).lastAutoTable.finalY + 15;
+    
+    if (p.statutPaiement === 'VALIDE') {
+      doc.setFillColor(16, 185, 129); // emerald-500
+      doc.roundedRect(14, finalY, 70, 10, 2, 2, 'F');
+      doc.setTextColor(255);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text('✓ PAIEMENT VALIDÉ', 49, finalY + 6.5, { align: 'center' });
+    } else {
+      doc.setFillColor(239, 68, 68); // red-500
+      doc.roundedRect(14, finalY, 70, 10, 2, 2, 'F');
+      doc.setTextColor(255);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text('⊗ ' + p.statutPaiement, 49, finalY + 6.5, { align: 'center' });
+    }
+
+    // Signature Area
+    doc.setTextColor(100, 116, 139);
     doc.setFontSize(9);
-    doc.setFont('helvetica', 'bold');
-    doc.text(p.statutPaiement === 'VALIDE' ? '✓ PAIEMENT VALIDÉ' : '⊗ ' + p.statutPaiement, 39, finalY + 5.5, { align: 'center' });
+    doc.setFont('helvetica', 'italic');
+    doc.text('Signature StudCash', 150, finalY);
+    doc.setDrawColor(100, 116, 139);
+    doc.line(140, finalY + 15, 196, finalY + 15);
 
     // Footer
-    doc.setTextColor(150, 150, 150);
+    doc.setTextColor(148, 163, 184); // slate-400
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
-    doc.text('Ce document est généré automatiquement par la plateforme StudCash.', 105, 285, { align: 'center' });
+    doc.text('Ce document a été généré électroniquement par la plateforme StudCash et fait office de preuve de paiement.', 105, 285, { align: 'center' });
 
     doc.save(`recu-scolarite-${p.studentMatricule || p.trackingId.slice(0, 8)}.pdf`);
   }

@@ -1,18 +1,18 @@
 <div class="mb-8">
-  <h1 class="text-2xl font-bold text-slate-900">Mon Profil</h1>
-  <p class="text-sm text-slate-500 mt-1">Gérez vos informations personnelles et paramètres de compte.</p>
+  <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Mon Profil</h1>
+  <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Gérez vos informations personnelles et paramètres de compte.</p>
 </div>
 
-<div class="bg-white shadow-sm rounded-xl border border-slate-200 overflow-hidden max-w-4xl">
+<div class="bg-white dark:bg-slate-900 shadow-sm rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden max-w-4xl">
   
-  <div class="p-6 sm:p-8 border-b border-slate-200 flex items-center space-x-6">
+  <div class="p-6 sm:p-8 border-b border-slate-200 dark:border-slate-800 flex items-center space-x-6">
     <div class="h-24 w-24 rounded-full bg-slate-900 text-white flex items-center justify-center text-3xl font-bold" translate="no">
       {{ user?.firstName?.charAt(0) || 'U' }}
     </div>
     <div>
-      <h2 class="text-xl font-bold text-slate-900">{{ user?.firstName }} {{ user?.lastName }}</h2>
-      <p class="text-sm font-medium text-slate-500 mb-2">{{ user?.email }}</p>
-      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200">
+      <h2 class="text-xl font-bold text-slate-900 dark:text-white">{{ user?.firstName }} {{ user?.lastName }}</h2>
+      <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">{{ user?.email }}</p>
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
         {{ user?.rolesList?.join(', ') || 'Administrateur GNS' }}
       </span>
     </div>
@@ -24,25 +24,25 @@
       <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
         <!-- First Name -->
         <div>
-          <label for="firstName" class="block text-sm font-medium text-slate-700">Prénom</label>
+          <label for="firstName" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Prénom</label>
           <div class="mt-1">
-            <input type="text" id="firstName" formControlName="firstName" class="shadow-sm focus:ring-slate-900 focus:border-slate-900 block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border transition-colors">
+            <input type="text" id="firstName" formControlName="firstName" class="shadow-sm focus:ring-slate-900 focus:border-slate-900 block w-full sm:text-sm border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-md py-2 px-3 border transition-colors placeholder-slate-400 dark:placeholder-slate-500">
           </div>
           <p *ngIf="profileForm.get('firstName')?.touched && profileForm.get('firstName')?.invalid" class="mt-1 text-xs text-red-500">Le prénom est requis.</p>
         </div>
 
         <!-- Last Name -->
         <div>
-          <label for="lastName" class="block text-sm font-medium text-slate-700">Nom</label>
+          <label for="lastName" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Nom</label>
           <div class="mt-1">
-            <input type="text" id="lastName" formControlName="lastName" class="shadow-sm focus:ring-slate-900 focus:border-slate-900 block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border transition-colors">
+            <input type="text" id="lastName" formControlName="lastName" class="shadow-sm focus:ring-slate-900 focus:border-slate-900 block w-full sm:text-sm border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-md py-2 px-3 border transition-colors placeholder-slate-400 dark:placeholder-slate-500">
           </div>
           <p *ngIf="profileForm.get('lastName')?.touched && profileForm.get('lastName')?.invalid" class="mt-1 text-xs text-red-500">Le nom est requis.</p>
         </div>
 
         <!-- Email (Disabled) -->
         <div class="sm:col-span-2">
-          <label for="email" class="block text-sm font-medium text-slate-700">Adresse Email</label>
+          <label for="email" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Adresse Email</label>
           <div class="mt-1 relative rounded-md shadow-sm">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg class="h-5 w-5 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
@@ -50,23 +50,23 @@
                 <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
               </svg>
             </div>
-            <input type="email" id="email" formControlName="email" class="bg-slate-50 text-slate-500 focus:ring-slate-500 focus:border-slate-500 block w-full pl-10 sm:text-sm border-slate-300 rounded-md py-2 px-3 border cursor-not-allowed">
+            <input type="email" id="email" formControlName="email" class="bg-slate-50 text-slate-500 dark:bg-slate-800 dark:text-slate-400 focus:ring-slate-500 focus:border-slate-500 block w-full pl-10 sm:text-sm border-slate-300 dark:border-slate-700 rounded-md py-2 px-3 border cursor-not-allowed">
           </div>
-          <p class="mt-1 text-xs text-slate-500">L'adresse email ne peut pas être modifiée directement.</p>
+          <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">L'adresse email ne peut pas être modifiée directement.</p>
         </div>
 
         <!-- Phone -->
         <div>
-          <label for="phone" class="block text-sm font-medium text-slate-700">Téléphone</label>
+          <label for="phone" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Téléphone</label>
           <div class="mt-1">
-            <input type="text" id="phone" formControlName="phone" class="shadow-sm focus:ring-slate-900 focus:border-slate-900 block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border transition-colors">
+            <input type="text" id="phone" formControlName="phone" class="shadow-sm focus:ring-slate-900 focus:border-slate-900 block w-full sm:text-sm border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-md py-2 px-3 border transition-colors placeholder-slate-400 dark:placeholder-slate-500">
           </div>
         </div>
 
         </div>
 
       <!-- Messages -->
-      <div *ngIf="successMessage" class="rounded-md bg-green-50 p-4">
+      <div *ngIf="successMessage" class="rounded-md bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 p-4">
         <div class="flex">
           <div class="flex-shrink-0">
             <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
@@ -74,17 +74,17 @@
             </svg>
           </div>
           <div class="ml-3 flex-1 md:flex md:justify-between">
-            <p class="text-sm text-green-700">{{ successMessage }}</p>
+            <p class="text-sm text-green-700 dark:text-green-300">{{ successMessage }}</p>
           </div>
         </div>
       </div>
 
       <!-- Actions -->
       <div class="pt-5 flex justify-end">
-        <button type="button" class="bg-white py-2 px-4 border border-slate-300 rounded-md shadow-sm text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900">
+        <button type="button" class="bg-white dark:bg-slate-800 py-2 px-4 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900">
           Annuler
         </button>
-        <button type="submit" [disabled]="isSaving || profileForm.invalid" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-slate-900 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 disabled:opacity-70 disabled:cursor-not-allowed">
+        <button type="submit" [disabled]="isSaving || profileForm.invalid" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 disabled:opacity-70 disabled:cursor-not-allowed">
           <svg *ngIf="isSaving" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>

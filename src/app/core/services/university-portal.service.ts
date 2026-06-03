@@ -51,6 +51,12 @@ export class UniversityPortalService {
     return this.http.get<any>(`${this.baseUrl}/students/universite/${universiteTrackingId}`, { params });
   }
 
+  /** Get annual inscriptions of university */
+  getInscriptions(universiteTrackingId: string, page = 0, size = 200): Observable<any> {
+    const params = new HttpParams().set('page', page).set('size', size);
+    return this.http.get<any>(`${this.baseUrl}/inscriptions/universite/${universiteTrackingId}`, { params });
+  }
+
   /** Get scolarite payments for this university */
   getPaiementsScolarite(universiteTrackingId: string, page = 0, size = 100): Observable<any> {
     const params = new HttpParams().set('page', page).set('size', size);

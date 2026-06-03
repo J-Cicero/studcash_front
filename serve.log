@@ -1,0 +1,91 @@
+
+> gns-front@0.0.0 start
+> ng serve --port 4200
+
+❯ Building...
+✔ Building...
+Initial chunk files | Names                      |  Raw size
+styles.css          | styles                     | 119.54 kB | 
+polyfills.js        | polyfills                  |  90.20 kB | 
+main.js             | main                       |   6.61 kB | 
+chunk-4BOQJOWY.js   | -                          |   2.00 kB | 
+chunk-Y5RQAIA6.js   | -                          |   1.50 kB | 
+chunk-WP6HBAGE.js   | -                          |   1.40 kB | 
+
+                    | Initial total              | 221.23 kB
+
+Lazy chunk files    | Names                      |  Raw size
+chunk-QSCUZJ5C.js   | parametres-component       |  63.33 kB | 
+chunk-DBCH7FF4.js   | versements-component       |  56.29 kB | 
+chunk-PZGZRTZT.js   | inscriptions-component     |  37.59 kB | 
+chunk-QPX6FQB3.js   | utilisateurs-component     |  30.58 kB | 
+chunk-6BI5NZGD.js   | transactions-component     |  29.58 kB | 
+chunk-OVD3WZKS.js   | dashboard-component        |  28.08 kB | 
+chunk-4QMOG7UD.js   | universities-component     |  26.91 kB | 
+chunk-NCESVLA4.js   | paiements-component        |  25.72 kB | 
+chunk-HSYQLWZK.js   | parametres-component       |  23.81 kB | 
+chunk-CWG67OQM.js   | dashboard-layout-component |  21.34 kB | 
+chunk-XHAYX3HA.js   | etudiants-component        |  19.50 kB | 
+chunk-S67B6KNW.js   | surveillance-component     |  17.90 kB | 
+chunk-SNQSBJ7J.js   | dashboard-component        |  17.78 kB | 
+chunk-TCING5SK.js   | parametres-component       |  16.05 kB | 
+chunk-HUFANJ3E.js   | register-component         |  13.66 kB | 
+...and 17 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [13.610 seconds]
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin-dbs/etudiants/etudiants.component.html:80:26:
+[37m      80 │                 {{ s.nom?.[32mcharAt[37m(0) }}{{ s.prenom?.charAt(0) }}
+         ╵                           [32m~~~~~~[0m
+
+  Error occurs in the template of component EtudiantsComponent.
+
+    src/app/features/admin-dbs/etudiants/etudiants.component.ts:10:15:
+[37m      10 │   templateUrl: [32m'./etudiants.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin-dbs/etudiants/etudiants.component.html:80:51:
+[37m      80 │                 {{ s.nom?.charAt(0) }}{{ s.prenom?.[32mcharAt[37m(0) }}
+         ╵                                                    [32m~~~~~~[0m
+
+  Error occurs in the template of component EtudiantsComponent.
+
+    src/app/features/admin-dbs/etudiants/etudiants.component.ts:10:15:
+[37m      10 │   templateUrl: [32m'./etudiants.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin-dbs/parametres/parametres.component.html:57:38:
+[37m      57 │ ...   {{ currentUser.firstName?.[32mcharAt[37m(0) }}{{ currentUser.lastNam...
+         ╵                                 [32m~~~~~~[0m
+
+  Error occurs in the template of component ParametresDbsComponent.
+
+    src/app/features/admin-dbs/parametres/parametres.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./parametres.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin-dbs/parametres/parametres.component.html:57:75:
+[37m      57 │ ...tUser.firstName?.charAt(0) }}{{ currentUser.lastName?.[32mcharAt[37m(0) }}
+         ╵                                                          [32m~~~~~~[0m
+
+  Error occurs in the template of component ParametresDbsComponent.
+
+    src/app/features/admin-dbs/parametres/parametres.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./parametres.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+Watch mode enabled. Watching for file changes...
+NOTE: Raw file sizes do not reflect development server per-request transformations.
+  ➜  Local:   http://localhost:4200/

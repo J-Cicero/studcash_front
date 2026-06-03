@@ -85,34 +85,44 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     const sortedKeys = Object.keys(monthlyMap).sort();
     const labels = sortedKeys.map(k => {
       const [y, m] = k.split('-');
-      return new Date(+y, +m - 1).toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' });
+      return new Date(+y, +m - 1).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
     });
+
+    const ctx = this.chartRef.nativeElement.getContext('2d');
+    if (!ctx) return;
+
+    let gradientTotal = ctx.createLinearGradient(0, 0, 0, 400);
+    gradientTotal.addColorStop(0, 'rgba(99, 102, 241, 0.4)');   // Indigo 500
+    gradientTotal.addColorStop(1, 'rgba(99, 102, 241, 0.05)');
 
     if (this.chart) this.chart.destroy();
     this.chart = new Chart(this.chartRef.nativeElement, {
-      type: 'bar',
+      type: 'line',
       data: {
         labels,
         datasets: [
           {
-            label: 'Montant (FCFA)',
+            label: 'Montant Total (FCFA)',
             data: sortedKeys.map(k => monthlyMap[k].total),
-            backgroundColor: 'rgba(99,102,241,0.7)',
-            borderColor: 'rgba(99,102,241,1)',
-            borderWidth: 2,
-            borderRadius: 6,
+            backgroundColor: gradientTotal,
+            borderColor: '#6366f1', // Indigo 500
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#ffffff',
+            pointBorderColor: '#6366f1',
+            pointBorderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6,
             yAxisID: 'yMontant'
           },
           {
-            label: 'Nombre de paiements',
+            label: 'Nombre d\'Étudiants',
             data: sortedKeys.map(k => monthlyMap[k].count),
-            type: 'line',
-            backgroundColor: 'rgba(16,185,129,0.2)',
-            borderColor: 'rgba(16,185,129,1)',
-            borderWidth: 2,
-            fill: false,
-            tension: 0.4,
-            pointRadius: 4,
+            type: 'bar',
+            backgroundColor: 'rgba(16, 185, 129, 0.8)', // Emerald 500
+            borderRadius: 4,
+            barThickness: 10,
             yAxisID: 'yCount'
           }
         ]
@@ -120,18 +130,73 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false,
+        },
         plugins: {
-          legend: { position: 'top', labels: { color: '#94a3b8', font: { family: 'Inter' } } }
+          legend: { 
+            position: 'top', 
+            labels: { 
+              color: '#64748b', 
+              font: { family: 'Inter', weight: 'bold' },
+              usePointStyle: true,
+              boxWidth: 8
+            } 
+          },
+          tooltip: {
+            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+            titleColor: '#ffffff',
+            bodyColor: '#cbd5e1',
+            borderColor: 'rgba(51, 65, 85, 0.5)',
+            borderWidth: 1,
+            padding: 12,
+            boxPadding: 6,
+            usePointStyle: true,
+            callbacks: {
+              label: (context) => {
+                let label = context.dataset.label || '';
+                if (label) { label += ' : '; }
+                if (context.parsed.y !== null) {
+                   if (context.datasetIndex === 0) {
+                     label += new Intl.NumberFormat('fr-FR').format(context.parsed.y) + ' FCFA';
+                   } else {
+                     label += context.parsed.y;
+                   }
+                }
+                return label;
+              }
+            }
+          }
         },
         scales: {
-          x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(148,163,184,0.1)' } },
+          x: { 
+            ticks: { color: '#64748b', font: { family: 'Inter' } }, 
+            grid: { display: false } 
+          },
           yMontant: {
-            type: 'linear', position: 'left',
-            ticks: { color: '#94a3b8' }, grid: { color: 'rgba(148,163,184,0.1)' }
+            type: 'linear', 
+            position: 'left',
+            beginAtZero: true,
+            ticks: { 
+              color: '#6366f1', 
+              font: { family: 'Inter', weight: 'bold' },
+              callback: (value) => new Intl.NumberFormat('fr-FR', { notation: "compact" , compactDisplay: "short" }).format(Number(value))
+            }, 
+            grid: { color: 'rgba(226, 232, 240, 0.5)' },
+            border: { display: false }
           },
           yCount: {
-            type: 'linear', position: 'right',
-            ticks: { color: '#10b981' }, grid: { drawOnChartArea: false }
+            type: 'linear', 
+            position: 'right',
+            beginAtZero: true,
+            ticks: { 
+              color: '#10b981', 
+              font: { family: 'Inter', weight: 'bold' },
+              stepSize: 1
+            }, 
+            grid: { drawOnChartArea: false },
+            border: { display: false }
           }
         }
       }
@@ -140,9 +205,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   getSoldeClass(): string {
     const level = this.wallet?.niveauSolde;
+    if (!level) return 'text-slate-500 dark:text-slate-400';
     if (level === 'EPUISE') return 'text-red-500 dark:text-red-400';
     if (level === 'CRITIQUE') return 'text-orange-500 dark:text-orange-400';
-    if (level === 'FAIBLE') return 'text-yellow-500 dark:text-yellow-400';
+    if (level === 'FAIBLE') return 'text-amber-500 dark:text-amber-400';
     return 'text-emerald-500 dark:text-emerald-400';
   }
 }
