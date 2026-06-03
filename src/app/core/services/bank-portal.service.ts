@@ -12,6 +12,8 @@ export interface StudentLiquidationInfo {
   depensesStudCash: number;
   resteAPayer: number;
   virementEffectue: boolean;
+  typeBourse: string;
+  urlSoucheTamponnee: string;
 }
 
 export interface UniversityReversementInfo {
@@ -25,6 +27,13 @@ export interface BanqueInfo {
   trackingId: string;
   code: string;
   nom: string;
+}
+
+export interface BankFinancialSummary {
+  totalScolariteUniversites: number;
+  totalDepensesAchats: number;
+  totalCommissionsAchats: number;
+  totalNetCommercants: number;
 }
 
 @Injectable({
@@ -61,5 +70,10 @@ export class BankPortalService {
   getBanqueInfo(bankOperatorTrackingId: string): Observable<BanqueInfo> {
     const params = new HttpParams().set('bankOperatorTrackingId', bankOperatorTrackingId);
     return this.http.get<BanqueInfo>(`${this.apiUrl}/info`, { params });
+  }
+
+  getFinancialSummary(bankOperatorTrackingId: string): Observable<BankFinancialSummary> {
+    const params = new HttpParams().set('bankOperatorTrackingId', bankOperatorTrackingId);
+    return this.http.get<BankFinancialSummary>(`${this.apiUrl}/summary`, { params });
   }
 }
