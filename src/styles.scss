@@ -544,3 +544,106 @@ p-floatLabel input:not(:placeholder-shown) ~ label {
 .gradient-bg {
   background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
 }
+
+/* =========================================
+   BANK PORTAL SHELL & THEME
+   ========================================= */
+
+.bank-portal-shell.dark {
+  --bg-main: #020617;
+  --text-main: #e2e8f0;
+  --text-muted: #94a3b8;
+  --border-color: #334155;
+  --card-bg: rgba(15, 23, 42, 0.92);
+  --color-primary: #10b981; /* emerald-500 */
+  --primary-light: #34d399; /* emerald-400 */
+  
+  background:
+    radial-gradient(circle at top left, rgba(16, 185, 129, 0.12), transparent 28%),
+    radial-gradient(circle at top right, rgba(52, 211, 153, 0.1), transparent 22%),
+    linear-gradient(180deg, #020617 0%, #0f172a 100%);
+}
+
+.bank-portal-shell.dark main,
+.bank-portal-shell.dark aside,
+.bank-portal-shell.dark header,
+.bank-portal-shell.dark .bg-white,
+.bank-portal-shell.dark .bg-slate-50,
+.bank-portal-shell.dark .bg-slate-100,
+.bank-portal-shell.dark .bg-slate-200 {
+  color: var(--text-main) !important;
+}
+
+.bank-portal-shell.dark .bg-white {
+  background-color: #0f172a !important;
+}
+
+.bank-portal-shell.dark .bg-slate-50,
+.bank-portal-shell.dark .bg-slate-100 {
+  background-color: #111827 !important;
+}
+
+.bank-portal-shell.dark .bg-slate-200 {
+  background-color: #1f2937 !important;
+}
+
+.bank-portal-shell.dark .text-slate-900,
+.bank-portal-shell.dark .text-slate-800,
+.bank-portal-shell.dark .text-slate-700,
+.bank-portal-shell.dark .text-slate-650,
+.bank-portal-shell.dark .text-slate-600,
+.bank-portal-shell.dark .text-slate-550,
+.bank-portal-shell.dark .text-slate-500,
+.bank-portal-shell.dark .text-slate-400 {
+  color: var(--text-main) !important;
+}
+
+.bank-portal-shell.dark .text-slate-500,
+.bank-portal-shell.dark .text-slate-400 {
+  color: var(--text-muted) !important;
+}
+
+.bank-portal-shell.dark .border-slate-50,
+.bank-portal-shell.dark .border-slate-100,
+.bank-portal-shell.dark .border-slate-200 {
+  border-color: var(--border-color) !important;
+}
+
+.bank-portal-shell.dark .shadow-sm,
+.bank-portal-shell.dark .shadow-lg,
+.bank-portal-shell.dark .shadow-xl {
+  box-shadow: 0 18px 40px rgba(2, 6, 23, 0.35) !important;
+}
+
+.bank-portal-shell.dark .p-inputtext,
+.bank-portal-shell.dark .p-dropdown,
+.bank-portal-shell.dark input,
+.bank-portal-shell.dark select,
+.bank-portal-shell.dark textarea,
+.bank-portal-shell.dark .p-component {
+  background-color: #0b1220 !important;
+  color: #e2e8f0 !important;
+  border-color: #334155 !important;
+}
+
+.bank-portal-shell.dark .p-datatable .p-datatable-thead > tr > th {
+  background-color: #111827;
+  color: #cbd5e1;
+  border-bottom-color: #334155;
+}
+
+.bank-portal-shell.dark .p-datatable .p-datatable-tbody > tr > td {
+  background-color: #0f172a;
+  color: #e2e8f0;
+  border-bottom-color: #1f2937;
+}
+
+.bank-portal-shell.dark .p-datatable .p-datatable-tbody > tr:hover > td {
+  background-color: #111c33;
+}
+
+.nav-item-active-bank {
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.1) 0%, transparent 100%);
+  border-left: 3px solid #10b981;
+}
+

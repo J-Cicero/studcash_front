@@ -138,6 +138,22 @@ export const routes: Routes = [
         loadComponent: () => import('./features/bank-portal/dashboard/dashboard.component').then(m => m.DashboardComponent)
       },
       {
+        path: 'liquidations',
+        loadComponent: () => import('./features/bank-portal/dashboard/dashboard.component').then(m => m.DashboardComponent)
+      },
+      {
+        path: 'boutiques',
+        loadComponent: () => import('./features/bank-portal/dashboard/dashboard.component').then(m => m.DashboardComponent)
+      },
+      {
+        path: 'reversements',
+        loadComponent: () => import('./features/bank-portal/dashboard/dashboard.component').then(m => m.DashboardComponent)
+      },
+      {
+        path: 'info',
+        loadComponent: () => import('./features/bank-portal/dashboard/dashboard.component').then(m => m.DashboardComponent)
+      },
+      {
         path: 'surveillance',
         loadComponent: () => import('./features/bank-portal/surveillance/surveillance.component').then(m => m.SurveillanceComponent)
       },

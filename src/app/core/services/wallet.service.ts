@@ -12,7 +12,6 @@ export interface WalletResponse {
   plafond: number;
   estVerrouille: boolean;
   dateCreation: string;
-  ownerName?: string;
 }
 
 @Injectable({

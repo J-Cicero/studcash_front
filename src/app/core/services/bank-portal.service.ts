@@ -16,6 +16,9 @@ export interface StudentLiquidationInfo {
   urlSoucheTamponnee: string;
   inscritAnnuel: boolean;
   inscritDefinitif: boolean;
+  walletTrackingId?: string;
+  walletStatus?: string;
+  numeroCompte: string;
 }
 
 export interface UniversityReversementInfo {
@@ -23,12 +26,25 @@ export interface UniversityReversementInfo {
   nomUniversite: string;
   codeUniversite: string;
   montantTotalScolarite: number;
+  numeroCompteVirement: string;
 }
 
 export interface BanqueInfo {
   trackingId: string;
   code: string;
   nom: string;
+  logoUrl?: string;
+}
+
+export interface BoutiqueLiquidationInfo {
+  boutiqueTrackingId: string;
+  nomBoutique: string;
+  categorieShop: string;
+  numeroCompte: string;
+  soldeWallet: number;
+  proprietaireNom: string;
+  walletTrackingId?: string;
+  walletStatus?: string;
 }
 
 export interface BankFinancialSummary {
@@ -78,4 +94,39 @@ export class BankPortalService {
     const params = new HttpParams().set('bankOperatorTrackingId', bankOperatorTrackingId);
     return this.http.get<BankFinancialSummary>(`${this.apiUrl}/summary`, { params });
   }
+
+  getBoutiques(bankOperatorTrackingId: string): Observable<BoutiqueLiquidationInfo[]> {
+    const params = new HttpParams().set('bankOperatorTrackingId', bankOperatorTrackingId);
+    return this.http.get<BoutiqueLiquidationInfo[]>(`${this.apiUrl}/boutiques`, { params });
+  }
+
+  liquidateBoutique(boutiqueTrackingId: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/boutiques/${boutiqueTrackingId}/liquidate`, null);
+  }
+
+  updateBoutiqueAccountNumber(boutiqueTrackingId: string, numeroCompte: string): Observable<any> {
+    const params = new HttpParams().set('numeroCompte', numeroCompte);
+    return this.http.post(`${this.apiUrl}/boutiques/${boutiqueTrackingId}/account-number`, null, { params });
+  }
+
+  updateBanqueLogo(bankOperatorTrackingId: string, logoUrl: string): Observable<any> {
+    const params = new HttpParams().set('bankOperatorTrackingId', bankOperatorTrackingId).set('logoUrl', logoUrl);
+    return this.http.post(`${this.apiUrl}/info/logo`, null, { params });
+  }
+
+  getBoutiqueVersements(bankOperatorTrackingId: string): Observable<BoutiqueVersementInfo[]> {
+    const params = new HttpParams().set('bankOperatorTrackingId', bankOperatorTrackingId);
+    return this.http.get<BoutiqueVersementInfo[]>(`${this.apiUrl}/boutiques/versements`, { params });
+  }
+}
+
+export interface BoutiqueVersementInfo {
+  versementTrackingId: string;
+  nomBoutique: string;
+  proprietaireNom: string;
+  numeroCompte: string;
+  montantVerse: number;
+  dateVersement: string;
+  typeVersement: string;
+  statut: string;
 }

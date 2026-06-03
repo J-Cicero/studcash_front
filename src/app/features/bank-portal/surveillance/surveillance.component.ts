@@ -1,17 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { WalletService, WalletResponse } from '../../../core/services/wallet.service';
+import { forkJoin } from 'rxjs';
+import { AuthService } from '../../../core/services/auth.service';
+import { BankPortalService } from '../../../core/services/bank-portal.service';
+import { WalletService } from '../../../core/services/wallet.service';
 
 interface WalletAlert {
-  id: string;
+  id: string; // studentTrackingId or boutiqueTrackingId
+  walletId?: string; // walletTrackingId
   type: 'Etudiant' | 'Boutique';
-  ownerName: string;
-  balance: number;
+  name: string;
+  numEtudiant?: string; // only for student
+  typeBourse?: string; // only for student
+  scholarshipAmount?: number; // only for student
+  spentAmount?: number; // only for student
+  balance: number; // resteAPayer for student, soldeWallet for boutique
   status: 'ACTIF' | 'GELE' | 'BLOQUE';
   suspiciousActivity: boolean;
   lastTransactionDate: Date;
-  rawResponse: WalletResponse; // Keep reference to update it easily
+  numeroCompte?: string; // only for boutique
+  ownerName?: string; // only for boutique
 }
 
 @Component({
@@ -28,49 +37,91 @@ export class SurveillanceComponent implements OnInit {
   isActionLoading = false;
   actionMessage = '';
 
+  activeTab: 'Etudiant' | 'Boutique' = 'Etudiant';
+
   // Filters
   statusFilter = 'ALL';
   searchTerm = '';
 
-  constructor(private walletService: WalletService) {}
+  constructor(
+    private authService: AuthService,
+    private bankPortalService: BankPortalService,
+    private walletService: WalletService
+  ) {}
 
   ngOnInit(): void {
     this.loadWallets();
   }
 
   loadWallets(): void {
+    const operatorId = this.authService.currentUserValue?.trackingId;
+    if (!operatorId) {
+      this.isLoading = false;
+      this.actionMessage = "Opérateur non identifié. Veuillez vous reconnecter.";
+      return;
+    }
+
     this.isLoading = true;
-    // Load student and boutique wallets
-    this.walletService.filterWallets('ALL', 'ALL', 0, 100).subscribe({
+    forkJoin({
+      students: this.bankPortalService.getStudents(operatorId),
+      boutiques: this.bankPortalService.getBoutiques(operatorId)
+    }).subscribe({
       next: (res) => {
-        const content: WalletResponse[] = res.content || [];
-        this.wallets = content
-          .filter(w => w.typeWallet === 'STUDENT' || w.typeWallet === 'BOUTIQUE')
-          .map(w => {
-            const isSuspicious = w.typeWallet === 'BOUTIQUE' && w.solde > 5000000 && w.statutWallet === 'ACTIF';
-            return {
-              id: w.trackingId,
-              type: w.typeWallet === 'STUDENT' ? 'Etudiant' : 'Boutique',
-              ownerName: w.ownerName || 'Inconnu',
-              balance: w.solde,
-              status: (w.statutWallet as 'ACTIF' | 'GELE' | 'BLOQUE') || 'ACTIF',
-              suspiciousActivity: isSuspicious, // Boutique with high balance could be flagged
-              lastTransactionDate: w.dateCreation ? new Date(w.dateCreation) : new Date(),
-              rawResponse: w
-            };
-          });
+        const studentWallets: WalletAlert[] = res.students.map(s => {
+          const status = (s.walletStatus as 'ACTIF' | 'GELE' | 'BLOQUE') || 'ACTIF';
+          return {
+            id: s.studentTrackingId,
+            walletId: s.walletTrackingId,
+            type: 'Etudiant' as const,
+            name: `${s.nom} ${s.prenom}`,
+            numEtudiant: s.numEtudiant,
+            typeBourse: s.typeBourse,
+            scholarshipAmount: s.bourseTotale,
+            spentAmount: s.depensesStudCash,
+            balance: s.resteAPayer,
+            status: status,
+            suspiciousActivity: false,
+            lastTransactionDate: new Date(),
+            numeroCompte: s.numeroCompte
+          };
+        });
+
+        const boutiqueWallets: WalletAlert[] = res.boutiques.map(b => {
+          const status = (b.walletStatus as 'ACTIF' | 'GELE' | 'BLOQUE') || 'ACTIF';
+          const isSuspicious = b.soldeWallet > 50000 && status === 'ACTIF'; // Flag high balance in demo
+          return {
+            id: b.boutiqueTrackingId,
+            walletId: b.walletTrackingId,
+            type: 'Boutique' as const,
+            name: b.nomBoutique,
+            ownerName: b.proprietaireNom,
+            numeroCompte: b.numeroCompte,
+            balance: b.soldeWallet,
+            status: status,
+            suspiciousActivity: isSuspicious,
+            lastTransactionDate: new Date(),
+          };
+        });
+
+        this.wallets = [...studentWallets, ...boutiqueWallets];
         this.applyFilters();
         this.isLoading = false;
       },
       error: (err) => {
         console.error("Erreur lors de la récupération des portefeuilles :", err);
+        this.actionMessage = "Erreur lors du chargement des portefeuilles.";
         this.isLoading = false;
       }
     });
   }
 
+  switchTab(tab: 'Etudiant' | 'Boutique'): void {
+    this.activeTab = tab;
+    this.applyFilters();
+  }
+
   applyFilters(): void {
-    let temp = [...this.wallets];
+    let temp = this.wallets.filter(w => w.type === this.activeTab);
 
     // Status filter
     if (this.statusFilter === 'suspect') {
@@ -83,8 +134,11 @@ export class SurveillanceComponent implements OnInit {
     if (this.searchTerm.trim()) {
       const term = this.searchTerm.toLowerCase();
       temp = temp.filter(w => 
-        w.ownerName.toLowerCase().includes(term) || 
-        w.id.toLowerCase().includes(term)
+        w.name.toLowerCase().includes(term) ||
+        (w.numEtudiant && w.numEtudiant.toLowerCase().includes(term)) ||
+        (w.typeBourse && w.typeBourse.toLowerCase().includes(term)) ||
+        (w.ownerName && w.ownerName.toLowerCase().includes(term)) ||
+        (w.numeroCompte && w.numeroCompte.toLowerCase().includes(term))
       );
     }
 
@@ -92,26 +146,36 @@ export class SurveillanceComponent implements OnInit {
   }
 
   updateWalletStatus(wallet: WalletAlert, newStatus: 'ACTIF' | 'GELE' | 'BLOQUE') {
+    if (!wallet.walletId) {
+      this.actionMessage = "Impossible de modifier le statut : identifiant de portefeuille manquant.";
+      return;
+    }
     this.isActionLoading = true;
     this.actionMessage = '';
 
-    const req = {
-      typeWallet: wallet.rawResponse.typeWallet,
-      statutWallet: newStatus,
-      solde: wallet.rawResponse.solde,
-      plafond: wallet.rawResponse.plafond,
-      estVerrouille: wallet.rawResponse.estVerrouille,
-      dateCreation: wallet.rawResponse.dateCreation
-    };
+    // First fetch the raw wallet state to preserve fields (such as balance, creation date, type, etc.)
+    this.walletService.getByTrackingId(wallet.walletId).subscribe({
+      next: (currentWallet) => {
+        const req = {
+          ...currentWallet,
+          statutWallet: newStatus
+        };
 
-    this.walletService.updateWallet(wallet.id, req).subscribe({
-      next: (res) => {
-        this.actionMessage = `Portefeuille de ${res.ownerName || 'Inconnu'} mis à jour avec le statut ${newStatus}.`;
-        this.isActionLoading = false;
-        this.loadWallets();
+        this.walletService.updateWallet(wallet.walletId!, req).subscribe({
+          next: () => {
+            this.actionMessage = `Portefeuille de "${wallet.name}" mis à jour avec le statut ${newStatus}.`;
+            this.isActionLoading = false;
+            this.loadWallets();
+          },
+          error: (err) => {
+            this.actionMessage = `Erreur lors de la mise à jour du portefeuille.`;
+            this.isActionLoading = false;
+            console.error(err);
+          }
+        });
       },
       error: (err) => {
-        this.actionMessage = `Erreur lors de la mise à jour du portefeuille.`;
+        this.actionMessage = `Impossible de récupérer les informations du portefeuille.`;
         this.isActionLoading = false;
         console.error(err);
       }
