@@ -8,7 +8,7 @@ import { LoginRequest, LoginResponse, RegisterRequest } from '../models/auth.mod
 })
 export class AuthService {
   // Configured correctly with backend API
-  private apiUrl = 'http://localhost:8080/api/users';
+  private apiUrl = 'http://localhost:8081/api/users';
   
   private currentUserSubject = new BehaviorSubject<LoginResponse | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();

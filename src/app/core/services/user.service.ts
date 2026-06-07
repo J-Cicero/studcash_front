@@ -26,4 +26,8 @@ export class UserService {
   updateUserEtat(trackingId: string, etat: boolean): Observable<any> {
     return this.http.patch<any>(`${this.apiUrl}/etat/${trackingId}`, null, { params: { etat: etat.toString() } });
   }
+
+  register(userData: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/register`, userData);
+  }
 }

@@ -1,50 +1,26 @@
-<div class="mb-10 animate-fade-in-up">
+<div class="mb-8 animate-fade-in-up">
   <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Inscriptions & Étudiants</h1>
-  <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Validez ou rejetez les inscriptions annuelles des étudiants et vérifiez leurs documents (KYC).</p>
+  <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Gestion des inscriptions pour l'année : {{ activeYear }}</p>
 </div>
 
 <div class="glass-panel rounded-2xl overflow-hidden animate-fade-in-up" style="animation-delay: 100ms;">
   
   <!-- Header & Search -->
   <div class="px-8 py-6 border-b border-slate-200/50 dark:border-slate-700/50 flex flex-col sm:flex-row sm:justify-between sm:items-center bg-white/40 dark:bg-slate-900/40 gap-4">
-    <div class="flex items-center space-x-4">
-      <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center">
-        <div class="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg mr-3 shadow-lg shadow-blue-500/20">
-          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-          </svg>
-        </div>
-        Étudiants Inscrits
-      </h3>
-      
-      <!-- KYC Filters -->
-      <div class="flex bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
-        <button (click)="setKycFilter('ALL')" [class.bg-white]="filterKyc === 'ALL'" [class.dark:bg-slate-700]="filterKyc === 'ALL'" [class.shadow-sm]="filterKyc === 'ALL'" class="px-3 py-1 text-xs font-bold rounded-md text-slate-600 dark:text-slate-300 transition-all">Tous</button>
-        <button (click)="setKycFilter('EN_ATTENTE')" [class.bg-white]="filterKyc === 'EN_ATTENTE'" [class.dark:bg-slate-700]="filterKyc === 'EN_ATTENTE'" [class.shadow-sm]="filterKyc === 'EN_ATTENTE'" class="px-3 py-1 text-xs font-bold rounded-md text-slate-600 dark:text-slate-300 transition-all">En Attente</button>
-        <button (click)="setKycFilter('VALIDEE')" [class.bg-white]="filterKyc === 'VALIDEE'" [class.dark:bg-slate-700]="filterKyc === 'VALIDEE'" [class.shadow-sm]="filterKyc === 'VALIDEE'" class="px-3 py-1 text-xs font-bold rounded-md text-slate-600 dark:text-slate-300 transition-all">Validé</button>
-      </div>
-    </div>
+    <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center">
+      Inscriptions Validées
+    </h3>
 
     <div class="relative w-full sm:w-64">
-      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-        <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-      </div>
-      <input type="text" [(ngModel)]="searchQuery" (input)="applyFilter()" placeholder="Rechercher (nom, email)..." class="block w-full pl-10 pr-3 py-2.5 border-none rounded-xl bg-white dark:bg-slate-800/50 shadow-sm text-sm placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-blue-500 dark:text-white transition-shadow">
+      <input type="text" [(ngModel)]="searchQuery" (input)="applyFilter()" placeholder="Rechercher par nom..." class="block w-full pl-10 pr-3 py-2.5 border-none rounded-xl bg-white dark:bg-slate-800/50 shadow-sm text-sm placeholder-slate-400 focus:ring-2 focus:ring-blue-500 transition-shadow dark:text-white">
     </div>
-  </div>
-
-  <!-- Error Message -->
-  <div *ngIf="errorMessage" class="p-4 bg-red-50 text-red-600 text-sm font-bold text-center">
-    {{ errorMessage }}
   </div>
 
   <!-- Loading State -->
   <div *ngIf="isLoading" class="flex justify-center items-center py-20">
     <div class="relative w-12 h-12">
-      <div class="absolute inset-0 rounded-full border-4 border-blue-100 dark:border-slate-800"></div>
-      <div class="absolute inset-0 rounded-full border-4 border-blue-600 dark:border-blue-400 border-t-transparent animate-spin"></div>
+      <div class="absolute inset-0 rounded-full border-4 border-indigo-100 dark:border-slate-800"></div>
+      <div class="absolute inset-0 rounded-full border-4 border-indigo-600 dark:border-indigo-400 border-t-transparent animate-spin"></div>
     </div>
   </div>
 
@@ -53,61 +29,39 @@
     <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
       <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
         <tr>
-          <th scope="col" class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Étudiant</th>
-          <th scope="col" class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Matricule / Email</th>
-          <th scope="col" class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Niveau</th>
-          <th scope="col" class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statut KYC</th>
-          <th scope="col" class="px-8 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Actions</th>
+          <th class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Étudiant</th>
+          <th class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Matricule</th>
+          <th class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Niveau</th>
+          <th class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statut</th>
+          <th class="px-8 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Actions</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
-        <tr *ngFor="let s of filteredStudents" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
-          <td class="px-8 py-5 whitespace-nowrap">
-            <div class="flex items-center">
-              <div class="h-10 w-10 flex-shrink-0 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold border border-blue-200 dark:border-blue-800">
-                {{ s.prenom ? s.prenom.charAt(0) : '' }}{{ s.nom ? s.nom.charAt(0) : '' }}
-              </div>
-              <div class="ml-4">
-                <div class="text-sm font-bold text-slate-900 dark:text-white">{{s.prenom}} {{s.nom}}</div>
-                <div class="text-xs text-slate-500">{{ s.telephone }}</div>
-              </div>
-            </div>
+        <tr *ngFor="let ins of filteredInscriptions" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+          <td class="px-8 py-5 whitespace-nowrap text-sm font-bold text-slate-900 dark:text-white">
+            {{ins.studentPrenom}} {{ins.studentNom}}
+          </td>
+          <td class="px-8 py-5 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+            {{ins.numEtudiantUniv}}
+          </td>
+          <td class="px-8 py-5 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
+            {{ins.niveau}}
           </td>
           <td class="px-8 py-5 whitespace-nowrap">
-            <div class="text-sm text-slate-900 dark:text-white font-medium">{{getShortId(s.trackingId)}}</div>
-            <div class="text-xs text-slate-500 dark:text-slate-400">{{s.email}}</div>
-          </td>
-          <td class="px-8 py-5 whitespace-nowrap text-sm font-bold text-slate-600 dark:text-slate-300">{{s.niveauEtude}}</td>
-          <td class="px-8 py-5 whitespace-nowrap">
-            <span *ngIf="s.statutKYC === 'EN_ATTENTE'" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-amber-100/80 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
-              En Attente
-            </span>
-            <span *ngIf="s.statutKYC === 'VALIDEE'" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-emerald-100/80 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-              Validée
-            </span>
-            <span *ngIf="s.statutKYC === 'REJETEE'" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-red-100/80 text-red-700 dark:bg-red-900/40 dark:text-red-400 border border-red-200 dark:border-red-800">
-              Rejetée
-            </span>
-            <span *ngIf="!s.statutKYC || s.statutKYC === 'NON_SOUMIS'" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-              Non Soumis
+            <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-blue-100/80 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 border border-blue-200 dark:border-blue-800">
+              {{ins.statut}}
             </span>
           </td>
           <td class="px-8 py-5 whitespace-nowrap text-right text-sm font-medium">
-            <button (click)="viewDetails(s)" class="inline-flex items-center px-4 py-2 border border-slate-200 dark:border-slate-700 text-xs font-bold rounded-lg text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">
-              <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+            <button (click)="viewDetails(ins)" class="inline-flex items-center px-4 py-2 border border-slate-200 dark:border-slate-700 text-xs font-bold rounded-lg text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">
               Détails & Documents
             </button>
           </td>
         </tr>
         
-        <tr *ngIf="filteredStudents.length === 0">
-          <td colspan="5" class="px-8 py-12 text-center">
-            <div class="flex flex-col items-center justify-center">
-              <svg class="h-12 w-12 text-slate-300 dark:text-slate-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-              <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Aucun étudiant trouvé.</p>
-            </div>
+        <tr *ngIf="filteredInscriptions.length === 0">
+          <td colspan="5" class="px-8 py-12 text-center text-sm text-slate-500 dark:text-slate-400">
+            Aucune inscription trouvée pour cette année.
           </td>
         </tr>
       </tbody>
@@ -115,121 +69,32 @@
   </div>
 </div>
 
-<!-- Overlay & Sidebar Modal for Details -->
-<div *ngIf="selectedStudent" class="fixed inset-0 z-50 overflow-hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
-  <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" (click)="closeDetails()"></div>
+<!-- Modal Détails & Documents -->
+<div *ngIf="selectedInscription" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+  <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+    <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/30">
+      <h3 class="text-lg font-bold text-slate-900 dark:text-white">Documents de {{selectedInscription.studentPrenom}}</h3>
+      <button (click)="closeDetails()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+      </button>
+    </div>
 
-  <div class="fixed inset-y-0 right-0 max-w-full flex">
-    <div class="w-screen max-w-2xl transform transition ease-in-out duration-500 sm:duration-700 translate-x-0">
-      <div class="h-full flex flex-col bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-800">
-        
-        <!-- Sidebar Header -->
-        <div class="px-6 py-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/30">
-          <div class="flex items-center">
-            <div class="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-lg border border-blue-200 dark:border-blue-800 mr-4">
-              {{ selectedStudent.prenom ? selectedStudent.prenom.charAt(0) : '' }}{{ selectedStudent.nom ? selectedStudent.nom.charAt(0) : '' }}
-            </div>
-            <div>
-              <h2 class="text-xl font-bold text-slate-900 dark:text-white" id="slide-over-title">
-                {{ selectedStudent.prenom }} {{ selectedStudent.nom }}
-              </h2>
-              <p class="text-sm text-slate-500 dark:text-slate-400">{{ selectedStudent.email }}</p>
-            </div>
-          </div>
-          <button (click)="closeDetails()" type="button" class="rounded-md text-slate-400 hover:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <span class="sr-only">Fermer</span>
-            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+    <div class="p-6 space-y-6">
+      <div *ngIf="isLoadingDocs" class="text-center py-10 text-slate-500">Chargement...</div>
+      
+      <div *ngIf="!isLoadingDocs && studentDocuments.length === 0" class="text-center py-10 text-slate-500">Aucun document trouvé.</div>
+
+      <div *ngIf="!isLoadingDocs && studentDocuments.length > 0" class="grid grid-cols-2 gap-4">
+        <div *ngFor="let doc of studentDocuments" class="border dark:border-slate-700 rounded-xl p-2">
+            <img [src]="doc.urlDocument" class="w-full h-32 object-cover rounded-lg mb-2">
+            <p class="text-xs font-bold text-center text-slate-700 dark:text-slate-300">{{doc.typeDocument}}</p>
         </div>
-
-        <!-- Sidebar Content -->
-        <div class="flex-1 overflow-y-auto px-6 py-6 space-y-8">
-          
-          <!-- Infos Etudiant -->
-          <div>
-            <h3 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-slate-800 pb-2">Informations Générales</h3>
-            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6">
-              <div>
-                <dt class="text-sm font-medium text-slate-500 dark:text-slate-400">Matricule</dt>
-                <dd class="mt-1 text-sm font-bold text-slate-900 dark:text-white">{{ getShortId(selectedStudent.trackingId) }}</dd>
-              </div>
-              <div>
-                <dt class="text-sm font-medium text-slate-500 dark:text-slate-400">Téléphone</dt>
-                <dd class="mt-1 text-sm font-bold text-slate-900 dark:text-white">{{ selectedStudent.telephone }}</dd>
-              </div>
-              <div>
-                <dt class="text-sm font-medium text-slate-500 dark:text-slate-400">Date de Naissance</dt>
-                <dd class="mt-1 text-sm font-bold text-slate-900 dark:text-white">{{ selectedStudent.dateNaissance | date:'longDate' }}</dd>
-              </div>
-              <div>
-                <dt class="text-sm font-medium text-slate-500 dark:text-slate-400">Niveau d'Étude</dt>
-                <dd class="mt-1 text-sm font-bold text-slate-900 dark:text-white">{{ selectedStudent.niveauEtude }}</dd>
-              </div>
-            </dl>
-          </div>
-
-          <!-- Documents KYC -->
-          <div>
-            <div class="flex items-center justify-between mb-4 border-b border-slate-200 dark:border-slate-800 pb-2">
-              <h3 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Documents Fournis (KYC)</h3>
-              <span *ngIf="selectedStudent.statutKYC === 'EN_ATTENTE'" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-400">À vérifier</span>
-            </div>
-
-            <div *ngIf="isLoadingDocs" class="flex justify-center py-8">
-              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            </div>
-
-            <div *ngIf="!isLoadingDocs && studentDocuments.length === 0" class="text-center py-8 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-slate-200 dark:border-slate-700 border-dashed">
-              <p class="text-sm text-slate-500 dark:text-slate-400">Aucun document téléversé pour le moment.</p>
-            </div>
-
-            <div *ngIf="!isLoadingDocs && studentDocuments.length > 0" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <!-- Document Card -->
-              <div *ngFor="let doc of studentDocuments" class="group relative bg-slate-50 dark:bg-slate-800 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
-                <div class="aspect-w-4 aspect-h-3 bg-slate-200 dark:bg-slate-700 relative">
-                  <!-- Image Document (Cloudinary) -->
-                  <img *ngIf="doc.urlDocument" [src]="doc.urlDocument" alt="Document {{ doc.typeDocument }}" class="object-cover w-full h-40">
-                  <div *ngIf="!doc.urlDocument" class="flex items-center justify-center w-full h-40">
-                    <svg class="h-12 w-12 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  
-                  <!-- Hover Overlay for viewing -->
-                  <div class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <a [href]="doc.urlDocument" target="_blank" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-bold rounded-lg text-white bg-blue-600 hover:bg-blue-700 shadow-sm">
-                      Voir en plein écran
-                    </a>
-                  </div>
-                </div>
-                <div class="p-4">
-                  <div class="flex items-center justify-between">
-                    <h4 class="text-sm font-bold text-slate-900 dark:text-white">{{ doc.typeDocument }}</h4>
-                    <span *ngIf="doc.valide" class="flex h-3 w-3 relative">
-                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                      <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-                    </span>
-                  </div>
-                  <p class="text-xs text-slate-500 mt-1">Envoyé le {{ doc.dateUpload | date:'shortDate' }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Sidebar Footer (Actions) -->
-        <div *ngIf="selectedStudent.statutKYC === 'EN_ATTENTE'" class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/30 flex justify-end space-x-3">
-          <button type="button" class="inline-flex items-center px-4 py-2 border border-slate-200 dark:border-slate-700 text-sm font-bold rounded-lg shadow-sm text-red-600 dark:text-red-400 bg-white dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-900/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
-            Rejeter le KYC
-          </button>
-          <button type="button" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-bold rounded-lg shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors">
-            Valider le KYC
-          </button>
-        </div>
-        
       </div>
+    </div>
+
+    <div class="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-end space-x-3 bg-slate-50/50 dark:bg-slate-800/30">
+      <button (click)="updateStatus('REJETEE')" class="px-4 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700">Rejeter</button>
+      <button (click)="updateStatus('VALIDEE')" class="px-4 py-2 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-700">Valider</button>
     </div>
   </div>
 </div>

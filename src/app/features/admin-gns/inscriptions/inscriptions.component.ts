@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StudentService, StudentResponse, DocumentResponse } from '../../../core/services/student.service';
+import { InscriptionAnnuelleService } from '../../../core/services/inscription-annuelle.service';
+import { StudentService, DocumentResponse } from '../../../core/services/student.service';
+import { ScolariteYearService } from '../../../core/services/scolarite-year.service';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -11,104 +13,101 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./inscriptions.component.scss']
 })
 export class InscriptionsComponent implements OnInit {
-  students: StudentResponse[] = [];
-  filteredStudents: StudentResponse[] = [];
+  inscriptions: any[] = [];
+  filteredInscriptions: any[] = [];
   
-  // Pagination / Filter
   isLoading = true;
   errorMessage = '';
   searchQuery = '';
   filterKyc: string = 'ALL';
+  activeYear: string | null = null;
 
-  // Details Modal/Sidebar
-  selectedStudent: StudentResponse | null = null;
+  selectedInscription: any | null = null;
   studentDocuments: DocumentResponse[] = [];
   isLoadingDocs = false;
 
-  constructor(private studentService: StudentService) {}
+  constructor(
+    private inscriptionService: InscriptionAnnuelleService,
+    private studentService: StudentService,
+    private scolariteYearService: ScolariteYearService
+  ) {}
 
   ngOnInit(): void {
-    this.loadStudents();
+    this.loadActiveYear();
   }
 
-  loadStudents() {
+  loadActiveYear() {
+    this.scolariteYearService.getActiveYear().subscribe(year => {
+      this.activeYear = year ? year.libelle : null;
+      this.loadInscriptions();
+    });
+  }
+
+  loadInscriptions() {
     this.isLoading = true;
-    this.errorMessage = '';
-    
-    if (this.filterKyc !== 'ALL') {
-      this.studentService.findByStatutKYC(this.filterKyc).subscribe({
-        next: (res) => {
-          this.students = res.content || [];
-          this.applyFilter();
-          this.isLoading = false;
-        },
-        error: (err) => {
-          this.students = [];
-          this.applyFilter();
-          this.isLoading = false;
-        }
-      });
-    } else {
-      this.studentService.findAll().subscribe({
-        next: (res) => {
-          this.students = res.content || [];
-          this.applyFilter();
-          this.isLoading = false;
-        },
-        error: (err) => {
-          this.students = [];
-          this.applyFilter();
-          this.isLoading = false;
-        }
-      });
-    }
+    this.inscriptionService.findAll().subscribe({
+      next: (res) => {
+        const all = res.content || [];
+        this.inscriptions = all.filter((i: any) => i.anneeAcademique === this.activeYear);
+        this.applyFilter();
+        this.isLoading = false;
+      },
+      error: () => {
+        this.errorMessage = 'Erreur lors du chargement des inscriptions';
+        this.isLoading = false;
+      }
+    });
   }
 
   applyFilter() {
     if (!this.searchQuery) {
-      this.filteredStudents = this.students;
+      this.filteredInscriptions = this.inscriptions;
       return;
     }
     const q = this.searchQuery.toLowerCase();
-    this.filteredStudents = this.students.filter(s => 
-      (s.nom && s.nom.toLowerCase().includes(q)) || 
-      (s.prenom && s.prenom.toLowerCase().includes(q)) || 
-      (s.email && s.email.toLowerCase().includes(q))
+    this.filteredInscriptions = this.inscriptions.filter(i => 
+      (i.studentNom && i.studentNom.toLowerCase().includes(q)) || 
+      (i.studentPrenom && i.studentPrenom.toLowerCase().includes(q))
     );
   }
 
   setKycFilter(statut: string) {
     this.filterKyc = statut;
-    this.loadStudents();
+    this.loadInscriptions(); 
   }
 
-  viewDetails(student: StudentResponse) {
-    this.selectedStudent = student;
+  viewDetails(ins: any) {
+    this.selectedInscription = ins;
     this.studentDocuments = [];
     this.isLoadingDocs = true;
     
-    this.studentService.getDocuments(student.trackingId).subscribe({
+    this.studentService.getDocuments(ins.studentTrackingId).subscribe({
       next: (res) => {
         this.studentDocuments = res.content || [];
         this.isLoadingDocs = false;
       },
-      error: (err) => {
-        if(err.status !== 404) {
-          console.error("Erreur docs", err);
-        }
+      error: () => {
         this.isLoadingDocs = false;
       }
     });
   }
 
+  updateStatus(statut: string) {
+    if (!this.selectedInscription) return;
+
+    this.inscriptionService.updateStatus(this.selectedInscription.trackingId, statut).subscribe({
+      next: () => {
+        this.loadInscriptions(); // Recharger la liste
+        this.closeDetails();
+      },
+      error: (err) => {
+        console.error("Erreur mise à jour statut", err);
+      }
+    });
+  }
+
   closeDetails() {
-    this.selectedStudent = null;
+    this.selectedInscription = null;
     this.studentDocuments = [];
   }
-
-  getShortId(id: string): string {
-    if (!id) return '';
-    return id.substring(0, 8).toUpperCase();
-  }
 }
-

@@ -78,7 +78,8 @@ export class VersementsComponent implements OnInit {
     
     this.walletService.filterWallets(this.filterType, this.filterNiveau, 0, 50).subscribe({
       next: (res) => {
-        this.wallets = res.content || [];
+        // Filtrer OPÉRATEUR_BANCAIRE
+        this.wallets = (res.content || []).filter((w: WalletResponse) => w.typeWallet !== 'OPÉRATEUR_BANCAIRE');
         this.isLoading = false;
       },
       error: (err) => {
@@ -109,6 +110,23 @@ export class VersementsComponent implements OnInit {
     return new Intl.NumberFormat('fr-FR').format(value);
   }
 
+  updateStatus(wallet: WalletResponse, statut: string) {
+    this.walletService.updateStatus(wallet.trackingId, statut).subscribe({
+      next: () => {
+        this.loadWallets();
+      },
+      error: (err) => {
+        console.error("Détails erreur wallet:", err);
+        alert("Erreur: " + (err.error?.message || "Mise à jour impossible"));
+      }
+    });
+  }
+
+  onStatusChange(wallet: WalletResponse, event: Event) {
+    const select = event.target as HTMLSelectElement;
+    this.updateStatus(wallet, select.value);
+  }
+
   // --- Manual Versement ---
   openManualVersement(wallet: WalletResponse) {
     if (wallet.typeWallet !== 'BOUTIQUE') return;
@@ -131,7 +149,7 @@ export class VersementsComponent implements OnInit {
     const payload = {
       trackingWalletId: this.selectedWalletForManual.trackingId,
       montantVerse: montant,
-      typeVersement: 'TRANSFERT_MANUEL',
+      typeVersement: 'RECHARGE_QUOTA_BOUTIQUE',
       statut: 'VALIDEE'
     };
 
@@ -150,6 +168,7 @@ export class VersementsComponent implements OnInit {
 
   // --- Mass Versement ---
   openMassVersement() {
+    console.log("Tentative d'ouverture du modal de versement en masse");
     this.massVersementForm.reset({ target: 'BOUTIQUE' });
     this.massStep = 1;
     this.showMassVersementModal = true;

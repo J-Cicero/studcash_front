@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../core/services/user.service';
+import { UniversiteService } from '../../../core/services/universite.service';
+import { BanqueService } from '../../../core/services/banque.service';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -29,7 +31,7 @@ export class UtilisateursComponent implements OnInit {
   errorMessage = '';
 
   filterRole = 'ALL';
-  roles = ['ALL', 'ADMIN_GNS', 'ADMIN_DBS', 'ADMIN_UL', 'COMMERCANT', 'ETUDIANT'];
+  roles = ['ALL', 'ADMIN_GNS', 'ADMIN_DBS', 'UNIVERSITY_ADMIN', 'ADMIN_BANQUE', 'COMMERCANT', 'ETUDIANT'];
 
   get filteredUsers() {
     if (this.filterRole === 'ALL') return this.users;
@@ -54,7 +56,18 @@ export class UtilisateursComponent implements OnInit {
   showRestoreModal = false;
   isProcessingRestore = false;
 
-  constructor(private userService: UserService) {
+  showCreateModal = false;
+  newUserForm: any = { nom: '', prenom: '', telephone: '', email: '', motDePasse: '', role: 'ADMIN_DBS', universiteTrackingId: '', banquePartenaireTrackingId: '' };
+  isProcessingCreate = false;
+  
+  universites: any[] = [];
+  banques: any[] = [];
+
+  constructor(
+    private userService: UserService,
+    private universiteService: UniversiteService,
+    private banqueService: BanqueService
+  ) {
     this.searchSubject.pipe(
       debounceTime(300),
       distinctUntilChanged()
@@ -69,6 +82,12 @@ export class UtilisateursComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUsers();
+    this.loadEntities();
+  }
+
+  loadEntities() {
+    this.universiteService.findAll().subscribe((res: any) => this.universites = res.content || []);
+    this.banqueService.getAllBanques().subscribe((res: any) => this.banques = res || []);
   }
 
   loadUsers() {
@@ -84,6 +103,31 @@ export class UtilisateursComponent implements OnInit {
         if(err.status === 404) this.users = [];
         else this.errorMessage = 'Erreur lors du chargement des utilisateurs.';
         this.isLoading = false;
+      }
+    });
+  }
+
+  openCreateModal() {
+    this.newUserForm = { nom: '', prenom: '', telephone: '', email: '', motDePasse: '', role: 'ADMIN_DBS', universiteTrackingId: '', banquePartenaireTrackingId: '' };
+    this.showCreateModal = true;
+  }
+
+  closeCreateModal() {
+    this.showCreateModal = false;
+  }
+
+  createUser() {
+    this.isProcessingCreate = true;
+    this.userService.register(this.newUserForm).subscribe({
+      next: () => {
+        this.isProcessingCreate = false;
+        this.closeCreateModal();
+        this.loadUsers();
+      },
+      error: (err) => {
+        this.isProcessingCreate = false;
+        const msg = err.error?.message || "Erreur lors de la création de l'utilisateur.";
+        alert(msg);
       }
     });
   }

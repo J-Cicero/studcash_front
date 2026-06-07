@@ -6,6 +6,7 @@ import { DocumentRequisService } from '../../../core/services/document-requis.se
 import { ScolariteYearService, ScolariteYear } from '../../../core/services/scolarite-year.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { LoginResponse } from '../../../core/models/auth.model';
+import { SystemStatusService } from '../../../core/services/system-status.service';
 
 @Component({
   selector: 'app-parametres-gns',
@@ -53,6 +54,7 @@ export class ParametresGnsComponent implements OnInit {
     private documentRequisService: DocumentRequisService,
     private scolariteYearService: ScolariteYearService,
     private authService: AuthService,
+    private systemStatusService: SystemStatusService,
     private fb: FormBuilder
   ) {
     this.docCreateForm = this.fb.group({
@@ -78,6 +80,16 @@ export class ParametresGnsComponent implements OnInit {
     this.loadParametres();
     this.loadDocumentsRequis();
     this.loadScolariteYear();
+    this.checkSystemStatus();
+  }
+
+  checkSystemStatus() {
+    this.systemStatusService.getStatus().subscribe(status => {
+      if (status.currentStatus === 'ACTIVE') {
+        this.paramForm.disable();
+        this.docCreateForm.disable();
+      }
+    });
   }
 
   setTab(tab: 'global' | 'kyc' | 'scolarite') {

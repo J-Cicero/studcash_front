@@ -1,0 +1,21 @@
+          <td class="px-6 py-4 whitespace-nowrap text-right">
+            <div class="flex items-center justify-end gap-2">
+              <!-- Recharger (Boutique uniquement) -->
+              <button *ngIf="w.typeWallet === 'BOUTIQUE'" (click)="openManualVersement(w)" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 font-bold text-xs bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/50 px-3 py-1.5 rounded-lg transition-colors">
+                Recharger
+              </button>
+
+              <!-- Actions de Statut (Boutique & Étudiant uniquement) -->
+              <div *ngIf="w.typeWallet === 'BOUTIQUE' || w.typeWallet === 'ETUDIANT'" class="relative inline-block text-left">
+                <select (change)="updateStatus(w, $event.target.value)" class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold rounded-lg px-2 py-1.5 text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-indigo-500 transition-colors">
+                  <option [selected]="w.statutWallet === 'ACTIF'" value="ACTIF">Activer</option>
+                  <option [selected]="w.statutWallet === 'GELE'" value="GELE">Geler</option>
+                  <option [selected]="w.statutWallet === 'BLOQUE'" value="BLOQUE">Bloquer</option>
+                </select>
+              </div>
+
+              <span *ngIf="w.typeWallet === 'UNIVERSITE'" class="text-slate-400 text-xs italic">
+                Lecture seule
+              </span>
+            </div>
+          </td>

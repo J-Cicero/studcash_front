@@ -44,4 +44,8 @@ export class WalletService {
   updateWallet(trackingId: string, request: any): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/${trackingId}`, request);
   }
+
+  updateStatus(trackingId: string, statut: string): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${trackingId}`, { statutWallet: statut });
+  }
 }
