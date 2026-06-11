@@ -1,0 +1,40 @@
+<div class="mb-8">
+  <h2 class="text-2xl font-bold text-slate-900 dark:text-white">File d'attente des Liquidations</h2>
+  <p class="text-slate-500">Validez les virements bancaires pour les boutiques ayant atteint leur quota.</p>
+</div>
+
+<div class="glass-panel rounded-2xl overflow-hidden">
+  <table class="min-w-full divide-y divide-slate-200">
+    <thead class="bg-slate-50">
+      <tr>
+        <th class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase">Boutique</th>
+        <th class="px-6 py-3 text-right text-xs font-bold text-slate-500 uppercase">Montant</th>
+        <th class="px-6 py-3 text-center text-xs font-bold text-slate-500 uppercase">Action</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-200">
+      <tr *ngFor="let l of liquidations">
+        <td class="px-6 py-4 font-medium text-slate-900">{{ l.boutiqueName }}</td>
+        <td class="px-6 py-4 text-right font-bold text-indigo-600">{{ l.montantALiquider | number }} FCFA</td>
+        <td class="px-6 py-4 text-center">
+          <button (click)="openValidationModal(l)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all">
+            Valider Virement
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Modal Validation -->
+<div *ngIf="selectedLiquidation" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+  <div class="bg-white rounded-2xl p-6 w-full max-w-sm">
+    <h3 class="text-lg font-bold mb-4">Valider le virement</h3>
+    <p class="text-sm text-slate-600 mb-4">Boutique: {{ selectedLiquidation.boutiqueName }}</p>
+    <input [(ngModel)]="referenceVirement" type="text" placeholder="Référence virement bancaire" class="w-full p-2 border rounded-lg mb-4">
+    <div class="flex space-x-3">
+      <button (click)="selectedLiquidation = null" class="flex-1 py-2 border rounded-lg">Annuler</button>
+      <button (click)="valider()" class="flex-1 py-2 bg-indigo-600 text-white rounded-lg font-bold">Confirmer</button>
+    </div>
+  </div>
+</div>

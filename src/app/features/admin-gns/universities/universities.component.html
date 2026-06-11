@@ -60,6 +60,7 @@
           <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statistiques</th>
           <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Solde Wallet</th>
           <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statut</th>
+          <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Action</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
@@ -100,9 +101,14 @@
               Inactive
             </span>
           </td>
+          <td class="px-6 py-5 whitespace-nowrap">
+            <button (click)="toggleUniversiteStatus(u)" class="text-indigo-600 hover:text-indigo-900 font-medium text-sm">
+                {{ u.estActive ? 'Désactiver' : 'Activer' }}
+            </button>
+          </td>
         </tr>
         <tr *ngIf="universities.length === 0 && !isLoading">
-          <td colspan="5" class="px-6 py-12 text-center">
+          <td colspan="6" class="px-6 py-12 text-center">
             <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">Aucune université configurée.</p>
           </td>
         </tr>

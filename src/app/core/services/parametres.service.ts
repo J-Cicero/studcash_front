@@ -33,12 +33,4 @@ export class ParametresService {
   saveParametreGns(param: Parametre): Observable<Parametre> {
     return this.http.post<Parametre>(`${environment.apiUrl}/parametres-gns`, param);
   }
-
-  getParametresDbs(): Observable<PaginatedResponse<Parametre>> {
-    return this.http.get<PaginatedResponse<Parametre>>(`${environment.apiUrl}/parametres-dbs?size=100`);
-  }
-
-  saveParametreDbs(param: Parametre): Observable<Parametre> {
-    return this.http.post<Parametre>(`${environment.apiUrl}/parametres-dbs`, param);
-  }
 }

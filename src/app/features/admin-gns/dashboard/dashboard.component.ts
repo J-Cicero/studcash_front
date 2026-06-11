@@ -57,17 +57,12 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   loadGlobalStats() {
     const defaultStats: GlobalStats = {
-      totalBourses: 0,
+      totalVolume: 0,
+      totalCommission: 0,
       totalStudents: 0,
       totalBoutiques: 0,
       totalUniversities: 0,
-      totalTransactions: 0,
-      totalEligibles: 0,
-      totalPending: 0,
-      verificationRate: 0,
-      volumeToday: 0,
-      failedTxns: 0,
-      successRate: 0
+      totalTransactions: 0
     };
 
     this.dashboardService.getGlobalStats().subscribe({
@@ -109,8 +104,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     const ctx = this.chartCanvas.nativeElement.getContext('2d');
     
     const labels = this.fluxData.map(d => d.mois);
-    const versements = this.fluxData.map(d => d.bourses);
-    const achats = this.fluxData.map(d => d.remboursements); // PAIEMENTS include both ACHAT and SCOLARITE
+    const volumes = this.fluxData.map(d => d.volume);
+    const commissions = this.fluxData.map(d => d.commissions);
 
     this.chart = new Chart(ctx, {
       type: 'line',
@@ -118,19 +113,19 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         labels: labels,
         datasets: [
           {
-            label: 'Versements Bourses',
-            data: versements,
-            borderColor: '#4f46e5', // indigo-600
-            backgroundColor: 'rgba(79, 70, 229, 0.1)',
+            label: 'Volume Paiements',
+            data: volumes,
+            borderColor: '#06b6d4', // cyan-500
+            backgroundColor: 'rgba(6, 182, 212, 0.1)',
             borderWidth: 2,
             fill: true,
             tension: 0.4
           },
           {
-            label: 'Volume Paiements',
-            data: achats,
-            borderColor: '#06b6d4', // cyan-500
-            backgroundColor: 'rgba(6, 182, 212, 0.1)',
+            label: 'Commissions Générées',
+            data: commissions,
+            borderColor: '#4f46e5', // indigo-600
+            backgroundColor: 'rgba(79, 70, 229, 0.1)',
             borderWidth: 2,
             fill: true,
             tension: 0.4

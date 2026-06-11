@@ -42,8 +42,6 @@ export class LoginComponent {
         // Redirection logic based on roles
         if (this.authService.hasRole('ADMIN_GNS')) {
           this.router.navigate(['/admin-gns/dashboard']);
-        } else if (this.authService.hasRole('ADMIN_DBS')) {
-          this.router.navigate(['/admin-dbs/dashboard']);
         } else if (this.authService.hasRole('ADMIN_BANQUE')) {
           this.router.navigate(['/bank-portal/dashboard']);
         } else if (this.authService.hasRole('UNIVERSITY_ADMIN')) {

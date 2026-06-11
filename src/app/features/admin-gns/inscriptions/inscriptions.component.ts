@@ -37,9 +37,16 @@ export class InscriptionsComponent implements OnInit {
   }
 
   loadActiveYear() {
-    this.scolariteYearService.getActiveYear().subscribe(year => {
-      this.activeYear = year ? year.libelle : null;
-      this.loadInscriptions();
+    this.scolariteYearService.getActiveYear().subscribe({
+      next: (year) => {
+        this.activeYear = year ? year.libelle : null;
+        this.loadInscriptions();
+      },
+      error: (err) => {
+        console.log("Aucune année scolaire active trouvée.");
+        this.activeYear = null;
+        this.loadInscriptions(); // On continue même sans année active
+      }
     });
   }
 
@@ -48,7 +55,12 @@ export class InscriptionsComponent implements OnInit {
     this.inscriptionService.findAll().subscribe({
       next: (res) => {
         const all = res.content || [];
-        this.inscriptions = all.filter((i: any) => i.anneeAcademique === this.activeYear);
+        // Si pas d'année active, on peut soit tout afficher, soit rien
+        if (this.activeYear) {
+          this.inscriptions = all.filter((i: any) => i.anneeAcademique === this.activeYear);
+        } else {
+          this.inscriptions = all; // Option: Afficher tout s'il n'y a pas d'année active
+        }
         this.applyFilter();
         this.isLoading = false;
       },

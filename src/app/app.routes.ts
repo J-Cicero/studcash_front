@@ -63,68 +63,6 @@ export const routes: Routes = [
     ]
   },
   {
-    path: 'admin-dbs',
-    loadComponent: () => import('./layouts/dbs-layout/dbs-layout.component').then(m => m.DbsLayoutComponent),
-    children: [
-      {
-        path: '',
-        redirectTo: 'dashboard',
-        pathMatch: 'full'
-      },
-      {
-        path: 'dashboard',
-        loadComponent: () => import('./features/admin-dbs/dashboard/dashboard.component').then(m => m.DashboardComponent)
-      },
-      {
-        path: 'parametres',
-        loadComponent: () => import('./features/admin-dbs/parametres/parametres.component').then(m => m.ParametresDbsComponent)
-      },
-      {
-        path: 'etudiants',
-        loadComponent: () => import('./features/admin-dbs/etudiants/etudiants.component').then(m => m.EtudiantsComponent)
-      },
-      {
-        path: 'universites',
-        loadComponent: () => import('./features/admin-dbs/universites/universites.component').then(m => m.UniversitesComponent)
-      },
-      {
-        path: 'profile',
-        loadComponent: () => import('./features/profile/profile.component').then(m => m.ProfileComponent)
-      }
-    ]
-  },
-  {
-    path: 'admin-university',
-    loadComponent: () => import('./layouts/university-layout/university-layout.component').then(m => m.UniversityLayoutComponent),
-    children: [
-      {
-        path: '',
-        redirectTo: 'dashboard',
-        pathMatch: 'full'
-      },
-      {
-        path: 'dashboard',
-        loadComponent: () => import('./features/admin-university/dashboard/dashboard.component').then(m => m.DashboardComponent)
-      },
-      {
-        path: 'inscriptions',
-        loadComponent: () => import('./features/admin-university/inscriptions/inscriptions.component').then(m => m.InscriptionsComponent)
-      },
-      {
-        path: 'paiements',
-        loadComponent: () => import('./features/admin-university/paiements/paiements.component').then(m => m.PaiementsComponent)
-      },
-      {
-        path: 'parametres',
-        loadComponent: () => import('./features/admin-university/parametres/parametres.component').then(m => m.ParametresComponent)
-      },
-      {
-        path: 'profile',
-        loadComponent: () => import('./features/profile/profile.component').then(m => m.ProfileComponent)
-      }
-    ]
-  },
-  {
     path: 'bank-portal',
     loadComponent: () => import('./layouts/bank-layout/bank-layout.component').then(m => m.BankLayoutComponent),
     children: [

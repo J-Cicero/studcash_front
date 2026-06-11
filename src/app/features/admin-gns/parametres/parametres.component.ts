@@ -27,7 +27,13 @@ export class ParametresGnsComponent implements OnInit {
   editingParam: Parametre | null = null;
   paramForm: FormGroup;
   isParamModalOpen = false;
-  paramOptions = ['TAUX_COMMISSION_PAIEMENT', 'FRAIS_CREATION_CARTE', 'RETENUE_BOURSE_ETUDIANT'];
+  paramOptions = [
+    'MONTANT_BOURSE_BASE',
+    'MONTANT_BOURSE_MAJORATION',
+    'TAUX_COMMISSION_PAIEMENT',
+    'PART_COMMISSION_GNS',
+    'FRAIS_CREATION_CARTE'
+  ];
 
   // KYC Documents
   documentsRequis: any[] = [];
@@ -116,6 +122,10 @@ export class ParametresGnsComponent implements OnInit {
   openParamModal(param?: Parametre) {
     this.successMessage = '';
     this.errorMessage = '';
+    
+    // On s'assure que le formulaire est actif avant de faire quoi que ce soit
+    this.paramForm.enable();
+
     if (param) {
       this.editingParam = param;
       this.paramForm.patchValue({
@@ -128,7 +138,6 @@ export class ParametresGnsComponent implements OnInit {
     } else {
       this.editingParam = null;
       this.paramForm.reset({ nomParametre: 'TAUX_COMMISSION_PAIEMENT' });
-      this.paramForm.get('nomParametre')?.enable();
     }
     this.isParamModalOpen = true;
   }
@@ -186,6 +195,7 @@ export class ParametresGnsComponent implements OnInit {
   openDocModal() {
     this.successMessage = '';
     this.errorMessage = '';
+    this.docCreateForm.enable(); // Force l'activation des champs
     this.docCreateForm.reset({ niveau: 'L1_ANNEE', typeDocument: 'RELEVE_BAC', obligatoire: true, estActif: true });
     this.isDocModalOpen = true;
   }

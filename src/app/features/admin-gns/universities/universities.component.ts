@@ -97,6 +97,20 @@ export class UniversitiesComponent implements OnInit {
     });
   }
 
+  toggleUniversiteStatus(univ: any) {
+    this.universiteService.updateEtat(univ.trackingId, !univ.estActive).subscribe({
+      next: (res) => {
+        this.loadUniversities();
+        this.successMessage = `Université ${res.nom} ${res.estActive ? 'activée' : 'désactivée'}.`;
+        setTimeout(() => this.successMessage = '', 3000);
+      },
+      error: (err) => {
+        this.errorMessage = "Erreur lors du changement de statut.";
+        setTimeout(() => this.errorMessage = '', 5000);
+      }
+    });
+  }
+
   formatNumberCompact(value: number | null | undefined): string {
     if (value == null || isNaN(value)) return '0';
     if (value >= 1000000) {

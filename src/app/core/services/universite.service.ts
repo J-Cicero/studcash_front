@@ -29,6 +29,11 @@ export class UniversiteService {
     return this.http.post<any>(this.apiUrl, data);
   }
 
+  updateEtat(trackingId: string, etat: boolean): Observable<any> {
+    const params = new HttpParams().set('etat', etat.toString());
+    return this.http.patch<any>(`${this.apiUrl}/etat/${trackingId}`, {}, { params });
+  }
+
   getSummaryStats(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/summary-stats`);
   }
