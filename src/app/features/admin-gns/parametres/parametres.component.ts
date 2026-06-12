@@ -7,7 +7,7 @@ import { ScolariteYearService, ScolariteYear } from '../../../core/services/scol
 import { AuthService } from '../../../core/services/auth.service';
 import { LoginResponse } from '../../../core/models/auth.model';
 import { SystemStatusService } from '../../../core/services/system-status.service';
-import { BanqueService, CompteBancaireGns } from '../../../core/services/banque.service';
+import { BanqueService, CompteBancaire } from '../../../core/services/banque.service';
 
 @Component({
   selector: 'app-parametres-gns',
@@ -17,7 +17,7 @@ import { BanqueService, CompteBancaireGns } from '../../../core/services/banque.
   styleUrls: ['./parametres.component.scss']
 })
 export class ParametresGnsComponent implements OnInit {
-  activeTab: 'global' | 'kyc' | 'scolarite' | 'bancaire' = 'global';
+  activeTab: 'global' | 'kyc' | 'bancaire' | 'banques' = 'global';
 
   // Global Parameters
   parametres: Parametre[] = [];
@@ -48,18 +48,22 @@ export class ParametresGnsComponent implements OnInit {
 
   // Scolarite Year
   activeYear: ScolariteYear | null = null;
-  scolariteYears: ScolariteYear[] = [];
-  isLoadingYear = false;
-  isCreatingYear = false;
-  scolariteForm: FormGroup;
-  isYearModalOpen = false;
 
   // Bancaire
-  comptesBancaires: CompteBancaireGns[] = [];
+  comptesBancaires: CompteBancaire[] = [];
+  banques: any[] = [];
   isLoadingBank = false;
-  isBankModalOpen = false;
-  bankForm: FormGroup;
-  editingCompte: CompteBancaireGns | null = null;
+  isBanqueModalOpen = false;
+  isCompteGnsModalOpen = false;
+  banqueForm: FormGroup;
+  compteGnsForm: FormGroup;
+  // RIB Upload state
+  ribCompteStep: 'upload' | 'details' = 'upload';
+  ribUploadedFile: File | null = null;
+  ribUploadedTrackingId: string | null = null;
+  ribUploadedUrl: string | null = null;
+  isUploadingRib = false;
+  isSavingCompte = false;
 
   currentUser: LoginResponse | null = null;
 
@@ -74,24 +78,26 @@ export class ParametresGnsComponent implements OnInit {
   ) {
     this.docCreateForm = this.fb.group({
       niveau: ['L1_ANNEE', Validators.required],
+      targetType: ['STUDENT', Validators.required],
       typeDocument: ['RELEVE_BAC', Validators.required],
       obligatoire: [true],
       estActif: [true]
-    });
-    this.scolariteForm = this.fb.group({
-      libelle: ['', Validators.required],
-      dateDebut: ['', Validators.required],
-      dateFin: ['', Validators.required]
     });
     this.paramForm = this.fb.group({
       nomParametre: ['TAUX_COMMISSION_PAIEMENT', Validators.required],
       valeurParametre: ['', Validators.required],
       description: ['']
     });
-    this.bankForm = this.fb.group({
-      nomBanque: ['', Validators.required],
-      codeBanque: ['', Validators.required],
-      rib: ['', Validators.required]
+    this.banqueForm = this.fb.group({
+      nom: ['', Validators.required],
+      code: ['', Validators.required],
+      logoUrl: ['']
+    });
+    this.compteGnsForm = this.fb.group({
+      banqueTrackingId: ['', Validators.required],
+      numeroCompte: ['', Validators.required],
+      typeProprietaire: ['GNS', Validators.required],
+      ribDocumentTrackingId: [''] // Optionnel pour les comptes GNS
     });
   }
 
@@ -101,17 +107,21 @@ export class ParametresGnsComponent implements OnInit {
     this.loadTabData(this.activeTab);
   }
 
-  loadTabData(tab: 'global' | 'kyc' | 'scolarite' | 'bancaire') {
+  loadTabData(tab: 'global' | 'kyc' | 'scolarite' | 'bancaire' | 'banques') {
     if (tab === 'global') {
       this.loadParametres();
       this.loadActiveYearOnly();
-    } else if (tab === 'scolarite') {
-      this.loadScolariteYear();
     } else if (tab === 'bancaire') {
       this.loadComptesBancaires();
+    } else if (tab === 'banques') {
+      this.loadBanques();
     } else if (tab === 'kyc') {
       this.loadDocumentsRequis();
     }
+  }
+
+  loadBanques() {
+    this.banqueService.getAllBanques().subscribe(res => this.banques = res);
   }
 
   loadActiveYearOnly() {
@@ -132,12 +142,12 @@ export class ParametresGnsComponent implements OnInit {
       if (status.currentStatus === 'ACTIVE') {
         this.paramForm.disable();
         this.docCreateForm.disable();
-        this.bankForm.disable();
+        this.banqueForm.disable();
       }
     });
   }
 
-  setTab(tab: 'global' | 'kyc' | 'scolarite' | 'bancaire') {
+  setTab(tab: 'global' | 'kyc' | 'bancaire' | 'banques') {
     this.activeTab = tab;
     this.successMessage = '';
     this.errorMessage = '';
@@ -221,8 +231,8 @@ export class ParametresGnsComponent implements OnInit {
   loadDocumentsRequis() {
     this.isLoadingDocs = true;
     this.documentRequisService.findAll().subscribe({
-      next: (res) => {
-        this.documentsRequis = res;
+      next: (res: any) => {
+        this.documentsRequis = res.content ? res.content : res;
         this.isLoadingDocs = false;
       },
       error: (err) => {
@@ -236,7 +246,7 @@ export class ParametresGnsComponent implements OnInit {
     this.successMessage = '';
     this.errorMessage = '';
     this.docCreateForm.enable(); // Force l'activation des champs
-    this.docCreateForm.reset({ niveau: 'L1_ANNEE', typeDocument: 'RELEVE_BAC', obligatoire: true, estActif: true });
+    this.docCreateForm.reset({ niveau: 'L1_ANNEE', targetType: 'STUDENT', typeDocument: 'RELEVE_BAC', obligatoire: true, estActif: true });
     this.isDocModalOpen = true;
   }
 
@@ -279,92 +289,6 @@ export class ParametresGnsComponent implements OnInit {
     }
   }
 
-  // --- Scolarite Year ---
-  loadScolariteYear() {
-    this.isLoadingYear = true;
-    
-    // Get active year
-    this.scolariteYearService.getActiveYear().subscribe({
-      next: (res) => {
-        this.activeYear = res;
-      },
-      error: (err) => {
-        if(err.status === 404) {
-          this.activeYear = null;
-        }
-      }
-    });
-
-    // Get all years for history
-    this.scolariteYearService.getAll().subscribe({
-      next: (res) => {
-        this.scolariteYears = res.content || [];
-        this.isLoadingYear = false;
-      },
-      error: (err) => {
-        this.errorMessage = 'Erreur lors du chargement des années scolaires.';
-        this.isLoadingYear = false;
-      }
-    });
-  }
-
-  openYearModal() {
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.scolariteForm.reset();
-    this.isYearModalOpen = true;
-  }
-
-  closeYearModal() {
-    this.isYearModalOpen = false;
-  }
-
-  onSubmitYear() {
-    if (this.scolariteForm.invalid) return;
-    
-    const confirmMsg = 'Voulez-vous créer cette année scolaire ?';
-    if (!confirm(confirmMsg)) return;
-
-    this.isCreatingYear = true;
-    this.successMessage = '';
-    this.errorMessage = '';
-
-    const req = { ...this.scolariteForm.value, estOuverte: true };
-
-    this.scolariteYearService.create(req).subscribe({
-      next: (res) => {
-        this.successMessage = 'Nouvelle année scolaire créée avec succès.';
-        this.isCreatingYear = false;
-        this.closeYearModal();
-        this.loadScolariteYear();
-      },
-      error: (err) => {
-        this.errorMessage = 'Erreur lors de la création de l\'année.';
-        this.isCreatingYear = false;
-      }
-    });
-  }
-
-  cloturerActiveYear() {
-    if (!this.activeYear || !this.activeYear.trackingId) return;
-    if (confirm(`Êtes-vous sûr de vouloir clôturer l'année scolaire "${this.activeYear.libelle}" ?`)) {
-      this.isLoadingYear = true;
-      this.successMessage = '';
-      this.errorMessage = '';
-      
-      this.scolariteYearService.cloturer(this.activeYear.trackingId).subscribe({
-        next: () => {
-          this.successMessage = "Année scolaire clôturée avec succès.";
-          this.loadScolariteYear();
-        },
-        error: (err) => {
-          this.errorMessage = "Erreur lors de la clôture de l'année scolaire.";
-          this.isLoadingYear = false;
-        }
-      });
-    }
-  }
-
   // --- Bancaire ---
   loadComptesBancaires() {
     this.isLoadingBank = true;
@@ -378,55 +302,84 @@ export class ParametresGnsComponent implements OnInit {
         this.isLoadingBank = false;
       }
     });
+    this.banqueService.getAllBanques().subscribe(res => this.banques = res);
   }
 
-  openBankModal(compte?: CompteBancaireGns) {
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.bankForm.enable();
-
-    if (compte) {
-      this.editingCompte = compte;
-      this.bankForm.patchValue({
-        nomBanque: compte.nomBanque,
-        codeBanque: compte.codeBanque,
-        rib: compte.rib
-      });
-    } else {
-      this.editingCompte = null;
-      this.bankForm.reset();
-    }
-    this.isBankModalOpen = true;
+  openBanqueModal() {
+    this.banqueForm.reset();
+    this.isBanqueModalOpen = true;
   }
 
-  closeBankModal() {
-    this.isBankModalOpen = false;
-    this.editingCompte = null;
-    this.bankForm.reset();
+  closeBanqueModal() {
+    this.isBanqueModalOpen = false;
   }
 
-  saveCompteBancaire() {
-    if (this.bankForm.invalid) return;
-
-    this.isLoadingBank = true;
-    const formVal = this.bankForm.value;
-
-    const payload: CompteBancaireGns = {
-      ...(this.editingCompte || {}),
-      nomBanque: formVal.nomBanque,
-      codeBanque: formVal.codeBanque,
-      rib: formVal.rib
-    };
-
-    this.banqueService.saveCompteGns(payload).subscribe({
+  saveBanque() {
+    if (this.banqueForm.invalid) return;
+    this.banqueService.createBanque(this.banqueForm.value).subscribe({
       next: () => {
-        this.successMessage = this.editingCompte ? 'Compte bancaire mis à jour.' : 'Compte bancaire ajouté.';
-        this.closeBankModal();
+        this.successMessage = 'Banque ajoutée.';
+        this.closeBanqueModal();
+        this.loadComptesBancaires();
+      }
+    });
+  }
+
+  openCompteGnsModal() {
+    this.compteGnsForm.reset({ typeProprietaire: 'GNS' });
+    this.ribCompteStep = 'upload';
+    this.ribUploadedFile = null;
+    this.ribUploadedTrackingId = null;
+    this.ribUploadedUrl = null;
+    this.isUploadingRib = false;
+    this.isSavingCompte = false;
+    this.isCompteGnsModalOpen = true;
+  }
+
+  closeCompteGnsModal() {
+    this.isCompteGnsModalOpen = false;
+  }
+
+  onRibFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.ribUploadedFile = input.files[0];
+    }
+  }
+
+  uploadRibAndNext() {
+    if (!this.ribUploadedFile) return;
+    this.isUploadingRib = true;
+    this.errorMessage = '';
+    this.banqueService.uploadRib(this.ribUploadedFile).subscribe({
+      next: (res) => {
+        this.ribUploadedTrackingId = res.trackingId;
+        this.ribUploadedUrl = res.urlFichier;
+        this.compteGnsForm.patchValue({ ribDocumentTrackingId: res.trackingId });
+        this.ribCompteStep = 'details';
+        this.isUploadingRib = false;
+      },
+      error: (err) => {
+        this.errorMessage = err.error?.message || "Erreur lors de l'upload du document RIB.";
+        this.isUploadingRib = false;
+      }
+    });
+  }
+
+  saveCompteGns() {
+    if (this.compteGnsForm.invalid || !this.ribUploadedTrackingId) return;
+    this.isSavingCompte = true;
+    this.errorMessage = '';
+    this.banqueService.saveCompteGns(this.compteGnsForm.value).subscribe({
+      next: () => {
+        this.successMessage = 'Compte GNS ajouté avec succès.';
+        this.isSavingCompte = false;
+        this.closeCompteGnsModal();
         this.loadComptesBancaires();
       },
-      error: () => {
-        this.errorMessage = 'Erreur lors de la sauvegarde du compte bancaire.';
-        this.isLoadingBank = false;
+      error: (err) => {
+        this.errorMessage = err.error?.message || 'Erreur lors de la création du compte.';
+        this.isSavingCompte = false;
       }
     });
   }

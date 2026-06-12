@@ -71,8 +71,8 @@ export class VersementsEtudiantsComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        if(err.status === 404) this.wallets = [];
-        else this.errorMessage = 'Erreur lors du chargement des portefeuilles étudiants.';
+        if(err.status === 404 || err.status === 204) this.wallets = [];
+        else console.error('Erreur chargement portefeuilles:', err);
         this.isLoading = false;
       }
     });
@@ -177,5 +177,28 @@ export class VersementsEtudiantsComponent implements OnInit {
         alert("Erreur lors du versement en masse des bourses.");
       }
     });
+  }
+
+  handleRemiseAZeroEtudiants() {
+    if (!this.massVersementForm.value.scolariteYearTrackingId) {
+      alert("Veuillez sélectionner une année scolaire.");
+      return;
+    }
+    if (confirm('Êtes-vous sûr de vouloir remettre à zéro les portefeuilles des étudiants pour cette année ? Cette action est irréversible.')) {
+      this.isProcessingMass = true;
+      this.versementService.resetMasseEtudiants({
+        scolariteYearTrackingId: this.massVersementForm.value.scolariteYearTrackingId
+      }).subscribe({
+        next: () => {
+          this.isProcessingMass = false;
+          alert("Remise à zéro effectuée avec succès.");
+          this.loadWallets();
+        },
+        error: () => {
+          this.isProcessingMass = false;
+          alert("Erreur lors de la remise à zéro.");
+        }
+      });
+    }
   }
 }

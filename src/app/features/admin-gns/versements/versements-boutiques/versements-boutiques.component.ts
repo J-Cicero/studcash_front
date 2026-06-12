@@ -159,4 +159,24 @@ export class VersementsBoutiquesComponent implements OnInit {
       }
     });
   }
+
+  handleRemiseAZeroBoutiques() {
+    if (confirm('Êtes-vous sûr de vouloir remettre à zéro les portefeuilles des boutiques ? Cette action est irréversible.')) {
+      this.isProcessingMass = true;
+      // For Boutiques reset, no trackingId is required based on Service definition
+      this.versementService.resetMasseBoutiques({
+        scolariteYearTrackingId: '' // The backend method takes a request object, even if it might not use the ID
+      }).subscribe({
+        next: () => {
+          this.isProcessingMass = false;
+          alert("Remise à zéro des boutiques effectuée avec succès.");
+          this.loadWallets();
+        },
+        error: () => {
+          this.isProcessingMass = false;
+          alert("Erreur lors de la remise à zéro des boutiques.");
+        }
+      });
+    }
+  }
 }

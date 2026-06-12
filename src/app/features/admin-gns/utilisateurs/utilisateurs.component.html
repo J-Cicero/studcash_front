@@ -178,25 +178,15 @@
           <div>
             <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1 ml-1">Rôle affecté</label>
             <select [(ngModel)]="newUserForm.role" name="role" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 transition-all font-bold">
-              <option value="ADMIN_DBS">Administrateur DBS</option>
-              <option value="UNIVERSITY_ADMIN">Administrateur Université</option>
+              <option value="ADMIN_GNS">Administrateur GNS</option>
               <option value="ADMIN_BANQUE">Opérateur Bancaire</option>
-            </select>
-          </div>
-
-          <!-- Select Universite (Affiché si Admin Université) -->
-          <div *ngIf="newUserForm.role === 'UNIVERSITY_ADMIN'" class="animate-fade-in-up">
-            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1 ml-1">Université rattachée</label>
-            <select [(ngModel)]="newUserForm.universiteTrackingId" name="universite" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 transition-all font-bold">
-              <option value="" disabled>Sélectionner une université</option>
-              <option *ngFor="let u of universites" [value]="u.trackingId">{{u.nom}}</option>
             </select>
           </div>
 
           <!-- Select Banque (Affiché si Admin Banque) -->
           <div *ngIf="newUserForm.role === 'ADMIN_BANQUE'" class="animate-fade-in-up">
             <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1 ml-1">Banque partenaire</label>
-            <select [(ngModel)]="newUserForm.banquePartenaireTrackingId" name="banque" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 transition-all font-bold">
+            <select [(ngModel)]="newUserForm.banqueTrackingId" name="banque" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 transition-all font-bold">
               <option value="" disabled>Sélectionner une banque</option>
               <option *ngFor="let b of banques" [value]="b.trackingId">{{b.nom}}</option>
             </select>

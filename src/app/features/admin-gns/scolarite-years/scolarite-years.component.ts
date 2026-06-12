@@ -26,10 +26,9 @@ export class ScolariteYearsComponent implements OnInit {
     private scolariteYearService: ScolariteYearService
   ) {
     this.createForm = this.fb.group({
-      debutAnnee: [null, [Validators.required, Validators.min(2000)]],
-      finAnnee: [null, [Validators.required, Validators.min(2000)]],
-      fraisScolariteDefaut: [0, Validators.required],
-      plafondPretDefaut: [0, Validators.required]
+      libelle: ['', Validators.required],
+      dateDebut: ['', Validators.required],
+      dateFin: ['', Validators.required]
     });
   }
 
@@ -45,7 +44,7 @@ export class ScolariteYearsComponent implements OnInit {
     this.isLoading = true;
     this.scolariteYearService.getAll().subscribe({
       next: (res) => {
-        this.scolariteYears = res.content || [];
+        this.scolariteYears = res.content || res || [];
         this.isLoading = false;
       },
       error: (err) => {
@@ -61,7 +60,7 @@ export class ScolariteYearsComponent implements OnInit {
   }
 
   cloturerYear(year: any) {
-    if (confirm('Êtes-vous sûr de vouloir clôturer cette année ?')) {
+    if (confirm(`Êtes-vous sûr de vouloir clôturer l'année ${year.libelle} ?`)) {
       this.scolariteYearService.cloturer(year.trackingId).subscribe({
         next: () => {
           this.successMessage = "Année clôturée avec succès.";
@@ -84,8 +83,9 @@ export class ScolariteYearsComponent implements OnInit {
     this.scolariteYearService.create(payload).subscribe({
       next: (res) => {
         this.isCreating = false;
-        this.successMessage = `Année ${res.libelle} créée avec succès.`;
-        this.createForm.reset({ fraisScolariteDefaut: 0, plafondPretDefaut: 0 });
+        this.successMessage = `Année ${res.libelle || payload.libelle} créée avec succès.`;
+        this.createForm.reset();
+        this.showForm = false;
         this.loadYears();
       },
       error: (err) => {

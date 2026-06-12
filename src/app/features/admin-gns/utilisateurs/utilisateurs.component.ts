@@ -108,7 +108,7 @@ export class UtilisateursComponent implements OnInit {
   }
 
   openCreateModal() {
-    this.newUserForm = { nom: '', prenom: '', telephone: '', email: '', motDePasse: '', role: 'ADMIN_DBS', universiteTrackingId: '', banquePartenaireTrackingId: '' };
+    this.newUserForm = { nom: '', prenom: '', telephone: '', email: '', motDePasse: '', role: 'ADMIN_GNS', universiteTrackingId: '', banqueTrackingId: '' };
     this.showCreateModal = true;
   }
 
@@ -118,13 +118,26 @@ export class UtilisateursComponent implements OnInit {
 
   createUser() {
     this.isProcessingCreate = true;
-    this.userService.register(this.newUserForm).subscribe({
+    
+    let request;
+    if (this.newUserForm.role === 'ADMIN_BANQUE') {
+      if (!this.newUserForm.banqueTrackingId) {
+        alert("Veuillez sélectionner une banque pour l'administrateur de banque.");
+        this.isProcessingCreate = false;
+        return;
+      }
+      request = this.userService.createAdminBanque(this.newUserForm);
+    } else {
+      request = this.userService.register(this.newUserForm);
+    }
+
+    request.subscribe({
       next: () => {
         this.isProcessingCreate = false;
         this.closeCreateModal();
         this.loadUsers();
       },
-      error: (err) => {
+      error: (err: any) => {
         this.isProcessingCreate = false;
         const msg = err.error?.message || "Erreur lors de la création de l'utilisateur.";
         alert(msg);

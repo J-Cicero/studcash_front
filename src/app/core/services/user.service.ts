@@ -32,4 +32,8 @@ export class UserService {
   register(userData: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/register`, userData);
   }
+
+  createAdminBanque(userData: any): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/admins/gns/create-banque-admin`, userData);
+  }
 }

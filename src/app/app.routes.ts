@@ -32,6 +32,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin-gns/parametres/parametres.component').then(m => m.ParametresGnsComponent)
       },
       {
+        path: 'scolarite',
+        loadComponent: () => import('./features/admin-gns/scolarite-years/scolarite-years.component').then(m => m.ScolariteYearsComponent)
+      },
+      {
         path: 'inscriptions',
         loadComponent: () => import('./features/admin-gns/inscriptions/inscriptions.component').then(m => m.InscriptionsComponent)
       },
