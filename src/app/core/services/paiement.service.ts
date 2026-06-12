@@ -24,7 +24,9 @@ export interface PaiementResponse {
 export class PaiementService {
   private apiUrl = `${environment.apiUrl}/paiements`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('PaiementService apiUrl:', this.apiUrl);
+  }
 
   create(data: any): Observable<PaiementResponse> {
     return this.http.post<PaiementResponse>(this.apiUrl, data);
@@ -55,5 +57,13 @@ export class PaiementService {
       .set('page', page.toString())
       .set('size', size.toString());
     return this.http.get<any>(`${this.apiUrl}/statut/${statut}`, { params });
+  }
+
+  getVolumeValideJour(): Observable<number> {
+    return this.http.get<number>(`${environment.apiUrl}/transactions/stats/volume-valide`);
+  }
+
+  getEvolutionTransactions(): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/transactions/stats/evolution`);
   }
 }

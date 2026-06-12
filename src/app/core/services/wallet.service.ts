@@ -7,6 +7,7 @@ export interface WalletResponse {
   trackingId: string;
   typeWallet: string;
   statutWallet: string;
+  proprietaireTrackingId: string;
   niveauSolde: string;
   solde: number;
   plafond: number;
@@ -20,7 +21,9 @@ export interface WalletResponse {
 export class WalletService {
   private apiUrl = `${environment.apiUrl}/wallets`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('WalletService apiUrl:', this.apiUrl);
+  }
 
   filterWallets(typeWallet?: string, niveauSolde?: string, page: number = 0, size: number = 50): Observable<any> {
     let params = new HttpParams()

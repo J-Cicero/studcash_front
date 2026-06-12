@@ -24,7 +24,9 @@ export interface PaginatedResponse<T> {
 })
 export class ParametresService {
   
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('ParametresService environment.apiUrl:', environment.apiUrl);
+  }
 
   getParametresGns(): Observable<PaginatedResponse<Parametre>> {
     return this.http.get<PaginatedResponse<Parametre>>(`${environment.apiUrl}/parametres-gns?size=100`);

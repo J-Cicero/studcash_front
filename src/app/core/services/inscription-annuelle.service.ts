@@ -9,7 +9,9 @@ import { environment } from '../../../environments/environment';
 export class InscriptionAnnuelleService {
   private apiUrl = `${environment.apiUrl}/inscriptions`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('InscriptionAnnuelleService apiUrl:', this.apiUrl);
+  }
 
   findAll(page: number = 0, size: number = 100): Observable<any> {
     let params = new HttpParams().set('page', page.toString()).set('size', size.toString());

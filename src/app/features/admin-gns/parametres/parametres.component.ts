@@ -7,6 +7,7 @@ import { ScolariteYearService, ScolariteYear } from '../../../core/services/scol
 import { AuthService } from '../../../core/services/auth.service';
 import { LoginResponse } from '../../../core/models/auth.model';
 import { SystemStatusService } from '../../../core/services/system-status.service';
+import { BanqueService, CompteBancaireGns } from '../../../core/services/banque.service';
 
 @Component({
   selector: 'app-parametres-gns',
@@ -16,7 +17,7 @@ import { SystemStatusService } from '../../../core/services/system-status.servic
   styleUrls: ['./parametres.component.scss']
 })
 export class ParametresGnsComponent implements OnInit {
-  activeTab: 'global' | 'kyc' | 'scolarite' = 'global';
+  activeTab: 'global' | 'kyc' | 'scolarite' | 'bancaire' = 'global';
 
   // Global Parameters
   parametres: Parametre[] = [];
@@ -53,12 +54,20 @@ export class ParametresGnsComponent implements OnInit {
   scolariteForm: FormGroup;
   isYearModalOpen = false;
 
+  // Bancaire
+  comptesBancaires: CompteBancaireGns[] = [];
+  isLoadingBank = false;
+  isBankModalOpen = false;
+  bankForm: FormGroup;
+  editingCompte: CompteBancaireGns | null = null;
+
   currentUser: LoginResponse | null = null;
 
   constructor(
     private parametresService: ParametresService,
     private documentRequisService: DocumentRequisService,
     private scolariteYearService: ScolariteYearService,
+    private banqueService: BanqueService,
     private authService: AuthService,
     private systemStatusService: SystemStatusService,
     private fb: FormBuilder
@@ -79,14 +88,43 @@ export class ParametresGnsComponent implements OnInit {
       valeurParametre: ['', Validators.required],
       description: ['']
     });
+    this.bankForm = this.fb.group({
+      nomBanque: ['', Validators.required],
+      codeBanque: ['', Validators.required],
+      rib: ['', Validators.required]
+    });
   }
 
   ngOnInit(): void {
     this.currentUser = this.authService.currentUserValue;
-    this.loadParametres();
-    this.loadDocumentsRequis();
-    this.loadScolariteYear();
     this.checkSystemStatus();
+    this.loadTabData(this.activeTab);
+  }
+
+  loadTabData(tab: 'global' | 'kyc' | 'scolarite' | 'bancaire') {
+    if (tab === 'global') {
+      this.loadParametres();
+      this.loadActiveYearOnly();
+    } else if (tab === 'scolarite') {
+      this.loadScolariteYear();
+    } else if (tab === 'bancaire') {
+      this.loadComptesBancaires();
+    } else if (tab === 'kyc') {
+      this.loadDocumentsRequis();
+    }
+  }
+
+  loadActiveYearOnly() {
+    this.scolariteYearService.getActiveYear().subscribe({
+      next: (res) => {
+        this.activeYear = res;
+      },
+      error: (err) => {
+        if(err.status === 404) {
+          this.activeYear = null;
+        }
+      }
+    });
   }
 
   checkSystemStatus() {
@@ -94,14 +132,16 @@ export class ParametresGnsComponent implements OnInit {
       if (status.currentStatus === 'ACTIVE') {
         this.paramForm.disable();
         this.docCreateForm.disable();
+        this.bankForm.disable();
       }
     });
   }
 
-  setTab(tab: 'global' | 'kyc' | 'scolarite') {
+  setTab(tab: 'global' | 'kyc' | 'scolarite' | 'bancaire') {
     this.activeTab = tab;
     this.successMessage = '';
     this.errorMessage = '';
+    this.loadTabData(tab);
   }
 
   loadParametres() {
@@ -282,7 +322,7 @@ export class ParametresGnsComponent implements OnInit {
   onSubmitYear() {
     if (this.scolariteForm.invalid) return;
     
-    const confirmMsg = this.activeYear ? 'Voulez-vous vraiment clôturer l\'année en cours et en démarrer une nouvelle ?' : 'Voulez-vous créer cette première année scolaire ?';
+    const confirmMsg = 'Voulez-vous créer cette année scolaire ?';
     if (!confirm(confirmMsg)) return;
 
     this.isCreatingYear = true;
@@ -291,34 +331,117 @@ export class ParametresGnsComponent implements OnInit {
 
     const req = { ...this.scolariteForm.value, estOuverte: true };
 
-    if (this.activeYear && this.activeYear.trackingId) {
-      this.scolariteYearService.cloturerEtOuvrirNouvelle(this.activeYear.trackingId, req).subscribe({
-        next: (res) => {
-          this.successMessage = 'Année scolaire précédente clôturée et nouvelle année créée.';
-          this.isCreatingYear = false;
-          this.closeYearModal();
+    this.scolariteYearService.create(req).subscribe({
+      next: (res) => {
+        this.successMessage = 'Nouvelle année scolaire créée avec succès.';
+        this.isCreatingYear = false;
+        this.closeYearModal();
+        this.loadScolariteYear();
+      },
+      error: (err) => {
+        this.errorMessage = 'Erreur lors de la création de l\'année.';
+        this.isCreatingYear = false;
+      }
+    });
+  }
+
+  cloturerActiveYear() {
+    if (!this.activeYear || !this.activeYear.trackingId) return;
+    if (confirm(`Êtes-vous sûr de vouloir clôturer l'année scolaire "${this.activeYear.libelle}" ?`)) {
+      this.isLoadingYear = true;
+      this.successMessage = '';
+      this.errorMessage = '';
+      
+      this.scolariteYearService.cloturer(this.activeYear.trackingId).subscribe({
+        next: () => {
+          this.successMessage = "Année scolaire clôturée avec succès.";
           this.loadScolariteYear();
         },
         error: (err) => {
-          this.errorMessage = 'Erreur lors de la création de la nouvelle année.';
-          this.isCreatingYear = false;
+          this.errorMessage = "Erreur lors de la clôture de l'année scolaire.";
+          this.isLoadingYear = false;
         }
       });
+    }
+  }
+
+  // --- Bancaire ---
+  loadComptesBancaires() {
+    this.isLoadingBank = true;
+    this.banqueService.getComptesGns().subscribe({
+      next: (res) => {
+        this.comptesBancaires = res || [];
+        this.isLoadingBank = false;
+      },
+      error: () => {
+        this.errorMessage = 'Erreur chargement des comptes bancaires.';
+        this.isLoadingBank = false;
+      }
+    });
+  }
+
+  openBankModal(compte?: CompteBancaireGns) {
+    this.successMessage = '';
+    this.errorMessage = '';
+    this.bankForm.enable();
+
+    if (compte) {
+      this.editingCompte = compte;
+      this.bankForm.patchValue({
+        nomBanque: compte.nomBanque,
+        codeBanque: compte.codeBanque,
+        rib: compte.rib
+      });
     } else {
-      this.scolariteYearService.create(req).subscribe({
-        next: (res) => {
-          this.successMessage = 'Première année scolaire créée avec succès.';
-          this.isCreatingYear = false;
-          this.closeYearModal();
-          this.loadScolariteYear();
+      this.editingCompte = null;
+      this.bankForm.reset();
+    }
+    this.isBankModalOpen = true;
+  }
+
+  closeBankModal() {
+    this.isBankModalOpen = false;
+    this.editingCompte = null;
+    this.bankForm.reset();
+  }
+
+  saveCompteBancaire() {
+    if (this.bankForm.invalid) return;
+
+    this.isLoadingBank = true;
+    const formVal = this.bankForm.value;
+
+    const payload: CompteBancaireGns = {
+      ...(this.editingCompte || {}),
+      nomBanque: formVal.nomBanque,
+      codeBanque: formVal.codeBanque,
+      rib: formVal.rib
+    };
+
+    this.banqueService.saveCompteGns(payload).subscribe({
+      next: () => {
+        this.successMessage = this.editingCompte ? 'Compte bancaire mis à jour.' : 'Compte bancaire ajouté.';
+        this.closeBankModal();
+        this.loadComptesBancaires();
+      },
+      error: () => {
+        this.errorMessage = 'Erreur lors de la sauvegarde du compte bancaire.';
+        this.isLoadingBank = false;
+      }
+    });
+  }
+
+  deleteCompteBancaire(trackingId: string) {
+    if (confirm('Voulez-vous vraiment supprimer ce compte bancaire ?')) {
+      this.banqueService.deleteCompteGns(trackingId).subscribe({
+        next: () => {
+          this.successMessage = 'Compte bancaire supprimé.';
+          this.loadComptesBancaires();
         },
-        error: (err) => {
-          this.errorMessage = 'Erreur lors de la création de l\'année.';
-          this.isCreatingYear = false;
+        error: () => {
+          this.errorMessage = 'Erreur lors de la suppression.';
         }
       });
     }
   }
 }
-
-

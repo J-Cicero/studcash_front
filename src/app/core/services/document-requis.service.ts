@@ -16,7 +16,11 @@ export interface DocumentRequisRequest {
 export class DocumentRequisService {
   private apiUrl = `${environment.apiUrl}/documents-requis`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('DocumentRequisService apiUrl:', this.apiUrl);
+    console.log('DocumentRequisService environment.apiUrl:', environment.apiUrl);
+    console.log('DocumentRequisService apiUrl:', this.apiUrl);
+  }
 
   findAll(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);

@@ -41,7 +41,17 @@
     <button (click)="setTab('scolarite')"
       [class]="activeTab === 'scolarite' ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:hover:text-slate-300'"
       class="whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm transition-colors">
-      Année Scolaire Active
+      Scolarité
+    </button>
+    <button (click)="setTab('bancaire')"
+      [class]="activeTab === 'bancaire' ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:hover:text-slate-300'"
+      class="whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm transition-colors">
+      Comptes Bancaires GNS
+    </button>
+    <button (click)="setTab('kyc')"
+      [class]="activeTab === 'kyc' ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:hover:text-slate-300'"
+      class="whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm transition-colors">
+      Documents Requis
     </button>
   </nav>
 </div>
@@ -233,9 +243,9 @@
       </div>
 
       <div *ngIf="!isLoadingYear && activeYear" class="mt-8">
-        <button (click)="openYearModal()"
+        <button (click)="cloturerActiveYear()"
           class="w-full inline-flex justify-center items-center py-3 px-4 border border-transparent shadow-lg shadow-rose-500/30 text-sm font-bold rounded-xl text-white bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 transition-all hover:-translate-y-0.5">
-          Clôturer l'année en cours et en ouvrir une nouvelle
+          Clôturer l'année en cours
         </button>
       </div>
 
@@ -300,7 +310,127 @@
   </div>
 </div>
 
-<div * ngIf="isParamModalOpen" class="fixed inset-0 z-50 overflow-y-auto">
+<!-- TAB BANCAIRE -->
+<div *ngIf="activeTab === 'bancaire'" class="animate-fade-in-up" style="animation-delay: 200ms;">
+  <div class="glass-panel rounded-2xl overflow-hidden">
+    <div class="px-6 py-5 border-b border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40 flex justify-between items-center">
+      <h3 class="text-lg font-bold text-slate-900 dark:text-white">Comptes Bancaires GNS</h3>
+      <div class="flex space-x-3">
+        <button (click)="loadComptesBancaires()"
+          class="px-4 py-2 text-sm font-bold text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 rounded-xl transition-colors">Rafraîchir</button>
+        <button (click)="openBankModal()"
+          class="px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 rounded-xl shadow-lg shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
+          Ajouter un compte
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="isLoadingBank" class="flex justify-center items-center py-12">
+      <div class="relative w-10 h-10">
+        <div class="absolute inset-0 rounded-full border-4 border-indigo-100 dark:border-slate-800"></div>
+        <div class="absolute inset-0 rounded-full border-4 border-indigo-600 dark:border-indigo-400 border-t-transparent animate-spin"></div>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoadingBank" class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
+        <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
+          <tr>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Banque</th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Code</th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">RIB</th>
+            <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Action</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
+          <tr *ngFor="let compte of comptesBancaires" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+            <td class="px-6 py-5 whitespace-nowrap">
+              <div class="text-sm font-bold text-slate-900 dark:text-white">{{ compte.nomBanque }}</div>
+            </td>
+            <td class="px-6 py-5 whitespace-nowrap">
+              <div class="text-sm text-slate-500 dark:text-slate-400 font-mono">{{ compte.codeBanque }}</div>
+            </td>
+            <td class="px-6 py-5 whitespace-nowrap">
+              <div class="text-sm font-bold text-slate-700 dark:text-slate-300 font-mono tracking-wider">{{ compte.rib }}</div>
+            </td>
+            <td class="px-6 py-5 whitespace-nowrap text-right text-sm font-medium">
+              <button (click)="openBankModal(compte)" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 hover:underline mr-3">Modifier</button>
+              <button (click)="compte.trackingId && deleteCompteBancaire(compte.trackingId)" class="text-rose-600 hover:text-rose-900 dark:text-rose-400 hover:underline">Supprimer</button>
+            </td>
+          </tr>
+          <tr *ngIf="comptesBancaires.length === 0">
+            <td colspan="4" class="px-6 py-12 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">
+              Aucun compte bancaire configuré.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- TAB KYC DOCUMENTS -->
+<div *ngIf="activeTab === 'kyc'" class="animate-fade-in-up" style="animation-delay: 200ms;">
+  <div class="glass-panel rounded-2xl overflow-hidden">
+    <div class="px-6 py-5 border-b border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40 flex justify-between items-center">
+      <h3 class="text-lg font-bold text-slate-900 dark:text-white">Documents Requis (KYC)</h3>
+      <div class="flex space-x-3">
+        <button (click)="loadDocumentsRequis()"
+          class="px-4 py-2 text-sm font-bold text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 rounded-xl transition-colors">Rafraîchir</button>
+        <button (click)="openDocModal()"
+          class="px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 rounded-xl shadow-lg shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
+          + Nouvelle Exigence
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="isLoadingDocs" class="flex justify-center items-center py-12">
+      <div class="relative w-10 h-10">
+        <div class="absolute inset-0 rounded-full border-4 border-indigo-100 dark:border-slate-800"></div>
+        <div class="absolute inset-0 rounded-full border-4 border-indigo-600 dark:border-indigo-400 border-t-transparent animate-spin"></div>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoadingDocs" class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
+        <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
+          <tr>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Niveau</th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Document</th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Obligatoire</th>
+            <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Action</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
+          <tr *ngFor="let doc of documentsRequis" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+            <td class="px-6 py-5 whitespace-nowrap">
+              <span class="px-3 py-1 inline-flex text-sm font-bold rounded-full bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300">
+                {{ doc.niveau }}
+              </span>
+            </td>
+            <td class="px-6 py-5 whitespace-nowrap">
+              <div class="text-sm font-bold text-slate-900 dark:text-white">{{ doc.typeDocument }}</div>
+            </td>
+            <td class="px-6 py-5 whitespace-nowrap">
+              <span *ngIf="doc.obligatoire" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-400">Oui</span>
+              <span *ngIf="!doc.obligatoire" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-400">Optionnel</span>
+            </td>
+            <td class="px-6 py-5 whitespace-nowrap text-right text-sm font-medium">
+              <button (click)="deleteDoc(doc.trackingId)" class="text-rose-600 hover:text-rose-900 dark:text-rose-400 hover:underline">Supprimer</button>
+            </td>
+          </tr>
+          <tr *ngIf="documentsRequis.length === 0">
+            <td colspan="4" class="px-6 py-12 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">
+              Aucun document requis configuré.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isParamModalOpen" class="fixed inset-0 z-50 overflow-y-auto">
   <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
     <div class="fixed inset-0 transition-opacity bg-slate-900/60 backdrop-blur-sm" (click)="closeParamModal()"></div>
     <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
@@ -399,19 +529,12 @@
     <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
     <div
       class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full border border-slate-200 dark:border-slate-800">
-      <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-800"
-        [ngClass]="activeYear ? 'bg-rose-50 dark:bg-rose-900/20' : 'bg-slate-50 dark:bg-slate-800/50'">
-        <h3 class="text-lg font-bold"
-          [ngClass]="activeYear ? 'text-rose-700 dark:text-rose-400' : 'text-slate-900 dark:text-white'">
-          {{ activeYear ? 'Clôturer & Ouvrir Nouvelle Année' : 'Créer la Première Année' }}
+      <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white">
+          Démarrer une Nouvelle Année Scolaire
         </h3>
       </div>
       <div class="p-6">
-        <p *ngIf="activeYear"
-          class="text-xs font-bold text-rose-600 dark:text-rose-400 mb-5 p-3 rounded-lg border border-rose-200 dark:border-rose-800/50 bg-white dark:bg-slate-900">
-          ⚠️ Cette action clôturera définitivement l'année "{{ activeYear.libelle }}".
-        </p>
-
         <form [formGroup]="scolariteForm" (ngSubmit)="onSubmitYear()" class="space-y-5">
           <div>
             <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Nom de la nouvelle
@@ -436,10 +559,49 @@
             <button type="button" (click)="closeYearModal()"
               class="px-4 py-2 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 rounded-xl transition-colors">Annuler</button>
             <button type="submit" [disabled]="scolariteForm.invalid || isCreatingYear"
-              class="px-4 py-2 text-sm font-bold text-white rounded-xl transition-colors disabled:opacity-50"
-              [ngClass]="activeYear ? 'bg-rose-600 hover:bg-rose-700' : 'bg-indigo-600 hover:bg-indigo-700'">
-              {{ activeYear ? 'Clôturer et Créer' : 'Créer l\'année' }}
+              class="px-4 py-2 text-sm font-bold text-white rounded-xl transition-colors disabled:opacity-50 bg-indigo-600 hover:bg-indigo-700">
+              Créer l'année
             </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BankModal -->
+<div *ngIf="isBankModalOpen" class="fixed inset-0 z-50 overflow-y-auto">
+  <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 transition-opacity bg-slate-900/60 backdrop-blur-sm" (click)="closeBankModal()"></div>
+    <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+    <div
+      class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-200 dark:border-slate-800">
+      <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ editingCompte ? 'Modifier le Compte' :
+          'Ajouter un Compte Bancaire' }}</h3>
+      </div>
+      <div class="p-6">
+        <form [formGroup]="bankForm" (ngSubmit)="saveCompteBancaire()" class="space-y-5">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Nom de la Banque</label>
+            <input type="text" formControlName="nomBanque" placeholder="Ex: Ecobank, UBA..."
+              class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Code Banque</label>
+            <input type="text" formControlName="codeBanque" placeholder="Ex: ECOB, UBA"
+              class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">RIB / IBAN</label>
+            <input type="text" formControlName="rib" placeholder="Ex: TG00..."
+              class="block w-full text-sm font-mono tracking-widest bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white">
+          </div>
+          <div class="pt-4 flex justify-end space-x-3">
+            <button type="button" (click)="closeBankModal()"
+              class="px-4 py-2 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 rounded-xl transition-colors">Annuler</button>
+            <button type="submit" [disabled]="bankForm.invalid || isLoadingBank"
+              class="px-4 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-colors disabled:opacity-50">Valider</button>
           </div>
         </form>
       </div>

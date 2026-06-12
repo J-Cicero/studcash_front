@@ -16,7 +16,9 @@ export interface UniversiteRequest {
 export class UniversiteService {
   private apiUrl = `${environment.apiUrl}/universites`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('UniversiteService apiUrl:', this.apiUrl);
+  }
 
   findAll(page: number = 0, size: number = 20): Observable<any> {
     const params = new HttpParams()
@@ -32,6 +34,10 @@ export class UniversiteService {
   updateEtat(trackingId: string, etat: boolean): Observable<any> {
     const params = new HttpParams().set('etat', etat.toString());
     return this.http.patch<any>(`${this.apiUrl}/etat/${trackingId}`, {}, { params });
+  }
+
+  delete(trackingId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${trackingId}`);
   }
 
   getSummaryStats(): Observable<any[]> {

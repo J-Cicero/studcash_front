@@ -33,7 +33,9 @@ export interface DocumentResponse {
 export class StudentService {
   private apiUrl = `${environment.apiUrl}/students`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('StudentService apiUrl:', this.apiUrl);
+  }
 
   findAll(page: number = 0, size: number = 20): Observable<any> {
     let params = new HttpParams().set('page', page.toString()).set('size', size.toString());
@@ -45,13 +47,20 @@ export class StudentService {
     return this.http.get<any>(`${this.apiUrl}/kyc/${statut}`, { params });
   }
 
-  getDocuments(trackingId: string, page: number = 0, size: number = 20): Observable<any> {
-    let params = new HttpParams().set('page', page.toString()).set('size', size.toString());
-    return this.http.get<any>(`${this.apiUrl}/${trackingId}/documents`, { params });
+  getInscriptionDocuments(inscriptionId: string | number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/documents/inscription/${inscriptionId}`);
   }
 
   verifyPin(trackingId: string, pinCode: string): Observable<any> {
     let params = new HttpParams().set('pinCode', pinCode);
     return this.http.post<any>(`${this.apiUrl}/${trackingId}/verify-pin`, null, { params });
+  }
+
+  getBourseRepartition(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/stats/bourse-repartition`);
+  }
+
+  getTotalStudents(): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/stats/total`);
   }
 }

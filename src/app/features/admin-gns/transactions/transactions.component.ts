@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PaiementService, PaiementResponse } from '../../../core/services/paiement.service';
+import { TransactionService, TransactionResponse } from '../../../core/services/transaction.service';
 
 @Component({
   selector: 'app-transactions',
@@ -11,12 +11,12 @@ import { PaiementService, PaiementResponse } from '../../../core/services/paieme
   styleUrls: ['./transactions.component.scss']
 })
 export class TransactionsComponent implements OnInit {
-  transactions: PaiementResponse[] = [];
-  stats: any = {
-    totalVolume: 0,
-    totalCommission: 0,
-    totalCount: 0
-  };
+  transactions: TransactionResponse[] = [];
+  
+  // KPIs
+  volumeValide: number = 0;
+  commissionsTotales: number = 0;
+  
   isLoading = false;
   isLoadingStats = false;
   errorMessage = '';
@@ -24,7 +24,7 @@ export class TransactionsComponent implements OnInit {
   filterType: string = 'ALL';
   filterStatut: string = 'ALL';
 
-  constructor(private paiementService: PaiementService) {}
+  constructor(private transactionService: TransactionService) {}
 
   ngOnInit(): void {
     this.loadStats();
@@ -33,13 +33,19 @@ export class TransactionsComponent implements OnInit {
 
   loadStats() {
     this.isLoadingStats = true;
-    this.paiementService.getStats().subscribe({
-      next: (res) => {
-        this.stats = res;
+    
+    this.transactionService.getVolumeValide().subscribe({
+      next: (val) => this.volumeValide = val || 0,
+      error: () => this.volumeValide = 0
+    });
+
+    this.transactionService.getCommissionsTotales().subscribe({
+      next: (val) => {
+        this.commissionsTotales = val || 0;
         this.isLoadingStats = false;
       },
-      error: (err) => {
-        console.error("Erreur chargement stats paiements", err);
+      error: () => {
+        this.commissionsTotales = 0;
         this.isLoadingStats = false;
       }
     });
@@ -49,40 +55,25 @@ export class TransactionsComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
 
-    if (this.filterType !== 'ALL') {
-      this.paiementService.findByType(this.filterType, 0, 50).subscribe({
-        next: (res) => {
-          this.transactions = res.content || [];
-          this.isLoading = false;
-        },
-        error: (err) => {
-          this.transactions = [];
-          this.isLoading = false;
+    // The backend might not have findByType/Statut yet, so we fallback to findAll and filter locally if needed
+    this.transactionService.findAll(0, 100).subscribe({
+      next: (res) => {
+        let list = res.content || res || [];
+
+        // Simple local filtering if backend endpoints are not ready yet
+        if (this.filterStatut !== 'ALL') {
+          list = list.filter((t: any) => t.statut === this.filterStatut);
         }
-      });
-    } else if (this.filterStatut !== 'ALL') {
-      this.paiementService.findByStatut(this.filterStatut, 0, 50).subscribe({
-        next: (res) => {
-          this.transactions = res.content || [];
-          this.isLoading = false;
-        },
-        error: (err) => {
-          this.transactions = [];
-          this.isLoading = false;
-        }
-      });
-    } else {
-      this.paiementService.findAll(0, 50).subscribe({
-        next: (res) => {
-          this.transactions = res.content || [];
-          this.isLoading = false;
-        },
-        error: (err) => {
-          this.transactions = [];
-          this.isLoading = false;
-        }
-      });
-    }
+        
+        this.transactions = list;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.transactions = [];
+        this.isLoading = false;
+        this.errorMessage = 'Erreur de chargement des transactions';
+      }
+    });
   }
 
   setFilterType(type: string) {

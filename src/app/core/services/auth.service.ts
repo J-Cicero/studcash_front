@@ -14,6 +14,7 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {
+    console.log('AuthService apiUrl:', this.apiUrl);
     this.loadUserFromStorage();
   }
 

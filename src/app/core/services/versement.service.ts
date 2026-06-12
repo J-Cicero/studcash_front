@@ -27,7 +27,9 @@ export interface MassResetBoutiqueRequest {
 export class VersementService {
   private apiUrl = `${environment.apiUrl}/versements`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('VersementService apiUrl:', this.apiUrl);
+  }
 
   create(payload: any): Observable<any> {
     return this.http.post<any>(this.apiUrl, payload);

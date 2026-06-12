@@ -14,6 +14,7 @@ export class ScolariteYearsComponent implements OnInit {
   scolariteYears: any[] = [];
   isLoading = false;
   isCreating = false;
+  showForm = false;
   
   successMessage = '';
   errorMessage = '';
@@ -36,6 +37,10 @@ export class ScolariteYearsComponent implements OnInit {
     this.loadYears();
   }
 
+  toggleForm() {
+    this.showForm = !this.showForm;
+  }
+
   loadYears() {
     this.isLoading = true;
     this.scolariteYearService.getAll().subscribe({
@@ -49,6 +54,22 @@ export class ScolariteYearsComponent implements OnInit {
         this.errorMessage = "Erreur lors du chargement des années scolaires.";
       }
     });
+  }
+
+  isYearEditable(year: any): boolean {
+    return year.estActive === true;
+  }
+
+  cloturerYear(year: any) {
+    if (confirm('Êtes-vous sûr de vouloir clôturer cette année ?')) {
+      this.scolariteYearService.cloturer(year.trackingId).subscribe({
+        next: () => {
+          this.successMessage = "Année clôturée avec succès.";
+          this.loadYears();
+        },
+        error: () => this.errorMessage = "Erreur lors de la clôture."
+      });
+    }
   }
 
   onSubmit() {

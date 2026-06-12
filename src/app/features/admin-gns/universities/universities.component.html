@@ -3,12 +3,17 @@
     <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Universités Partenaires</h1>
     <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Gérez la liste des universités, leurs codes et leur statut dans le réseau.</p>
   </div>
-  <button (click)="showForm = true" class="inline-flex items-center justify-center py-2.5 px-5 text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-xl shadow-lg shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
-    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-    </svg>
-    Ajouter Université
-  </button>
+  <div class="flex space-x-3">
+    <a routerLink="/admin-gns/utilisateurs" class="inline-flex items-center justify-center py-2.5 px-5 text-sm font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 rounded-xl transition-all">
+      Gérer Admins Banque
+    </a>
+    <button (click)="showForm = true" class="inline-flex items-center justify-center py-2.5 px-5 text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-xl shadow-lg shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+      </svg>
+      Ajouter Université
+    </button>
+  </div>
 </div>
 
 <!-- Messages -->
@@ -102,8 +107,11 @@
             </span>
           </td>
           <td class="px-6 py-5 whitespace-nowrap">
-            <button (click)="toggleUniversiteStatus(u)" class="text-indigo-600 hover:text-indigo-900 font-medium text-sm">
+            <button (click)="toggleUniversiteStatus(u)" class="text-indigo-600 hover:text-indigo-900 font-medium text-sm mr-4">
                 {{ u.estActive ? 'Désactiver' : 'Activer' }}
+            </button>
+            <button (click)="deleteUniversite(u)" class="text-red-600 hover:text-red-900 font-medium text-sm">
+                Supprimer
             </button>
           </td>
         </tr>
@@ -175,3 +183,13 @@
     </form>
   </div>
 </div>
+
+<app-confirm-dialog
+  [isOpen]="showConfirmModal"
+  [title]="confirmTitle"
+  [message]="confirmMessage"
+  confirmText="Oui"
+  cancelText="Non"
+  (confirm)="onModalConfirm()"
+  (cancel)="onModalCancel()"
+></app-confirm-dialog>

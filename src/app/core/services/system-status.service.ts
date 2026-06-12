@@ -14,7 +14,9 @@ export interface SystemStatusResponse {
 export class SystemStatusService {
   private apiUrl = `${environment.apiUrl}/public/system-status`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('SystemStatusService apiUrl:', this.apiUrl);
+  }
 
   getStatus(): Observable<SystemStatusResponse> {
     return this.http.get<SystemStatusResponse>(this.apiUrl);

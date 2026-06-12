@@ -36,8 +36,20 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin-gns/inscriptions/inscriptions.component').then(m => m.InscriptionsComponent)
       },
       {
-        path: 'versements',
-        loadComponent: () => import('./features/admin-gns/versements/versements.component').then(m => m.VersementsComponent)
+        path: 'versements/etudiants',
+        loadComponent: () => import('./features/admin-gns/versements/versements-etudiants/versements-etudiants.component').then(m => m.VersementsEtudiantsComponent)
+      },
+      {
+        path: 'versements-etudiants',
+        loadComponent: () => import('./features/admin-gns/versements/versements-etudiants/versements-etudiants.component').then(m => m.VersementsEtudiantsComponent)
+      },
+      {
+        path: 'versements/boutiques',
+        loadComponent: () => import('./features/admin-gns/versements/versements-boutiques/versements-boutiques.component').then(m => m.VersementsBoutiquesComponent)
+      },
+      {
+        path: 'versements-boutiques',
+        loadComponent: () => import('./features/admin-gns/versements/versements-boutiques/versements-boutiques.component').then(m => m.VersementsBoutiquesComponent)
       },
 
       {

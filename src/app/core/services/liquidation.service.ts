@@ -18,7 +18,9 @@ export interface Liquidation {
 export class LiquidationService {
   private apiUrl = `${environment.apiUrl}/liquidations`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('LiquidationService apiUrl:', this.apiUrl);
+  }
 
   findAll(): Observable<Liquidation[]> {
     return this.http.get<Liquidation[]>(this.apiUrl);
@@ -26,5 +28,9 @@ export class LiquidationService {
 
   validerLiquidation(trackingId: string, referenceVirement: string): Observable<Liquidation> {
     return this.http.patch<Liquidation>(`${this.apiUrl}/${trackingId}/valider?referenceVirement=${referenceVirement}`, {});
+  }
+
+  getPendingTotal(): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/stats/pending-total`);
   }
 }

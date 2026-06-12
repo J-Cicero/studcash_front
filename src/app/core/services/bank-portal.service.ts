@@ -60,7 +60,9 @@ export interface BankFinancialSummary {
 export class BankPortalService {
   private apiUrl = `${environment.apiUrl}/bank-portal`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('BankPortalService apiUrl:', this.apiUrl);
+  }
 
   getStudents(bankOperatorTrackingId: string): Observable<StudentLiquidationInfo[]> {
     const params = new HttpParams().set('bankOperatorTrackingId', bankOperatorTrackingId);

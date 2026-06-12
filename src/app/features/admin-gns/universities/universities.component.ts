@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UniversiteService } from '../../../core/services/universite.service';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-universities',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ConfirmDialogComponent],
   templateUrl: './universities.component.html',
   styleUrls: ['./universities.component.scss']
 })
@@ -21,6 +22,12 @@ export class UniversitiesComponent implements OnInit {
   errorMessage = '';
   
   createForm: FormGroup;
+
+  // Custom Confirmation Dialog state
+  showConfirmModal = false;
+  confirmTitle = '';
+  confirmMessage = '';
+  onConfirmCallback: (() => void) | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -37,6 +44,26 @@ export class UniversitiesComponent implements OnInit {
   ngOnInit(): void {
     this.loadUniversities();
     this.loadSummaryStats();
+  }
+
+  confirmAction(title: string, message: string, callback: () => void) {
+    this.confirmTitle = title;
+    this.confirmMessage = message;
+    this.onConfirmCallback = callback;
+    this.showConfirmModal = true;
+  }
+
+  onModalConfirm() {
+    if (this.onConfirmCallback) {
+      this.onConfirmCallback();
+    }
+    this.showConfirmModal = false;
+    this.onConfirmCallback = null;
+  }
+
+  onModalCancel() {
+    this.showConfirmModal = false;
+    this.onConfirmCallback = null;
   }
 
   loadUniversities() {
@@ -58,40 +85,35 @@ export class UniversitiesComponent implements OnInit {
   loadSummaryStats() {
     this.universiteService.getSummaryStats().subscribe({
       next: (res) => {
-        this.summaryStats = res;
+        this.summaryStats = res || [];
       },
       error: (err) => {
-        console.error("Erreur chargement stats:", err);
+        console.error(err);
       }
     });
   }
 
   getStatsForUniversite(trackingId: string): any {
-    return this.summaryStats.find(s => s.trackingId === trackingId) || null;
+    return this.summaryStats.find(s => s.universiteTrackingId === trackingId);
   }
 
   onSubmit() {
     if (this.createForm.invalid) return;
 
     this.isCreating = true;
-    this.successMessage = '';
-    this.errorMessage = '';
-
-    const payload = this.createForm.value;
-
-    this.universiteService.create(payload).subscribe({
-      next: (res) => {
-        this.isCreating = false;
-        this.showForm = false;
-        this.successMessage = `Université ${res.nom} créée avec succès.`;
-        this.createForm.reset({ estActive: true });
+    this.universiteService.create(this.createForm.value).subscribe({
+      next: () => {
         this.loadUniversities();
         this.loadSummaryStats();
-        setTimeout(() => this.successMessage = '', 5000);
+        this.showForm = false;
+        this.createForm.reset({ estActive: true });
+        this.successMessage = "Université ajoutée avec succès.";
+        this.isCreating = false;
+        setTimeout(() => this.successMessage = '', 3000);
       },
       error: (err) => {
+        this.errorMessage = err.error?.message || "Erreur lors de la création.";
         this.isCreating = false;
-        this.errorMessage = "Erreur lors de la création de l'université.";
         setTimeout(() => this.errorMessage = '', 5000);
       }
     });
@@ -109,6 +131,26 @@ export class UniversitiesComponent implements OnInit {
         setTimeout(() => this.errorMessage = '', 5000);
       }
     });
+  }
+
+  deleteUniversite(univ: any) {
+    this.confirmAction(
+      'Suppression d\'université',
+      `Êtes-vous sûr de vouloir supprimer l'université ${univ.nom} ?`,
+      () => {
+        this.universiteService.delete(univ.trackingId).subscribe({
+          next: () => {
+            this.loadUniversities();
+            this.successMessage = `Université ${univ.nom} supprimée.`;
+            setTimeout(() => this.successMessage = '', 3000);
+          },
+          error: (err: any) => {
+            this.errorMessage = err.error?.message || "Erreur lors de la suppression.";
+            setTimeout(() => this.errorMessage = '', 5000);
+          }
+        });
+      }
+    );
   }
 
   formatNumberCompact(value: number | null | undefined): string {

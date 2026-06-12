@@ -18,7 +18,9 @@ export interface ScolariteYear {
 export class ScolariteYearService {
   private apiUrl = `${environment.apiUrl}/scolarite-years`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('ScolariteYearService apiUrl:', this.apiUrl);
+  }
 
   getAll(page: number = 0, size: number = 20): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}?page=${page}&size=${size}`);
@@ -30,6 +32,10 @@ export class ScolariteYearService {
 
   create(data: ScolariteYear): Observable<ScolariteYear> {
     return this.http.post<ScolariteYear>(this.apiUrl, data);
+  }
+
+  cloturer(trackingId: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${trackingId}/cloturer`, {});
   }
 
   cloturerEtOuvrirNouvelle(oldTrackingId: string, data: ScolariteYear): Observable<ScolariteYear> {

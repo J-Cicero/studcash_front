@@ -1,45 +1,84 @@
 import { Component, OnInit, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { DashboardService, GlobalStats, FluxMensuel } from '../../../core/services/dashboard.service';
-import { PaiementService, PaiementResponse } from '../../../core/services/paiement.service';
+import { DashboardService, GlobalStats } from '../../../core/services/dashboard.service';
+import { TransactionService } from '../../../core/services/transaction.service';
 import { ScolariteYearService, ScolariteYear } from '../../../core/services/scolarite-year.service';
+import { StudentService } from '../../../core/services/student.service';
+import { BoutiqueService } from '../../../core/services/boutique.service';
+import { LiquidationService } from '../../../core/services/liquidation.service';
 import Chart from 'chart.js/auto';
+import { catchError, of } from 'rxjs';
+import { KpiCardComponent } from '../../../shared/components/kpi-card/kpi-card.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, KpiCardComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
-  @ViewChild('chartCanvas') chartCanvas!: ElementRef;
-  chart: any;
+  @ViewChild('lineChartCanvas') lineChartCanvas!: ElementRef;
+  @ViewChild('pieChartCanvas') pieChartCanvas!: ElementRef;
+  
+  lineChart: any;
+  pieChart: any;
 
   stats: GlobalStats | null = null;
-  fluxData: FluxMensuel[] = [];
-  recentTransactions: PaiementResponse[] = [];
-  
-  isLoadingStats = true;
-  isLoadingFlux = true;
-  isLoadingTxns = true;
-
   activeYear: ScolariteYear | null = null;
+  isLoadingStats = true;
+
+  // KPIs states
+  totalEtudiants = 0;
+  isTotalEtudiantsLoading = true;
+  totalEtudiantsError = false;
+
+  volumeValide = 0;
+  isVolumeValideLoading = true;
+  volumeValideError = false;
+
+  lowQuotaBoutiques = 0;
+  isLowQuotaBoutiquesLoading = true;
+  lowQuotaBoutiquesError = false;
+
+  pendingLiquidations = 0;
+  isPendingLiquidationsLoading = true;
+  pendingLiquidationsError = false;
+
+  // Chart states
+  isLineChartLoading = true;
+  isPieChartLoading = true;
 
   constructor(
     private dashboardService: DashboardService,
-    private paiementService: PaiementService,
-    private scolariteYearService: ScolariteYearService
+    private transactionService: TransactionService,
+    private scolariteYearService: ScolariteYearService,
+    private studentService: StudentService,
+    private boutiqueService: BoutiqueService,
+    private liquidationService: LiquidationService
   ) {}
 
   ngOnInit(): void {
     this.loadActiveYear();
     this.loadGlobalStats();
-    this.loadFluxMensuel();
-    this.loadRecentTransactions();
+    
+    // Load KPIs
+    this.loadTotalEtudiants();
+    this.loadVolumeValide();
+    this.loadLowQuotaBoutiques();
+    this.loadPendingLiquidations();
+
+    // Load Charts
+    setTimeout(() => {
+      this.loadEvolutionTransactions();
+      this.loadBourseRepartition();
+    }, 200); // Small delay to let canvas render
   }
 
+  ngAfterViewInit(): void {}
+
+  // --- Header Data ---
   loadActiveYear() {
     this.scolariteYearService.getActiveYear().subscribe({
       next: (year) => {
@@ -51,133 +90,142 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngAfterViewInit(): void {
-    // Chart will be initialized when data is loaded
-  }
-
   loadGlobalStats() {
-    const defaultStats: GlobalStats = {
-      totalVolume: 0,
-      totalCommission: 0,
-      totalStudents: 0,
-      totalBoutiques: 0,
-      totalUniversities: 0,
-      totalTransactions: 0
-    };
-
     this.dashboardService.getGlobalStats().subscribe({
       next: (res) => {
-        this.stats = res ? { ...defaultStats, ...res } : defaultStats;
+        this.stats = res;
         this.isLoadingStats = false;
       },
       error: () => {
-        this.stats = defaultStats;
         this.isLoadingStats = false;
       }
     });
   }
 
-  loadFluxMensuel() {
-    this.dashboardService.getFluxMensuel().subscribe({
-      next: (res) => {
-        this.fluxData = res;
-        this.isLoadingFlux = false;
-        this.initChart();
-      },
-      error: () => this.isLoadingFlux = false
+  // --- KPIs ---
+  loadTotalEtudiants() {
+    this.studentService.getTotalStudents().pipe(
+      catchError(() => {
+        this.totalEtudiantsError = true;
+        return of(0);
+      })
+    ).subscribe((res) => {
+      this.totalEtudiants = res || 0;
+      this.isTotalEtudiantsLoading = false;
     });
   }
 
-  loadRecentTransactions() {
-    this.paiementService.findAll(0, 5).subscribe({
-      next: (res) => {
-        this.recentTransactions = res.content || [];
-        this.isLoadingTxns = false;
-      },
-      error: () => this.isLoadingTxns = false
+  loadVolumeValide() {
+    this.transactionService.getVolumeValide().pipe(
+      catchError(() => {
+        this.volumeValideError = true;
+        return of(0);
+      })
+    ).subscribe((val) => {
+      this.volumeValide = val || 0;
+      this.isVolumeValideLoading = false;
     });
   }
 
-  initChart() {
-    if (!this.chartCanvas || this.fluxData.length === 0) return;
+  loadLowQuotaBoutiques() {
+    this.boutiqueService.getLowQuotaCount().pipe(
+      catchError(() => {
+        this.lowQuotaBoutiquesError = true;
+        return of(0);
+      })
+    ).subscribe((val) => {
+      this.lowQuotaBoutiques = val || 0;
+      this.isLowQuotaBoutiquesLoading = false;
+    });
+  }
 
-    const ctx = this.chartCanvas.nativeElement.getContext('2d');
-    
-    const labels = this.fluxData.map(d => d.mois);
-    const volumes = this.fluxData.map(d => d.volume);
-    const commissions = this.fluxData.map(d => d.commissions);
+  loadPendingLiquidations() {
+    this.liquidationService.getPendingTotal().pipe(
+      catchError(() => {
+        this.pendingLiquidationsError = true;
+        return of(0);
+      })
+    ).subscribe((val) => {
+      this.pendingLiquidations = val || 0;
+      this.isPendingLiquidationsLoading = false;
+    });
+  }
 
-    this.chart = new Chart(ctx, {
+  // --- Charts ---
+  loadEvolutionTransactions() {
+    this.transactionService.getEvolutionTransactions().pipe(
+      catchError(() => of([]))
+    ).subscribe((data: any) => {
+      this.isLineChartLoading = false;
+      this.initLineChart(data);
+    });
+  }
+
+  loadBourseRepartition() {
+    this.studentService.getBourseRepartition().pipe(
+      catchError(() => of([]))
+    ).subscribe((data: any) => {
+      this.isPieChartLoading = false;
+      this.initPieChart(data);
+    });
+  }
+
+  initLineChart(data: any[]) {
+    if (!this.lineChartCanvas || !data || data.length === 0) return;
+
+    const ctx = this.lineChartCanvas.nativeElement.getContext('2d');
+    const labels = data.map(d => d.date || d.label || d.mois || '');
+    const volumes = data.map(d => d.volume || d.value || d.montant || 0);
+
+    this.lineChart = new Chart(ctx, {
       type: 'line',
       data: {
         labels: labels,
-        datasets: [
-          {
-            label: 'Volume Paiements',
-            data: volumes,
-            borderColor: '#06b6d4', // cyan-500
-            backgroundColor: 'rgba(6, 182, 212, 0.1)',
-            borderWidth: 2,
-            fill: true,
-            tension: 0.4
-          },
-          {
-            label: 'Commissions Générées',
-            data: commissions,
-            borderColor: '#4f46e5', // indigo-600
-            backgroundColor: 'rgba(79, 70, 229, 0.1)',
-            borderWidth: 2,
-            fill: true,
-            tension: 0.4
-          }
-        ]
+        datasets: [{
+          label: 'Évolution Transactions',
+          data: volumes,
+          borderColor: '#4f46e5',
+          backgroundColor: 'rgba(79, 70, 229, 0.1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4
+        }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { position: 'top' },
-          tooltip: {
-            callbacks: {
-              label: (context) => {
-                let label = context.dataset.label || '';
-                if (label) { label += ': '; }
-                if (context.parsed.y !== null) {
-                  label += new Intl.NumberFormat('fr-FR').format(context.parsed.y) + ' FCFA';
-                }
-                return label;
-              }
-            }
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              callback: (value) => {
-                return this.formatNumberCompact(Number(value));
-              }
-            }
-          }
+          legend: { display: false }
         }
       }
     });
   }
 
-  formatNumberCompact(value: number | undefined | null): string {
-    if (value === null || value === undefined) return '0';
-    if (value >= 1000000) {
-      return (value / 1000000).toFixed(1).replace(/\.0$/, '') + ' M';
-    }
-    if (value >= 1000) {
-      return (value / 1000).toFixed(1).replace(/\.0$/, '') + ' K';
-    }
-    return value.toString();
-  }
+  initPieChart(data: any[]) {
+    if (!this.pieChartCanvas || !data || data.length === 0) return;
 
-  getShortId(id: string): string {
-    if (!id) return '';
-    return id.substring(0, 8).toUpperCase();
+    const ctx = this.pieChartCanvas.nativeElement.getContext('2d');
+    const labels = data.map(d => d.type || d.label || d.statut || 'Inconnu');
+    const counts = data.map(d => d.count || d.value || d.total || 0);
+
+    this.pieChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: counts,
+          backgroundColor: ['#0ea5e9', '#8b5cf6', '#f59e0b', '#10b981'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom' }
+        },
+        cutout: '70%'
+      }
+    });
   }
 }
-

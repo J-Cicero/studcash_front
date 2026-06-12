@@ -9,7 +9,9 @@ import { environment } from '../../../environments/environment';
 export class UserService {
   private apiUrl = `${environment.apiUrl}/users`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('UserService apiUrl:', this.apiUrl);
+  }
 
   getAllUsers(page: number = 0, size: number = 20): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/all`, { params: { page: page.toString(), size: size.toString() } });

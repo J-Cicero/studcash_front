@@ -25,6 +25,7 @@ export class InscriptionsComponent implements OnInit {
   selectedInscription: any | null = null;
   studentDocuments: DocumentResponse[] = [];
   isLoadingDocs = false;
+  hasMandatoryDocs = false;
 
   constructor(
     private inscriptionService: InscriptionAnnuelleService,
@@ -92,13 +93,21 @@ export class InscriptionsComponent implements OnInit {
     this.selectedInscription = ins;
     this.studentDocuments = [];
     this.isLoadingDocs = true;
+    this.hasMandatoryDocs = false;
     
-    this.studentService.getDocuments(ins.studentTrackingId).subscribe({
+    // Assuming inscription ID is 'id', fallback to 'trackingId'
+    const inscriptionId = ins.id || ins.trackingId;
+    
+    this.studentService.getInscriptionDocuments(inscriptionId).subscribe({
       next: (res) => {
-        this.studentDocuments = res.content || [];
+        // Handle both pagination format and simple array
+        this.studentDocuments = res.content || res || [];
+        this.hasMandatoryDocs = this.studentDocuments.some(doc => doc.typeDocument === 'MANDAT_BANCAIRE');
         this.isLoadingDocs = false;
       },
       error: () => {
+        this.studentDocuments = [];
+        this.hasMandatoryDocs = false;
         this.isLoadingDocs = false;
       }
     });

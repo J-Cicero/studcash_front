@@ -24,7 +24,9 @@ export interface FluxMensuel {
 export class DashboardService {
   private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('DashboardService apiUrl:', this.apiUrl);
+  }
 
   getGlobalStats(): Observable<GlobalStats> {
     return forkJoin({

@@ -27,7 +27,9 @@ export class UniversityPortalService {
     private http: HttpClient,
     private authService: AuthService,
     private walletService: WalletService
-  ) {}
+  ) {
+    console.log('UniversityPortalService apiUrl:', this.apiUrl);
+  }
 
   /** Get the university admin profile (gives universiteTrackingId + walletTrackingId) */
   getMyProfile(): Observable<UniversityAdminProfile> {

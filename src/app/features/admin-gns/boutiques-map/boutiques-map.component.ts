@@ -49,10 +49,10 @@ export class BoutiquesMapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private initMap(): void {
-    // Default center (Cameroon) if no boutiques are loaded yet
+    // Centre sur le Togo
     this.map = L.map('map', {
-      center: [4.0511, 9.7679], // Douala approximate
-      zoom: 6
+      center: [8.6195, 0.8248],
+      zoom: 7
     });
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -63,7 +63,6 @@ export class BoutiquesMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadBoutiques(): void {
     this.isLoading = true;
-    // We fetch a high size (e.g. 500) to display as many as possible on the map
     this.boutiqueService.getAllBoutiques(0, 500).subscribe({
       next: (res) => {
         this.boutiques = res.content || [];
@@ -80,38 +79,34 @@ export class BoutiquesMapComponent implements OnInit, AfterViewInit, OnDestroy {
   private addMarkersToMap(): void {
     if (!this.map) return;
 
-    let hasMarkers = false;
-    const markers: L.Marker[] = [];
+    const bounds = L.latLngBounds([]);
 
     this.boutiques.forEach(b => {
-      // We only place the boutique if it has valid coordinates recorded
-      if (b.latitude && b.longitude) {
-        hasMarkers = true;
-        
+      const lat = Number(b.latitude);
+      const lng = Number(b.longitude);
+
+      if (!isNaN(lat) && !isNaN(lng)) {
         const popupContent = `
-          <div class="p-2 min-w-[200px]">
-            <h3 class="font-bold text-slate-900 text-base mb-1">${b.nomBoutique}</h3>
-            <p class="text-xs font-medium text-slate-500 mb-2 uppercase tracking-wider">${b.categorieShop}</p>
-            <div class="flex items-center mt-3">
-              <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold ${
-                b.statutKYC === 'VALIDE' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
-              }">
-                KYC: ${b.statutKYC}
-              </span>
-            </div>
+          <div class="p-3">
+            <h3 class="font-bold text-lg text-slate-900">${b.nomBoutique}</h3>
+            <p class="text-sm text-slate-600">${b.categorieShop || 'Boutique'}</p>
+            <p class="text-xs text-slate-400 mt-2">KYC: ${b.statutKYC}</p>
           </div>
         `;
 
-        const marker = L.marker([b.latitude, b.longitude]).bindPopup(popupContent);
+        const marker = L.marker([lat, lng])
+          .bindPopup(popupContent)
+          .on('mouseover', (e) => {
+            marker.openPopup();
+          });
+        
         marker.addTo(this.map!);
-        markers.push(marker);
+        bounds.extend([lat, lng]);
       }
     });
 
-    // If we have valid markers, zoom the map to fit them all
-    if (hasMarkers && markers.length > 0) {
-      const group = new L.FeatureGroup(markers);
-      this.map.fitBounds(group.getBounds(), { padding: [50, 50] });
+    if (bounds.isValid()) {
+      this.map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
     }
   }
 }
