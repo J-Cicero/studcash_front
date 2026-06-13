@@ -320,7 +320,12 @@ export class ParametresGnsComponent implements OnInit {
       next: () => {
         this.successMessage = 'Banque ajoutée.';
         this.closeBanqueModal();
+        this.loadBanques();
         this.loadComptesBancaires();
+      },
+      error: (err) => {
+        this.errorMessage = err.error?.message || 'Erreur lors de la création de la banque.';
+        this.closeBanqueModal();
       }
     });
   }
