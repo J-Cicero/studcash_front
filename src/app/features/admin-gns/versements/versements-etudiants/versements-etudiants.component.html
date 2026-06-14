@@ -22,7 +22,7 @@
   <div class="px-8 py-5 border-b border-slate-200/50 dark:border-slate-700/50 flex space-x-2 overflow-x-auto custom-scrollbar">
     <button (click)="setFilterNiveau('ALL')" [class.bg-blue-600]="filterNiveau === 'ALL'" [class.text-white]="filterNiveau === 'ALL'" [class.bg-slate-100]="filterNiveau !== 'ALL'" [class.text-slate-600]="filterNiveau !== 'ALL'" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors whitespace-nowrap dark:bg-slate-800 dark:text-slate-300">Tous les niveaux</button>
     <button (click)="setFilterNiveau('LICENCE')" [class.bg-blue-600]="filterNiveau === 'LICENCE'" [class.text-white]="filterNiveau === 'LICENCE'" [class.bg-slate-100]="filterNiveau !== 'LICENCE'" [class.text-slate-600]="filterNiveau !== 'LICENCE'" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors whitespace-nowrap dark:bg-slate-800 dark:text-slate-300">Licence</button>
-    <button (click)="setFilterNiveau('MASTER')" [class.bg-blue-600]="filterNiveau === 'MASTER'" [class.text-white]="filterNiveau === 'MASTER'" [class.bg-slate-100]="filterNiveau !== 'MASTER'" [class.text-slate-600]="filterNiveau !== 'MASTER'" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors whitespace-nowrap dark:bg-slate-800 dark:text-slate-300">Master</button>
+
   </div>
 
   <div *ngIf="isLoading" class="flex justify-center items-center py-20">

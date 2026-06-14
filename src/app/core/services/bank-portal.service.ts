@@ -52,6 +52,22 @@ export interface BankFinancialSummary {
   totalDepensesAchats: number;
   totalCommissionsAchats: number;
   totalNetCommercants: number;
+  totalCommissionsBanque?: number;
+}
+
+export interface VenteNonLiquidee {
+  trackingId: string;
+  date: string;
+  montant: number;
+  etudiantNom: string;
+  etudiantPrenom: string;
+}
+
+export interface StudentDepense {
+  trackingId: string;
+  date: string;
+  montant: number;
+  boutiqueNom: string;
 }
 
 @Injectable({
@@ -119,6 +135,19 @@ export class BankPortalService {
   getBoutiqueVersements(bankOperatorTrackingId: string): Observable<BoutiqueVersementInfo[]> {
     const params = new HttpParams().set('bankOperatorTrackingId', bankOperatorTrackingId);
     return this.http.get<BoutiqueVersementInfo[]>(`${this.apiUrl}/boutiques/versements`, { params });
+  }
+
+  getVentesNonLiquidees(boutiqueTrackingId: string): Observable<VenteNonLiquidee[]> {
+    return this.http.get<VenteNonLiquidee[]>(`${this.apiUrl}/boutiques/${boutiqueTrackingId}/ventes-non-liquidees`);
+  }
+
+  validerLiquidation(trackingId: string, referenceVirement: string): Observable<any> {
+    const params = new HttpParams().set('referenceVirement', referenceVirement);
+    return this.http.patch(`${environment.apiUrl}/liquidations/${trackingId}/valider`, null, { params });
+  }
+
+  getStudentDepenses(studentTrackingId: string): Observable<StudentDepense[]> {
+    return this.http.get<StudentDepense[]>(`${this.apiUrl}/students/${studentTrackingId}/depenses`);
   }
 }
 

@@ -1,51 +1,108 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LiquidationService, Liquidation } from '../../../core/services/liquidation.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { 
+  BankPortalService, 
+  BoutiqueLiquidationInfo,
+  VenteNonLiquidee
+} from '../../../core/services/bank-portal.service';
 
 @Component({
   selector: 'app-liquidation-queue',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './liquidation-queue.component.html'
+  templateUrl: './liquidation-queue.component.html',
+  styleUrls: ['./liquidation-queue.component.scss']
 })
 export class LiquidationQueueComponent implements OnInit {
-  liquidations: Liquidation[] = [];
+  boutiques: BoutiqueLiquidationInfo[] = [];
   isLoading = false;
-  referenceVirement: string = '';
-  selectedLiquidation: Liquidation | null = null;
+  
+  selectedBoutique: BoutiqueLiquidationInfo | null = null;
+  ventesDetails: VenteNonLiquidee[] = [];
+  isLoadingDetails = false;
+  
+  referenceVirement = '';
+  isValidating = false;
+  validationSuccess = false;
 
-  constructor(private liquidationService: LiquidationService) {}
+  constructor(
+    private bankPortalService: BankPortalService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
-    this.loadLiquidations();
+    this.loadBoutiques();
   }
 
-  loadLiquidations() {
+  loadBoutiques(): void {
+    const operatorId = this.authService.currentUserValue?.trackingId;
+    if (!operatorId) return;
+
     this.isLoading = true;
-    this.liquidationService.findAll().subscribe({
-      next: (data) => {
-        this.liquidations = data.filter(l => l.statut === 'EN_ATTENTE');
+    this.bankPortalService.getBoutiques(operatorId).subscribe({
+      next: (data: any) => {
+        this.boutiques = data.filter((b: any) => b.soldeWallet > 0);
         this.isLoading = false;
       },
-      error: () => {
+      error: (err: any) => {
+        console.error(err);
         this.isLoading = false;
       }
     });
   }
 
-  openValidationModal(liquidation: Liquidation) {
-    this.selectedLiquidation = liquidation;
+  selectBoutique(boutique: BoutiqueLiquidationInfo): void {
+    this.selectedBoutique = boutique;
+    this.validationSuccess = false;
     this.referenceVirement = '';
+    this.loadVentesDetails(boutique.boutiqueTrackingId);
   }
 
-  valider() {
-    if (!this.selectedLiquidation || !this.referenceVirement) return;
-    
-    this.liquidationService.validerLiquidation(this.selectedLiquidation.trackingId, this.referenceVirement).subscribe({
+  closeDetails(): void {
+    this.selectedBoutique = null;
+    this.ventesDetails = [];
+  }
+
+  loadVentesDetails(boutiqueTrackingId: string): void {
+    this.isLoadingDetails = true;
+    this.bankPortalService.getVentesNonLiquidees(boutiqueTrackingId).subscribe({
+      next: (data: any) => {
+        this.ventesDetails = data;
+        this.isLoadingDetails = false;
+      },
+      error: (err: any) => {
+        console.error(err);
+        this.isLoadingDetails = false;
+      }
+    });
+  }
+
+  get totalVentesBrutes(): number {
+    return this.ventesDetails.reduce((acc, curr) => acc + curr.montant, 0);
+  }
+
+  validerVirement(): void {
+    if (!this.selectedBoutique || !this.referenceVirement.trim()) return;
+
+    this.isValidating = true;
+    this.bankPortalService.validerLiquidation(this.selectedBoutique.boutiqueTrackingId, this.referenceVirement).subscribe({
       next: () => {
-        this.selectedLiquidation = null;
-        this.loadLiquidations();
+        this.isValidating = false;
+        this.validationSuccess = true;
+        
+        // Remove from list
+        this.boutiques = this.boutiques.filter(b => b.boutiqueTrackingId !== this.selectedBoutique?.boutiqueTrackingId);
+        
+        setTimeout(() => {
+          this.closeDetails();
+        }, 2000);
+      },
+      error: (err: any) => {
+        console.error(err);
+        this.isValidating = false;
+        alert("Erreur lors de la validation du virement.");
       }
     });
   }

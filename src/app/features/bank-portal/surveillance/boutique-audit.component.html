@@ -1,0 +1,128 @@
+<div class="space-y-6 animate-fade-in-up">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800/60 pb-4">
+    <div>
+      <h1 class="text-xl font-bold text-slate-900 dark:text-white">Audit des Boutiques</h1>
+      <p class="text-slate-500 dark:text-slate-400 text-[11px] mt-0.5">Historique des versements par partenaire</p>
+    </div>
+    
+    <!-- Barre de recherche -->
+    <div class="relative w-full md:w-64">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+      <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearch()"
+             class="block w-full pl-9 pr-3 py-1.5 border border-slate-300 dark:border-slate-600 rounded-lg leading-5 bg-white dark:bg-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-xs transition-colors text-slate-900 dark:text-white"
+             placeholder="Rechercher une boutique...">
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="flex justify-center py-12">
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+  </div>
+
+  <div class="flex flex-col lg:flex-row gap-6" *ngIf="!isLoading">
+    
+    <!-- Liste des Boutiques -->
+    <div class="w-full lg:w-1/3 glass-panel rounded-2xl overflow-hidden shadow-sm border border-slate-200/50 dark:border-slate-700/50 h-[calc(100vh-250px)] flex flex-col">
+      <div class="bg-slate-50 dark:bg-slate-800/50 px-4 py-2.5 border-b border-slate-200 dark:border-slate-700/50 font-semibold text-slate-700 dark:text-slate-300 text-xs">
+        Boutiques ({{ filteredBoutiques.length }})
+      </div>
+      <div class="overflow-y-auto custom-scrollbar flex-1 p-2 space-y-1">
+        <div *ngIf="filteredBoutiques.length === 0" class="text-center text-slate-500 py-6 text-xs">
+          Aucune boutique trouvée.
+        </div>
+        
+        <div *ngFor="let boutique of filteredBoutiques" 
+             (click)="selectBoutique(boutique)"
+             class="p-2.5 rounded-lg cursor-pointer transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
+             [class.bg-blue-50]="selectedBoutique?.boutiqueTrackingId === boutique.boutiqueTrackingId"
+             [class.dark:bg-blue-900.20]="selectedBoutique?.boutiqueTrackingId === boutique.boutiqueTrackingId"
+             [class.border-blue-200]="selectedBoutique?.boutiqueTrackingId === boutique.boutiqueTrackingId"
+             [class.dark:border-blue-800]="selectedBoutique?.boutiqueTrackingId === boutique.boutiqueTrackingId">
+          <div class="flex items-center space-x-3">
+            <div class="h-8 w-8 rounded-full bg-gradient-to-br from-blue-100 to-sky-100 dark:from-blue-900 dark:to-sky-900 flex items-center justify-center text-blue-700 dark:text-blue-300 font-bold text-[10px] shadow-inner shrink-0">
+              {{ boutique.nomBoutique.charAt(0) }}
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-semibold text-slate-900 dark:text-white truncate">
+                {{ boutique.nomBoutique }}
+              </p>
+              <p class="text-[10px] text-slate-500 truncate mt-0.5">
+                Cpt: {{ boutique.numeroCompte || 'Non renseigné' }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Détail des Versements -->
+    <div class="w-full lg:w-2/3">
+      <div *ngIf="!selectedBoutique" class="glass-panel rounded-2xl border border-slate-200/50 dark:border-slate-700/50 h-[calc(100vh-250px)] flex flex-col items-center justify-center p-8 text-center text-slate-500">
+        <svg class="w-12 h-12 mb-3 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+        </svg>
+        <p class="text-sm font-medium text-slate-600 dark:text-slate-400">Sélectionnez une boutique</p>
+      </div>
+
+      <div *ngIf="selectedBoutique" class="glass-panel rounded-2xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden h-[calc(100vh-250px)] flex flex-col">
+        <!-- Info Carte -->
+        <div class="p-4 bg-gradient-to-r from-blue-900 via-sky-900 to-blue-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-white flex justify-between items-end relative overflow-hidden shrink-0">
+          <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/5 rounded-full blur-2xl"></div>
+          <div class="relative z-10">
+            <h2 class="text-lg font-bold">{{ selectedBoutique.nomBoutique }}</h2>
+            <div class="flex items-center space-x-3 mt-1.5 text-blue-200 text-xs">
+              <span class="flex items-center"><svg class="w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg> {{ selectedBoutique.proprietaireNom }}</span>
+              <span class="flex items-center"><svg class="w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg> Cpt: {{ selectedBoutique.numeroCompte || 'N/A' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table Versements -->
+        <div class="flex-1 bg-white dark:bg-slate-900 overflow-hidden flex flex-col">
+          <div class="flex-1 overflow-y-auto custom-scrollbar">
+            <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
+              <thead class="bg-slate-50 dark:bg-slate-800/50 sticky top-0 z-10">
+                <tr>
+                  <th class="px-4 py-2.5 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider">Date & Ref</th>
+                  <th class="px-4 py-2.5 text-right text-[10px] font-bold text-slate-500 uppercase tracking-wider">Ventes Brutes</th>
+                  <th class="px-4 py-2.5 text-right text-[10px] font-bold text-slate-500 uppercase tracking-wider">Net Versé</th>
+                  <th class="px-4 py-2.5 text-center text-[10px] font-bold text-slate-500 uppercase tracking-wider">Statut</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                <tr *ngIf="boutiqueVersements.length === 0">
+                  <td colspan="4" class="px-4 py-8 text-center text-slate-500 text-xs">Aucun versement enregistré pour le moment.</td>
+                </tr>
+                <tr *ngFor="let v of boutiqueVersements" class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                  <td class="px-4 py-3 whitespace-nowrap">
+                    <div class="text-xs font-semibold text-slate-900 dark:text-white">{{ v.dateVersement ? (v.dateVersement | date:'dd/MM/yyyy HH:mm') : 'En attente' }}</div>
+                    <div class="text-[10px] text-slate-500 mt-0.5 font-mono">{{ v.versementTrackingId || 'N/A' }}</div>
+                  </td>
+                  <td class="px-4 py-3 whitespace-nowrap text-right">
+                    <div class="text-[11px] text-slate-600 dark:text-slate-400">---</div>
+                  </td>
+                  <td class="px-4 py-3 whitespace-nowrap text-right">
+                    <span class="text-xs font-bold text-blue-600 dark:text-blue-400">{{ v.montantVerse | number }} F</span>
+                  </td>
+                  <td class="px-4 py-3 whitespace-nowrap text-center">
+                    <span *ngIf="v.statut === 'VALIDE' || v.statut === 'LIQUIDE'" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                      Liquidé
+                    </span>
+                    <span *ngIf="v.statut !== 'VALIDE' && v.statut !== 'LIQUIDE'" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                      {{ v.statut || 'En attente' }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -43,7 +43,7 @@ export class ParametresGnsComponent implements OnInit {
   docCreateForm: FormGroup;
   isDocModalOpen = false;
 
-  niveaux = ['L1_ANNEE', 'L2_ANNEE', 'L3_ANNEE', 'L4_ANNEE', 'L5_ANNEE', 'M1_ANNEE', 'M2_ANNEE', 'M3_ANNEE'];
+  niveaux = ['L1_ANNEE', 'L2_ANNEE', 'L3_ANNEE'];
   typesDocument = ['RELEVE_BAC', 'SOUCHE_TAMPONNEE', 'RELEVE_NOTES', 'FICHE_UE', 'PIECE_IDENTITE'];
 
   // Scolarite Year
@@ -142,7 +142,6 @@ export class ParametresGnsComponent implements OnInit {
       if (status.currentStatus === 'ACTIVE') {
         this.paramForm.disable();
         this.docCreateForm.disable();
-        this.banqueForm.disable();
       }
     });
   }

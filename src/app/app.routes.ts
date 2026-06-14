@@ -93,23 +93,19 @@ export const routes: Routes = [
       },
       {
         path: 'liquidations',
-        loadComponent: () => import('./features/bank-portal/dashboard/dashboard.component').then(m => m.DashboardComponent)
-      },
-      {
-        path: 'boutiques',
-        loadComponent: () => import('./features/bank-portal/dashboard/dashboard.component').then(m => m.DashboardComponent)
-      },
-      {
-        path: 'reversements',
-        loadComponent: () => import('./features/bank-portal/dashboard/dashboard.component').then(m => m.DashboardComponent)
-      },
-      {
-        path: 'info',
-        loadComponent: () => import('./features/bank-portal/dashboard/dashboard.component').then(m => m.DashboardComponent)
+        loadComponent: () => import('./features/bank-portal/liquidation-queue/liquidation-queue.component').then(m => m.LiquidationQueueComponent)
       },
       {
         path: 'surveillance',
         loadComponent: () => import('./features/bank-portal/surveillance/surveillance.component').then(m => m.SurveillanceComponent)
+      },
+      {
+        path: 'surveillance/student-audit',
+        loadComponent: () => import('./features/bank-portal/surveillance/student-audit.component').then(m => m.StudentAuditComponent)
+      },
+      {
+        path: 'surveillance/boutique-audit',
+        loadComponent: () => import('./features/bank-portal/surveillance/boutique-audit.component').then(m => m.BoutiqueAuditComponent)
       },
       {
         path: 'profile',

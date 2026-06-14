@@ -277,13 +277,29 @@
 <div *ngIf="isBanqueModalOpen" class="fixed inset-0 z-50 overflow-y-auto">
   <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
     <div class="fixed inset-0 transition-opacity bg-slate-900/60 backdrop-blur-sm" (click)="closeBanqueModal()"></div>
-    <div class="relative z-10 inline-block align-bottom bg-white dark:bg-slate-900 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-200 dark:border-slate-800 p-6">
-      <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Nouvelle Banque</h3>
-      <form [formGroup]="banqueForm" (ngSubmit)="saveBanque()" class="space-y-4">
-        <input type="text" formControlName="nom" placeholder="Nom de la banque" class="block w-full text-sm border rounded-xl py-2 px-3">
-        <input type="text" formControlName="code" placeholder="Code de la banque" class="block w-full text-sm border rounded-xl py-2 px-3">
-        <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-xl font-bold text-sm">Valider</button>
-      </form>
+    <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+    <div class="relative z-10 inline-block align-bottom bg-white dark:bg-slate-900 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full border border-slate-200 dark:border-slate-800">
+      <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Nouvelle Banque</h3>
+      </div>
+      <div class="p-6">
+        <form [formGroup]="banqueForm" (ngSubmit)="saveBanque()" class="space-y-5">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Nom de la banque <span class="text-red-500">*</span></label>
+            <input type="text" formControlName="nom" placeholder="Ex: Ecobank" class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white">
+            <p *ngIf="banqueForm.get('nom')?.invalid && banqueForm.get('nom')?.touched" class="text-xs text-red-500 font-bold mt-1">Le nom de la banque est requis.</p>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Code de la banque <span class="text-red-500">*</span></label>
+            <input type="text" formControlName="code" placeholder="Ex: ECO" class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white uppercase">
+            <p *ngIf="banqueForm.get('code')?.invalid && banqueForm.get('code')?.touched" class="text-xs text-red-500 font-bold mt-1">Le code de la banque est requis.</p>
+          </div>
+          <div class="pt-4 flex justify-end space-x-3">
+            <button type="button" (click)="closeBanqueModal()" class="px-4 py-2 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 rounded-xl transition-colors">Annuler</button>
+            <button type="submit" [disabled]="banqueForm.invalid" class="px-4 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-colors disabled:opacity-50">Valider</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>
