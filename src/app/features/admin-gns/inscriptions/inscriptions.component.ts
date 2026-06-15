@@ -95,8 +95,8 @@ export class InscriptionsComponent implements OnInit {
     this.isLoadingDocs = true;
     this.hasMandatoryDocs = false;
     
-    // Assuming inscription ID is 'id', fallback to 'trackingId'
-    const inscriptionId = ins.id || ins.trackingId;
+    // Fix: Backend expects UUID (trackingId) for documents
+    const inscriptionId = ins.trackingId;
     
     this.studentService.getInscriptionDocuments(inscriptionId).subscribe({
       next: (res) => {
@@ -113,16 +113,30 @@ export class InscriptionsComponent implements OnInit {
     });
   }
 
-  updateStatus(statut: string) {
+  updateDefinitif(estInscritDefinitif: boolean) {
     if (!this.selectedInscription) return;
 
-    this.inscriptionService.updateStatus(this.selectedInscription.trackingId, statut).subscribe({
+    this.inscriptionService.updateDefinitif(this.selectedInscription.trackingId, estInscritDefinitif).subscribe({
       next: () => {
         this.loadInscriptions(); // Recharger la liste
         this.closeDetails();
       },
       error: (err) => {
-        console.error("Erreur mise à jour statut", err);
+        console.error("Erreur mise à jour définitif", err);
+      }
+    });
+  }
+
+  synchronizeInscription() {
+    if (!this.selectedInscription) return;
+
+    this.inscriptionService.synchroniser(this.selectedInscription.trackingId).subscribe({
+      next: () => {
+        this.loadInscriptions();
+        this.closeDetails();
+      },
+      error: (err) => {
+        console.error("Erreur synchronisation", err);
       }
     });
   }

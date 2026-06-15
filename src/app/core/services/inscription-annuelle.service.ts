@@ -19,7 +19,17 @@ export class InscriptionAnnuelleService {
   }
 
   updateStatus(trackingId: string, statut: string): Observable<any> {
+    // OBSOLETE: Use updateDefinitif or synchroniser instead
     let params = new HttpParams().set('statut', statut);
     return this.http.patch<any>(`${this.apiUrl}/${trackingId}/statut`, null, { params });
+  }
+
+  updateDefinitif(trackingId: string, estInscritDefinitif: boolean): Observable<any> {
+    let params = new HttpParams().set('estInscritDefinitif', estInscritDefinitif.toString());
+    return this.http.patch<any>(`${this.apiUrl}/${trackingId}/definitif`, null, { params });
+  }
+
+  synchroniser(trackingId: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/${trackingId}/synchroniser`, null);
   }
 }
