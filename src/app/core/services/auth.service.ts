@@ -61,4 +61,8 @@ export class AuthService {
     if (!user || !user.rolesList) return false;
     return user.rolesList.includes(role) || user.rolesList.includes(`ROLE_${role}`);
   }
+
+  public getCurrentUserId(): string | null {
+    return this.currentUserValue?.userId || null;
+  }
 }

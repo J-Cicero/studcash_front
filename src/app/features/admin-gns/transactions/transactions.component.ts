@@ -15,7 +15,7 @@ export class TransactionsComponent implements OnInit {
   
   // KPIs
   volumeValide: number = 0;
-  commissionsTotales: number = 0;
+  // commissionsTotales: number = 0; // Removed as no longer available from backend
   
   isLoading = false;
   isLoadingStats = false;
@@ -35,20 +35,19 @@ export class TransactionsComponent implements OnInit {
     this.isLoadingStats = true;
     
     this.transactionService.getVolumeValide().subscribe({
-      next: (val) => this.volumeValide = val || 0,
-      error: () => this.volumeValide = 0
-    });
-
-    this.transactionService.getCommissionsTotales().subscribe({
-      next: (val) => {
-        this.commissionsTotales = val || 0;
+      next: (val: number) => {
+        this.volumeValide = val || 0;
+        // this.commissionsTotales = val?.totalGnsCommission || 0; // Removed
         this.isLoadingStats = false;
       },
       error: () => {
-        this.commissionsTotales = 0;
+        this.volumeValide = 0;
+        // this.commissionsTotales = 0; // Removed
         this.isLoadingStats = false;
       }
     });
+    // Set commissionsTotales to 0 or handle as not applicable
+    // this.commissionsTotales = 0; // No longer needed as property removed
   }
 
   loadTransactions() {
@@ -62,7 +61,7 @@ export class TransactionsComponent implements OnInit {
 
         // Simple local filtering if backend endpoints are not ready yet
         if (this.filterStatut !== 'ALL') {
-          list = list.filter((t: any) => t.statut === this.filterStatut);
+          list = list.filter((t: any) => t.status === this.filterStatut); // Changed 'statut' to 'status' as per new TransactionResponse
         }
         
         this.transactions = list;

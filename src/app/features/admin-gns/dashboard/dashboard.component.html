@@ -56,18 +56,7 @@
     actionButtonRoute="/admin-gns/versements-etudiants"
   ></app-kpi-card>
 
-  <!-- Volume Validé (Jour) -->
-  <app-kpi-card
-    title="Volume Validé (Jour)"
-    [value]="volumeValide"
-    [isLoading]="isVolumeValideLoading"
-    [hasError]="volumeValideError"
-    suffix="FCFA"
-    iconSvgPath="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-    gradientClass="from-emerald-400 to-emerald-600"
-    iconBgClass="bg-emerald-500/10"
-    shadowClass="shadow-emerald-500/30"
-  ></app-kpi-card>
+
 
   <!-- Boutiques Alerte Quota -->
   <app-kpi-card
@@ -98,35 +87,7 @@
 
 <!-- Charts Section -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-  <!-- Line Chart: Evolution Transactions -->
-  <div class="lg:col-span-2 glass-panel rounded-2xl p-5 flex flex-col min-h-[400px] lg:min-h-[450px]">
-    <div class="flex justify-between items-center mb-4">
-      <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center">
-        <svg class="w-4 h-4 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-        Évolution Transactions
-      </h3>
-    </div>
-    <div class="relative flex-grow w-full">
-      <div *ngIf="isLineChartLoading" class="absolute inset-0 flex items-center justify-center">
-        <div class="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
-      </div>
-      <canvas #lineChartCanvas [class.opacity-0]="isLineChartLoading" class="transition-opacity duration-300"></canvas>
-    </div>
-  </div>
 
-  <!-- Pie Chart: Repartition Bourses -->
-  <div class="lg:col-span-1 glass-panel rounded-2xl p-5 flex flex-col min-h-[400px] lg:min-h-[450px]">
-    <div class="flex justify-between items-center mb-4">
-      <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center">
-        <svg class="w-4 h-4 mr-2 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
-        Répartition Bourses
-      </h3>
-    </div>
-    <div class="relative flex-grow w-full">
-      <div *ngIf="isPieChartLoading" class="absolute inset-0 flex items-center justify-center">
-        <div class="w-8 h-8 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
-      </div>
-      <canvas #pieChartCanvas [class.opacity-0]="isPieChartLoading" class="transition-opacity duration-300"></canvas>
-    </div>
-  </div>
+
+
 </div>

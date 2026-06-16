@@ -92,21 +92,21 @@
         <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
           <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
             <tr>
-              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Période (Libellé)</th>
-              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Début</th>
-              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Fin</th>
-              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statut</th>
-              <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Actions</th>
+              <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Période (Libellé)</th>
+              <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Début</th>
+              <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Fin</th>
+              <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statut</th>
+              <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Actions</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
             <tr *ngFor="let year of scolariteYears" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
-              <td class="px-6 py-5 whitespace-nowrap">
+              <td class="px-4 py-3 whitespace-nowrap">
                 <div class="text-sm font-bold text-slate-900 dark:text-white">{{year.libelle}}</div>
               </td>
-              <td class="px-6 py-5 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400 font-medium">{{year.dateDebut | date:'dd/MM/yyyy'}}</td>
-              <td class="px-6 py-5 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400 font-medium">{{year.dateFin | date:'dd/MM/yyyy'}}</td>
-              <td class="px-6 py-5 whitespace-nowrap">
+              <td class="px-4 py-3 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400 font-medium">{{year.dateDebut | date:'dd/MM/yyyy'}}</td>
+              <td class="px-4 py-3 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400 font-medium">{{year.dateFin | date:'dd/MM/yyyy'}}</td>
+              <td class="px-4 py-3 whitespace-nowrap">
                 <span *ngIf="year.estOuverte || year.estActive" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-emerald-100/80 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
                   Active
                 </span>
@@ -114,14 +114,14 @@
                   Clôturée
                 </span>
               </td>
-              <td class="px-6 py-5 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+              <td class="px-4 py-3 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
                 <button *ngIf="year.estOuverte || year.estActive" (click)="cloturerYear(year)" class="text-rose-600 hover:text-rose-900 font-bold text-sm">
                     Clôturer
                 </button>
               </td>
             </tr>
             <tr *ngIf="scolariteYears.length === 0">
-              <td colspan="5" class="px-6 py-12 text-center">
+              <td colspan="5" class="px-4 py-8 text-center">
                 <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">Aucune année scolaire configurée.</p>
               </td>
             </tr>

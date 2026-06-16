@@ -101,7 +101,13 @@ export class UniversitiesComponent implements OnInit {
     if (this.createForm.invalid) return;
 
     this.isCreating = true;
-    this.universiteService.create(this.createForm.value).subscribe({
+    const universityData = {
+      full_name: this.createForm.value.nom,
+      code: this.createForm.value.code,
+      ville: this.createForm.value.ville,
+      estActive: this.createForm.value.estActive
+    };
+    this.universiteService.create(universityData).subscribe({
       next: () => {
         this.loadUniversities();
         this.loadSummaryStats();

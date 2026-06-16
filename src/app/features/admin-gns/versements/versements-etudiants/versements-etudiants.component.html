@@ -38,22 +38,22 @@
     <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
       <thead class="bg-slate-50/50 dark:bg-slate-800/30">
         <tr>
-          <th class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Portefeuille (Étudiant)</th>
-          <th class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Solde Actuel</th>
-          <th class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statut</th>
-          <th class="px-8 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Actions</th>
+          <th class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Portefeuille (Étudiant)</th>
+          <th class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Solde Actuel</th>
+          <th class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statut</th>
+          <th class="px-4 py-2 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Actions</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
         <tr *ngFor="let wallet of wallets" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
-          <td class="px-8 py-5 whitespace-nowrap">
+          <td class="px-4 py-3 whitespace-nowrap">
             <p class="text-sm font-bold text-slate-900 dark:text-white">{{wallet.proprietaireTrackingId ? getShortId(wallet.proprietaireTrackingId) : 'Inconnu'}}</p>
             <p class="text-xs text-slate-500 dark:text-slate-400">#{{getShortId(wallet.trackingId)}}</p>
           </td>
-          <td class="px-8 py-5 whitespace-nowrap">
+          <td class="px-4 py-3 whitespace-nowrap">
             <span class="text-sm font-extrabold text-slate-900 dark:text-white">{{formatNumber(wallet.solde || 0)}} FCFA</span>
           </td>
-          <td class="px-8 py-5 whitespace-nowrap">
+          <td class="px-4 py-3 whitespace-nowrap">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border"
               [ngClass]="{
                 'bg-emerald-100 text-emerald-800 border-emerald-200': wallet.statutWallet === 'ACTIF',
@@ -62,14 +62,14 @@
               {{wallet.statutWallet}}
             </span>
           </td>
-          <td class="px-8 py-5 whitespace-nowrap text-right text-sm font-medium">
+          <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
             <button (click)="openManualVersement(wallet)" class="inline-flex items-center px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50 font-bold rounded-lg transition-colors">
               Bourse Individuelle
             </button>
           </td>
         </tr>
         <tr *ngIf="wallets.length === 0">
-          <td colspan="4" class="px-8 py-12 text-center text-sm text-slate-500 dark:text-slate-400">
+          <td colspan="4" class="px-4 py-8 text-center text-sm text-slate-500 dark:text-slate-400">
             Aucun portefeuille étudiant trouvé.
           </td>
         </tr>

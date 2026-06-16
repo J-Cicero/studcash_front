@@ -12,7 +12,7 @@ Ce portail est destiné aux administrateurs globaux du système pour gérer l'en
 * **`/admin-gns/dashboard`** : Tableau de bord principal. Affiche les statistiques globales (KPIs), les inscriptions récentes, les transactions. Fait appel aux services de statistiques et de reporting.
 * **`/admin-gns/parametres`** : Gestion des paramètres globaux de l'application (frais, limites, configurations).
 * **`/admin-gns/scolarite`** : Gestion des années de scolarité (ouverture, fermeture d'une année universitaire).
-* **`/admin-gns/inscriptions`** : Gestion et validation des inscriptions annuelles des étudiants. Fait appel au `InscriptionService`.
+* **`/admin-gns/inscriptions`** : Gestion et validation des ninscriptions annuelles des étudiants. Fait appel au `InscriptionService`.
 * **`/admin-gns/versements/etudiants`** : Suivi et gestion des versements de bourses aux étudiants. Fait appel au `VersementService` et `WalletService`.
 * **`/admin-gns/versements/boutiques`** : Suivi et gestion des paiements/remboursements effectués envers les boutiques partenaires.
 * **`/admin-gns/transactions`** : Historique global de toutes les transactions du système (paiements QR, virements). Fait appel au `TransactionService`.

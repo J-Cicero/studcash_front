@@ -36,4 +36,8 @@ export class UserService {
   createAdminBanque(userData: any): Observable<any> {
     return this.http.post<any>(`${environment.apiUrl}/admins/gns/create-banque-admin`, userData);
   }
+
+  getMerchantDocuments(trackingId: string): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/merchants/documents/merchant/${trackingId}`);
+  }
 }

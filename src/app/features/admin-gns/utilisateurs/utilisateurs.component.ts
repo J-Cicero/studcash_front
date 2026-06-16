@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../core/services/user.service';
 import { UniversiteService } from '../../../core/services/universite.service';
 import { BanqueService } from '../../../core/services/banque.service';
+import { StudentService, DocumentResponse } from '../../../core/services/student.service';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -15,7 +16,7 @@ export interface UserResponse {
   role: string;
   telephone?: string;
   dateInscription: string;
-  estActif: boolean;
+  isActive: boolean;
 }
 
 @Component({
@@ -31,7 +32,7 @@ export class UtilisateursComponent implements OnInit {
   errorMessage = '';
 
   filterRole = 'ALL';
-  roles = ['ALL', 'ADMIN_GNS', 'ADMIN_DBS', 'UNIVERSITY_ADMIN', 'ADMIN_BANQUE', 'COMMERCANT', 'ETUDIANT'];
+  roles = ['ALL', 'ADMIN_GNS', 'ADMIN_DBS', 'ADMIN_BANQUE', 'COMMERCANT', 'ETUDIANT'];
 
   get filteredUsers() {
     if (this.filterRole === 'ALL') return this.users;
@@ -59,6 +60,12 @@ export class UtilisateursComponent implements OnInit {
   showCreateModal = false;
   newUserForm: any = { nom: '', prenom: '', telephone: '', email: '', motDePasse: '', role: 'ADMIN_DBS', universiteTrackingId: '', banquePartenaireTrackingId: '' };
   isProcessingCreate = false;
+
+  // Documents Modal
+  selectedUser: UserResponse | null = null;
+  userDocuments: DocumentResponse[] = [];
+  isLoadingDocs = false;
+  hasMandatoryDocs = false;
   
   universites: any[] = [];
   banques: any[] = [];
@@ -66,7 +73,8 @@ export class UtilisateursComponent implements OnInit {
   constructor(
     private userService: UserService,
     private universiteService: UniversiteService,
-    private banqueService: BanqueService
+    private banqueService: BanqueService,
+    private studentService: StudentService
   ) {
     this.searchSubject.pipe(
       debounceTime(300),
@@ -236,7 +244,7 @@ export class UtilisateursComponent implements OnInit {
 
   getRoleColorClass(role: string): string {
     switch(role) {
-      case 'ADMIN_GNS': return 'bg-indigo-100 text-indigo-700 border-indigo-200 dark:bg-indigo-900/40 dark:text-indigo-400 dark:border-indigo-800';
+      case 'ADMIN_GNS': return 'bg-indigo-500 text-white border-indigo-500 dark:bg-indigo-700 dark:text-indigo-100 dark:border-indigo-700';
       case 'ADMIN_DBS': return 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/40 dark:text-blue-400 dark:border-blue-800';
       case 'UNIVERSITY_ADMIN':
       case 'ADMINISTRATION_UNIVERSITAIRE':
@@ -247,5 +255,50 @@ export class UtilisateursComponent implements OnInit {
       case 'ETUDIANT': return 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/40 dark:text-orange-400 dark:border-orange-800';
       default: return 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700';
     }
+  }
+
+  // --- Documents ---
+  viewDetails(user: UserResponse) {
+    if (user.role !== 'ETUDIANT' && user.role !== 'COMMERCANT') {
+      return; // Pas de documents à afficher pour les autres rôles pour l'instant
+    }
+    
+    this.selectedUser = user;
+    this.userDocuments = [];
+    this.isLoadingDocs = true;
+    this.hasMandatoryDocs = false;
+    
+    if (user.role === 'ETUDIANT') {
+      this.studentService.getStudentDocuments(user.trackingId).subscribe({
+        next: (res) => {
+          this.userDocuments = res || [];
+          this.hasMandatoryDocs = this.userDocuments.some(doc => doc.typeDocument === 'MANDAT_BANCAIRE');
+          this.isLoadingDocs = false;
+        },
+        error: () => {
+          this.userDocuments = [];
+          this.hasMandatoryDocs = false;
+          this.isLoadingDocs = false;
+        }
+      });
+    } else if (user.role === 'COMMERCANT') {
+      this.userService.getMerchantDocuments(user.trackingId).subscribe({
+        next: (res) => {
+          this.userDocuments = res.content || res || [];
+          this.hasMandatoryDocs = this.userDocuments.some(doc => doc.typeDocument === 'MANDAT_BANCAIRE' || doc.typeDocument === 'RIB'); // Ajuster selon le marchand
+          this.isLoadingDocs = false;
+        },
+        error: () => {
+          this.userDocuments = [];
+          this.hasMandatoryDocs = false;
+          this.isLoadingDocs = false;
+        }
+      });
+    }
+  }
+
+  closeDetails() {
+    this.selectedUser = null;
+    this.userDocuments = [];
   }
 }

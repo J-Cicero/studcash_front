@@ -34,10 +34,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   isTotalEtudiantsLoading = true;
   totalEtudiantsError = false;
 
-  volumeValide = 0;
-  isVolumeValideLoading = true;
-  volumeValideError = false;
-
   lowQuotaBoutiques = 0;
   isLowQuotaBoutiquesLoading = true;
   lowQuotaBoutiquesError = false;
@@ -65,14 +61,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     
     // Load KPIs
     this.loadTotalEtudiants();
-    this.loadVolumeValide();
     this.loadLowQuotaBoutiques();
     this.loadPendingLiquidations();
 
     // Load Charts
     setTimeout(() => {
-      this.loadEvolutionTransactions();
-      this.loadBourseRepartition();
     }, 200); // Small delay to let canvas render
   }
 
@@ -115,18 +108,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
-  loadVolumeValide() {
-    this.transactionService.getVolumeValide().pipe(
-      catchError(() => {
-        this.volumeValideError = true;
-        return of(0);
-      })
-    ).subscribe((val) => {
-      this.volumeValide = val || 0;
-      this.isVolumeValideLoading = false;
-    });
-  }
-
   loadLowQuotaBoutiques() {
     this.boutiqueService.getLowQuotaCount().pipe(
       catchError(() => {
@@ -152,23 +133,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   // --- Charts ---
-  loadEvolutionTransactions() {
-    this.transactionService.getEvolutionTransactions().pipe(
-      catchError(() => of([]))
-    ).subscribe((data: any) => {
-      this.isLineChartLoading = false;
-      this.initLineChart(data);
-    });
-  }
 
-  loadBourseRepartition() {
-    this.studentService.getBourseRepartition().pipe(
-      catchError(() => of([]))
-    ).subscribe((data: any) => {
-      this.isPieChartLoading = false;
-      this.initPieChart(data);
-    });
-  }
 
   initLineChart(data: any[]) {
     if (!this.lineChartCanvas || !data || data.length === 0) return;

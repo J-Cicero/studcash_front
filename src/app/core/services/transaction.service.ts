@@ -5,15 +5,19 @@ import { environment } from '../../../environments/environment';
 
 export interface TransactionResponse {
   trackingId: string;
-  studentName: string;
-  boutiqueName: string;
-  montantDebite: number;
-  montantNetBoutique: number;
-  commissionTotale: number;
-  commissionGns: number;
-  commissionBanque: number;
-  date: string;
-  statut: string;
+  senderTrackingId: string;
+  receiverTrackingId: string;
+  senderName: string;
+  receiverName: string;
+  amount: number;
+  amountDebited: number;
+  amountCredited: number;
+  totalCommission: number;
+  gnsCommission: number;
+  bankCommission: number;
+  isCommissionPaid: boolean;
+  status: string; 
+  createdAt: string; 
 }
 
 @Injectable({
@@ -31,21 +35,11 @@ export class TransactionService {
     return this.http.get<any>(this.apiUrl, { params });
   }
 
+  getGlobalStats(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/stats/global`);
+  }
+
   getVolumeValide(): Observable<number> {
     return this.http.get<number>(`${this.apiUrl}/stats/volume-valide`);
-  }
-
-  getCommissionsTotales(): Observable<number> {
-    // Assuming this endpoint exists or will exist as requested
-    return this.http.get<number>(`${this.apiUrl}/stats/commissions-totales`);
-  }
-
-  // Fallback for getting stats if needed (from older PaiementService)
-  getStats(): Observable<any> {
-    return this.http.get<any>(`${environment.apiUrl}/paiements/stats`);
-  }
-
-  getEvolutionTransactions(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/stats/evolution`);
   }
 }

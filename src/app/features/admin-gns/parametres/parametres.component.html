@@ -129,35 +129,35 @@
         <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
           <tr>
             <th scope="col"
-              class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+              class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
               Paramètre</th>
             <th scope="col"
-              class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+              class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
               Valeur</th>
             <th scope="col"
-              class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+              class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
               Description</th>
             <th scope="col"
-              class="px-6 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+              class="px-4 py-2 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
               Action</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
           <tr *ngFor="let param of parametres"
             class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
-            <td class="px-6 py-5 whitespace-nowrap">
+            <td class="px-4 py-3 whitespace-nowrap">
               <div class="text-sm font-bold text-slate-900 dark:text-white">{{ param.nomParametre }}</div>
             </td>
-            <td class="px-6 py-5 whitespace-nowrap">
+            <td class="px-4 py-3 whitespace-nowrap">
               <span
                 class="px-3 py-1 inline-flex text-sm font-bold rounded-full bg-blue-100/80 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
                 {{ param.valeurParametre }}
               </span>
             </td>
-            <td class="px-6 py-5 text-sm text-slate-500 dark:text-slate-400 font-medium max-w-xs truncate">
+            <td class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400 font-medium max-w-xs truncate">
               {{ param.description }}
             </td>
-            <td class="px-6 py-5 whitespace-nowrap text-right text-sm font-medium">
+            <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
               <button *ngIf="!activeYear" (click)="openParamModal(param)"
                 class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 hover:underline">
                 Modifier
@@ -175,7 +175,7 @@
             </td>
           </tr>
           <tr *ngIf="parametres.length === 0">
-            <td colspan="4" class="px-6 py-12 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">
+            <td colspan="4" class="px-4 py-8 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">
               Aucun paramètre configuré.
             </td>
           </tr>
@@ -212,25 +212,25 @@
       <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
         <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
           <tr>
-            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Banque</th>
-            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Numéro de Compte</th>
-            <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Action</th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Banque</th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Numéro de Compte</th>
+            <th scope="col" class="px-4 py-2 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Action</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
           <tr *ngFor="let compte of comptesBancaires" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
-            <td class="px-6 py-5 whitespace-nowrap">
+            <td class="px-4 py-3 whitespace-nowrap">
               <div class="text-sm font-bold text-slate-900 dark:text-white">{{ compte.banqueTrackingId }}</div>
             </td>
-            <td class="px-6 py-5 whitespace-nowrap">
+            <td class="px-4 py-3 whitespace-nowrap">
               <div class="text-sm font-bold text-slate-700 dark:text-slate-300 font-mono tracking-wider">{{ compte.numeroCompte }}</div>
             </td>
-            <td class="px-6 py-5 whitespace-nowrap text-right text-sm font-medium">
+            <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
               <button (click)="compte.trackingId && deleteCompteBancaire(compte.trackingId)" class="text-rose-600 hover:text-rose-900 dark:text-rose-400 hover:underline">Supprimer</button>
             </td>
           </tr>
           <tr *ngIf="comptesBancaires.length === 0">
-            <td colspan="3" class="px-6 py-12 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">
+            <td colspan="3" class="px-4 py-8 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">
               Aucun compte bancaire GNS configuré.
             </td>
           </tr>
@@ -258,14 +258,14 @@
       <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
         <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
           <tr>
-            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Nom</th>
-            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Code</th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Nom</th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Code</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
           <tr *ngFor="let b of banques" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
-            <td class="px-6 py-5 whitespace-nowrap"><div class="text-sm font-bold text-slate-900 dark:text-white">{{ b.nom }}</div></td>
-            <td class="px-6 py-5 whitespace-nowrap"><div class="text-sm font-bold text-slate-700 dark:text-slate-300">{{ b.code }}</div></td>
+            <td class="px-4 py-3 whitespace-nowrap"><div class="text-sm font-bold text-slate-900 dark:text-white">{{ b.nom }}</div></td>
+            <td class="px-4 py-3 whitespace-nowrap"><div class="text-sm font-bold text-slate-700 dark:text-slate-300">{{ b.code }}</div></td>
           </tr>
         </tbody>
       </table>
@@ -487,32 +487,32 @@
       <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
         <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
           <tr>
-            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Niveau</th>
-            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Document</th>
-            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Obligatoire</th>
-            <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Action</th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Niveau</th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Document</th>
+            <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Obligatoire</th>
+            <th scope="col" class="px-4 py-2 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Action</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
           <tr *ngFor="let doc of documentsRequis" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
-            <td class="px-6 py-5 whitespace-nowrap">
+            <td class="px-4 py-3 whitespace-nowrap">
               <span class="px-3 py-1 inline-flex text-sm font-bold rounded-full bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300">
                 {{ doc.niveau }}
               </span>
             </td>
-            <td class="px-6 py-5 whitespace-nowrap">
+            <td class="px-4 py-3 whitespace-nowrap">
               <div class="text-sm font-bold text-slate-900 dark:text-white">{{ doc.typeDocument }}</div>
             </td>
-            <td class="px-6 py-5 whitespace-nowrap">
+            <td class="px-4 py-3 whitespace-nowrap">
               <span *ngIf="doc.obligatoire" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-400">Oui</span>
               <span *ngIf="!doc.obligatoire" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-400">Optionnel</span>
             </td>
-            <td class="px-6 py-5 whitespace-nowrap text-right text-sm font-medium">
+            <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
               <button (click)="deleteDoc(doc.trackingId)" class="text-rose-600 hover:text-rose-900 dark:text-rose-400 hover:underline">Supprimer</button>
             </td>
           </tr>
           <tr *ngIf="documentsRequis.length === 0">
-            <td colspan="4" class="px-6 py-12 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">
+            <td colspan="4" class="px-4 py-8 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">
               Aucun document requis configuré.
             </td>
           </tr>

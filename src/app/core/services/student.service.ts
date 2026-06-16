@@ -51,14 +51,16 @@ export class StudentService {
     return this.http.get<any>(`${this.apiUrl}/documents/inscription/${inscriptionId}`);
   }
 
+  getStudentDocuments(trackingId: string): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/api/admin/students/${trackingId}/documents`);
+  }
+
   verifyPin(trackingId: string, pinCode: string): Observable<any> {
     let params = new HttpParams().set('pinCode', pinCode);
     return this.http.post<any>(`${this.apiUrl}/${trackingId}/verify-pin`, null, { params });
   }
 
-  getBourseRepartition(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/stats/bourse-repartition`);
-  }
+
 
   getTotalStudents(): Observable<number> {
     return this.http.get<number>(`${this.apiUrl}/stats/total`);

@@ -29,25 +29,25 @@
     <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
       <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
         <tr>
-          <th class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Étudiant</th>
-          <th class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Matricule</th>
-          <th class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Niveau</th>
-          <th class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statut</th>
-          <th class="px-8 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Actions</th>
+          <th class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Étudiant</th>
+          <th class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Matricule</th>
+          <th class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Niveau</th>
+          <th class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statut</th>
+          <th class="px-4 py-2 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Actions</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
         <tr *ngFor="let ins of filteredInscriptions" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
-          <td class="px-8 py-5 whitespace-nowrap text-sm font-bold text-slate-900 dark:text-white">
+          <td class="px-4 py-3 whitespace-nowrap text-sm font-bold text-slate-900 dark:text-white">
             {{ins.studentPrenom}} {{ins.studentNom}}
           </td>
-          <td class="px-8 py-5 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+          <td class="px-4 py-3 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
             {{ins.numEtudiantUniv || 'N/A'}}
           </td>
-          <td class="px-8 py-5 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
+          <td class="px-4 py-3 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
             {{ins.niveau}}
           </td>
-          <td class="px-8 py-5 whitespace-nowrap">
+          <td class="px-4 py-3 whitespace-nowrap">
             <span *ngIf="ins.estInscritDefinitif" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-emerald-100/80 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
               INSCRIT DÉFINITIF
             </span>
@@ -55,7 +55,7 @@
               EN ATTENTE
             </span>
           </td>
-          <td class="px-8 py-5 whitespace-nowrap text-right text-sm font-medium">
+          <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
             <button (click)="viewDetails(ins)" class="inline-flex items-center px-4 py-2 border border-slate-200 dark:border-slate-700 text-xs font-bold rounded-lg text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">
               Détails & Documents
             </button>
@@ -63,7 +63,7 @@
         </tr>
         
         <tr *ngIf="filteredInscriptions.length === 0">
-          <td colspan="5" class="px-8 py-12 text-center text-sm text-slate-500 dark:text-slate-400">
+          <td colspan="5" class="px-4 py-8 text-center text-sm text-slate-500 dark:text-slate-400">
             Aucune inscription trouvée pour cette année.
           </td>
         </tr>

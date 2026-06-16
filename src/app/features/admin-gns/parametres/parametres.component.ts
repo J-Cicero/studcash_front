@@ -315,7 +315,12 @@ export class ParametresGnsComponent implements OnInit {
 
   saveBanque() {
     if (this.banqueForm.invalid) return;
-    this.banqueService.createBanque(this.banqueForm.value).subscribe({
+    const banqueData = {
+      name: this.banqueForm.value.nom,
+      code: this.banqueForm.value.code,
+      logoUrl: this.banqueForm.value.logoUrl
+    };
+    this.banqueService.createBanque(banqueData).subscribe({
       next: () => {
         this.successMessage = 'Banque ajoutée.';
         this.closeBanqueModal();

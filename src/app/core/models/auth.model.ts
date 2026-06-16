@@ -4,6 +4,7 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
+  userId: string;
   trackingId: string;
   token: string;
   type: string;

@@ -5,7 +5,7 @@ import { environment } from '../../../environments/environment';
 
 export interface UniversiteRequest {
   code: string;
-  nom: string;
+  full_name: string;
   ville?: string;
   estActive: boolean;
 }
