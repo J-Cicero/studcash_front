@@ -8,6 +8,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { LoginResponse } from '../../../core/models/auth.model';
 import { SystemStatusService } from '../../../core/services/system-status.service';
 import { BanqueService, CompteBancaire } from '../../../core/services/banque.service';
+import { Banque } from '../../../core/models/banque.model';
 
 @Component({
   selector: 'app-parametres-gns',
@@ -51,7 +52,7 @@ export class ParametresGnsComponent implements OnInit {
 
   // Bancaire
   comptesBancaires: CompteBancaire[] = [];
-  banques: any[] = [];
+  banques: Banque[] = [];
   isLoadingBank = false;
   isBanqueModalOpen = false;
   isCompteGnsModalOpen = false;
@@ -96,7 +97,7 @@ export class ParametresGnsComponent implements OnInit {
     this.compteGnsForm = this.fb.group({
       banqueTrackingId: ['', Validators.required],
       numeroCompte: ['', Validators.required],
-      typeProprietaire: ['GNS', Validators.required],
+      ownerType: ['GNS', Validators.required],
       ribDocumentTrackingId: [''] // Optionnel pour les comptes GNS
     });
   }
@@ -121,7 +122,10 @@ export class ParametresGnsComponent implements OnInit {
   }
 
   loadBanques() {
-    this.banqueService.getAllBanques().subscribe(res => this.banques = res);
+    this.banqueService.getAllBanques().subscribe(res => {
+      this.banques = res;
+      console.log('Banques chargées:', this.banques);
+    });
   }
 
   loadActiveYearOnly() {
@@ -301,7 +305,6 @@ export class ParametresGnsComponent implements OnInit {
         this.isLoadingBank = false;
       }
     });
-    this.banqueService.getAllBanques().subscribe(res => this.banques = res);
   }
 
   openBanqueModal() {
@@ -335,7 +338,8 @@ export class ParametresGnsComponent implements OnInit {
   }
 
   openCompteGnsModal() {
-    this.compteGnsForm.reset({ typeProprietaire: 'GNS' });
+    this.loadBanques();
+    this.compteGnsForm.reset({ ownerType: 'GNS' });
     this.ribCompteStep = 'upload';
     this.ribUploadedFile = null;
     this.ribUploadedTrackingId = null;
@@ -376,10 +380,33 @@ export class ParametresGnsComponent implements OnInit {
   }
 
   saveCompteGns() {
-    if (this.compteGnsForm.invalid || !this.ribUploadedTrackingId) return;
+    // Force validation messages to show if form is invalid
+    this.compteGnsForm.markAllAsTouched();
+
+    if (this.compteGnsForm.invalid || !this.ribUploadedTrackingId) {
+      this.errorMessage = 'Veuillez remplir tous les champs obligatoires et uploader le RIB.';
+      return;
+    }
+
+    const banqueTrackingId = this.compteGnsForm.get('banqueTrackingId')?.value;
+    if (!banqueTrackingId || banqueTrackingId.trim() === '') {
+      this.compteGnsForm.get('banqueTrackingId')?.setErrors({ 'required': true });
+      this.compteGnsForm.get('banqueTrackingId')?.markAsTouched();
+      this.errorMessage = 'Veuillez sélectionner une banque valide.';
+      return;
+    }
+
+    const compteData: CompteBancaire = {
+      banqueTrackingId: banqueTrackingId,
+      accountNumber: this.compteGnsForm.get('numeroCompte')?.value,
+      typeProprietaire: this.compteGnsForm.get('ownerType')?.value,
+      ribDocumentTrackingId: this.compteGnsForm.get('ribDocumentTrackingId')?.value
+    };
+
     this.isSavingCompte = true;
     this.errorMessage = '';
-    this.banqueService.saveCompteGns(this.compteGnsForm.value).subscribe({
+    console.log('compteData soumise:', compteData);
+    this.banqueService.saveCompteGns(compteData).subscribe({
       next: () => {
         this.successMessage = 'Compte GNS ajouté avec succès.';
         this.isSavingCompte = false;

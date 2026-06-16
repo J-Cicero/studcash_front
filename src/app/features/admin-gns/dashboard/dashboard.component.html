@@ -34,7 +34,7 @@
       </div>
       <div>
         <p class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Année Scolaire</p>
-        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white tracking-tight">{{ activeYear.libelle }}</h2>
+        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white tracking-tight">{{ activeYear.label }}</h2>
       </div>
     </div>
   </div>
@@ -86,8 +86,17 @@
 </div>
 
 <!-- Charts Section -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-
-
-
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+  <div class="glass-panel rounded-2xl p-6">
+    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Volume Transactions</h3>
+    <div class="h-64">
+      <canvas #lineChartCanvas></canvas>
+    </div>
+  </div>
+  <div class="glass-panel rounded-2xl p-6">
+    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Répartition</h3>
+    <div class="h-64">
+      <canvas #pieChartCanvas></canvas>
+    </div>
+  </div>
 </div>

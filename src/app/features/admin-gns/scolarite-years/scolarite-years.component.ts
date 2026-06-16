@@ -56,11 +56,11 @@ export class ScolariteYearsComponent implements OnInit {
   }
 
   isYearEditable(year: any): boolean {
-    return year.estActive === true;
+    return year.isOpen === true;
   }
 
   cloturerYear(year: any) {
-    if (confirm(`Êtes-vous sûr de vouloir clôturer l'année ${year.libelle} ?`)) {
+    if (confirm(`Êtes-vous sûr de vouloir clôturer l'année ${year.label} ?`)) {
       this.scolariteYearService.cloturer(year.trackingId).subscribe({
         next: () => {
           this.successMessage = "Année clôturée avec succès.";
@@ -78,12 +78,17 @@ export class ScolariteYearsComponent implements OnInit {
     this.successMessage = '';
     this.errorMessage = '';
 
-    const payload = this.createForm.value;
+    const payload = {
+      label: this.createForm.value.libelle,
+      startDate: this.createForm.value.dateDebut,
+      endDate: this.createForm.value.dateFin,
+      isOpen: true
+    };
 
     this.scolariteYearService.create(payload).subscribe({
       next: (res) => {
         this.isCreating = false;
-        this.successMessage = `Année ${res.libelle || payload.libelle} créée avec succès.`;
+        this.successMessage = `Année ${res.label || payload.label} créée avec succès.`;
         this.createForm.reset();
         this.showForm = false;
         this.loadYears();

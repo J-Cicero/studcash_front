@@ -5,11 +5,11 @@ import { environment } from '../../../environments/environment';
 
 export interface ScolariteYear {
   trackingId?: string;
-  libelle: string;
-  dateDebut: string;
-  dateFin: string;
-  estOuverte?: boolean;
-  estCloturee?: boolean;
+  label: string;
+  startDate: string;
+  endDate: string;
+  isOpen: boolean;
+  isClosed?: boolean;
 }
 
 @Injectable({

@@ -127,19 +127,16 @@ export class UtilisateursComponent implements OnInit {
   createUser() {
     this.isProcessingCreate = true;
     
-    let request;
-    if (this.newUserForm.role === 'ADMIN_BANQUE') {
-      if (!this.newUserForm.banqueTrackingId) {
-        alert("Veuillez sélectionner une banque pour l'administrateur de banque.");
-        this.isProcessingCreate = false;
-        return;
-      }
-      request = this.userService.createAdminBanque(this.newUserForm);
-    } else {
-      request = this.userService.register(this.newUserForm);
+    // Pour l'admin banque, on force le rôle à ADMIN_BANQUE
+    this.newUserForm.role = 'ADMIN_BANQUE';
+    
+    if (!this.newUserForm.banqueTrackingId) {
+      alert("Veuillez sélectionner une banque pour l'administrateur de banque.");
+      this.isProcessingCreate = false;
+      return;
     }
 
-    request.subscribe({
+    this.userService.createAdminBanque(this.newUserForm).subscribe({
       next: () => {
         this.isProcessingCreate = false;
         this.closeCreateModal();

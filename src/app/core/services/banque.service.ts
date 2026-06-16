@@ -6,10 +6,11 @@ import { environment } from '../../../environments/environment';
 export interface CompteBancaire {
   trackingId?: string;
   banqueTrackingId: string;
+  bankName?: string;
   ribDocumentTrackingId?: string;
   proprietaireTrackingId?: string;
   typeProprietaire: string;
-  numeroCompte: string;
+  accountNumber: string;
 }
 
 @Injectable({

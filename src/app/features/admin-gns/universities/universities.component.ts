@@ -17,6 +17,7 @@ export class UniversitiesComponent implements OnInit {
   isLoading = false;
   isCreating = false;
   showForm = false;
+  editingUniv: any | null = null;
   
   successMessage = '';
   errorMessage = '';
@@ -97,12 +98,23 @@ export class UniversitiesComponent implements OnInit {
     return this.summaryStats.find(s => s.universiteTrackingId === trackingId);
   }
 
+  openEditModal(u: any) {
+    this.editingUniv = u;
+    this.createForm.patchValue({
+      code: u.code,
+      nom: u.fullName,
+      ville: u.ville,
+      estActive: u.estActive
+    });
+    this.showForm = true;
+  }
+
   onSubmit() {
     if (this.createForm.invalid) return;
 
     this.isCreating = true;
     const universityData = {
-      full_name: this.createForm.value.nom,
+      fullName: this.createForm.value.nom,
       code: this.createForm.value.code,
       ville: this.createForm.value.ville,
       estActive: this.createForm.value.estActive

@@ -40,7 +40,7 @@ export class InscriptionsComponent implements OnInit {
   loadActiveYear() {
     this.scolariteYearService.getActiveYear().subscribe({
       next: (year) => {
-        this.activeYear = year ? year.libelle : null;
+        this.activeYear = year ? year.label : null;
         this.loadInscriptions();
       },
       error: (err) => {

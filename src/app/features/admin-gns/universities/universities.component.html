@@ -4,9 +4,6 @@
     <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Gérez la liste des universités, leurs codes et leur statut dans le réseau.</p>
   </div>
   <div class="flex space-x-3">
-    <a routerLink="/admin-gns/utilisateurs" class="inline-flex items-center justify-center py-2.5 px-5 text-sm font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 rounded-xl transition-all">
-      Gérer Admins Banque
-    </a>
     <button (click)="showForm = true" class="inline-flex items-center justify-center py-2.5 px-5 text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-xl shadow-lg shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
       <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -16,34 +13,6 @@
   </div>
 </div>
 
-<!-- Messages -->
-<div *ngIf="successMessage" class="rounded-xl bg-emerald-50/80 dark:bg-emerald-900/20 backdrop-blur-sm border border-emerald-200 dark:border-emerald-800 p-4 mb-8 animate-fade-in-up">
-  <div class="flex items-center">
-    <div class="flex-shrink-0">
-      <svg class="h-6 w-6 text-emerald-500 dark:text-emerald-400" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-      </svg>
-    </div>
-    <div class="ml-4 flex-1">
-      <p class="text-sm font-bold text-emerald-700 dark:text-emerald-400">{{ successMessage }}</p>
-    </div>
-  </div>
-</div>
-
-<div *ngIf="errorMessage" class="rounded-xl bg-red-50/80 dark:bg-red-900/20 backdrop-blur-sm border border-red-200 dark:border-red-800 p-4 mb-8 animate-fade-in-up">
-  <div class="flex items-center">
-    <div class="flex-shrink-0">
-      <svg class="h-6 w-6 text-red-500 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    </div>
-    <div class="ml-4 flex-1">
-      <p class="text-sm font-bold text-red-700 dark:text-red-400">{{ errorMessage }}</p>
-    </div>
-  </div>
-</div>
-
-<!-- Liste des Universités -->
 <div class="glass-panel rounded-2xl overflow-hidden animate-fade-in-up" style="animation-delay: 100ms;">
   <div class="px-6 py-5 border-b border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40">
     <h3 class="text-lg font-bold text-slate-900 dark:text-white">Réseau Universitaire</h3>
@@ -61,10 +30,10 @@
       <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
         <tr>
           <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Code</th>
-          <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Nom & Ville</th>
-          <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statistiques</th>
+          <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Université</th>
+          <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Stats StudCash</th>
           <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statut</th>
-          <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Action</th>
+          <th scope="col" class="px-4 py-2 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Actions</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
@@ -73,44 +42,25 @@
             <div class="text-sm font-bold text-indigo-600 dark:text-indigo-400">{{u.code}}</div>
           </td>
           <td class="px-4 py-3 whitespace-nowrap">
-            <div class="text-sm font-bold text-slate-900 dark:text-white">{{u.nom}}</div>
-            <div class="text-xs text-slate-500 dark:text-slate-400 mt-1 flex items-center">
-              <svg class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              {{u.ville || 'Non spécifié'}}
-            </div>
+            <div class="text-sm font-bold text-slate-900 dark:text-white">{{u.fullName}}</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">{{u.ville || 'Non spécifié'}}</div>
           </td>
           <td class="px-4 py-3 whitespace-nowrap">
-            <div *ngIf="getStatsForUniversite(u.trackingId) as stats" class="text-sm">
-              <span class="font-bold text-slate-700 dark:text-slate-300">{{stats.nbEtudiants}}</span> étudiants inscrits<br>
-              <span class="text-xs text-emerald-600 dark:text-emerald-400 font-medium">{{stats.nbEligibles}} éligibles (KYC)</span>
+            <div *ngIf="getStatsForUniversite(u.trackingId) as stats" class="text-sm font-medium">
+              <span class="text-indigo-600 font-bold">{{stats.nbEtudiants || 0}}</span> étudiants
             </div>
-            <div *ngIf="!getStatsForUniversite(u.trackingId)" class="text-sm text-slate-400 italic">
-              Chargement...
-            </div>
+            <div *ngIf="!getStatsForUniversite(u.trackingId)" class="text-xs text-slate-400 italic">...</div>
           </td>
           <td class="px-4 py-3 whitespace-nowrap">
-            <span *ngIf="u.estActive" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-emerald-100/80 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-              Active
-            </span>
-            <span *ngIf="!u.estActive" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-slate-100/80 text-slate-700 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-              Inactive
-            </span>
+            <span *ngIf="u.estActive" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-emerald-100/80 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">Active</span>
+            <span *ngIf="!u.estActive" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-slate-100/80 text-slate-700 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700">Inactive</span>
           </td>
-          <td class="px-4 py-3 whitespace-nowrap">
-            <button (click)="toggleUniversiteStatus(u)" class="text-indigo-600 hover:text-indigo-900 font-medium text-sm mr-4">
+          <td class="px-4 py-3 whitespace-nowrap text-right space-x-2">
+            <button (click)="openEditModal(u)" class="text-blue-600 hover:text-blue-900 font-bold text-sm">Modifier</button>
+            <button (click)="toggleUniversiteStatus(u)" class="text-amber-600 hover:text-amber-900 font-bold text-sm">
                 {{ u.estActive ? 'Désactiver' : 'Activer' }}
             </button>
-            <button (click)="deleteUniversite(u)" class="text-red-600 hover:text-red-900 font-medium text-sm">
-                Supprimer
-            </button>
-          </td>
-        </tr>
-        <tr *ngIf="universities.length === 0 && !isLoading">
-          <td colspan="5" class="px-4 py-8 text-center">
-            <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">Aucune université configurée.</p>
+            <button (click)="deleteUniversite(u)" class="text-red-600 hover:text-red-900 font-bold text-sm">Supprimer</button>
           </td>
         </tr>
       </tbody>
