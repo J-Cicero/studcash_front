@@ -40,6 +40,10 @@ export class UniversiteService {
     return this.http.delete<void>(`${this.apiUrl}/${trackingId}`);
   }
 
+  update(trackingId: string, data: UniversiteRequest): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${trackingId}`, data);
+  }
+
   getSummaryStats(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/summary-stats`);
   }

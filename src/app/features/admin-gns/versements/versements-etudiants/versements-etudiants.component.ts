@@ -64,8 +64,8 @@ export class VersementsEtudiantsComponent implements OnInit {
   loadWallets() {
     this.isLoading = true;
     this.errorMessage = '';
-    // filterType = 'ETUDIANT'
-    this.walletService.filterWallets('ETUDIANT', this.filterNiveau, 0, 50).subscribe({
+    // filterType = 'STUDENT'
+    this.walletService.filterWallets('STUDENT', this.filterNiveau, 0, 50).subscribe({
       next: (res) => {
         this.wallets = res.content || [];
         this.isLoading = false;

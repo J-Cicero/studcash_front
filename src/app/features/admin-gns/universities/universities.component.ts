@@ -119,22 +119,43 @@ export class UniversitiesComponent implements OnInit {
       ville: this.createForm.value.ville,
       estActive: this.createForm.value.estActive
     };
-    this.universiteService.create(universityData).subscribe({
-      next: () => {
-        this.loadUniversities();
-        this.loadSummaryStats();
-        this.showForm = false;
-        this.createForm.reset({ estActive: true });
-        this.successMessage = "Université ajoutée avec succès.";
-        this.isCreating = false;
-        setTimeout(() => this.successMessage = '', 3000);
-      },
-      error: (err) => {
-        this.errorMessage = err.error?.message || "Erreur lors de la création.";
-        this.isCreating = false;
-        setTimeout(() => this.errorMessage = '', 5000);
-      }
-    });
+
+    if (this.editingUniv) {
+      this.universiteService.update(this.editingUniv.trackingId, universityData).subscribe({
+        next: () => {
+          this.loadUniversities();
+          this.loadSummaryStats();
+          this.showForm = false;
+          this.editingUniv = null;
+          this.createForm.reset({ estActive: true });
+          this.successMessage = "Université modifiée avec succès.";
+          this.isCreating = false;
+          setTimeout(() => this.successMessage = '', 3000);
+        },
+        error: (err) => {
+          this.errorMessage = err.error?.message || "Erreur lors de la modification.";
+          this.isCreating = false;
+          setTimeout(() => this.errorMessage = '', 5000);
+        }
+      });
+    } else {
+      this.universiteService.create(universityData).subscribe({
+        next: () => {
+          this.loadUniversities();
+          this.loadSummaryStats();
+          this.showForm = false;
+          this.createForm.reset({ estActive: true });
+          this.successMessage = "Université ajoutée avec succès.";
+          this.isCreating = false;
+          setTimeout(() => this.successMessage = '', 3000);
+        },
+        error: (err) => {
+          this.errorMessage = err.error?.message || "Erreur lors de la création.";
+          this.isCreating = false;
+          setTimeout(() => this.errorMessage = '', 5000);
+        }
+      });
+    }
   }
 
   toggleUniversiteStatus(univ: any) {

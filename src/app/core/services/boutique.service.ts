@@ -7,12 +7,13 @@ export interface BoutiqueResponse {
   trackingId: string;
   merchantTrackingId: string;
   walletTrackingId: string;
-  nomBoutique: string;
-  categorieShop: string;
-  cheminCarteEDJ: string;
-  statutKYC: string;
+  name: string;
+  description: string;
+  kycStatus: string;
   latitude: number | null;
   longitude: number | null;
+  balance: number;
+  limitAmount: number;
 }
 
 @Injectable({

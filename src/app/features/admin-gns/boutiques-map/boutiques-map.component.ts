@@ -88,9 +88,9 @@ export class BoutiquesMapComponent implements OnInit, AfterViewInit, OnDestroy {
       if (!isNaN(lat) && !isNaN(lng)) {
         const popupContent = `
           <div class="p-3">
-            <h3 class="font-bold text-lg text-slate-900">${b.nomBoutique}</h3>
-            <p class="text-sm text-slate-600">${b.categorieShop || 'Boutique'}</p>
-            <p class="text-xs text-slate-400 mt-2">KYC: ${b.statutKYC}</p>
+            <h3 class="font-bold text-lg text-slate-900">${b.name}</h3>
+            <p class="text-sm text-slate-600">${b.description || 'Boutique'}</p>
+            <p class="text-xs text-slate-400 mt-2">KYC: ${b.kycStatus}</p>
           </div>
         `;
 

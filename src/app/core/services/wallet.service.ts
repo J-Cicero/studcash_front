@@ -8,6 +8,7 @@ export interface WalletResponse {
   typeWallet: string;
   statutWallet: string;
   proprietaireTrackingId: string;
+  ownerName: string; // <-- Ajouté ici
   niveauSolde: string;
   solde: number;
   plafond: number;
