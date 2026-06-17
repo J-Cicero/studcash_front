@@ -34,6 +34,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   isTotalEtudiantsLoading = true;
   totalEtudiantsError = false;
 
+  totalGnsCommission = 0;
+  totalBankCommission = 0;
+
   lowQuotaBoutiques = 0;
   isLowQuotaBoutiquesLoading = true;
   lowQuotaBoutiquesError = false;
@@ -87,6 +90,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.dashboardService.getGlobalStats().subscribe({
       next: (res) => {
         this.stats = res;
+        this.totalGnsCommission = res.totalGnsCommission;
+        this.totalBankCommission = res.totalBankCommission;
         this.isLoadingStats = false;
       },
       error: () => {

@@ -51,6 +51,10 @@ export class StudentService {
     return this.http.get<any>(`${this.apiUrl}/documents/inscription/${inscriptionId}`);
   }
 
+  getDocumentById(trackingId: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/documents/${trackingId}`);
+  }
+
   getStudentDocuments(trackingId: string): Observable<any> {
     return this.http.get<any>(`${environment.apiUrl}/api/admin/students/${trackingId}/documents`);
   }

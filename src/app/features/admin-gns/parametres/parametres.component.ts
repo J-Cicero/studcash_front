@@ -9,6 +9,7 @@ import { LoginResponse } from '../../../core/models/auth.model';
 import { SystemStatusService } from '../../../core/services/system-status.service';
 import { BanqueService, CompteBancaire } from '../../../core/services/banque.service';
 import { Banque } from '../../../core/models/banque.model';
+import { StudentService } from '../../../core/services/student.service';
 
 @Component({
   selector: 'app-parametres-gns',
@@ -34,7 +35,8 @@ export class ParametresGnsComponent implements OnInit {
     'MONTANT_BOURSE_MAJORATION',
     'TAUX_COMMISSION_PAIEMENT',
     'PART_COMMISSION_GNS',
-    'FRAIS_CREATION_CARTE'
+    'FRAIS_CREATION_CARTE',
+    'MAJORATION_MONTANT_BOUTIQUE'
   ];
 
   // KYC Documents
@@ -66,6 +68,10 @@ export class ParametresGnsComponent implements OnInit {
   isUploadingRib = false;
   isSavingCompte = false;
 
+  // RIB Preview Modal
+  selectedRibUrl: string | null = null;
+  isPreviewModalOpen = false;
+
   currentUser: LoginResponse | null = null;
 
   constructor(
@@ -73,6 +79,7 @@ export class ParametresGnsComponent implements OnInit {
     private documentRequisService: DocumentRequisService,
     private scolariteYearService: ScolariteYearService,
     private banqueService: BanqueService,
+    private studentService: StudentService,
     private authService: AuthService,
     private systemStatusService: SystemStatusService,
     private fb: FormBuilder
@@ -98,7 +105,7 @@ export class ParametresGnsComponent implements OnInit {
       banqueTrackingId: ['', Validators.required],
       numeroCompte: ['', Validators.required],
       ownerType: ['GNS', Validators.required],
-      ribDocumentTrackingId: [''] // Optionnel pour les comptes GNS
+      ribDocumentTrackingId: ['']
     });
   }
 
@@ -108,7 +115,7 @@ export class ParametresGnsComponent implements OnInit {
     this.loadTabData(this.activeTab);
   }
 
-  loadTabData(tab: 'global' | 'kyc' | 'scolarite' | 'bancaire' | 'banques') {
+  loadTabData(tab: 'global' | 'kyc' | 'bancaire' | 'banques') {
     if (tab === 'global') {
       this.loadParametres();
       this.loadActiveYearOnly();
@@ -124,7 +131,6 @@ export class ParametresGnsComponent implements OnInit {
   loadBanques() {
     this.banqueService.getAllBanques().subscribe(res => {
       this.banques = res;
-      console.log('Banques chargées:', this.banques);
     });
   }
 
@@ -175,10 +181,7 @@ export class ParametresGnsComponent implements OnInit {
   openParamModal(param?: Parametre) {
     this.successMessage = '';
     this.errorMessage = '';
-    
-    // On s'assure que le formulaire est actif avant de faire quoi que ce soit
     this.paramForm.enable();
-
     if (param) {
       this.editingParam = param;
       this.paramForm.patchValue({
@@ -186,7 +189,6 @@ export class ParametresGnsComponent implements OnInit {
         valeurParametre: param.valeurParametre,
         description: param.description || ''
       });
-      // Disable editing name if it's an update
       this.paramForm.get('nomParametre')?.disable();
     } else {
       this.editingParam = null;
@@ -204,10 +206,7 @@ export class ParametresGnsComponent implements OnInit {
   saveParam() {
     if (this.paramForm.invalid) return;
     this.isLoading = true;
-    
-    // Get raw value in case nomParametre is disabled
     const formVal = this.paramForm.getRawValue();
-    
     const updatedParam: Parametre = {
       ...(this.editingParam || {}),
       nomParametre: formVal.nomParametre,
@@ -215,40 +214,34 @@ export class ParametresGnsComponent implements OnInit {
       description: formVal.description,
       estActif: true
     };
-
     this.parametresService.saveParametreGns(updatedParam).subscribe({
-      next: (res) => {
-        this.successMessage = this.editingParam ? 'Paramètre mis à jour avec succès.' : 'Paramètre ajouté avec succès.';
+      next: () => {
+        this.successMessage = this.editingParam ? 'Paramètre mis à jour.' : 'Paramètre ajouté.';
         this.closeParamModal();
         this.loadParametres();
       },
-      error: (err) => {
-        this.errorMessage = 'Erreur lors de la sauvegarde.';
+      error: () => {
+        this.errorMessage = 'Erreur sauvegarde.';
         this.isLoading = false;
       }
     });
   }
 
-  // --- KYC Documents ---
-
   loadDocumentsRequis() {
     this.isLoadingDocs = true;
     this.documentRequisService.findAll().subscribe({
       next: (res: any) => {
-        this.documentsRequis = res.content ? res.content : res;
+        this.documentsRequis = res.content || res;
         this.isLoadingDocs = false;
       },
-      error: (err) => {
-        this.errorMessage = 'Erreur lors du chargement des exigences KYC.';
+      error: () => {
+        this.errorMessage = 'Erreur chargement KYC.';
         this.isLoadingDocs = false;
       }
     });
   }
 
   openDocModal() {
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.docCreateForm.enable(); // Force l'activation des champs
     this.docCreateForm.reset({ niveau: 'L1_ANNEE', targetType: 'STUDENT', typeDocument: 'RELEVE_BAC', obligatoire: true, estActif: true });
     this.isDocModalOpen = true;
   }
@@ -259,40 +252,35 @@ export class ParametresGnsComponent implements OnInit {
 
   onSubmitDoc() {
     if (this.docCreateForm.invalid) return;
-    
     this.isCreatingDoc = true;
-    this.successMessage = '';
-    this.errorMessage = '';
-
     this.documentRequisService.create(this.docCreateForm.value).subscribe({
-      next: (res) => {
-        this.successMessage = 'Règle de document ajoutée avec succès.';
+      next: () => {
+        this.successMessage = 'Règle ajoutée.';
         this.isCreatingDoc = false;
         this.closeDocModal();
         this.loadDocumentsRequis();
       },
-      error: (err) => {
-        this.errorMessage = 'Erreur lors de l\'ajout de la règle.';
+      error: () => {
+        this.errorMessage = 'Erreur ajout règle.';
         this.isCreatingDoc = false;
       }
     });
   }
 
   deleteDoc(trackingId: string) {
-    if(confirm('Voulez-vous vraiment supprimer cette exigence ?')) {
+    if(confirm('Supprimer cette règle ?')) {
       this.documentRequisService.delete(trackingId).subscribe({
         next: () => {
-          this.successMessage = 'Règle supprimée.';
+          this.successMessage = 'Supprimée.';
           this.loadDocumentsRequis();
         },
         error: () => {
-          this.errorMessage = 'Erreur lors de la suppression.';
+          this.errorMessage = 'Erreur suppression.';
         }
       });
     }
   }
 
-  // --- Bancaire ---
   loadComptesBancaires() {
     this.isLoadingBank = true;
     this.banqueService.getComptesGns().subscribe({
@@ -301,7 +289,7 @@ export class ParametresGnsComponent implements OnInit {
         this.isLoadingBank = false;
       },
       error: () => {
-        this.errorMessage = 'Erreur chargement des comptes bancaires.';
+        this.errorMessage = 'Erreur chargement comptes.';
         this.isLoadingBank = false;
       }
     });
@@ -328,11 +316,9 @@ export class ParametresGnsComponent implements OnInit {
         this.successMessage = 'Banque ajoutée.';
         this.closeBanqueModal();
         this.loadBanques();
-        this.loadComptesBancaires();
       },
-      error: (err) => {
-        this.errorMessage = err.error?.message || 'Erreur lors de la création de la banque.';
-        this.closeBanqueModal();
+      error: () => {
+        this.errorMessage = 'Erreur ajout banque.';
       }
     });
   }
@@ -343,9 +329,6 @@ export class ParametresGnsComponent implements OnInit {
     this.ribCompteStep = 'upload';
     this.ribUploadedFile = null;
     this.ribUploadedTrackingId = null;
-    this.ribUploadedUrl = null;
-    this.isUploadingRib = false;
-    this.isSavingCompte = false;
     this.isCompteGnsModalOpen = true;
   }
 
@@ -353,17 +336,14 @@ export class ParametresGnsComponent implements OnInit {
     this.isCompteGnsModalOpen = false;
   }
 
-  onRibFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.ribUploadedFile = input.files[0];
-    }
+  onRibFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) this.ribUploadedFile = file;
   }
 
   uploadRibAndNext() {
     if (!this.ribUploadedFile) return;
     this.isUploadingRib = true;
-    this.errorMessage = '';
     this.banqueService.uploadRib(this.ribUploadedFile).subscribe({
       next: (res) => {
         this.ribUploadedTrackingId = res.trackingId;
@@ -372,65 +352,68 @@ export class ParametresGnsComponent implements OnInit {
         this.ribCompteStep = 'details';
         this.isUploadingRib = false;
       },
-      error: (err) => {
-        this.errorMessage = err.error?.message || "Erreur lors de l'upload du document RIB.";
+      error: () => {
+        this.errorMessage = "Erreur upload RIB.";
         this.isUploadingRib = false;
       }
     });
   }
 
   saveCompteGns() {
-    // Force validation messages to show if form is invalid
-    this.compteGnsForm.markAllAsTouched();
-
-    if (this.compteGnsForm.invalid || !this.ribUploadedTrackingId) {
-      this.errorMessage = 'Veuillez remplir tous les champs obligatoires et uploader le RIB.';
-      return;
-    }
-
-    const banqueTrackingId = this.compteGnsForm.get('banqueTrackingId')?.value;
-    if (!banqueTrackingId || banqueTrackingId.trim() === '') {
-      this.compteGnsForm.get('banqueTrackingId')?.setErrors({ 'required': true });
-      this.compteGnsForm.get('banqueTrackingId')?.markAsTouched();
-      this.errorMessage = 'Veuillez sélectionner une banque valide.';
-      return;
-    }
-
-    const compteData: CompteBancaire = {
-      banqueTrackingId: banqueTrackingId,
-      accountNumber: this.compteGnsForm.get('numeroCompte')?.value,
-      typeProprietaire: this.compteGnsForm.get('ownerType')?.value,
-      ribDocumentTrackingId: this.compteGnsForm.get('ribDocumentTrackingId')?.value
-    };
-
+    if (this.compteGnsForm.invalid || !this.ribUploadedTrackingId) return;
     this.isSavingCompte = true;
-    this.errorMessage = '';
-    console.log('compteData soumise:', compteData);
-    this.banqueService.saveCompteGns(compteData).subscribe({
+    const data: CompteBancaire = {
+      banqueTrackingId: this.compteGnsForm.value.banqueTrackingId,
+      accountNumber: this.compteGnsForm.value.numeroCompte,
+      typeProprietaire: 'GNS',
+      ribDocumentTrackingId: this.ribUploadedTrackingId
+    };
+    this.banqueService.saveCompteGns(data).subscribe({
       next: () => {
-        this.successMessage = 'Compte GNS ajouté avec succès.';
+        this.successMessage = 'Compte ajouté.';
         this.isSavingCompte = false;
         this.closeCompteGnsModal();
         this.loadComptesBancaires();
       },
-      error: (err) => {
-        this.errorMessage = err.error?.message || 'Erreur lors de la création du compte.';
+      error: () => {
+        this.errorMessage = 'Erreur création compte.';
         this.isSavingCompte = false;
       }
     });
   }
 
   deleteCompteBancaire(trackingId: string) {
-    if (confirm('Voulez-vous vraiment supprimer ce compte bancaire ?')) {
+    if (confirm('Supprimer ce compte ?')) {
       this.banqueService.deleteCompteGns(trackingId).subscribe({
         next: () => {
-          this.successMessage = 'Compte bancaire supprimé.';
+          this.successMessage = 'Supprimé.';
           this.loadComptesBancaires();
         },
         error: () => {
-          this.errorMessage = 'Erreur lors de la suppression.';
+          this.errorMessage = 'Erreur suppression.';
         }
       });
     }
+  }
+
+  viewRib(compte: CompteBancaire) {
+    if (!compte.ribDocumentTrackingId) {
+      alert("Aucun document RIB.");
+      return;
+    }
+    this.studentService.getDocumentById(compte.ribDocumentTrackingId).subscribe({
+      next: (doc: any) => {
+        this.selectedRibUrl = doc.urlDocument || doc.fileUrl;
+        this.isPreviewModalOpen = true;
+      },
+      error: () => {
+        alert("Erreur récupération document.");
+      }
+    });
+  }
+
+  closePreviewModal() {
+    this.isPreviewModalOpen = false;
+    this.selectedRibUrl = null;
   }
 }

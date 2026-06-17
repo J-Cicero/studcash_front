@@ -11,11 +11,11 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 export interface UserResponse {
   trackingId: string;
   email: string;
-  nom: string;
-  prenom: string;
+  lastName: string;
+  firstName: string;
   role: string;
-  telephone?: string;
-  dateInscription: string;
+  phoneNumber?: string;
+  registrationDate: string;
   isActive: boolean;
 }
 
@@ -58,7 +58,7 @@ export class UtilisateursComponent implements OnInit {
   isProcessingRestore = false;
 
   showCreateModal = false;
-  newUserForm: any = { nom: '', prenom: '', telephone: '', email: '', motDePasse: '', role: 'ADMIN_DBS', universiteTrackingId: '', banquePartenaireTrackingId: '' };
+  newUserForm: any = { nom: '', prenom: '', telephone: '', email: '', motDePasse: '', role: 'ADMIN_BANQUE', universiteTrackingId: '', banqueTrackingId: '' };
   isProcessingCreate = false;
 
   // Documents Modal
@@ -136,7 +136,18 @@ export class UtilisateursComponent implements OnInit {
       return;
     }
 
-    this.userService.createAdminBanque(this.newUserForm).subscribe({
+    // Mapping vers les noms attendus par le backend (DTO AdminBanqueRequest)
+    const requestPayload = {
+      lastName: this.newUserForm.nom,
+      firstName: this.newUserForm.prenom,
+      phoneNumber: this.newUserForm.telephone,
+      email: this.newUserForm.email,
+      password: this.newUserForm.motDePasse,
+      role: 'ADMIN_BANQUE',
+      bankTrackingId: this.newUserForm.banqueTrackingId
+    };
+
+    this.userService.createAdminBanque(requestPayload).subscribe({
       next: () => {
         this.isProcessingCreate = false;
         this.closeCreateModal();

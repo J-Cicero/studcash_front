@@ -4,44 +4,11 @@
       <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Dashboard Admin</h1>
       <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">Vue d'ensemble du réseau GNS</p>
     </div>
-    
-    <!-- Reference Counters Header -->
-    <div *ngIf="!isLoadingStats && stats" class="mt-4 md:mt-0 flex space-x-6 bg-white dark:bg-slate-900 px-6 py-2.5 rounded-full shadow-sm border border-slate-100 dark:border-slate-800">
-      <div class="flex items-center space-x-2">
-        <div class="w-2 h-2 rounded-full bg-blue-500"></div>
-        <span class="text-xs font-bold text-slate-600 dark:text-slate-300">{{ stats.totalUniversities }} Univ.</span>
-      </div>
-      <div class="flex items-center space-x-2">
-        <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
-        <span class="text-xs font-bold text-slate-600 dark:text-slate-300">{{ stats.totalStudents }} Étu.</span>
-      </div>
-      <div class="flex items-center space-x-2">
-        <div class="w-2 h-2 rounded-full bg-purple-500"></div>
-        <span class="text-xs font-bold text-slate-600 dark:text-slate-300">{{ stats.totalBoutiques }} Bout.</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Active Year Banner -->
-<div *ngIf="activeYear" class="mb-6 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-700 p-[2px] relative overflow-hidden shadow-sm">
-  <div class="absolute inset-0 bg-white/10 dark:bg-white/5 backdrop-blur-sm"></div>
-  <div class="relative bg-white dark:bg-slate-900 rounded-lg px-4 py-3 flex flex-col sm:flex-row items-center justify-between">
-    <div class="flex items-center mb-2 sm:mb-0">
-      <div class="relative flex h-2.5 w-2.5 mr-3">
-        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-      </div>
-      <div>
-        <p class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Année Scolaire</p>
-        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white tracking-tight">{{ activeYear.label }}</h2>
-      </div>
-    </div>
   </div>
 </div>
 
 <!-- KPI Cards Grid -->
-<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
   <!-- Total Étudiants -->
   <app-kpi-card
     title="Total Étudiants"
@@ -82,6 +49,28 @@
     gradientClass="from-purple-500 to-indigo-600"
     iconBgClass="bg-purple-500/10"
     shadowClass="shadow-purple-500/30"
+  ></app-kpi-card>
+</div>
+
+<!-- Commission Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+  <app-kpi-card
+    title="Commissions GNS"
+    [value]="totalGnsCommission | currency:'XOF':'symbol':'1.0-0'"
+    [isLoading]="isLoadingStats"
+    icon="chart-bar"
+    colorClass="from-indigo-500 to-purple-600"
+    iconBgClass="bg-indigo-500/10"
+    shadowClass="shadow-indigo-500/30"
+  ></app-kpi-card>
+  <app-kpi-card
+    title="Commissions Banques"
+    [value]="totalBankCommission | currency:'XOF':'symbol':'1.0-0'"
+    [isLoading]="isLoadingStats"
+    icon="building-library"
+    colorClass="from-blue-500 to-cyan-600"
+    iconBgClass="bg-blue-500/10"
+    shadowClass="shadow-blue-500/30"
   ></app-kpi-card>
 </div>
 

@@ -7,7 +7,8 @@ export interface GlobalStats {
   totalStudents: number;
   totalBoutiques: number;
   totalUniversities: number;
-  // totalVolume, totalCommission, totalTransactions are no longer directly available from a single endpoint
+  totalGnsCommission: number;
+  totalBankCommission: number;
 }
 
 @Injectable({
@@ -24,7 +25,8 @@ export class DashboardService {
     return forkJoin({
       users: this.http.get<any>(`${this.apiUrl}/users/all`).pipe(catchError(() => of({ content: [] }))),
       boutiques: this.http.get<any>(`${this.apiUrl}/boutiques`).pipe(catchError(() => of({ totalElements: 0 }))),
-      universites: this.http.get<any>(`${this.apiUrl}/universites`).pipe(catchError(() => of({ totalElements: 0 })))
+      universites: this.http.get<any>(`${this.apiUrl}/universites`).pipe(catchError(() => of({ totalElements: 0 }))),
+      transactions: this.http.get<any>(`${this.apiUrl}/transactions/stats/global`).pipe(catchError(() => of(null)))
     }).pipe(
       map(results => {
         const usersContent = results.users?.content || [];
@@ -34,6 +36,8 @@ export class DashboardService {
           totalStudents: etudiants.length, 
           totalBoutiques: results.boutiques?.totalElements || results.boutiques?.length || 0,
           totalUniversities: results.universites?.totalElements || results.universites?.length || 0,
+          totalGnsCommission: results.transactions?.totalGnsCommission || 0,
+          totalBankCommission: results.transactions?.totalBankCommission || 0
         };
       })
     );
