@@ -41,27 +41,27 @@ export class RegisterComponent {
     });
   }
 
-  onSubmit(): void {
-    if (this.registerForm.invalid) {
-      this.registerForm.markAllAsTouched();
-      return;
-    }
+  // onSubmit(): void {
+  //   if (this.registerForm.invalid) {
+  //     this.registerForm.markAllAsTouched();
+  //     return;
+  //   }
 
-    this.isLoading = true;
-    this.errorMessage = '';
-    this.successMessage = '';
+  //   this.isLoading = true;
+  //   this.errorMessage = '';
+  //   this.successMessage = '';
 
-    this.authService.register(this.registerForm.value).subscribe({
-      next: () => {
-        this.isLoading = false;
-        this.successMessage = 'Compte créé avec succès ! Redirection...';
-        setTimeout(() => this.router.navigate(['/login']), 2000);
-      },
-      error: (err) => {
-        this.isLoading = false;
-        this.errorMessage = err.error?.message || 'Erreur lors de la création du compte.';
-        console.error('Registration error', err);
-      }
-    });
-  }
+  //   this.authService.register(this.registerForm.value).subscribe({
+  //     next: () => {
+  //       this.isLoading = false;
+  //       this.successMessage = 'Compte créé avec succès ! Redirection...';
+  //       setTimeout(() => this.router.navigate(['/login']), 2000);
+  //     },
+  //     error: (err) => {
+  //       this.isLoading = false;
+  //       this.errorMessage = err.error?.message || 'Erreur lors de la création du compte.';
+  //       console.error('Registration error', err);
+  //     }
+  //   });
+  // }
 }

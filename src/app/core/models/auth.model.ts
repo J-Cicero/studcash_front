@@ -1,28 +1,24 @@
 export interface LoginRequest {
   email: string;
-  password?: string;
+  password: string; // Assuming password is always required for login
 }
 
 export interface LoginResponse {
-  userId: string;
   trackingId: string;
   token: string;
   type: string;
   firstName: string;
   lastName: string;
-  phone: string;
+  phoneNumber: string; // Renamed from 'phone'
   email: string;
-  roles: string;
-  rolesList: string[];
-  country: string;
-  active: boolean;
+  rolesList: string[]; // Kept, as 'roles' was redundant
 }
 
-export interface RegisterRequest {
-  nom: string;
-  prenom: string;
-  email: string;
-  telephone: string;
-  motDePasse: string;
-  role: string;
-}
+// export interface RegisterRequest { // Commented out as this is for a generic register endpoint which is no longer used
+//   nom: string;
+//   prenom: string;
+//   email: string;
+//   telephone: string;
+//   motDePasse: string;
+//   role: string;
+// }

@@ -65,6 +65,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin-gns/utilisateurs/utilisateurs.component').then(m => m.UtilisateursComponent)
       },
       {
+        path: 'cards/create',
+        loadComponent: () => import('./features/admin-gns/create-card/create-card.component').then(m => m.CreateCardComponent)
+      },
+      {
         path: 'carte-boutiques',
         loadComponent: () => import('./features/admin-gns/boutiques-map/boutiques-map.component').then(m => m.BoutiquesMapComponent)
       },

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { LoginRequest, LoginResponse, RegisterRequest } from '../models/auth.model';
+import { LoginRequest, LoginResponse } from '../models/auth.model';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -35,9 +35,9 @@ export class AuthService {
       );
   }
 
-  register(request: RegisterRequest): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, request);
-  }
+  // register(request: RegisterRequest): Observable<any> {
+  //   return this.http.post(`${this.apiUrl}/register`, request);
+  // }
 
   logout(): void {
     localStorage.removeItem('currentUser');
@@ -63,6 +63,6 @@ export class AuthService {
   }
 
   public getCurrentUserId(): string | null {
-    return this.currentUserValue?.userId || null;
+    return this.currentUserValue?.trackingId || null;
   }
 }

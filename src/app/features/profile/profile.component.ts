@@ -24,7 +24,7 @@ export class ProfileComponent implements OnInit {
     this.profileForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
-      phone: ['', Validators.required],
+      phoneNumber: ['', Validators.required],
       email: [{value: '', disabled: true}]
     });
   }
@@ -36,7 +36,7 @@ export class ProfileComponent implements OnInit {
         this.profileForm.patchValue({
           firstName: user.firstName,
           lastName: user.lastName,
-          phone: user.phone,
+          phoneNumber: user.phoneNumber,
           email: user.email
         });
       }

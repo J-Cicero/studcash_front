@@ -4,20 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../core/services/user.service';
 import { UniversiteService } from '../../../core/services/universite.service';
 import { BanqueService } from '../../../core/services/banque.service';
-import { StudentService, DocumentResponse } from '../../../core/services/student.service';
+import { StudentService } from '../../../core/services/student.service';
+import { DocumentService } from '../../../core/services/document.service'; 
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-
-export interface UserResponse {
-  trackingId: string;
-  email: string;
-  lastName: string;
-  firstName: string;
-  role: string;
-  phoneNumber?: string;
-  registrationDate: string;
-  isActive: boolean;
-}
+import { Page } from '../../../core/models/page.model';
+import { UserResponse } from '../../../core/models/user.model';
+import { DocumentResponse } from '../../../core/models/document.model'; 
 
 @Component({
   selector: 'app-utilisateurs',
@@ -74,7 +67,8 @@ export class UtilisateursComponent implements OnInit {
     private userService: UserService,
     private universiteService: UniversiteService,
     private banqueService: BanqueService,
-    private studentService: StudentService
+    private studentService: StudentService,
+    private documentService: DocumentService
   ) {
     this.searchSubject.pipe(
       debounceTime(300),
@@ -94,20 +88,20 @@ export class UtilisateursComponent implements OnInit {
   }
 
   loadEntities() {
-    this.universiteService.findAll().subscribe((res: any) => this.universites = res.content || []);
-    this.banqueService.getAllBanques().subscribe((res: any) => this.banques = res || []);
+    this.universiteService.findAll().subscribe((res: any) => this.universites = res.content || []); 
+    this.banqueService.getAllBanques().subscribe((res: any) => this.banques = res || []); 
   }
 
   loadUsers() {
     this.isLoading = true;
     this.errorMessage = '';
     this.userService.getAllUsers(this.currentPage, this.pageSize).subscribe({
-      next: (res) => {
+      next: (res: Page<UserResponse>) => { 
         this.users = res.content || [];
         this.totalElements = res.totalElements || 0;
         this.isLoading = false;
       },
-      error: (err) => {
+      error: (err: any) => { 
         if(err.status === 404) this.users = [];
         else this.errorMessage = 'Erreur lors du chargement des utilisateurs.';
         this.isLoading = false;
@@ -116,7 +110,7 @@ export class UtilisateursComponent implements OnInit {
   }
 
   openCreateModal() {
-    this.newUserForm = { nom: '', prenom: '', telephone: '', email: '', motDePasse: '', role: 'ADMIN_GNS', universiteTrackingId: '', banqueTrackingId: '' };
+    this.newUserForm = { nom: '', prenom: '', telephone: '', email: '', motDePasse: '', role: 'ADMIN_BANQUE', universiteTrackingId: '', banqueTrackingId: '' };
     this.showCreateModal = true;
   }
 
@@ -127,7 +121,6 @@ export class UtilisateursComponent implements OnInit {
   createUser() {
     this.isProcessingCreate = true;
     
-    // Pour l'admin banque, on force le rôle à ADMIN_BANQUE
     this.newUserForm.role = 'ADMIN_BANQUE';
     
     if (!this.newUserForm.banqueTrackingId) {
@@ -136,7 +129,6 @@ export class UtilisateursComponent implements OnInit {
       return;
     }
 
-    // Mapping vers les noms attendus par le backend (DTO AdminBanqueRequest)
     const requestPayload = {
       lastName: this.newUserForm.nom,
       firstName: this.newUserForm.prenom,
@@ -153,7 +145,7 @@ export class UtilisateursComponent implements OnInit {
         this.closeCreateModal();
         this.loadUsers();
       },
-      error: (err: any) => {
+      error: (err: any) => { 
         this.isProcessingCreate = false;
         const msg = err.error?.message || "Erreur lors de la création de l'utilisateur.";
         alert(msg);
@@ -170,11 +162,11 @@ export class UtilisateursComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
     this.userService.searchUsers(query).subscribe({
-      next: (res) => {
+      next: (res: UserResponse[]) => { 
         this.users = res || [];
         this.isLoading = false;
       },
-      error: (err) => {
+      error: (err: any) => { 
         if(err.status === 404) this.users = [];
         else this.errorMessage = 'Erreur lors de la recherche.';
         this.isLoading = false;
@@ -182,7 +174,6 @@ export class UtilisateursComponent implements OnInit {
     });
   }
 
-  // --- Deletion ---
   confirmDelete(user: UserResponse) {
     this.userToDelete = user;
     this.showDeleteModal = true;
@@ -201,22 +192,19 @@ export class UtilisateursComponent implements OnInit {
       next: () => {
         this.isProcessingDelete = false;
         this.closeDeleteModal();
-        
-        // Refresh based on search state
         if (this.searchQuery.trim()) {
           this.searchUsers(this.searchQuery);
         } else {
           this.loadUsers();
         }
       },
-      error: () => {
+      error: (err: any) => { 
         this.isProcessingDelete = false;
         alert("Erreur lors de la suppression de l'utilisateur.");
       }
     });
   }
 
-  // --- Restoration ---
   confirmRestore(user: UserResponse) {
     this.userToRestore = user;
     this.showRestoreModal = true;
@@ -235,15 +223,13 @@ export class UtilisateursComponent implements OnInit {
       next: () => {
         this.isProcessingRestore = false;
         this.closeRestoreModal();
-        
-        // Refresh based on search state
         if (this.searchQuery.trim()) {
           this.searchUsers(this.searchQuery);
         } else {
           this.loadUsers();
         }
       },
-      error: () => {
+      error: (err: any) => { 
         this.isProcessingRestore = false;
         alert("Erreur lors de la réactivation de l'utilisateur.");
       }
@@ -265,10 +251,9 @@ export class UtilisateursComponent implements OnInit {
     }
   }
 
-  // --- Documents ---
   viewDetails(user: UserResponse) {
     if (user.role !== 'ETUDIANT' && user.role !== 'COMMERCANT') {
-      return; // Pas de documents à afficher pour les autres rôles pour l'instant
+      return; 
     }
     
     this.selectedUser = user;
@@ -276,33 +261,20 @@ export class UtilisateursComponent implements OnInit {
     this.isLoadingDocs = true;
     this.hasMandatoryDocs = false;
     
-    if (user.role === 'ETUDIANT') {
-      this.studentService.getStudentDocuments(user.trackingId).subscribe({
-        next: (res) => {
-          this.userDocuments = res || [];
-          this.hasMandatoryDocs = this.userDocuments.some(doc => doc.typeDocument === 'MANDAT_BANCAIRE');
-          this.isLoadingDocs = false;
-        },
-        error: () => {
-          this.userDocuments = [];
-          this.hasMandatoryDocs = false;
-          this.isLoadingDocs = false;
-        }
-      });
-    } else if (user.role === 'COMMERCANT') {
-      this.userService.getMerchantDocuments(user.trackingId).subscribe({
-        next: (res) => {
-          this.userDocuments = res.content || res || [];
-          this.hasMandatoryDocs = this.userDocuments.some(doc => doc.typeDocument === 'MANDAT_BANCAIRE' || doc.typeDocument === 'RIB'); // Ajuster selon le marchand
-          this.isLoadingDocs = false;
-        },
-        error: () => {
-          this.userDocuments = [];
-          this.hasMandatoryDocs = false;
-          this.isLoadingDocs = false;
-        }
-      });
-    }
+    this.documentService.getDocumentsByOwner(user.trackingId).subscribe({
+      next: (res: DocumentResponse[]) => { 
+        this.userDocuments = res || [];
+        this.hasMandatoryDocs = this.userDocuments.some(doc => doc.documentType === 'MANDAT_BANCAIRE' || doc.documentType === 'RIB' || doc.documentType === 'MANDAT');
+        this.isLoadingDocs = false;
+      },
+      error: (err: any) => { 
+        console.error('Erreur lors du chargement des documents', err);
+        this.userDocuments = [];
+        this.hasMandatoryDocs = false;
+        this.isLoadingDocs = false;
+        this.errorMessage = "Impossible de charger les documents.";
+      }
+    });
   }
 
   closeDetails() {
