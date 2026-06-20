@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } 
 import { VersementService } from '../../../../core/services/versement.service';
 import { WalletService, WalletResponse } from '../../../../core/services/wallet.service';
 import { ScolariteYearService } from '../../../../core/services/scolarite-year.service';
+import { InscriptionAnnuelleService } from '../../../../core/services/inscription-annuelle.service';
 
 @Component({
   selector: 'app-versements-etudiants',
@@ -37,7 +38,8 @@ export class VersementsEtudiantsComponent implements OnInit {
     private fb: FormBuilder, 
     private versementService: VersementService,
     private walletService: WalletService,
-    private scolariteYearService: ScolariteYearService
+    private scolariteYearService: ScolariteYearService,
+    private inscriptionAnnuelleService: InscriptionAnnuelleService
   ) {
     this.manualVersementForm = this.fb.group({
       montant: [null, [Validators.required, Validators.min(1)]]
@@ -64,15 +66,32 @@ export class VersementsEtudiantsComponent implements OnInit {
   loadWallets() {
     this.isLoading = true;
     this.errorMessage = '';
-    // filterType = 'STUDENT'
-    this.walletService.filterWallets('STUDENT', this.filterNiveau, 0, 50).subscribe({
+    
+    // Instead of wallets, we fetch inscriptions to get student names and filter only fully enrolled students.
+    this.inscriptionAnnuelleService.findAll(0, 100).subscribe({
       next: (res) => {
-        this.wallets = res.content || [];
+        // Filter those who are fully enrolled and match the study level
+        const allInscriptions = res.content || [];
+        const filtered = allInscriptions.filter((ins: any) => {
+           const matchLevel = this.filterNiveau === 'ALL' || ins.studyLevel === this.filterNiveau;
+           return ins.isFullyEnrolled && matchLevel;
+        });
+        
+        // Map to a structure similar to WalletResponse so the HTML doesn't break, 
+        // but with added student names!
+        this.wallets = filtered.map((ins: any) => ({
+          trackingId: ins.walletTrackingId, // Important: use the walletTrackingId we just added to backend!
+          statutWallet: 'VALIDE', // Fake status just for display
+          solde: ins.walletBalance || 0, // Now coming from backend
+          studentTrackingId: ins.studentTrackingId,
+          ownerName: `${ins.studentFirstName || 'Inconnu'} ${ins.studentLastName || ''}`
+        }));
+        
         this.isLoading = false;
       },
       error: (err) => {
-        if(err.status === 404 || err.status === 204) this.wallets = [];
-        else console.error('Erreur chargement portefeuilles:', err);
+        console.error('Erreur chargement inscriptions:', err);
+        this.wallets = [];
         this.isLoading = false;
       }
     });
@@ -109,10 +128,11 @@ export class VersementsEtudiantsComponent implements OnInit {
     
     this.isProcessingManual = true;
     const payload = {
-      trackingWalletId: this.selectedWalletForManual.trackingId,
-      montantVerse: this.manualVersementForm.value.montant,
-      typeVersement: 'DOTATION_BOURSE_INITIALE',
-      statut: 'VALIDEE'
+      walletTrackingId: this.selectedWalletForManual.trackingId,
+      amount: this.manualVersementForm.value.montant,
+      paymentType: 'BOURSE_INITIALE',
+      paymentDate: new Date().toISOString(),
+      status: 'VALIDEE'
     };
 
     this.versementService.create(payload).subscribe({
