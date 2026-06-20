@@ -33,6 +33,9 @@ export class ParametresService {
   }
 
   saveParametreGns(param: Parametre): Observable<Parametre> {
+    if (param.trackingId) {
+      return this.http.put<Parametre>(`${environment.apiUrl}/parametres-gns/${param.trackingId}`, param);
+    }
     return this.http.post<Parametre>(`${environment.apiUrl}/parametres-gns`, param);
   }
 }

@@ -42,4 +42,17 @@ export class TransactionService {
   getVolumeValide(): Observable<number> {
     return this.http.get<number>(`${this.apiUrl}/stats/volume-valide`);
   }
+
+
+  findByTrackingId(trackingId: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${trackingId}`);
+  }
+
+  findByBoutiqueId(boutiqueId: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/boutique/${boutiqueId}`);
+  }
+
+  findByStudentId(studentId: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/student/${studentId}`);
+  }
 }

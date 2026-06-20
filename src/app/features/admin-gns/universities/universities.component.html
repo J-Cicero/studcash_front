@@ -43,7 +43,7 @@
           </td>
           <td class="px-4 py-3 whitespace-nowrap">
             <div class="text-sm font-bold text-slate-900 dark:text-white">{{u.fullName}}</div>
-            <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">{{u.ville || 'Non spécifié'}}</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">{{u.city || 'Non spécifié'}}</div>
           </td>
           <td class="px-4 py-3 whitespace-nowrap">
             <div class="text-sm font-medium">
@@ -53,8 +53,8 @@
             </div>
           </td>
           <td class="px-4 py-3 whitespace-nowrap">
-            <span *ngIf="u.estActive" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-emerald-100/80 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">Active</span>
-            <span *ngIf="!u.estActive" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-slate-100/80 text-slate-700 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700">Inactive</span>
+            <span *ngIf="u.isActive" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-emerald-100/80 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">Active</span>
+            <span *ngIf="!u.isActive" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-slate-100/80 text-slate-700 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700">Inactive</span>
           </td>
           <td class="px-4 py-3 whitespace-nowrap text-right">
             <div class="relative inline-block text-left group">
@@ -68,9 +68,9 @@
                             Modifier
                         </button>
                         <button (click)="toggleUniversiteStatus(u)" class="flex items-center w-full px-4 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                            <svg *ngIf="u.estActive" class="w-4 h-4 mr-3 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            <svg *ngIf="!u.estActive" class="w-4 h-4 mr-3 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            {{ u.estActive ? 'Désactiver' : 'Activer' }}
+                            <svg *ngIf="u.isActive" class="w-4 h-4 mr-3 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <svg *ngIf="!u.isActive" class="w-4 h-4 mr-3 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            {{ u.isActive ? 'Désactiver' : 'Activer' }}
                         </button>
                         <div class="h-px bg-slate-100 dark:bg-slate-800 my-1"></div>
                         <button (click)="deleteUniversite(u)" class="flex items-center w-full px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
@@ -123,8 +123,8 @@
       </div>
 
       <div class="flex items-center mt-4 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
-        <input id="estActive" type="checkbox" formControlName="estActive" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 rounded">
-        <label for="estActive" class="ml-3 block text-sm font-medium text-slate-700 dark:text-slate-300">
+        <input id="isActive" type="checkbox" formControlName="isActive" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 rounded">
+        <label for="isActive" class="ml-3 block text-sm font-medium text-slate-700 dark:text-slate-300">
           Université Active
         </label>
       </div>

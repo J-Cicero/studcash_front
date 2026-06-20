@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InscriptionAnnuelleService } from '../../../core/services/inscription-annuelle.service';
 import { StudentService, DocumentResponse } from '../../../core/services/student.service';
+import { DocumentEtudiantService } from '../../../core/services/document-etudiant.service';
 import { ScolariteYearService } from '../../../core/services/scolarite-year.service';
 import { FormsModule } from '@angular/forms';
 
@@ -23,13 +24,14 @@ export class InscriptionsComponent implements OnInit {
   activeYear: string | null = null;
 
   selectedInscription: any | null = null;
-  studentDocuments: DocumentResponse[] = [];
+  studentDocuments: any[] = [];
   isLoadingDocs = false;
   hasMandatoryDocs = false;
 
   constructor(
     private inscriptionService: InscriptionAnnuelleService,
     private studentService: StudentService,
+    private documentEtudiantService: DocumentEtudiantService,
     private scolariteYearService: ScolariteYearService
   ) {}
 
@@ -95,14 +97,13 @@ export class InscriptionsComponent implements OnInit {
     this.isLoadingDocs = true;
     this.hasMandatoryDocs = false;
     
-    // Fix: Backend expects UUID (trackingId) for documents
-    const inscriptionId = ins.trackingId;
+    // Pour voir les documents uploadés par l'étudiant lors de la création de son compte
+    const studentTrackingId = ins.studentTrackingId;
     
-    this.studentService.getInscriptionDocuments(inscriptionId).subscribe({
+    this.documentEtudiantService.findByTrackingId(studentTrackingId).subscribe({
       next: (res) => {
-        // Handle both pagination format and simple array
         this.studentDocuments = res.content || res || [];
-        this.hasMandatoryDocs = this.studentDocuments.some(doc => doc.typeDocument === 'MANDAT_BANCAIRE');
+        this.hasMandatoryDocs = this.studentDocuments.some((doc: any) => doc.typeDocument === 'MANDAT_BANCAIRE' || doc.typeDocument === 'PIECE_IDENTITE');
         this.isLoadingDocs = false;
       },
       error: () => {

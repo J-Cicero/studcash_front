@@ -46,8 +46,12 @@ export class ParametresGnsComponent implements OnInit {
   docCreateForm: FormGroup;
   isDocModalOpen = false;
 
-  niveaux = ['L1_ANNEE', 'L2_ANNEE', 'L3_ANNEE'];
-  typesDocument = ['RELEVE_BAC', 'SOUCHE_TAMPONNEE', 'RELEVE_NOTES', 'FICHE_UE', 'PIECE_IDENTITE'];
+  // Confirmation suppression doc
+  isDeleteDocModalOpen = false;
+  docToDeleteId: string | null = null;
+
+  niveaux = ['L1_ANNEE', 'L2_ANNEE', 'L3_ANNEE', 'L4_ANNEE', 'L5_ANNEE'];
+  typesDocument = ['RELEVE_BAC', 'SOUCHE_TAMPONNEE', 'RELEVE_NOTES', 'FICHE_UE', 'PIECE_IDENTITE', 'RIB', 'MANDAT'];
 
   // Scolarite Year
   activeYear: ScolariteYear | null = null;
@@ -89,7 +93,8 @@ export class ParametresGnsComponent implements OnInit {
       targetType: ['STUDENT', Validators.required],
       typeDocument: ['RELEVE_BAC', Validators.required],
       obligatoire: [true],
-      estActif: [true]
+      estActif: [true],
+      description: ['']
     });
     this.paramForm = this.fb.group({
       nomParametre: ['TAUX_COMMISSION_PAIEMENT', Validators.required],
@@ -138,10 +143,20 @@ export class ParametresGnsComponent implements OnInit {
     this.scolariteYearService.getActiveYear().subscribe({
       next: (res) => {
         this.activeYear = res;
+        // Si une année scolaire est active, on ne peut plus modifier les paramètres
+        if (this.activeYear) {
+          this.paramForm.disable();
+          this.docCreateForm.disable();
+        } else {
+          this.paramForm.enable();
+          this.docCreateForm.enable();
+        }
       },
       error: (err) => {
         if(err.status === 404) {
           this.activeYear = null;
+          this.paramForm.enable();
+          this.docCreateForm.enable();
         }
       }
     });
@@ -242,7 +257,7 @@ export class ParametresGnsComponent implements OnInit {
   }
 
   openDocModal() {
-    this.docCreateForm.reset({ niveau: 'L1_ANNEE', targetType: 'STUDENT', typeDocument: 'RELEVE_BAC', obligatoire: true, estActif: true });
+    this.docCreateForm.reset({ niveau: 'L1_ANNEE', targetType: 'STUDENT', typeDocument: 'RELEVE_BAC', obligatoire: true, estActif: true, description: '' });
     this.isDocModalOpen = true;
   }
 
@@ -253,7 +268,16 @@ export class ParametresGnsComponent implements OnInit {
   onSubmitDoc() {
     if (this.docCreateForm.invalid) return;
     this.isCreatingDoc = true;
-    this.documentRequisService.create(this.docCreateForm.value).subscribe({
+
+    const formVal = this.docCreateForm.value;
+    const payload = {
+      typeDocument: formVal.typeDocument,
+      studentNiveau: formVal.niveau,
+      required: formVal.obligatoire,
+      description: formVal.description || ''
+    };
+
+    this.documentRequisService.create(payload).subscribe({
       next: () => {
         this.successMessage = 'Règle ajoutée.';
         this.isCreatingDoc = false;
@@ -267,18 +291,33 @@ export class ParametresGnsComponent implements OnInit {
     });
   }
 
+  openDeleteDocModal(trackingId: string) {
+    this.docToDeleteId = trackingId;
+    this.isDeleteDocModalOpen = true;
+  }
+
+  cancelDeleteDoc() {
+    this.docToDeleteId = null;
+    this.isDeleteDocModalOpen = false;
+  }
+
+  confirmDeleteDoc() {
+    if (!this.docToDeleteId) return;
+    this.documentRequisService.delete(this.docToDeleteId).subscribe({
+      next: () => {
+        this.successMessage = 'Règle supprimée.';
+        this.cancelDeleteDoc();
+        this.loadDocumentsRequis();
+      },
+      error: () => {
+        this.errorMessage = 'Erreur lors de la suppression.';
+        this.cancelDeleteDoc();
+      }
+    });
+  }
+
   deleteDoc(trackingId: string) {
-    if(confirm('Supprimer cette règle ?')) {
-      this.documentRequisService.delete(trackingId).subscribe({
-        next: () => {
-          this.successMessage = 'Supprimée.';
-          this.loadDocumentsRequis();
-        },
-        error: () => {
-          this.errorMessage = 'Erreur suppression.';
-        }
-      });
-    }
+    this.openDeleteDocModal(trackingId);
   }
 
   loadComptesBancaires() {
@@ -363,7 +402,7 @@ export class ParametresGnsComponent implements OnInit {
     if (this.compteGnsForm.invalid || !this.ribUploadedTrackingId) return;
     this.isSavingCompte = true;
     const data: CompteBancaire = {
-      banqueTrackingId: this.compteGnsForm.value.banqueTrackingId,
+      bankTrackingId: this.compteGnsForm.value.banqueTrackingId,
       accountNumber: this.compteGnsForm.value.numeroCompte,
       typeProprietaire: 'GNS',
       ribDocumentTrackingId: this.ribUploadedTrackingId

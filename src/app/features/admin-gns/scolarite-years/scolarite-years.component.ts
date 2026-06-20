@@ -71,6 +71,18 @@ export class ScolariteYearsComponent implements OnInit {
     }
   }
 
+  deleteYear(year: any) {
+    if (confirm(`Êtes-vous sûr de vouloir supprimer l'année ${year.label} ? Cette action est irréversible.`)) {
+      this.scolariteYearService.delete(year.trackingId).subscribe({
+        next: () => {
+          this.successMessage = "Année scolaire supprimée avec succès.";
+          this.loadYears();
+        },
+        error: () => this.errorMessage = "Erreur lors de la suppression de l'année scolaire."
+      });
+    }
+  }
+
   onSubmit() {
     if (this.createForm.invalid) return;
 

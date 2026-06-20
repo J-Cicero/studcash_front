@@ -43,5 +43,30 @@ export class UserService {
   //   // This endpoint is currently missing in the backend
   //   return this.http.get<any>(`${environment.apiUrl}/merchants/documents/merchant/${trackingId}`);
   // }
+
+
+  createUser(data: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/register`, data);
+  }
+
+  login(data: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/login`, data);
+  }
+
+  getGetTrackingid(trackingId: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/get/${trackingId}`);
+  }
+
+  patchEtatTrackingid(trackingId: any, data: any): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/etat/${trackingId}`, data);
+  }
+
+  getProfile(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/profile`);
+  }
+
+  getSearch(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/search`);
+  }
 }
 

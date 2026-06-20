@@ -33,4 +33,13 @@ export class LiquidationService {
   getPendingTotal(): Observable<number> {
     return this.http.get<number>(`${this.apiUrl}/stats/pending-total`);
   }
+
+
+  findByTrackingId(trackingId: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${trackingId}`);
+  }
+
+  findByBoutiqueId(boutiqueId: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/boutique/${boutiqueId}`);
+  }
 }

@@ -41,4 +41,33 @@ export class BoutiqueService {
   getLowQuotaCount(): Observable<number> {
     return this.http.get<number>(`${this.apiUrl}/stats/low-quota-count`);
   }
+
+
+  findByTrackingId(trackingId: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${trackingId}`);
+  }
+
+  updateTrackingid(trackingId: any, data: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${trackingId}`, data);
+  }
+
+  delete(trackingId: any): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${trackingId}`);
+  }
+
+  getMerchantMerchanttrackingid(merchantTrackingId: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/merchant/${merchantTrackingId}`);
+  }
+
+  getWalletWallettrackingid(walletTrackingId: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/wallet/${walletTrackingId}`);
+  }
+
+  getKycStatutkyc(statutKYC: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/kyc/${statutKYC}`);
+  }
+
+  getBoutiquesEnAlerte(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/alertes-quota`);
+  }
 }

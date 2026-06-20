@@ -15,4 +15,17 @@ export class DocumentService {
   getDocumentsByOwner(ownerTrackingId: string): Observable<DocumentResponse[]> {
     return this.http.get<DocumentResponse[]>(`${this.apiUrl}/owner/${ownerTrackingId}`);
   }
+
+
+  uploadDocument(data: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/upload`, data);
+  }
+
+  getDocumentByTrackingId(trackingId: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${trackingId}`);
+  }
+
+  deleteDocument(trackingId: any): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${trackingId}`);
+  }
 }

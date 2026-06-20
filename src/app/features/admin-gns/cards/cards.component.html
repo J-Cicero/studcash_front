@@ -1,0 +1,84 @@
+<div class="mb-8 flex justify-between items-center animate-fade-in-up">
+  <div>
+    <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Gestion des Cartes Étudiantes</h1>
+    <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Gérez le cycle de vie des cartes NFC et les QR Codes associés.</p>
+  </div>
+</div>
+
+  <div *ngIf="errorMessage" class="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
+    {{ errorMessage }}
+  </div>
+
+  <div class="glass-panel rounded-2xl overflow-hidden mb-6 p-6 animate-fade-in-up">
+    <div class="flex flex-col md:flex-row md:items-center gap-4 justify-between">
+      <div class="flex items-center space-x-2 bg-slate-100/50 dark:bg-slate-800/50 p-1 rounded-xl">
+        <button (click)="setFilterStatus('ALL')" [ngClass]="filterStatus === 'ALL' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm font-bold' : 'text-slate-600 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white'" class="px-4 py-2 text-sm rounded-lg transition-all">Toutes</button>
+        <button (click)="setFilterStatus('EN_ATTENTE')" [ngClass]="filterStatus === 'EN_ATTENTE' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 shadow-sm font-bold' : 'text-slate-600 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white'" class="px-4 py-2 text-sm rounded-lg transition-all">En Attente</button>
+        <button (click)="setFilterStatus('IMPRIMEE')" [ngClass]="filterStatus === 'IMPRIMEE' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 shadow-sm font-bold' : 'text-slate-600 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white'" class="px-4 py-2 text-sm rounded-lg transition-all">Imprimées</button>
+      </div>
+
+      <div class="relative w-full md:w-80">
+        <input type="text" [(ngModel)]="searchQuery" (input)="applyFilter()" placeholder="Rechercher une carte..." class="w-full pl-10 pr-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white transition-colors">
+        <span class="absolute left-3 top-2.5 text-slate-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+          </svg>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="glass-panel rounded-2xl overflow-hidden animate-fade-in-up" style="animation-delay: 100ms;">
+    <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+      <div class="relative w-10 h-10">
+        <div class="absolute inset-0 rounded-full border-4 border-indigo-100 dark:border-slate-800"></div>
+        <div class="absolute inset-0 rounded-full border-4 border-indigo-600 dark:border-indigo-400 border-t-transparent animate-spin"></div>
+      </div>
+    </div>
+
+    <table *ngIf="!isLoading" class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
+      <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
+        <tr>
+          <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">QR Code</th>
+          <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">ID Demande</th>
+          <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Étudiant</th>
+          <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Date d'Expiration</th>
+          <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statut</th>
+          <th scope="col" class="px-4 py-3 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
+        <tr *ngFor="let card of filteredCards" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+          <td class="px-4 py-3 whitespace-nowrap">
+            <div class="p-1 bg-white inline-block rounded-lg shadow-sm border border-slate-200">
+              <qrcode [qrdata]="card.trackingId" [width]="50" [errorCorrectionLevel]="'M'"></qrcode>
+            </div>
+          </td>
+          <td class="px-4 py-3 whitespace-nowrap text-sm font-bold text-indigo-600 dark:text-indigo-400">{{ card.trackingId | slice:0:8 }}...</td>
+          <td class="px-4 py-3 whitespace-nowrap">
+            <div class="text-sm font-bold text-slate-900 dark:text-white">{{ card.studentNom }} {{ card.studentPrenom }}</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">{{ card.trackingId }}</div>
+          </td>
+          <td class="px-4 py-3 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400 font-medium">{{ card.dateExpiration | date:'dd/MM/yyyy' }}</td>
+          <td class="px-4 py-3 whitespace-nowrap">
+            <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full"
+                  [ngClass]="{
+                    'bg-amber-100/80 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 border border-amber-200 dark:border-amber-800': card.statutCarte === 'EN_ATTENTE',
+                    'bg-emerald-100/80 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800': card.statutCarte === 'IMPRIMEE' || card.statutCarte === 'ACTIVE',
+                    'bg-rose-100/80 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400 border border-rose-200 dark:border-rose-800': card.statutCarte === 'BLOQUEE' || card.statutCarte === 'PERDUE'
+                  }">
+              {{ card.statutCarte }}
+            </span>
+          </td>
+          <td class="px-4 py-3 whitespace-nowrap text-right space-x-2">
+            <button *ngIf="card.statutCarte === 'EN_ATTENTE'" (click)="updateCardStatus(card.trackingId, 'IMPRIMEE')" class="text-blue-600 hover:text-blue-900 font-bold text-sm">Imprimer</button>
+            <button *ngIf="card.statutCarte === 'IMPRIMEE'" (click)="updateCardStatus(card.trackingId, 'ACTIVE')" class="text-emerald-600 hover:text-emerald-900 font-bold text-sm">Activer</button>
+            <button *ngIf="card.statutCarte === 'ACTIVE'" (click)="updateCardStatus(card.trackingId, 'BLOQUEE')" class="text-rose-600 hover:text-rose-900 font-bold text-sm">Bloquer</button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredCards.length === 0">
+          <td colspan="6" class="px-4 py-8 text-center text-sm font-medium text-slate-500 dark:text-slate-400">Aucune carte trouvée.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>

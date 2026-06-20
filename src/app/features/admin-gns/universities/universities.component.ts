@@ -38,7 +38,7 @@ export class UniversitiesComponent implements OnInit {
       code: ['', Validators.required],
       nom: ['', Validators.required],
       ville: [''],
-      estActive: [true]
+      isActive: [true]
     });
   }
 
@@ -103,8 +103,8 @@ export class UniversitiesComponent implements OnInit {
     this.createForm.patchValue({
       code: u.code,
       nom: u.fullName,
-      ville: u.ville,
-      estActive: u.estActive
+      ville: u.city,
+      isActive: u.isActive
     });
     this.showForm = true;
   }
@@ -116,8 +116,8 @@ export class UniversitiesComponent implements OnInit {
     const universityData = {
       fullName: this.createForm.value.nom,
       code: this.createForm.value.code,
-      ville: this.createForm.value.ville,
-      estActive: this.createForm.value.estActive
+      city: this.createForm.value.ville,
+      isActive: this.createForm.value.isActive
     };
 
     if (this.editingUniv) {
@@ -127,7 +127,7 @@ export class UniversitiesComponent implements OnInit {
           this.loadSummaryStats();
           this.showForm = false;
           this.editingUniv = null;
-          this.createForm.reset({ estActive: true });
+          this.createForm.reset({ isActive: true });
           this.successMessage = "Université modifiée avec succès.";
           this.isCreating = false;
           setTimeout(() => this.successMessage = '', 3000);
@@ -144,7 +144,7 @@ export class UniversitiesComponent implements OnInit {
           this.loadUniversities();
           this.loadSummaryStats();
           this.showForm = false;
-          this.createForm.reset({ estActive: true });
+          this.createForm.reset({ isActive: true });
           this.successMessage = "Université ajoutée avec succès.";
           this.isCreating = false;
           setTimeout(() => this.successMessage = '', 3000);
@@ -159,10 +159,10 @@ export class UniversitiesComponent implements OnInit {
   }
 
   toggleUniversiteStatus(univ: any) {
-    this.universiteService.updateEtat(univ.trackingId, !univ.estActive).subscribe({
+    this.universiteService.updateEtat(univ.trackingId, !univ.isActive).subscribe({
       next: (res) => {
         this.loadUniversities();
-        this.successMessage = `Université ${res.nom} ${res.estActive ? 'activée' : 'désactivée'}.`;
+        this.successMessage = `Université ${res.fullName} ${res.isActive ? 'activée' : 'désactivée'}.`;
         setTimeout(() => this.successMessage = '', 3000);
       },
       error: (err) => {
@@ -175,12 +175,12 @@ export class UniversitiesComponent implements OnInit {
   deleteUniversite(univ: any) {
     this.confirmAction(
       'Suppression d\'université',
-      `Êtes-vous sûr de vouloir supprimer l'université ${univ.nom} ?`,
+      `Êtes-vous sûr de vouloir supprimer l'université ${univ.fullName} ?`,
       () => {
         this.universiteService.delete(univ.trackingId).subscribe({
           next: () => {
             this.loadUniversities();
-            this.successMessage = `Université ${univ.nom} supprimée.`;
+            this.successMessage = `Université ${univ.fullName} supprimée.`;
             setTimeout(() => this.successMessage = '', 3000);
           },
           error: (err: any) => {

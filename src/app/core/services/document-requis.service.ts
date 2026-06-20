@@ -4,10 +4,10 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface DocumentRequisRequest {
-  niveau: string;
   typeDocument: string;
-  obligatoire: boolean;
-  estActif: boolean;
+  studentNiveau: string;
+  required: boolean;
+  description?: string;
 }
 
 @Injectable({
@@ -31,6 +31,19 @@ export class DocumentRequisService {
   }
 
   delete(trackingId: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${trackingId}`);
+  }
+
+
+  getDocumentRequisByTrackingId(trackingId: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${trackingId}`);
+  }
+
+  getDocumentRequisByType(typeDocument: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/type/${typeDocument}`);
+  }
+
+  deleteDocumentRequis(trackingId: any): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${trackingId}`);
   }
 }

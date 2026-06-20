@@ -62,4 +62,45 @@ export class VersementService {
   resetMasseBoutiques(request: MassResetBoutiqueRequest): Observable<any> {
     return this.http.post(`${this.apiUrl}/masse/reset/boutiques`, null, { params: request as any });
   }
+
+
+  createMasseEtudiants(data: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/masse/etudiants`, data);
+  }
+
+  effectuerVersementMasseBoutiques(data: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/masse/boutiques`, data);
+  }
+
+  remiseAZeroMasseEtudiants(data: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/masse/reset/etudiants`, data);
+  }
+
+  remiseAZeroMasseBoutiques(data: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/masse/reset/boutiques`, data);
+  }
+
+  findByTrackingId(trackingId: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${trackingId}`);
+  }
+
+  update(trackingId: any, data: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${trackingId}`, data);
+  }
+
+  delete(trackingId: any): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${trackingId}`);
+  }
+
+  findByStatut(statut: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/statut/${statut}`);
+  }
+
+  findByTypeVersement(typeVersement: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/type/${typeVersement}`);
+  }
+
+  findByWalletTrackingId(walletTrackingId: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/wallet/${walletTrackingId}`);
+  }
 }

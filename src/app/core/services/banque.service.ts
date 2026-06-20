@@ -5,7 +5,7 @@ import { environment } from '../../../environments/environment';
 
 export interface CompteBancaire {
   trackingId?: string;
-  banqueTrackingId: string;
+  bankTrackingId: string;
   bankName?: string;
   ribDocumentTrackingId?: string;
   proprietaireTrackingId?: string;
@@ -50,5 +50,10 @@ export class BanqueService {
       `${this.apiUrl}/upload-rib`,
       formData
     );
+  }
+
+
+  uploadRibDocument(data: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/upload-rib`, data);
   }
 }

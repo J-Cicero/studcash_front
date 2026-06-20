@@ -32,4 +32,33 @@ export class InscriptionAnnuelleService {
   synchroniser(trackingId: string): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/${trackingId}/synchroniser`, null);
   }
+
+
+  createSimple(data: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/simple`, data);
+  }
+
+  getTrackingid(trackingId: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${trackingId}`);
+  }
+
+  updateTrackingid(trackingId: any, data: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${trackingId}`, data);
+  }
+
+  deleteTrackingid(trackingId: any): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${trackingId}`);
+  }
+
+  getStudentStudenttrackingid(studentTrackingId: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/student/${studentTrackingId}`);
+  }
+
+  getStudentStudenttrackingidAnneeAnneeacademique(studentTrackingId: any, anneeAcademique: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/student/${studentTrackingId}/annee/${anneeAcademique}`);
+  }
+
+  findByUniversite(universiteTrackingId: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/universite/${universiteTrackingId}`);
+  }
 }

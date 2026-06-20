@@ -41,4 +41,13 @@ export class ScolariteYearService {
   cloturerEtOuvrirNouvelle(oldTrackingId: string, data: ScolariteYear): Observable<ScolariteYear> {
     return this.http.post<ScolariteYear>(`${this.apiUrl}/${oldTrackingId}/cloturer`, data);
   }
+
+
+  getByTrackingId(trackingId: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${trackingId}`);
+  }
+
+  delete(trackingId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${trackingId}`);
+  }
 }

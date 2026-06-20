@@ -69,4 +69,37 @@ export class StudentService {
   getTotalStudents(): Observable<number> {
     return this.http.get<number>(`${this.apiUrl}/stats/total`);
   }
+
+
+  uploadDocument(trackingId: any, data: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/${trackingId}/documents/upload`, data);
+  }
+
+  getDocuments(trackingId: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${trackingId}/documents`);
+  }
+
+  findByTrackingId(trackingId: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${trackingId}`);
+  }
+
+  update(trackingId: any, data: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${trackingId}`, data);
+  }
+
+  assignerMatricule(trackingId: any, data: any): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/${trackingId}/matricule`, data);
+  }
+
+  delete(trackingId: any): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${trackingId}`);
+  }
+
+  getStats(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/stats`);
+  }
+
+  getCard(trackingId: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${trackingId}/card`);
+  }
 }

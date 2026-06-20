@@ -6,8 +6,8 @@ import { environment } from '../../../environments/environment';
 export interface UniversiteRequest {
   code: string;
   fullName: string;
-  ville?: string;
-  estActive: boolean;
+  city?: string;
+  isActive: boolean;
 }
 
 @Injectable({
@@ -46,5 +46,10 @@ export class UniversiteService {
 
   getSummaryStats(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/summary-stats`);
+  }
+
+
+  findByTrackingId(trackingId: any): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${trackingId}`);
   }
 }
