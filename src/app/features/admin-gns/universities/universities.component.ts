@@ -95,7 +95,7 @@ export class UniversitiesComponent implements OnInit {
   }
 
   getStatsForUniversite(trackingId: string): any {
-    return this.summaryStats.find(s => s.universiteTrackingId === trackingId);
+    return this.summaryStats.find(s => s.trackingId === trackingId);
   }
 
   openEditModal(u: any) {

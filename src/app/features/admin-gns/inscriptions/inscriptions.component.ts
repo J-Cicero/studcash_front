@@ -60,7 +60,7 @@ export class InscriptionsComponent implements OnInit {
         const all = res.content || [];
         // Si pas d'année active, on peut soit tout afficher, soit rien
         if (this.activeYear) {
-          this.inscriptions = all.filter((i: any) => i.anneeAcademique === this.activeYear);
+          this.inscriptions = all.filter((i: any) => i.academicYearLabel === this.activeYear);
         } else {
           this.inscriptions = all; // Option: Afficher tout s'il n'y a pas d'année active
         }
@@ -81,8 +81,8 @@ export class InscriptionsComponent implements OnInit {
     }
     const q = this.searchQuery.toLowerCase();
     this.filteredInscriptions = this.inscriptions.filter(i => 
-      (i.studentNom && i.studentNom.toLowerCase().includes(q)) || 
-      (i.studentPrenom && i.studentPrenom.toLowerCase().includes(q))
+      (i.studentLastName && i.studentLastName.toLowerCase().includes(q)) || 
+      (i.studentFirstName && i.studentFirstName.toLowerCase().includes(q))
     );
   }
 
@@ -97,10 +97,10 @@ export class InscriptionsComponent implements OnInit {
     this.isLoadingDocs = true;
     this.hasMandatoryDocs = false;
     
-    // Pour voir les documents uploadés par l'étudiant lors de la création de son compte
-    const studentTrackingId = ins.studentTrackingId;
+    // Fetch documents attached to this specific inscription
+    const inscriptionTrackingId = ins.trackingId;
     
-    this.documentEtudiantService.findByTrackingId(studentTrackingId).subscribe({
+    this.documentEtudiantService.findByInscriptionId(inscriptionTrackingId).subscribe({
       next: (res) => {
         this.studentDocuments = res.content || res || [];
         this.hasMandatoryDocs = this.studentDocuments.some((doc: any) => doc.typeDocument === 'MANDAT_BANCAIRE' || doc.typeDocument === 'PIECE_IDENTITE');

@@ -39,19 +39,19 @@
       <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
         <tr *ngFor="let ins of filteredInscriptions" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
           <td class="px-4 py-3 whitespace-nowrap text-sm font-bold text-slate-900 dark:text-white">
-            {{ins.studentPrenom}} {{ins.studentNom}}
+            {{ins.studentFirstName}} {{ins.studentLastName}}
           </td>
           <td class="px-4 py-3 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
-            {{ins.numEtudiantUniv || 'N/A'}}
+            {{ins.studentIdNumber || 'N/A'}}
           </td>
           <td class="px-4 py-3 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
-            {{ins.niveau}}
+            {{ins.studyLevel}}
           </td>
           <td class="px-4 py-3 whitespace-nowrap">
-            <span *ngIf="ins.estInscritDefinitif" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-emerald-100/80 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+            <span *ngIf="ins.isFullyEnrolled" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-emerald-100/80 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
               INSCRIT DÉFINITIF
             </span>
-            <span *ngIf="!ins.estInscritDefinitif" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-orange-100/80 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400 border border-orange-200 dark:border-orange-800">
+            <span *ngIf="!ins.isFullyEnrolled" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-orange-100/80 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400 border border-orange-200 dark:border-orange-800">
               EN ATTENTE
             </span>
           </td>
@@ -76,7 +76,7 @@
 <div *ngIf="selectedInscription" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
   <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
     <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/30">
-      <h3 class="text-lg font-bold text-slate-900 dark:text-white">Documents de {{selectedInscription.studentPrenom}}</h3>
+      <h3 class="text-lg font-bold text-slate-900 dark:text-white">Documents de {{selectedInscription.studentFirstName}}</h3>
       <button (click)="closeDetails()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
       </button>
