@@ -22,8 +22,12 @@
     <div class="w-8 h-8 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin"></div>
   </div>
 
-  <div *ngIf="!isLoading && errorMessage" class="p-8 text-center text-red-500 font-bold">
+  <div *ngIf="!isLoading && errorMessage" class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800 mx-8 font-bold text-center">
     {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!isLoading && successMessage" class="p-4 mb-4 text-sm text-emerald-700 bg-emerald-100 rounded-lg dark:bg-emerald-200 dark:text-emerald-800 mx-8 font-bold text-center">
+    {{ successMessage }}
   </div>
 
   <!-- Table -->
@@ -40,7 +44,7 @@
       <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
         <tr *ngFor="let wallet of wallets" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
           <td class="px-4 py-3 whitespace-nowrap">
-            <p class="text-sm font-bold text-slate-900 dark:text-white">{{wallet.proprietaireTrackingId ? getShortId(wallet.proprietaireTrackingId) : 'Inconnu'}}</p>
+            <p class="text-sm font-bold text-slate-900 dark:text-white">{{wallet.proprietaireTrackingId || 'Inconnu'}}</p>
             <p class="text-xs text-slate-500 dark:text-slate-400">#{{getShortId(wallet.trackingId)}}</p>
           </td>
           <td class="px-4 py-3 whitespace-nowrap">
@@ -157,3 +161,14 @@
     </div>
   </div>
 </div>
+
+<!-- Custom Confirmation Modal -->
+<app-confirm-dialog
+  [isOpen]="showConfirmModal"
+  [title]="confirmTitle"
+  [message]="confirmMessage"
+  confirmText="Oui"
+  cancelText="Non"
+  (confirm)="onModalConfirm()"
+  (cancel)="onModalCancel()"
+></app-confirm-dialog>

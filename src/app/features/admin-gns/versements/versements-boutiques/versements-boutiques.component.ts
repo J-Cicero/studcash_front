@@ -2,22 +2,24 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { VersementService } from '../../../../core/services/versement.service';
-import { WalletService, WalletResponse } from '../../../../core/services/wallet.service';
+import { BoutiqueService, BoutiqueResponse } from '../../../../core/services/boutique.service';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-versements-boutiques',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, ConfirmDialogComponent],
   templateUrl: './versements-boutiques.component.html',
   styleUrls: ['./versements-boutiques.component.scss']
 })
 export class VersementsBoutiquesComponent implements OnInit {
-  wallets: WalletResponse[] = [];
+  wallets: any[] = [];
   isLoading = false;
   errorMessage = '';
+  successMessage = '';
   
   showManualVersementModal = false;
-  selectedWalletForManual: WalletResponse | null = null;
+  selectedWalletForManual: any | null = null;
   manualVersementForm: FormGroup;
   isProcessingManual = false;
 
@@ -28,10 +30,15 @@ export class VersementsBoutiquesComponent implements OnInit {
   massPreviewNames: string[] = [];
   isProcessingMass = false;
 
+  showConfirmModal = false;
+  confirmTitle = '';
+  confirmMessage = '';
+  onConfirmCallback: (() => void) | null = null;
+
   constructor(
     private fb: FormBuilder, 
     private versementService: VersementService,
-    private walletService: WalletService
+    private boutiqueService: BoutiqueService
   ) {
     this.manualVersementForm = this.fb.group({
       montant: [null, [Validators.required, Validators.min(1)]]
@@ -51,9 +58,16 @@ export class VersementsBoutiquesComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
     
-    this.walletService.filterWallets('BOUTIQUE', 'ALL', 0, 50).subscribe({
+    this.boutiqueService.getAllBoutiques(0, 100).subscribe({
       next: (res) => {
-        this.wallets = res.content || [];
+        const allBoutiques = res.content || [];
+        this.wallets = allBoutiques.map((b: any) => ({
+          trackingId: b.walletTrackingId,
+          statutWallet: b.kycStatus === 'VALIDE' ? 'ACTIF' : 'EN_ATTENTE',
+          solde: b.balance || 0,
+          proprietaireTrackingId: b.name, // Displayed as name in UI
+          limitAmount: b.limitAmount || 0
+        }));
         this.isLoading = false;
       },
       error: (err) => {
@@ -74,7 +88,7 @@ export class VersementsBoutiquesComponent implements OnInit {
   }
 
   // Manual
-  openManualVersement(wallet: WalletResponse) {
+  openManualVersement(wallet: any) {
     this.selectedWalletForManual = wallet;
     this.manualVersementForm.reset();
     this.showManualVersementModal = true;
@@ -101,6 +115,9 @@ export class VersementsBoutiquesComponent implements OnInit {
         this.isProcessingManual = false;
         this.closeManualVersement();
         this.loadWallets();
+        this.errorMessage = '';
+        this.successMessage = "Recharge individuelle effectuée avec succès !";
+        setTimeout(() => this.successMessage = '', 5000);
       },
       error: () => {
         this.isProcessingManual = false;
@@ -152,6 +169,9 @@ export class VersementsBoutiquesComponent implements OnInit {
         this.isProcessingMass = false;
         this.closeMassVersement();
         this.loadWallets();
+        this.errorMessage = '';
+        this.successMessage = "Recharge en masse effectuée avec succès !";
+        setTimeout(() => this.successMessage = '', 5000);
       },
       error: () => {
         this.isProcessingMass = false;
@@ -160,23 +180,49 @@ export class VersementsBoutiquesComponent implements OnInit {
     });
   }
 
-  handleRemiseAZeroBoutiques() {
-    if (confirm('Êtes-vous sûr de vouloir remettre à zéro les portefeuilles des boutiques ? Cette action est irréversible.')) {
-      this.isProcessingMass = true;
-      // For Boutiques reset, no trackingId is required based on Service definition
-      this.versementService.resetMasseBoutiques({
-        scolariteYearTrackingId: '' // The backend method takes a request object, even if it might not use the ID
-      }).subscribe({
-        next: () => {
-          this.isProcessingMass = false;
-          alert("Remise à zéro des boutiques effectuée avec succès.");
-          this.loadWallets();
-        },
-        error: () => {
-          this.isProcessingMass = false;
-          alert("Erreur lors de la remise à zéro des boutiques.");
-        }
-      });
+  confirmAction(title: string, message: string, callback: () => void) {
+    this.confirmTitle = title;
+    this.confirmMessage = message;
+    this.onConfirmCallback = callback;
+    this.showConfirmModal = true;
+  }
+
+  onModalConfirm() {
+    if (this.onConfirmCallback) {
+      this.onConfirmCallback();
     }
+    this.showConfirmModal = false;
+    this.onConfirmCallback = null;
+  }
+
+  onModalCancel() {
+    this.showConfirmModal = false;
+    this.onConfirmCallback = null;
+  }
+
+  handleRemiseAZeroBoutiques() {
+    this.confirmAction(
+      'Remise à zéro des portefeuilles',
+      'Êtes-vous sûr de vouloir remettre à zéro les portefeuilles des boutiques ? Cette action est irréversible.',
+      () => {
+        this.isProcessingMass = true;
+        this.versementService.resetMasseBoutiques({
+          scolariteYearTrackingId: ''
+        }).subscribe({
+          next: () => {
+            this.isProcessingMass = false;
+            this.errorMessage = '';
+            this.successMessage = "Remise à zéro des boutiques effectuée avec succès.";
+            setTimeout(() => this.successMessage = '', 5000);
+            this.loadWallets();
+          },
+          error: () => {
+            this.isProcessingMass = false;
+            this.errorMessage = "Erreur lors de la remise à zéro des boutiques.";
+            setTimeout(() => this.errorMessage = '', 5000);
+          }
+        });
+      }
+    );
   }
 }

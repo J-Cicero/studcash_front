@@ -58,7 +58,8 @@ import { BankPortalService, BanqueInfo } from '../../../../core/services/bank-po
             <div>
               <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Compte Central GNS (Pour vos virements)</p>
               <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-100 dark:border-blue-800/50 mt-1">
-                <p class="text-sm font-mono text-blue-800 dark:text-blue-300">En attente de configuration GNS...</p>
+                <p *ngIf="banqueInfo.compteCentralGns" class="text-sm font-mono text-blue-800 dark:text-blue-300">{{ banqueInfo.compteCentralGns }}</p>
+                <p *ngIf="!banqueInfo.compteCentralGns" class="text-sm font-mono text-blue-800 dark:text-blue-300 opacity-70">En attente de configuration GNS...</p>
               </div>
             </div>
           </div>

@@ -34,6 +34,7 @@ export interface BanqueInfo {
   code: string;
   nom: string;
   logoUrl?: string;
+  compteCentralGns?: string;
 }
 
 export interface BoutiqueLiquidationInfo {
