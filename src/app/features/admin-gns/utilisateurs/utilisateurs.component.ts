@@ -264,15 +264,58 @@ export class UtilisateursComponent implements OnInit {
     this.documentService.getDocumentsByOwner(user.trackingId).subscribe({
       next: (res: DocumentResponse[]) => { 
         this.userDocuments = res || [];
-        this.hasMandatoryDocs = this.userDocuments.some(doc => doc.documentType === 'MANDAT_BANCAIRE' || doc.documentType === 'RIB' || doc.documentType === 'MANDAT');
-        this.isLoadingDocs = false;
+        
+        // Also fetch CompteBancaire (RIB)
+        let ownerId = user.trackingId;
+        // Si c'est un commerçant, l'ID du compte bancaire est peut-être lié à sa boutique
+        // mais pour l'instant essayons avec son propre ID, ou ajoutons-le si trouvé
+        this.banqueService.getCompteBancaireByOwner(ownerId).subscribe({
+          next: (compte) => {
+             if (compte && compte.ribUrl) {
+                this.userDocuments.push({
+                   trackingId: compte.trackingId,
+                   documentType: 'RIB_COMPTE_BANCAIRE',
+                   fileUrl: compte.ribUrl,
+                   ownerTrackingId: ownerId,
+                   createdAt: new Date().toISOString()
+                } as any);
+             }
+             this.hasMandatoryDocs = this.userDocuments.some(doc => doc.documentType === 'MANDAT_BANCAIRE' || doc.documentType === 'RIB' || doc.documentType === 'MANDAT' || doc.documentType === 'RIB_COMPTE_BANCAIRE');
+             this.isLoadingDocs = false;
+          },
+          error: () => {
+             this.hasMandatoryDocs = this.userDocuments.some(doc => doc.documentType === 'MANDAT_BANCAIRE' || doc.documentType === 'RIB' || doc.documentType === 'MANDAT');
+             this.isLoadingDocs = false;
+          }
+        });
       },
       error: (err: any) => { 
         console.error('Erreur lors du chargement des documents', err);
         this.userDocuments = [];
         this.hasMandatoryDocs = false;
-        this.isLoadingDocs = false;
-        this.errorMessage = "Impossible de charger les documents.";
+        
+        // Try fetching only CompteBancaire if DocumentEtudiant fails
+        let ownerId = user.trackingId;
+        this.banqueService.getCompteBancaireByOwner(ownerId).subscribe({
+          next: (compte) => {
+             if (compte && compte.ribUrl) {
+                this.userDocuments.push({
+                   trackingId: compte.trackingId,
+                   documentType: 'RIB_COMPTE_BANCAIRE',
+                   fileUrl: compte.ribUrl,
+                   ownerTrackingId: ownerId,
+                   createdAt: new Date().toISOString()
+                } as any);
+                this.hasMandatoryDocs = true;
+             }
+             this.isLoadingDocs = false;
+             this.errorMessage = "";
+          },
+          error: () => {
+             this.isLoadingDocs = false;
+             this.errorMessage = "Impossible de charger les documents.";
+          }
+        });
       }
     });
   }

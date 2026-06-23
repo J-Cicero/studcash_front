@@ -14,6 +14,7 @@ export interface WalletResponse {
   plafond: number;
   estVerrouille: boolean;
   dateCreation: string;
+  selected?: boolean; // For UI selection
 }
 
 @Injectable({

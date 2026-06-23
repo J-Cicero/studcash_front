@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { InscriptionAnnuelleService } from '../../../core/services/inscription-annuelle.service';
 import { StudentService, DocumentResponse } from '../../../core/services/student.service';
 import { DocumentEtudiantService } from '../../../core/services/document-etudiant.service';
@@ -28,11 +29,15 @@ export class InscriptionsComponent implements OnInit {
   isLoadingDocs = false;
   hasMandatoryDocs = false;
 
+  selectedDocumentForPreview: any = null;
+  sanitizedPdfUrl: SafeResourceUrl | null = null;
+
   constructor(
     private inscriptionService: InscriptionAnnuelleService,
     private studentService: StudentService,
     private documentEtudiantService: DocumentEtudiantService,
-    private scolariteYearService: ScolariteYearService
+    private scolariteYearService: ScolariteYearService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -102,16 +107,62 @@ export class InscriptionsComponent implements OnInit {
     
     this.documentEtudiantService.findByInscriptionId(inscriptionTrackingId).subscribe({
       next: (res) => {
-        this.studentDocuments = res.content || res || [];
-        this.hasMandatoryDocs = this.studentDocuments.some((doc: any) => doc.typeDocument === 'MANDAT_BANCAIRE' || doc.typeDocument === 'PIECE_IDENTITE');
-        this.isLoadingDocs = false;
+        let docs = res.content || res || [];
+        
+        if (docs.length === 0 && ins.studentTrackingId) {
+          // Fallback if documents were uploaded before inscription creation (e.g. mobile app registration)
+          this.documentEtudiantService.findByStudentId(ins.studentTrackingId).subscribe({
+            next: (studentRes) => {
+              this.studentDocuments = studentRes.content || studentRes || [];
+              this.hasMandatoryDocs = this.studentDocuments.some((doc: any) => doc.documentType === 'MANDAT_BANCAIRE' || doc.documentType === 'PIECE_IDENTITE');
+              if (this.studentDocuments.length > 0) this.selectDocument(this.studentDocuments[0]);
+              this.isLoadingDocs = false;
+            },
+            error: () => {
+              this.studentDocuments = [];
+              this.hasMandatoryDocs = false;
+              this.isLoadingDocs = false;
+            }
+          });
+        } else {
+          this.studentDocuments = docs;
+          this.hasMandatoryDocs = this.studentDocuments.some((doc: any) => doc.documentType === 'MANDAT_BANCAIRE' || doc.documentType === 'PIECE_IDENTITE');
+          if (this.studentDocuments.length > 0) this.selectDocument(this.studentDocuments[0]);
+          this.isLoadingDocs = false;
+        }
       },
       error: () => {
-        this.studentDocuments = [];
-        this.hasMandatoryDocs = false;
-        this.isLoadingDocs = false;
+        // Fallback on error as well
+        if (ins.studentTrackingId) {
+          this.documentEtudiantService.findByStudentId(ins.studentTrackingId).subscribe({
+            next: (studentRes) => {
+              this.studentDocuments = studentRes.content || studentRes || [];
+              this.hasMandatoryDocs = this.studentDocuments.some((doc: any) => doc.documentType === 'MANDAT_BANCAIRE' || doc.documentType === 'PIECE_IDENTITE');
+              if (this.studentDocuments.length > 0) this.selectDocument(this.studentDocuments[0]);
+              this.isLoadingDocs = false;
+            },
+            error: () => {
+              this.studentDocuments = [];
+              this.hasMandatoryDocs = false;
+              this.isLoadingDocs = false;
+            }
+          });
+        } else {
+          this.studentDocuments = [];
+          this.hasMandatoryDocs = false;
+          this.isLoadingDocs = false;
+        }
       }
     });
+  }
+
+  selectDocument(doc: any) {
+    this.selectedDocumentForPreview = doc;
+    if (doc.documentType === 'MANDAT_BANCAIRE' || (doc.fileUrl && doc.fileUrl.endsWith('.pdf'))) {
+      this.sanitizedPdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(doc.fileUrl);
+    } else {
+      this.sanitizedPdfUrl = null;
+    }
   }
 
   updateDefinitif(estInscritDefinitif: boolean) {

@@ -19,16 +19,30 @@
 
 <div class="glass-panel rounded-2xl overflow-hidden animate-fade-in-up" style="animation-delay: 100ms;">
   <!-- Filters -->
-  <div class="px-8 py-5 border-b border-slate-200/50 dark:border-slate-700/50 flex space-x-2 overflow-x-auto custom-scrollbar">
-    <button (click)="setFilterNiveau('ALL')" [class.bg-blue-600]="filterNiveau === 'ALL'" [class.text-white]="filterNiveau === 'ALL'" [class.bg-slate-100]="filterNiveau !== 'ALL'" [class.text-slate-600]="filterNiveau !== 'ALL'" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors whitespace-nowrap dark:bg-slate-800 dark:text-slate-300">Tous les niveaux</button>
+  <div class="px-6 py-4 border-b border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40 flex flex-wrap gap-2 items-center justify-between">
+    <div class="flex space-x-2 overflow-x-auto custom-scrollbar">
+      <button (click)="setFilterNiveau('ALL')" [class.bg-blue-600]="filterNiveau === 'ALL'" [class.text-white]="filterNiveau === 'ALL'" [class.bg-slate-100]="filterNiveau !== 'ALL'" [class.text-slate-600]="filterNiveau !== 'ALL'" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors whitespace-nowrap dark:bg-slate-800 dark:text-slate-300">Tous les niveaux</button>
+      <button (click)="setFilterNiveau('L1_ANNEE')" [class.bg-blue-600]="filterNiveau === 'L1_ANNEE'" [class.text-white]="filterNiveau === 'L1_ANNEE'" [class.bg-slate-100]="filterNiveau !== 'L1_ANNEE'" [class.text-slate-600]="filterNiveau !== 'L1_ANNEE'" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors whitespace-nowrap hidden sm:block">Licence 1</button>
+      <button (click)="setFilterNiveau('L2_ANNEE')" [class.bg-blue-600]="filterNiveau === 'L2_ANNEE'" [class.text-white]="filterNiveau === 'L2_ANNEE'" [class.bg-slate-100]="filterNiveau !== 'L2_ANNEE'" [class.text-slate-600]="filterNiveau !== 'L2_ANNEE'" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors whitespace-nowrap hidden sm:block">Licence 2</button>
+      <button (click)="setFilterNiveau('L3_ANNEE')" [class.bg-blue-600]="filterNiveau === 'L3_ANNEE'" [class.text-white]="filterNiveau === 'L3_ANNEE'" [class.bg-slate-100]="filterNiveau !== 'L3_ANNEE'" [class.text-slate-600]="filterNiveau !== 'L3_ANNEE'" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors whitespace-nowrap hidden sm:block">Licence 3</button>
+    </div>
+    
+    <button *ngIf="hasSelectedWallets" (click)="openSpecificMassVersement()" class="inline-flex items-center justify-center py-2 px-4 text-sm font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-lg shadow-lg transition-all animate-fade-in whitespace-nowrap">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      Verser à la sélection ({{ getSelectedWalletIds().length }})
+    </button>
   </div>
 
   <div *ngIf="isLoading" class="flex justify-center items-center py-20">
     <div class="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
   </div>
 
-  <div *ngIf="!isLoading && errorMessage" class="p-8 text-center text-red-500 font-bold">
+  <div *ngIf="!isLoading && errorMessage" class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800 mx-8 font-bold text-center">
     {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!isLoading && successMessage" class="p-4 mb-4 text-sm text-emerald-700 bg-emerald-100 rounded-lg dark:bg-emerald-200 dark:text-emerald-800 mx-8 font-bold text-center">
+    {{ successMessage }}
   </div>
 
   <!-- Table -->
@@ -36,6 +50,9 @@
     <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
       <thead class="bg-slate-50/50 dark:bg-slate-800/30">
         <tr>
+          <th class="px-4 py-2 text-left w-12">
+            <input type="checkbox" (change)="selectAll($event)" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-slate-900 dark:border-slate-700 cursor-pointer">
+          </th>
           <th class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Portefeuille (Étudiant)</th>
           <th class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Solde Actuel</th>
           <th class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statut</th>
@@ -43,7 +60,10 @@
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
-        <tr *ngFor="let wallet of wallets" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+        <tr *ngFor="let wallet of wallets" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors" [class.bg-indigo-50]="wallet.selected" [class.dark:bg-indigo-900]="wallet.selected" [class.bg-opacity-20]="wallet.selected">
+          <td class="px-4 py-3 whitespace-nowrap">
+            <input type="checkbox" [checked]="wallet.selected" (change)="toggleSelection(wallet)" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-slate-900 dark:border-slate-700 cursor-pointer">
+          </td>
           <td class="px-4 py-3 whitespace-nowrap">
             <p class="text-sm font-bold text-slate-900 dark:text-white">{{wallet.ownerName || 'Inconnu'}}</p>
             <p class="text-xs text-slate-500 dark:text-slate-400">#{{getShortId(wallet.trackingId)}}</p>
@@ -54,7 +74,7 @@
           <td class="px-4 py-3 whitespace-nowrap">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border"
               [ngClass]="{
-                'bg-emerald-100 text-emerald-800 border-emerald-200': wallet.statutWallet === 'ACTIF',
+                'bg-emerald-100 text-emerald-800 border-emerald-200': wallet.statutWallet === 'ACTIF' || wallet.statutWallet === 'VALIDE',
                 'bg-amber-100 text-amber-800 border-amber-200': wallet.statutWallet === 'INACTIF',
                 'bg-red-100 text-red-800 border-red-200': wallet.statutWallet === 'SUSPENDU'}">
               {{wallet.statutWallet}}
@@ -67,7 +87,7 @@
           </td>
         </tr>
         <tr *ngIf="wallets.length === 0">
-          <td colspan="4" class="px-4 py-8 text-center text-sm text-slate-500 dark:text-slate-400">
+          <td colspan="5" class="px-4 py-8 text-center text-sm text-slate-500 dark:text-slate-400">
             Aucun portefeuille étudiant trouvé.
           </td>
         </tr>
@@ -165,3 +185,14 @@
     </div>
   </div>
 </div>
+
+<!-- Custom Confirmation Modal -->
+<app-confirm-dialog
+  [isOpen]="showConfirmModal"
+  [title]="confirmTitle"
+  [message]="confirmMessage"
+  confirmText="Oui"
+  cancelText="Non"
+  (confirm)="onModalConfirm()"
+  (cancel)="onModalCancel()"
+></app-confirm-dialog>

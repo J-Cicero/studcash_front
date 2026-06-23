@@ -41,6 +41,10 @@ export class VersementService {
     return this.http.post(`${this.apiUrl}/masse/etudiants`, null, { params });
   }
 
+  masseEtudiantsSpecifiques(request: { walletTrackingIds: string[], montantFixe?: number }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/masse/etudiants/specifiques`, request);
+  }
+
   masseBoutiques(request: MassVersementBoutiqueRequest): Observable<any> {
     return this.http.post(`${this.apiUrl}/masse/boutiques`, null, { params: request as any });
   }

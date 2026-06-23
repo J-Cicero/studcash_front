@@ -74,39 +74,76 @@
 
 <!-- Modal Détails & Documents -->
 <div *ngIf="selectedInscription" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
-  <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
-    <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/30">
-      <h3 class="text-lg font-bold text-slate-900 dark:text-white">Documents de {{selectedInscription.studentFirstName}}</h3>
+  <!-- Augmenté max-w-2xl à max-w-6xl ou w-11/12 -->
+  <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-6xl h-[85vh] flex flex-col overflow-hidden border border-slate-200 dark:border-slate-800">
+    <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/30 shrink-0">
+      <h3 class="text-lg font-bold text-slate-900 dark:text-white">Dossier de {{selectedInscription.studentFirstName}} {{selectedInscription.studentLastName}}</h3>
       <button (click)="closeDetails()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
       </button>
     </div>
 
-    <div class="p-6 space-y-6">
-      <div *ngIf="isLoadingDocs" class="text-center py-10 text-slate-500">Chargement...</div>
-      
-      <div *ngIf="!isLoadingDocs && studentDocuments.length === 0" class="text-center py-10 text-slate-500">Aucun document trouvé.</div>
+    <!-- Contenu Split-View -->
+    <div class="flex-1 flex overflow-hidden">
+      <!-- Panneau de gauche: Liste des documents -->
+      <div class="w-1/3 border-r border-slate-100 dark:border-slate-800 overflow-y-auto bg-slate-50/30 dark:bg-slate-900 p-4 custom-scrollbar">
+        <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Documents ({{studentDocuments.length}})</h4>
+        
+        <div *ngIf="isLoadingDocs" class="text-center py-10 text-slate-500">Chargement...</div>
+        <div *ngIf="!isLoadingDocs && studentDocuments.length === 0" class="text-center py-10 text-slate-500 text-sm">Aucun document trouvé.</div>
 
-      <div *ngIf="!isLoadingDocs && studentDocuments.length > 0" class="grid grid-cols-2 gap-4">
-        <div *ngFor="let doc of studentDocuments" class="border border-slate-200 dark:border-slate-700 rounded-xl p-3 flex flex-col items-center justify-between bg-white dark:bg-slate-800/50">
-            
-            <!-- PDF Document (e.g., MANDAT_BANCAIRE) -->
-            <ng-container *ngIf="doc.typeDocument === 'MANDAT_BANCAIRE' || doc.urlDocument.endsWith('.pdf')">
-                <div class="w-full h-24 bg-red-50/50 dark:bg-red-900/20 rounded-lg flex items-center justify-center mb-3">
-                    <svg class="w-10 h-10 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
-                </div>
-                <p class="text-xs font-bold text-center text-slate-700 dark:text-slate-300 truncate w-full mb-2" [title]="doc.typeDocument">{{doc.typeDocument}}</p>
-                <a [href]="doc.urlDocument" target="_blank" class="w-full text-center px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-xs font-bold text-slate-700 dark:text-slate-300 rounded-lg transition-colors">
-                    Télécharger
-                </a>
-            </ng-container>
+        <div *ngIf="!isLoadingDocs && studentDocuments.length > 0" class="space-y-3">
+          <div *ngFor="let doc of studentDocuments" 
+               (click)="selectDocument(doc)"
+               [class.ring-2]="selectedDocumentForPreview?.trackingId === doc.trackingId"
+               [class.ring-indigo-500]="selectedDocumentForPreview?.trackingId === doc.trackingId"
+               class="border border-slate-200 dark:border-slate-700 rounded-xl p-3 flex items-center bg-white dark:bg-slate-800 cursor-pointer hover:shadow-md transition-all">
+              
+              <!-- Icon -->
+              <div class="w-12 h-12 rounded-lg flex items-center justify-center mr-3 shrink-0"
+                   [ngClass]="doc.documentType === 'MANDAT_BANCAIRE' || doc.fileUrl.endsWith('.pdf') ? 'bg-red-50 text-red-500 dark:bg-red-900/30' : 'bg-blue-50 text-blue-500 dark:bg-blue-900/30'">
+                  <svg *ngIf="doc.documentType === 'MANDAT_BANCAIRE' || doc.fileUrl.endsWith('.pdf')" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
+                  <svg *ngIf="doc.documentType !== 'MANDAT_BANCAIRE' && !doc.fileUrl.endsWith('.pdf')" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+              </div>
+              
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold text-slate-900 dark:text-white truncate" [title]="doc.documentType">{{doc.documentType}}</p>
+                <p class="text-xs text-slate-500 truncate">{{doc.uploadedAt | date:'mediumDate'}}</p>
+              </div>
+          </div>
+        </div>
+      </div>
 
-            <!-- Image Document (e.g., PHOTO_IDENTITE) -->
-            <ng-container *ngIf="doc.typeDocument !== 'MANDAT_BANCAIRE' && !doc.urlDocument.endsWith('.pdf')">
-                <img [src]="doc.urlDocument" class="w-full h-24 object-cover rounded-lg mb-3 shadow-sm border border-slate-100 dark:border-slate-700">
-                <p class="text-xs font-bold text-center text-slate-700 dark:text-slate-300 truncate w-full" [title]="doc.typeDocument">{{doc.typeDocument}}</p>
+      <!-- Panneau de droite: Prévisualisation -->
+      <div class="w-2/3 bg-slate-100 dark:bg-slate-900/50 flex flex-col p-4">
+        <div *ngIf="!selectedDocumentForPreview" class="flex-1 flex flex-col items-center justify-center text-slate-400">
+          <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+          <p class="font-medium text-sm">Sélectionnez un document pour le visualiser</p>
+        </div>
+
+        <div *ngIf="selectedDocumentForPreview" class="flex-1 flex flex-col h-full overflow-hidden bg-white dark:bg-slate-800 rounded-xl shadow-inner border border-slate-200 dark:border-slate-700">
+          
+          <!-- Header for preview -->
+          <div class="px-4 py-3 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/80">
+            <h4 class="font-bold text-slate-700 dark:text-slate-200">{{selectedDocumentForPreview.documentType}}</h4>
+            <a [href]="selectedDocumentForPreview.fileUrl" target="_blank" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 flex items-center bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1.5 rounded-lg transition-colors">
+              <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              Ouvrir dans un nouvel onglet
+            </a>
+          </div>
+
+          <!-- Document Content -->
+          <div class="flex-1 overflow-auto bg-slate-100 dark:bg-slate-900 flex items-center justify-center p-2 relative">
+            <ng-container *ngIf="sanitizedPdfUrl; else imageView">
+              <!-- Viewer pour PDF -->
+              <iframe [src]="sanitizedPdfUrl" class="w-full h-full border-0 rounded-lg"></iframe>
             </ng-container>
             
+            <ng-template #imageView>
+              <!-- Viewer pour Images -->
+              <img [src]="selectedDocumentForPreview.fileUrl" class="max-w-full max-h-full object-contain rounded-lg shadow-sm">
+            </ng-template>
+          </div>
         </div>
       </div>
     </div>

@@ -71,8 +71,27 @@ export class UniversitiesComponent implements OnInit {
     this.isLoading = true;
     this.universiteService.findAll().subscribe({
       next: (res) => {
-        this.universities = res.content || [];
-        this.isLoading = false;
+        const unmappedUniversities = res.content || [];
+        // Load summary stats right after universities are fetched
+        this.universiteService.getSummaryStats().subscribe({
+          next: (statsRes) => {
+            this.summaryStats = statsRes || [];
+            // Map stats directly to the university objects
+            this.universities = unmappedUniversities.map((u: any) => {
+              const uStats = this.summaryStats.find(s => 
+                s.trackingId && s.trackingId.toLowerCase() === u.trackingId.toLowerCase()
+              );
+              return { ...u, stats: uStats || { nbEtudiants: 0, nbEligibles: 0 } };
+            });
+            this.isLoading = false;
+          },
+          error: (err) => {
+            console.error(err);
+            this.summaryStats = [];
+            this.universities = unmappedUniversities.map((u: any) => ({ ...u, stats: { nbEtudiants: 0, nbEligibles: 0 } }));
+            this.isLoading = false;
+          }
+        });
       },
       error: (err) => {
         console.error(err);
@@ -84,18 +103,15 @@ export class UniversitiesComponent implements OnInit {
   }
 
   loadSummaryStats() {
-    this.universiteService.getSummaryStats().subscribe({
-      next: (res) => {
-        this.summaryStats = res || [];
-      },
-      error: (err) => {
-        console.error(err);
-      }
-    });
+    // Legacy method kept if needed, but the mapping is now handled in loadUniversities
   }
 
   getStatsForUniversite(trackingId: string): any {
-    return this.summaryStats.find(s => s.trackingId === trackingId);
+    // Deprecated in template: template should use u.stats.nbEtudiants directly
+    if (!trackingId || !this.summaryStats) return null;
+    return this.summaryStats.find(s => 
+      s.trackingId && s.trackingId.toLowerCase() === trackingId.toLowerCase()
+    );
   }
 
   openEditModal(u: any) {

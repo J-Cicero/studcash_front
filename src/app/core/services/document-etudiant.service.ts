@@ -22,4 +22,8 @@ export class DocumentEtudiantService {
   findByTrackingId(trackingId: any): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${trackingId}`);
   }
+
+  findByStudentId(studentId: string): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/students/${studentId}/documents`);
+  }
 }
