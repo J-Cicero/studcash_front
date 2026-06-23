@@ -119,7 +119,7 @@ export const routes: Routes = [
       },
       {
         path: 'profile',
-        loadComponent: () => import('./features/profile/profile.component').then(m => m.ProfileComponent)
+        loadComponent: () => import('./features/bank-portal/profile/bank-profile/bank-profile.component').then(m => m.BankProfileComponent)
       }
     ]
   }

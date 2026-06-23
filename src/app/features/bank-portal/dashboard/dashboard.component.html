@@ -29,7 +29,7 @@
         </div>
         <div class="ml-3">
           <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Net à Liquider</p>
-          <p class="text-xl font-bold text-slate-900 dark:text-white mt-0.5">{{ financialSummary.totalNetCommercants | number }} <span class="text-xs text-slate-400">FCFA</span></p>
+          <p class="text-xl font-bold text-slate-900 dark:text-white mt-0.5">{{ financialSummary.totalNetCommercants | shortNumber }} <span class="text-xs text-slate-400">FCFA</span></p>
         </div>
       </div>
     </div>
@@ -45,7 +45,7 @@
         </div>
         <div class="ml-3">
           <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Comm. Banque</p>
-          <p class="text-xl font-bold text-slate-900 dark:text-white mt-0.5">{{ (financialSummary.totalCommissionsBanque || 0) | number }} <span class="text-xs text-slate-400">FCFA</span></p>
+          <p class="text-xl font-bold text-slate-900 dark:text-white mt-0.5">{{ (financialSummary.totalCommissionsBanque || 0) | shortNumber }} <span class="text-xs text-slate-400">FCFA</span></p>
         </div>
       </div>
     </div>
@@ -61,7 +61,7 @@
         </div>
         <div class="ml-3">
           <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Comm. GNS</p>
-          <p class="text-xl font-bold text-slate-900 dark:text-white mt-0.5">{{ financialSummary.totalCommissionsAchats | number }} <span class="text-xs text-slate-400">FCFA</span></p>
+          <p class="text-xl font-bold text-slate-900 dark:text-white mt-0.5">{{ financialSummary.totalCommissionsAchats | shortNumber }} <span class="text-xs text-slate-400">FCFA</span></p>
         </div>
       </div>
     </div>
@@ -77,19 +77,24 @@
         </div>
         <div class="ml-3">
           <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Volume Achats</p>
-          <p class="text-xl font-bold text-slate-900 dark:text-white mt-0.5">{{ financialSummary.totalDepensesAchats | number }} <span class="text-xs text-slate-400">FCFA</span></p>
+          <p class="text-xl font-bold text-slate-900 dark:text-white mt-0.5">{{ financialSummary.totalDepensesAchats | shortNumber }} <span class="text-xs text-slate-400">FCFA</span></p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Charts Area (En attente du Backend) -->
-  <div *ngIf="!isLoading && financialSummary" class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200/60 dark:border-slate-800/60 p-5 mt-6 flex flex-col items-center justify-center py-12 text-slate-500">
-    <svg class="w-10 h-10 mb-3 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-    </svg>
-    <p class="text-sm font-medium">Historique des flux bientôt disponible</p>
-    <p class="text-xs mt-1">En attente de connexion avec la base de données centrale</p>
+  <!-- Charts Area -->
+  <div *ngIf="!isLoading && financialSummary" class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200/60 dark:border-slate-800/60 p-5 mt-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Flux des Dépenses vs Liquidations</h2>
+      <select class="bg-slate-50 dark:bg-slate-800 border-none text-sm rounded-lg focus:ring-0 text-slate-600 dark:text-slate-300">
+        <option>7 derniers jours</option>
+        <option>30 derniers jours</option>
+      </select>
+    </div>
+    <div class="h-72 w-full relative">
+      <canvas #activityChart></canvas>
+    </div>
   </div>
 
 </div>

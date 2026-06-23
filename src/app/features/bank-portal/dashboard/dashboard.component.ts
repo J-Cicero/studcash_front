@@ -7,13 +7,14 @@ import {
   BankFinancialSummary
 } from '../../../core/services/bank-portal.service';
 import { Chart, registerables } from 'chart.js';
+import { ShortNumberPipe } from '../../../core/pipes/short-number.pipe';
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ShortNumberPipe],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
