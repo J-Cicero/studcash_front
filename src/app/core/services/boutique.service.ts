@@ -14,6 +14,7 @@ export interface BoutiqueResponse {
   longitude: number | null;
   balance: number;
   limitAmount: number;
+  walletStatus: string;
 }
 
 @Injectable({

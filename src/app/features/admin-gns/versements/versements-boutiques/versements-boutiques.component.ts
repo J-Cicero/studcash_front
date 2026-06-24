@@ -63,7 +63,7 @@ export class VersementsBoutiquesComponent implements OnInit {
         const allBoutiques = res.content || [];
         this.wallets = allBoutiques.map((b: any) => ({
           trackingId: b.walletTrackingId,
-          statutWallet: b.kycStatus === 'VALIDE' ? 'ACTIF' : 'EN_ATTENTE',
+          statutWallet: (b.balance > 0 && b.walletStatus === 'INACTIF') ? 'ACTIF' : (b.walletStatus === 'INACTIF' ? 'EN_ATTENTE' : (b.walletStatus || 'EN_ATTENTE')),
           solde: b.balance || 0,
           proprietaireTrackingId: b.name, // Displayed as name in UI
           limitAmount: b.limitAmount || 0
@@ -104,10 +104,11 @@ export class VersementsBoutiquesComponent implements OnInit {
     
     this.isProcessingManual = true;
     const payload = {
-      trackingWalletId: this.selectedWalletForManual.trackingId,
-      montantVerse: this.manualVersementForm.value.montant,
-      typeVersement: 'RECHARGE_QUOTA_BOUTIQUE',
-      statut: 'VALIDEE'
+      walletTrackingId: this.selectedWalletForManual.trackingId,
+      amount: this.manualVersementForm.value.montant,
+      paymentType: 'RECHARGE_QUOTA_BOUTIQUE',
+      paymentDate: new Date().toISOString(),
+      status: 'VALIDEE'
     };
 
     this.versementService.create(payload).subscribe({

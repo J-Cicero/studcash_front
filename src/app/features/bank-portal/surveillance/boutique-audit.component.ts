@@ -5,7 +5,8 @@ import { AuthService } from '../../../core/services/auth.service';
 import { 
   BankPortalService, 
   BoutiqueLiquidationInfo,
-  BoutiqueVersementInfo
+  BoutiqueVersementInfo,
+  VenteNonLiquidee
 } from '../../../core/services/bank-portal.service';
 
 @Component({
@@ -21,10 +22,13 @@ export class BoutiqueAuditComponent implements OnInit {
   searchTerm: string = '';
   isLoading = false;
   
-  allVersements: BoutiqueVersementInfo[] = [];
-  boutiqueVersements: BoutiqueVersementInfo[] = [];
+  ventesNonLiquidees: VenteNonLiquidee[] = [];
   selectedBoutique: BoutiqueLiquidationInfo | null = null;
-  isLoadingVersements = false;
+  isLoadingVentes = false;
+  isLiquidating = false;
+  liquidationSuccess = false;
+
+  totalVentes: number = 0;
 
   constructor(
     private bankPortalService: BankPortalService,
@@ -40,7 +44,6 @@ export class BoutiqueAuditComponent implements OnInit {
     if (!operatorId) return;
 
     this.isLoading = true;
-    this.isLoadingVersements = true;
 
     // Load boutiques
     this.bankPortalService.getBoutiques(operatorId).subscribe({
@@ -52,18 +55,6 @@ export class BoutiqueAuditComponent implements OnInit {
       error: (err: any) => {
         console.error(err);
         this.isLoading = false;
-      }
-    });
-
-    // Preload all versements to allow instant filtering
-    this.bankPortalService.getBoutiqueVersements(operatorId).subscribe({
-      next: (data: any) => {
-        this.allVersements = data;
-        this.isLoadingVersements = false;
-      },
-      error: (err: any) => {
-        console.error(err);
-        this.isLoadingVersements = false;
       }
     });
   }
@@ -79,10 +70,43 @@ export class BoutiqueAuditComponent implements OnInit {
 
   selectBoutique(boutique: BoutiqueLiquidationInfo): void {
     this.selectedBoutique = boutique;
-    // Filter versements by boutique name or trackingId (assuming nomBoutique matches for now, 
-    // ideally the backend sends boutiqueTrackingId in BoutiqueVersementInfo)
-    this.boutiqueVersements = this.allVersements
-      .filter(v => v.nomBoutique === boutique.nomBoutique)
-      .sort((a, b) => new Date(b.dateVersement).getTime() - new Date(a.dateVersement).getTime());
+    this.isLoadingVentes = true;
+    this.liquidationSuccess = false;
+    
+    this.bankPortalService.getVentesNonLiquidees(boutique.boutiqueTrackingId).subscribe({
+      next: (data) => {
+        this.ventesNonLiquidees = data;
+        this.totalVentes = this.ventesNonLiquidees.reduce((acc, curr) => acc + curr.montant, 0);
+        this.isLoadingVentes = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.ventesNonLiquidees = [];
+        this.totalVentes = 0;
+        this.isLoadingVentes = false;
+      }
+    });
+  }
+
+  liquider(): void {
+    if (!this.selectedBoutique || this.ventesNonLiquidees.length === 0) return;
+    
+    this.isLiquidating = true;
+    this.bankPortalService.liquidateBoutique(this.selectedBoutique.boutiqueTrackingId).subscribe({
+      next: () => {
+        this.isLiquidating = false;
+        this.liquidationSuccess = true;
+        // Optionally refresh ventes
+        this.ventesNonLiquidees = [];
+        this.totalVentes = 0;
+        
+        // Refresh boutiques to update solde
+        this.loadData();
+      },
+      error: (err) => {
+        console.error('Erreur lors de la liquidation', err);
+        this.isLiquidating = false;
+      }
+    });
   }
 }

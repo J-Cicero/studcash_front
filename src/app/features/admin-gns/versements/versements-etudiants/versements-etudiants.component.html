@@ -60,7 +60,7 @@
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
-        <tr *ngFor="let wallet of wallets" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors" [class.bg-indigo-50]="wallet.selected" [class.dark:bg-indigo-900]="wallet.selected" [class.bg-opacity-20]="wallet.selected">
+        <tr *ngFor="let wallet of wallets" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors" [ngClass]="{'bg-indigo-50 dark:bg-indigo-900 bg-opacity-20': wallet.selected}">
           <td class="px-4 py-3 whitespace-nowrap">
             <input type="checkbox" [checked]="wallet.selected" (change)="toggleSelection(wallet)" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-slate-900 dark:border-slate-700 cursor-pointer">
           </td>

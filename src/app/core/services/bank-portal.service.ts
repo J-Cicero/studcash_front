@@ -54,6 +54,7 @@ export interface BankFinancialSummary {
   totalCommissionsAchats: number;
   totalNetCommercants: number;
   totalCommissionsBanque?: number;
+  monthlyProfits?: number[];
 }
 
 export interface VenteNonLiquidee {

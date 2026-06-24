@@ -136,6 +136,11 @@
           </td>
           <td class="px-8 py-5 whitespace-nowrap text-right text-xs font-bold space-x-2">
             <button 
+              (click)="viewDetails(wallet)" 
+              class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 rounded-lg transition-all shadow-sm">
+              Documents KYC
+            </button>
+            <button 
               *ngIf="wallet.status === 'ACTIF'" 
               (click)="gelerWallet(wallet.id)" 
               [disabled]="isActionLoading" 
@@ -197,6 +202,11 @@
           </td>
           <td class="px-8 py-5 whitespace-nowrap text-right text-xs font-bold space-x-2">
             <button 
+              (click)="viewDetails(wallet)" 
+              class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 rounded-lg transition-all shadow-sm">
+              Documents KYC
+            </button>
+            <button 
               *ngIf="wallet.status === 'ACTIF'" 
               (click)="gelerWallet(wallet.id)" 
               [disabled]="isActionLoading" 
@@ -221,5 +231,82 @@
         </tr>
       </tbody>
     </table>
+  </div>
+</div>
+
+<!-- Modal Détails & Documents -->
+<div *ngIf="selectedWallet" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+  <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-6xl h-[85vh] flex flex-col overflow-hidden border border-slate-200 dark:border-slate-800">
+    <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/30 shrink-0">
+      <h3 class="text-lg font-bold text-slate-900 dark:text-white">
+        Dossier KYC - {{selectedWallet.type}} : {{selectedWallet.name}}
+      </h3>
+      <button (click)="closeDetails()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+      </button>
+    </div>
+
+    <!-- Contenu Split-View -->
+    <div class="flex-1 flex overflow-hidden">
+      <!-- Panneau de gauche: Liste des documents -->
+      <div class="w-1/3 border-r border-slate-100 dark:border-slate-800 overflow-y-auto bg-slate-50/30 dark:bg-slate-900 p-4 custom-scrollbar">
+        <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Documents ({{entityDocuments.length}})</h4>
+        
+        <div *ngIf="isLoadingDocs" class="text-center py-10 text-slate-500">Chargement...</div>
+        <div *ngIf="!isLoadingDocs && entityDocuments.length === 0" class="text-center py-10 text-slate-500 text-sm">Aucun document trouvé pour ce compte.</div>
+
+        <div *ngIf="!isLoadingDocs && entityDocuments.length > 0" class="space-y-3">
+          <div *ngFor="let doc of entityDocuments" 
+               (click)="selectDocument(doc)"
+               [class.ring-2]="selectedDocumentForPreview?.trackingId === doc.trackingId"
+               [class.ring-indigo-500]="selectedDocumentForPreview?.trackingId === doc.trackingId"
+               class="border border-slate-200 dark:border-slate-700 rounded-xl p-3 flex items-center bg-white dark:bg-slate-800 cursor-pointer hover:shadow-md transition-all">
+              
+              <!-- Icon -->
+              <div class="w-12 h-12 rounded-lg flex items-center justify-center mr-3 shrink-0"
+                   [ngClass]="doc.documentType === 'MANDAT_BANCAIRE' || doc.fileUrl?.endsWith('.pdf') ? 'bg-red-50 text-red-500 dark:bg-red-900/30' : 'bg-blue-50 text-blue-500 dark:bg-blue-900/30'">
+                  <svg *ngIf="doc.documentType === 'MANDAT_BANCAIRE' || doc.fileUrl?.endsWith('.pdf')" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
+                  <svg *ngIf="doc.documentType !== 'MANDAT_BANCAIRE' && !doc.fileUrl?.endsWith('.pdf')" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+              </div>
+              
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold text-slate-900 dark:text-white truncate" [title]="doc.documentType">{{doc.documentType}}</p>
+                <p class="text-xs text-slate-500 truncate">{{doc.uploadedAt | date:'mediumDate'}}</p>
+              </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panneau de droite: Prévisualisation -->
+      <div class="w-2/3 bg-slate-100 dark:bg-slate-900/50 flex flex-col p-4">
+        <div *ngIf="!selectedDocumentForPreview" class="flex-1 flex flex-col items-center justify-center text-slate-400">
+          <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+          <p class="font-medium text-sm">Sélectionnez un document pour le visualiser</p>
+        </div>
+
+        <div *ngIf="selectedDocumentForPreview" class="flex-1 flex flex-col h-full overflow-hidden bg-white dark:bg-slate-800 rounded-xl shadow-inner border border-slate-200 dark:border-slate-700">
+          
+          <!-- Header for preview -->
+          <div class="px-4 py-3 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/80">
+            <h4 class="font-bold text-slate-700 dark:text-slate-200">{{selectedDocumentForPreview.documentType}}</h4>
+            <a [href]="selectedDocumentForPreview.fileUrl" target="_blank" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 flex items-center bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1.5 rounded-lg transition-colors">
+              <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              Ouvrir dans un nouvel onglet
+            </a>
+          </div>
+
+          <!-- Document Content -->
+          <div class="flex-1 overflow-auto bg-slate-100 dark:bg-slate-900 flex items-center justify-center p-2 relative">
+            <ng-container *ngIf="sanitizedPdfUrl; else imageView">
+              <iframe [src]="sanitizedPdfUrl" class="w-full h-full border-0 rounded-lg"></iframe>
+            </ng-container>
+            
+            <ng-template #imageView>
+              <img [src]="selectedDocumentForPreview.fileUrl" class="max-w-full max-h-full object-contain rounded-lg shadow-sm">
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

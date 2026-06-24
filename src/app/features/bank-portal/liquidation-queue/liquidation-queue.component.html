@@ -27,10 +27,7 @@
         <div *ngFor="let boutique of boutiques" 
              (click)="selectBoutique(boutique)"
              class="p-2.5 rounded-lg cursor-pointer transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
-             [class.bg-blue-50]="selectedBoutique?.boutiqueTrackingId === boutique.boutiqueTrackingId"
-             [class.dark:bg-blue-900.20]="selectedBoutique?.boutiqueTrackingId === boutique.boutiqueTrackingId"
-             [class.border-blue-200]="selectedBoutique?.boutiqueTrackingId === boutique.boutiqueTrackingId"
-             [class.dark:border-blue-800]="selectedBoutique?.boutiqueTrackingId === boutique.boutiqueTrackingId">
+             [ngClass]="{'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800': selectedBoutique?.boutiqueTrackingId === boutique.boutiqueTrackingId}">
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-3 truncate">
               <div class="h-8 w-8 rounded-full bg-gradient-to-br from-blue-100 to-sky-100 dark:from-blue-900 dark:to-sky-900 flex items-center justify-center text-blue-700 dark:text-blue-400 font-bold text-xs shadow-inner shrink-0">

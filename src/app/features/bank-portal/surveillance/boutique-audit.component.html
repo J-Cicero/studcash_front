@@ -2,8 +2,8 @@
   <!-- Header -->
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800/60 pb-4">
     <div>
-      <h1 class="text-xl font-bold text-slate-900 dark:text-white">Audit des Boutiques</h1>
-      <p class="text-slate-500 dark:text-slate-400 text-[11px] mt-0.5">Historique des versements par partenaire</p>
+      <h1 class="text-xl font-bold text-slate-900 dark:text-white">Paiement Marchand en Guichet</h1>
+      <p class="text-slate-500 dark:text-slate-400 text-[11px] mt-0.5">Virements manuels pour les ventes non liquidées</p>
     </div>
     
     <!-- Barre de recherche -->
@@ -38,10 +38,7 @@
         <div *ngFor="let boutique of filteredBoutiques" 
              (click)="selectBoutique(boutique)"
              class="p-2.5 rounded-lg cursor-pointer transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
-             [class.bg-blue-50]="selectedBoutique?.boutiqueTrackingId === boutique.boutiqueTrackingId"
-             [class.dark:bg-blue-900.20]="selectedBoutique?.boutiqueTrackingId === boutique.boutiqueTrackingId"
-             [class.border-blue-200]="selectedBoutique?.boutiqueTrackingId === boutique.boutiqueTrackingId"
-             [class.dark:border-blue-800]="selectedBoutique?.boutiqueTrackingId === boutique.boutiqueTrackingId">
+             [ngClass]="{'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800': selectedBoutique?.boutiqueTrackingId === boutique.boutiqueTrackingId}">
           <div class="flex items-center space-x-3">
             <div class="h-8 w-8 rounded-full bg-gradient-to-br from-blue-100 to-sky-100 dark:from-blue-900 dark:to-sky-900 flex items-center justify-center text-blue-700 dark:text-blue-300 font-bold text-[10px] shadow-inner shrink-0">
               {{ boutique.nomBoutique.charAt(0) }}
@@ -59,7 +56,7 @@
       </div>
     </div>
 
-    <!-- Détail des Versements -->
+    <!-- Détail des Transactions -->
     <div class="w-full lg:w-2/3">
       <div *ngIf="!selectedBoutique" class="glass-panel rounded-2xl border border-slate-200/50 dark:border-slate-700/50 h-[calc(100vh-250px)] flex flex-col items-center justify-center p-8 text-center text-slate-500">
         <svg class="w-12 h-12 mb-3 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -81,44 +78,62 @@
           </div>
         </div>
 
-        <!-- Table Versements -->
-        <div class="flex-1 bg-white dark:bg-slate-900 overflow-hidden flex flex-col">
+        <!-- Table Transactions -->
+        <div class="flex-1 bg-white dark:bg-slate-900 overflow-hidden flex flex-col relative">
+          <!-- Loading overlay -->
+          <div *ngIf="isLoadingVentes || isLiquidating" class="absolute inset-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm z-20 flex flex-col items-center justify-center">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-2"></div>
+            <p class="text-sm font-medium text-blue-600">{{ isLiquidating ? 'Liquidation en cours...' : 'Chargement...' }}</p>
+          </div>
+
+          <div *ngIf="liquidationSuccess" class="bg-emerald-50 dark:bg-emerald-900/30 p-4 border-b border-emerald-200 dark:border-emerald-800 flex items-center text-emerald-700 dark:text-emerald-400">
+            <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span class="text-sm font-bold">Liquidation effectuée avec succès ! Le virement a été enregistré.</span>
+          </div>
+
           <div class="flex-1 overflow-y-auto custom-scrollbar">
             <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
               <thead class="bg-slate-50 dark:bg-slate-800/50 sticky top-0 z-10">
                 <tr>
                   <th class="px-4 py-2.5 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider">Date & Ref</th>
-                  <th class="px-4 py-2.5 text-right text-[10px] font-bold text-slate-500 uppercase tracking-wider">Ventes Brutes</th>
-                  <th class="px-4 py-2.5 text-right text-[10px] font-bold text-slate-500 uppercase tracking-wider">Net Versé</th>
-                  <th class="px-4 py-2.5 text-center text-[10px] font-bold text-slate-500 uppercase tracking-wider">Statut</th>
+                  <th class="px-4 py-2.5 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider">Client (Étudiant)</th>
+                  <th class="px-4 py-2.5 text-right text-[10px] font-bold text-slate-500 uppercase tracking-wider">Montant Transaction</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-                <tr *ngIf="boutiqueVersements.length === 0">
-                  <td colspan="4" class="px-4 py-8 text-center text-slate-500 text-xs">Aucun versement enregistré pour le moment.</td>
+                <tr *ngIf="ventesNonLiquidees.length === 0">
+                  <td colspan="3" class="px-4 py-8 text-center text-slate-500 text-xs">Aucune vente en attente de liquidation.</td>
                 </tr>
-                <tr *ngFor="let v of boutiqueVersements" class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                <tr *ngFor="let v of ventesNonLiquidees" class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
                   <td class="px-4 py-3 whitespace-nowrap">
-                    <div class="text-xs font-semibold text-slate-900 dark:text-white">{{ v.dateVersement ? (v.dateVersement | date:'dd/MM/yyyy HH:mm') : 'En attente' }}</div>
-                    <div class="text-[10px] text-slate-500 mt-0.5 font-mono">{{ v.versementTrackingId || 'N/A' }}</div>
+                    <div class="text-xs font-semibold text-slate-900 dark:text-white">{{ v.date | date:'dd/MM/yyyy HH:mm' }}</div>
+                    <div class="text-[10px] text-slate-500 mt-0.5 font-mono">{{ v.trackingId }}</div>
+                  </td>
+                  <td class="px-4 py-3 whitespace-nowrap text-left">
+                    <div class="text-xs text-slate-600 dark:text-slate-400">{{ v.etudiantPrenom }} {{ v.etudiantNom }}</div>
                   </td>
                   <td class="px-4 py-3 whitespace-nowrap text-right">
-                    <div class="text-[11px] text-slate-600 dark:text-slate-400">---</div>
-                  </td>
-                  <td class="px-4 py-3 whitespace-nowrap text-right">
-                    <span class="text-xs font-bold text-blue-600 dark:text-blue-400">{{ v.montantVerse | number }} F</span>
-                  </td>
-                  <td class="px-4 py-3 whitespace-nowrap text-center">
-                    <span *ngIf="v.statut === 'VALIDE' || v.statut === 'LIQUIDE'" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                      Liquidé
-                    </span>
-                    <span *ngIf="v.statut !== 'VALIDE' && v.statut !== 'LIQUIDE'" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                      {{ v.statut || 'En attente' }}
-                    </span>
+                    <span class="text-xs font-bold text-blue-600 dark:text-blue-400">{{ v.montant | number }} F</span>
                   </td>
                 </tr>
               </tbody>
             </table>
+          </div>
+
+          <!-- Bottom Action Bar -->
+          <div *ngIf="ventesNonLiquidees.length > 0" class="p-4 bg-slate-50 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-700 flex justify-between items-center">
+            <div>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Total à liquider</p>
+              <p class="text-xl font-extrabold text-slate-900 dark:text-white">{{ totalVentes | number }} <span class="text-sm">FCFA</span></p>
+            </div>
+            <button (click)="liquider()" [disabled]="isLiquidating" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold rounded-xl shadow-sm transition-colors text-sm flex items-center">
+              <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Initier le virement
+            </button>
           </div>
         </div>
       </div>

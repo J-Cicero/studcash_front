@@ -5,14 +5,17 @@ import { forkJoin } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { BankPortalService } from '../../../core/services/bank-portal.service';
 import { WalletService } from '../../../core/services/wallet.service';
+import { DocumentEtudiantService } from '../../../core/services/document-etudiant.service';
+import { DocumentMerchantService } from '../../../core/services/document-merchant.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 interface WalletAlert {
-  id: string; // studentTrackingId or boutiqueTrackingId
-  walletId?: string; // walletTrackingId
+  id: string;
+  walletId?: string;
   type: 'Etudiant' | 'Boutique';
   name: string;
-  numEtudiant?: string; // only for student
-  typeBourse?: string; // only for student
+  numEtudiant?: string;
+  typeBourse?: string; // only for studentumber; // only for student
   scholarshipAmount?: number; // only for student
   spentAmount?: number; // only for student
   balance: number; // resteAPayer for student, soldeWallet for boutique
@@ -43,11 +46,21 @@ export class SurveillanceComponent implements OnInit {
   statusFilter = 'ALL';
   searchTerm = '';
 
+  selectedWallet: WalletAlert | null = null;
+  entityDocuments: any[] = [];
+  isLoadingDocs = false;
+  hasMandatoryDocs = false;
+  selectedDocumentForPreview: any = null;
+  sanitizedPdfUrl: SafeResourceUrl | null = null;
+
   constructor(
     private authService: AuthService,
     private bankPortalService: BankPortalService,
-    private walletService: WalletService
-  ) {}
+    private walletService: WalletService,
+    private documentEtudiantService: DocumentEtudiantService,
+    private documentMerchantService: DocumentMerchantService,
+    private sanitizer: DomSanitizer
+  ) { }
 
   ngOnInit(): void {
     this.loadWallets();
@@ -133,7 +146,7 @@ export class SurveillanceComponent implements OnInit {
     // Search term
     if (this.searchTerm.trim()) {
       const term = this.searchTerm.toLowerCase();
-      temp = temp.filter(w => 
+      temp = temp.filter(w =>
         w.name.toLowerCase().includes(term) ||
         (w.numEtudiant && w.numEtudiant.toLowerCase().includes(term)) ||
         (w.typeBourse && w.typeBourse.toLowerCase().includes(term)) ||
@@ -195,5 +208,59 @@ export class SurveillanceComponent implements OnInit {
   debloquerWallet(id: string) {
     const w = this.wallets.find(w => w.id === id);
     if (w) this.updateWalletStatus(w, 'ACTIF');
+  }
+
+  viewDetails(wallet: WalletAlert) {
+    this.selectedWallet = wallet;
+    this.entityDocuments = [];
+    this.isLoadingDocs = true;
+    this.hasMandatoryDocs = false;
+    this.selectedDocumentForPreview = null;
+    this.sanitizedPdfUrl = null;
+
+    if (wallet.type === 'Etudiant') {
+      this.documentEtudiantService.findByStudentId(wallet.id).subscribe({
+        next: (res) => {
+          this.entityDocuments = res.content || res || [];
+          this.hasMandatoryDocs = this.entityDocuments.some((doc: any) => doc.documentType === 'MANDAT_BANCAIRE' || doc.documentType === 'PIECE_IDENTITE');
+          if (this.entityDocuments.length > 0) this.selectDocument(this.entityDocuments[0]);
+          this.isLoadingDocs = false;
+        },
+        error: () => {
+          this.entityDocuments = [];
+          this.isLoadingDocs = false;
+        }
+      });
+    } else {
+      // For Boutique, we assume wallet.id can be used or backend handles it
+      this.documentMerchantService.findByMerchantId(wallet.id).subscribe({
+        next: (res) => {
+          this.entityDocuments = res.content || res || [];
+          this.hasMandatoryDocs = this.entityDocuments.some((doc: any) => doc.documentType === 'RIB_BOUTIQUE' || doc.documentType === 'PIECE_IDENTITE' || doc.documentType === 'RIB');
+          if (this.entityDocuments.length > 0) this.selectDocument(this.entityDocuments[0]);
+          this.isLoadingDocs = false;
+        },
+        error: () => {
+          this.entityDocuments = [];
+          this.isLoadingDocs = false;
+        }
+      });
+    }
+  }
+
+  selectDocument(doc: any) {
+    this.selectedDocumentForPreview = doc;
+    if (doc.documentType === 'MANDAT_BANCAIRE' || (doc.fileUrl && doc.fileUrl.endsWith('.pdf'))) {
+      this.sanitizedPdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(doc.fileUrl);
+    } else {
+      this.sanitizedPdfUrl = null;
+    }
+  }
+
+  closeDetails() {
+    this.selectedWallet = null;
+    this.entityDocuments = [];
+    this.selectedDocumentForPreview = null;
+    this.sanitizedPdfUrl = null;
   }
 }
