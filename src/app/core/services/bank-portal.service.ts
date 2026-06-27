@@ -46,6 +46,7 @@ export interface BoutiqueLiquidationInfo {
   proprietaireNom: string;
   walletTrackingId?: string;
   walletStatus?: string;
+  merchantTrackingId?: string;
 }
 
 export interface BankFinancialSummary {

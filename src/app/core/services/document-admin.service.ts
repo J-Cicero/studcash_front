@@ -14,4 +14,19 @@ export class DocumentAdminService {
   getDocumentsByStudent(studentTrackingId: any): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${studentTrackingId}/documents`);
   }
+
+  // Bank Admin endpoints
+  updateStudentDocumentStatus(documentTrackingId: string, status: 'VALIDE' | 'REJETE', rejectionReason?: string): Observable<any> {
+    return this.http.put<any>(`${environment.apiUrl}/api/admin-banque/documents/students/${documentTrackingId}/status`, {
+      status,
+      rejectionReason
+    });
+  }
+
+  updateMerchantDocumentStatus(documentTrackingId: string, status: 'VALIDE' | 'REJETE', rejectionReason?: string): Observable<any> {
+    return this.http.put<any>(`${environment.apiUrl}/api/admin-banque/documents/merchants/${documentTrackingId}/status`, {
+      status,
+      rejectionReason
+    });
+  }
 }

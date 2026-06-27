@@ -51,7 +51,7 @@
         <tr *ngFor="let card of filteredCards" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
           <td class="px-4 py-3 whitespace-nowrap">
             <div class="p-1 bg-white inline-block rounded-lg shadow-sm border border-slate-200">
-              <qrcode [qrdata]="card.trackingId" [width]="50" [errorCorrectionLevel]="'M'"></qrcode>
+              <qrcode [qrdata]="card.qrCodeData" [width]="50" [errorCorrectionLevel]="'M'"></qrcode>
             </div>
           </td>
           <td class="px-4 py-3 whitespace-nowrap text-sm font-bold text-indigo-600 dark:text-indigo-400">{{ card.trackingId | slice:0:8 }}...</td>

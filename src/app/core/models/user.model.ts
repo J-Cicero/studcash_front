@@ -8,6 +8,7 @@ export interface UserResponse {
   email: string;
   role: string;
   registrationDate?: string; // LocalDateTime from backend -> string
+  kycStatus?: string;
   isActive: boolean;
 }
 

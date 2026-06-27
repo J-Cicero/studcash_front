@@ -9,6 +9,8 @@ import { DocumentEtudiantService } from '../../../core/services/document-etudian
 import { DocumentMerchantService } from '../../../core/services/document-merchant.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
+import { DocumentAdminService } from '../../../core/services/document-admin.service';
+
 interface WalletAlert {
   id: string;
   walletId?: string;
@@ -59,6 +61,7 @@ export class SurveillanceComponent implements OnInit {
     private walletService: WalletService,
     private documentEtudiantService: DocumentEtudiantService,
     private documentMerchantService: DocumentMerchantService,
+    private documentAdminService: DocumentAdminService,
     private sanitizer: DomSanitizer
   ) { }
 
@@ -103,7 +106,7 @@ export class SurveillanceComponent implements OnInit {
           const status = (b.walletStatus as 'ACTIF' | 'GELE' | 'BLOQUE') || 'ACTIF';
           const isSuspicious = b.soldeWallet > 50000 && status === 'ACTIF'; // Flag high balance in demo
           return {
-            id: b.boutiqueTrackingId,
+            id: b.merchantTrackingId || b.boutiqueTrackingId, // Use merchant tracking ID for documents
             walletId: b.walletTrackingId,
             type: 'Boutique' as const,
             name: b.nomBoutique,
@@ -262,5 +265,44 @@ export class SurveillanceComponent implements OnInit {
     this.entityDocuments = [];
     this.selectedDocumentForPreview = null;
     this.sanitizedPdfUrl = null;
+  }
+
+  updateDocumentStatus(status: 'VALIDE' | 'REJETE') {
+    if (!this.selectedDocumentForPreview || !this.selectedWallet) return;
+
+    let rejectionReason: string | undefined;
+    if (status === 'REJETE') {
+      const reason = prompt('Veuillez entrer le motif du rejet :');
+      if (reason === null) return; // cancelled
+      if (!reason.trim()) {
+        alert('Le motif est obligatoire pour un rejet.');
+        return;
+      }
+      rejectionReason = reason.trim();
+    }
+
+    this.isActionLoading = true;
+    const docId = this.selectedDocumentForPreview.trackingId;
+
+    const request$ = this.selectedWallet.type === 'Etudiant' 
+      ? this.documentAdminService.updateStudentDocumentStatus(docId, status, rejectionReason)
+      : this.documentAdminService.updateMerchantDocumentStatus(docId, status, rejectionReason);
+
+    request$.subscribe({
+      next: (res) => {
+        this.isActionLoading = false;
+        this.actionMessage = `Document ${status} avec succès.`;
+        // Update local object
+        if (this.selectedDocumentForPreview) {
+          this.selectedDocumentForPreview.status = status;
+          this.selectedDocumentForPreview.rejectionReason = rejectionReason;
+        }
+      },
+      error: (err) => {
+        this.isActionLoading = false;
+        this.actionMessage = `Erreur lors de la mise à jour du document.`;
+        console.error(err);
+      }
+    });
   }
 }

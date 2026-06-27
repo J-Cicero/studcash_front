@@ -165,16 +165,23 @@ export class InscriptionsComponent implements OnInit {
     }
   }
 
-  updateDefinitif(estInscritDefinitif: boolean) {
+  updateStatus(statut: string) {
     if (!this.selectedInscription) return;
 
-    this.inscriptionService.updateDefinitif(this.selectedInscription.trackingId, estInscritDefinitif).subscribe({
+    let motif = undefined;
+    if (statut === 'REJETEE') {
+      const input = prompt('Veuillez saisir le motif du rejet :');
+      if (input === null) return; // Annulé par l'utilisateur
+      motif = input;
+    }
+
+    this.inscriptionService.updateStatus(this.selectedInscription.trackingId, statut, motif).subscribe({
       next: () => {
         this.loadInscriptions(); // Recharger la liste
         this.closeDetails();
       },
       error: (err) => {
-        console.error("Erreur mise à jour définitif", err);
+        console.error("Erreur mise à jour statut", err);
       }
     });
   }

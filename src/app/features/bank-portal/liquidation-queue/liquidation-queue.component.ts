@@ -80,7 +80,18 @@ export class LiquidationQueueComponent implements OnInit {
   }
 
   get totalVentesBrutes(): number {
-    return this.ventesDetails.reduce((acc, curr) => acc + curr.montant, 0);
+    const total = this.ventesDetails.reduce((acc, curr) => acc + curr.montant, 0);
+    // Fallback if data is inconsistent (e.g. backend error returned 500 but solde is > 0)
+    if (total === 0 && this.selectedBoutique && this.selectedBoutique.soldeWallet > 0) {
+      return this.selectedBoutique.soldeWallet;
+    }
+    return total;
+  }
+
+  get commissions(): number {
+    if (!this.selectedBoutique) return 0;
+    const diff = this.totalVentesBrutes - this.selectedBoutique.soldeWallet;
+    return diff > 0 ? diff : 0;
   }
 
   validerVirement(): void {

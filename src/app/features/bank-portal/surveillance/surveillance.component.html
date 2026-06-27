@@ -269,9 +269,16 @@
                   <svg *ngIf="doc.documentType !== 'MANDAT_BANCAIRE' && !doc.fileUrl?.endsWith('.pdf')" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
               </div>
               
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-bold text-slate-900 dark:text-white truncate" [title]="doc.documentType">{{doc.documentType}}</p>
-                <p class="text-xs text-slate-500 truncate">{{doc.uploadedAt | date:'mediumDate'}}</p>
+              <div class="flex-1 min-w-0 flex justify-between items-center">
+                <div>
+                  <p class="text-sm font-bold text-slate-900 dark:text-white truncate" [title]="doc.documentType">{{doc.documentType}}</p>
+                  <p class="text-xs text-slate-500 truncate">{{doc.uploadedAt | date:'mediumDate'}}</p>
+                </div>
+                <div>
+                  <span *ngIf="doc.status === 'EN_ATTENTE'" class="w-2 h-2 rounded-full bg-amber-500 inline-block" title="En attente"></span>
+                  <span *ngIf="doc.status === 'VALIDE'" class="w-2 h-2 rounded-full bg-emerald-500 inline-block" title="Validé"></span>
+                  <span *ngIf="doc.status === 'REJETE'" class="w-2 h-2 rounded-full bg-rose-500 inline-block" title="Rejeté"></span>
+                </div>
               </div>
           </div>
         </div>
@@ -288,11 +295,38 @@
           
           <!-- Header for preview -->
           <div class="px-4 py-3 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/80">
-            <h4 class="font-bold text-slate-700 dark:text-slate-200">{{selectedDocumentForPreview.documentType}}</h4>
-            <a [href]="selectedDocumentForPreview.fileUrl" target="_blank" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 flex items-center bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1.5 rounded-lg transition-colors">
-              <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-              Ouvrir dans un nouvel onglet
-            </a>
+            <div class="flex items-center gap-3">
+              <h4 class="font-bold text-slate-700 dark:text-slate-200">{{selectedDocumentForPreview.documentType}}</h4>
+              
+              <span *ngIf="selectedDocumentForPreview.status === 'EN_ATTENTE'" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700">En attente</span>
+              <span *ngIf="selectedDocumentForPreview.status === 'VALIDE'" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700">Validé</span>
+              <span *ngIf="selectedDocumentForPreview.status === 'REJETE'" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-700" [title]="selectedDocumentForPreview.rejectionReason || ''">Rejeté</span>
+            </div>
+            
+            <div class="flex items-center space-x-2">
+              <button 
+                *ngIf="selectedDocumentForPreview.status !== 'VALIDE'" 
+                (click)="updateDocumentStatus('VALIDE')"
+                [disabled]="isActionLoading"
+                class="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-lg transition-all shadow-sm text-xs font-bold disabled:opacity-50 flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                Accepter
+              </button>
+              
+              <button 
+                *ngIf="selectedDocumentForPreview.status !== 'REJETE'" 
+                (click)="updateDocumentStatus('REJETE')"
+                [disabled]="isActionLoading"
+                class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg transition-all shadow-sm text-xs font-bold disabled:opacity-50 flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                Rejeter
+              </button>
+
+              <a [href]="selectedDocumentForPreview.fileUrl" target="_blank" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 flex items-center bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1.5 rounded-lg transition-colors ml-2">
+                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                Ouvrir
+              </a>
+            </div>
           </div>
 
           <!-- Document Content -->

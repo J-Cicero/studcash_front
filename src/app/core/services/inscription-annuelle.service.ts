@@ -18,9 +18,11 @@ export class InscriptionAnnuelleService {
     return this.http.get<any>(this.apiUrl, { params });
   }
 
-  updateStatus(trackingId: string, statut: string): Observable<any> {
-    // OBSOLETE: Use updateDefinitif or synchroniser instead
+  updateStatus(trackingId: string, statut: string, motifRejet?: string): Observable<any> {
     let params = new HttpParams().set('statut', statut);
+    if (motifRejet) {
+        params = params.set('motifRejet', motifRejet);
+    }
     return this.http.patch<any>(`${this.apiUrl}/${trackingId}/statut`, null, { params });
   }
 

@@ -115,13 +115,24 @@
           </td>
 
           <td class="px-4 py-3 whitespace-nowrap text-right space-x-2">
-            <button *ngIf="u.role === 'ETUDIANT' || u.role === 'COMMERCANT'" (click)="viewDetails(u)" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 font-bold text-sm bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/50 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center group-hover:opacity-100 opacity-70">
-              <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            <div *ngIf="u.role === 'ETUDIANT' || u.role === 'COMMERCANT'" class="inline-flex items-center px-2.5 py-1.5 rounded-lg text-xs font-bold transition-colors mr-2" 
+                 [ngClass]="{
+                    'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800': u.kycStatus === 'VALIDE',
+                    'bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800': u.kycStatus === 'EN_ATTENTE' || !u.kycStatus,
+                    'bg-red-50 text-red-700 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800': u.kycStatus === 'REJETE'
+                 }"
+                 [title]="'Statut du dossier bancaire'">
+              <svg *ngIf="u.kycStatus === 'VALIDE'" class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              Documents
-            </button>
+              <svg *ngIf="u.kycStatus === 'EN_ATTENTE' || !u.kycStatus" class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <svg *ngIf="u.kycStatus === 'REJETE'" class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              {{ u.kycStatus === 'VALIDE' ? 'Dossier Validé' : (u.kycStatus === 'REJETE' ? 'Dossier Rejeté' : 'Dossier En Attente') }}
+            </div>
             <button *ngIf="u.isActive" (click)="confirmDelete(u)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 font-bold text-sm bg-red-50 hover:bg-red-100 dark:bg-red-900/30 dark:hover:bg-red-900/50 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center group-hover:opacity-100 opacity-70">
               <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
