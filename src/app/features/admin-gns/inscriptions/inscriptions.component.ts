@@ -108,50 +108,15 @@ export class InscriptionsComponent implements OnInit {
     this.documentEtudiantService.findByInscriptionId(inscriptionTrackingId).subscribe({
       next: (res) => {
         let docs = res.content || res || [];
-        
-        if (docs.length === 0 && ins.studentTrackingId) {
-          // Fallback if documents were uploaded before inscription creation (e.g. mobile app registration)
-          this.documentEtudiantService.findByStudentId(ins.studentTrackingId).subscribe({
-            next: (studentRes) => {
-              this.studentDocuments = studentRes.content || studentRes || [];
-              this.hasMandatoryDocs = this.studentDocuments.some((doc: any) => doc.documentType === 'MANDAT_BANCAIRE' || doc.documentType === 'PIECE_IDENTITE');
-              if (this.studentDocuments.length > 0) this.selectDocument(this.studentDocuments[0]);
-              this.isLoadingDocs = false;
-            },
-            error: () => {
-              this.studentDocuments = [];
-              this.hasMandatoryDocs = false;
-              this.isLoadingDocs = false;
-            }
-          });
-        } else {
-          this.studentDocuments = docs;
-          this.hasMandatoryDocs = this.studentDocuments.some((doc: any) => doc.documentType === 'MANDAT_BANCAIRE' || doc.documentType === 'PIECE_IDENTITE');
-          if (this.studentDocuments.length > 0) this.selectDocument(this.studentDocuments[0]);
-          this.isLoadingDocs = false;
-        }
+        this.studentDocuments = docs;
+        this.hasMandatoryDocs = this.studentDocuments.some((doc: any) => doc.documentType === 'MANDAT_BANCAIRE' || doc.documentType === 'PIECE_IDENTITE' || doc.documentType === 'QUITTANCE_PAIEMENT' || doc.documentType === 'BULLETIN_NOTE');
+        if (this.studentDocuments.length > 0) this.selectDocument(this.studentDocuments[0]);
+        this.isLoadingDocs = false;
       },
       error: () => {
-        // Fallback on error as well
-        if (ins.studentTrackingId) {
-          this.documentEtudiantService.findByStudentId(ins.studentTrackingId).subscribe({
-            next: (studentRes) => {
-              this.studentDocuments = studentRes.content || studentRes || [];
-              this.hasMandatoryDocs = this.studentDocuments.some((doc: any) => doc.documentType === 'MANDAT_BANCAIRE' || doc.documentType === 'PIECE_IDENTITE');
-              if (this.studentDocuments.length > 0) this.selectDocument(this.studentDocuments[0]);
-              this.isLoadingDocs = false;
-            },
-            error: () => {
-              this.studentDocuments = [];
-              this.hasMandatoryDocs = false;
-              this.isLoadingDocs = false;
-            }
-          });
-        } else {
-          this.studentDocuments = [];
-          this.hasMandatoryDocs = false;
-          this.isLoadingDocs = false;
-        }
+        this.studentDocuments = [];
+        this.hasMandatoryDocs = false;
+        this.isLoadingDocs = false;
       }
     });
   }
