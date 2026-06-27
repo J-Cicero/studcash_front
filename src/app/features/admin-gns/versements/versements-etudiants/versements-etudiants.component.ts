@@ -83,7 +83,7 @@ export class VersementsEtudiantsComponent implements OnInit {
         const allInscriptions = res.content || [];
         const filtered = allInscriptions.filter((ins: any) => {
            const matchLevel = this.filterNiveau === 'ALL' || ins.studyLevel === this.filterNiveau;
-           return matchLevel && ins.isFullyEnrolled;
+           return matchLevel && ins.status === 'ACTIVE';
         });
         
         // Map to a structure similar to WalletResponse so the HTML doesn't break, 
