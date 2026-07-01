@@ -32,6 +32,9 @@ export class InscriptionsComponent implements OnInit {
   selectedDocumentForPreview: any = null;
   sanitizedPdfUrl: SafeResourceUrl | null = null;
 
+  showRejectModal = false;
+  rejectionReasonInput = '';
+
   constructor(
     private inscriptionService: InscriptionAnnuelleService,
     private studentService: StudentService,
@@ -130,16 +133,37 @@ export class InscriptionsComponent implements OnInit {
     }
   }
 
+  openRejectModal() {
+    this.rejectionReasonInput = '';
+    this.showRejectModal = true;
+  }
+
+  closeRejectModal() {
+    this.showRejectModal = false;
+    this.rejectionReasonInput = '';
+  }
+
+  confirmReject() {
+    if (!this.rejectionReasonInput.trim()) {
+      alert('Veuillez saisir le motif du rejet.');
+      return;
+    }
+    this.showRejectModal = false;
+    this.executeStatusUpdate('REJETEE', this.rejectionReasonInput.trim());
+  }
+
   updateStatus(statut: string) {
     if (!this.selectedInscription) return;
 
-    let motif = undefined;
     if (statut === 'REJETEE') {
-      const input = prompt('Veuillez saisir le motif du rejet :');
-      if (input === null) return; // Annulé par l'utilisateur
-      motif = input;
+      this.openRejectModal();
+      return;
     }
+    
+    this.executeStatusUpdate(statut);
+  }
 
+  private executeStatusUpdate(statut: string, motif?: string) {
     this.inscriptionService.updateStatus(this.selectedInscription.trackingId, statut, motif).subscribe({
       next: () => {
         this.loadInscriptions(); // Recharger la liste

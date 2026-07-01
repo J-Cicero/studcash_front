@@ -55,6 +55,10 @@ export class SurveillanceComponent implements OnInit {
   selectedDocumentForPreview: any = null;
   sanitizedPdfUrl: SafeResourceUrl | null = null;
 
+  // Custom Reject Modal State
+  showRejectModal = false;
+  rejectionReasonInput = '';
+
   constructor(
     private authService: AuthService,
     private bankPortalService: BankPortalService,
@@ -224,7 +228,10 @@ export class SurveillanceComponent implements OnInit {
     if (wallet.type === 'Etudiant') {
       this.documentEtudiantService.findByStudentId(wallet.id).subscribe({
         next: (res) => {
-          this.entityDocuments = res.content || res || [];
+          let docs = res.content || res || [];
+          this.entityDocuments = docs.filter((d: any) => 
+            ['RIB', 'MANDAT_BANCAIRE', 'PIECE_IDENTITE', 'RECIPISSE'].includes(d.documentType)
+          );
           this.hasMandatoryDocs = this.entityDocuments.some((doc: any) => doc.documentType === 'MANDAT_BANCAIRE' || doc.documentType === 'PIECE_IDENTITE');
           if (this.entityDocuments.length > 0) this.selectDocument(this.entityDocuments[0]);
           this.isLoadingDocs = false;
@@ -238,7 +245,10 @@ export class SurveillanceComponent implements OnInit {
       // For Boutique, we assume wallet.id can be used or backend handles it
       this.documentMerchantService.findByMerchantId(wallet.id).subscribe({
         next: (res) => {
-          this.entityDocuments = res.content || res || [];
+          let docs = res.content || res || [];
+          this.entityDocuments = docs.filter((d: any) => 
+            ['RIB_BOUTIQUE', 'RIB', 'PIECE_IDENTITE', 'RECIPISSE'].includes(d.documentType)
+          );
           this.hasMandatoryDocs = this.entityDocuments.some((doc: any) => doc.documentType === 'RIB_BOUTIQUE' || doc.documentType === 'PIECE_IDENTITE' || doc.documentType === 'RIB');
           if (this.entityDocuments.length > 0) this.selectDocument(this.entityDocuments[0]);
           this.isLoadingDocs = false;
@@ -267,18 +277,31 @@ export class SurveillanceComponent implements OnInit {
     this.sanitizedPdfUrl = null;
   }
 
-  updateDocumentStatus(status: 'VALIDE' | 'REJETE') {
+  openRejectModal() {
+    this.rejectionReasonInput = '';
+    this.showRejectModal = true;
+  }
+
+  closeRejectModal() {
+    this.showRejectModal = false;
+    this.rejectionReasonInput = '';
+  }
+
+  confirmReject() {
+    if (!this.rejectionReasonInput.trim()) {
+      this.actionMessage = 'Le motif est obligatoire pour un rejet.';
+      return;
+    }
+    this.showRejectModal = false;
+    this.updateDocumentStatus('REJETE', this.rejectionReasonInput.trim());
+  }
+
+  updateDocumentStatus(status: 'VALIDE' | 'REJETE', rejectionReason?: string) {
     if (!this.selectedDocumentForPreview || !this.selectedWallet) return;
 
-    let rejectionReason: string | undefined;
-    if (status === 'REJETE') {
-      const reason = prompt('Veuillez entrer le motif du rejet :');
-      if (reason === null) return; // cancelled
-      if (!reason.trim()) {
-        alert('Le motif est obligatoire pour un rejet.');
-        return;
-      }
-      rejectionReason = reason.trim();
+    if (status === 'REJETE' && !rejectionReason) {
+      this.openRejectModal();
+      return;
     }
 
     this.isActionLoading = true;
