@@ -23,6 +23,7 @@
       "ES2022",
       "dom"
     ],
+    "rootDir": "./src",
     "baseUrl": "./",
     "paths": {
       "@core/*": ["src/app/core/*"],
