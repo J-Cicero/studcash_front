@@ -112,7 +112,7 @@ export class InscriptionsComponent implements OnInit {
       next: (res) => {
         let docs = res.content || res || [];
         this.studentDocuments = docs;
-        this.hasMandatoryDocs = this.studentDocuments.some((doc: any) => doc.documentType === 'MANDAT_BANCAIRE' || doc.documentType === 'PIECE_IDENTITE' || doc.documentType === 'QUITTANCE_PAIEMENT' || doc.documentType === 'BULLETIN_NOTE');
+        this.hasMandatoryDocs = true;
         if (this.studentDocuments.length > 0) this.selectDocument(this.studentDocuments[0]);
         this.isLoadingDocs = false;
       },
