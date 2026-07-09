@@ -39,6 +39,10 @@ export class TransactionService {
     return this.http.get<any>(`${this.apiUrl}/stats/global`);
   }
 
+  getChartStats(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/stats/chart`);
+  }
+
   getVolumeValide(): Observable<number> {
     return this.http.get<number>(`${this.apiUrl}/stats/volume-valide`);
   }

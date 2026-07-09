@@ -69,6 +69,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
     // Load Charts
     setTimeout(() => {
+      this.loadChartStats();
     }, 200); // Small delay to let canvas render
   }
 
@@ -195,6 +196,36 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           legend: { position: 'bottom' }
         },
         cutout: '70%'
+      }
+    });
+  }
+
+  loadChartStats() {
+    this.transactionService.getChartStats().subscribe({
+      next: (res) => {
+        if (res.monthlyVolume) {
+          this.initLineChart(res.monthlyVolume);
+        }
+        if (res.boutiqueShare) {
+          const shareData = res.boutiqueShare.length > 0 ? res.boutiqueShare : [
+            { label: 'Aucune transaction', volume: 1 }
+          ];
+          this.initPieChart(shareData);
+        }
+        this.isLineChartLoading = false;
+        this.isPieChartLoading = false;
+      },
+      error: () => {
+        this.initLineChart([
+          { label: 'Janvier', volume: 0 },
+          { label: 'Février', volume: 0 },
+          { label: 'Mars', volume: 0 }
+        ]);
+        this.initPieChart([
+          { label: 'Aucune donnée', volume: 1 }
+        ]);
+        this.isLineChartLoading = false;
+        this.isPieChartLoading = false;
       }
     });
   }
