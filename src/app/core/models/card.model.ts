@@ -9,10 +9,12 @@ export interface CardResponse {
   trackingId: string;
   cardNumber: string;
   qrCodeData: string;
-  status: CardStatus;
+  statutCarte: CardStatus;
   emissionDate: string;
-  expirationDate: string;
+  dateExpiration: string;
   walletTrackingId: string;
+  studentNom?: string;
+  studentPrenom?: string;
 }
 
 export enum CardStatus {

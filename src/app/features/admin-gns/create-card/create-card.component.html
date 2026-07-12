@@ -51,7 +51,7 @@
       <div *ngIf="!isLoadingCards && studentCards.length === 0" class="text-slate-600">Aucune carte trouvée pour cet étudiant.</div>
       <ul *ngIf="!isLoadingCards && studentCards.length > 0" class="list-disc pl-5 space-y-2">
         <li *ngFor="let card of studentCards">
-          Carte: {{ card.cardNumber }} (Statut: {{ card.status }}) - ID: {{ card.trackingId }}
+          Carte: {{ card.cardNumber }} (Statut: {{ card.statutCarte }}) - ID: {{ card.trackingId }}
         </li>
       </ul>
     </div>

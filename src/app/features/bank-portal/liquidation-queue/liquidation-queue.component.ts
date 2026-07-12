@@ -19,6 +19,8 @@ export class LiquidationQueueComponent implements OnInit {
   boutiques: BoutiqueLiquidationInfo[] = [];
   isLoading = false;
   
+  searchQuery = '';
+  
   selectedBoutique: BoutiqueLiquidationInfo | null = null;
   ventesDetails: VenteNonLiquidee[] = [];
   isLoadingDetails = false;
@@ -53,6 +55,17 @@ export class LiquidationQueueComponent implements OnInit {
     });
   }
 
+  get filteredBoutiques(): BoutiqueLiquidationInfo[] {
+    if (!this.searchQuery) return this.boutiques;
+    const q = this.searchQuery.toLowerCase();
+    return this.boutiques.filter(b => 
+      b.nomBoutique.toLowerCase().includes(q) || 
+      b.proprietaireNom.toLowerCase().includes(q) ||
+      (b.numeroCompte && b.numeroCompte.toLowerCase().includes(q)) ||
+      (b.boutiqueTrackingId && b.boutiqueTrackingId.toLowerCase().includes(q))
+    );
+  }
+
   selectBoutique(boutique: BoutiqueLiquidationInfo): void {
     this.selectedBoutique = boutique;
     this.validationSuccess = false;
@@ -81,7 +94,6 @@ export class LiquidationQueueComponent implements OnInit {
 
   get totalVentesBrutes(): number {
     const total = this.ventesDetails.reduce((acc, curr) => acc + curr.montant, 0);
-    // Fallback if data is inconsistent (e.g. backend error returned 500 but solde is > 0)
     if (total === 0 && this.selectedBoutique && this.selectedBoutique.soldeWallet > 0) {
       return this.selectedBoutique.soldeWallet;
     }

@@ -28,7 +28,7 @@ export class BanqueService {
   }
 
   getCompteBancaireByOwner(ownerTrackingId: string): Observable<any> {
-    return this.http.get<any>(`${environment.apiUrl}/comptes-bancaires/owner/${ownerTrackingId}`);
+    return this.http.get<any>(`${environment.apiUrl}/api/comptes-bancaires/owner/${ownerTrackingId}`);
   }
 
   getAllBanques(): Observable<any[]> {

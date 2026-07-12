@@ -19,6 +19,7 @@ export class CreateCardComponent implements OnInit {
   searchStudentForm: FormGroup;
   createCardForm: FormGroup;
   foundStudent: UserResponse | null = null;
+  foundStudentWalletTrackingId: string | null = null;
   studentCards: any[] = []; // To display existing cards
 
   isLoadingStudent = false;
@@ -60,6 +61,7 @@ export class CreateCardComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
     this.foundStudent = null;
+    this.foundStudentWalletTrackingId = null;
     this.studentCards = [];
 
     const identifier = this.searchStudentForm.get('studentIdentifier')?.value;
@@ -68,15 +70,25 @@ export class CreateCardComponent implements OnInit {
       next: (users: UserResponse[]) => {
         const student = users.find(u => u.role === 'ETUDIANT' && (u.email === identifier || u.trackingId === identifier));
         if (student) {
-          this.foundStudent = student;
-          this.loadStudentCards(student.trackingId);
-          this.createCardForm.reset(); // Reset card form for new student
-          this.createCardForm.get('status')?.setValue(CardStatus.ACTIVE);
-          this.successMessage = `Étudiant "${student.firstName} ${student.lastName}" trouvé.`;
+          this.studentService.findByTrackingId(student.trackingId).subscribe({
+            next: (studentDetail: any) => {
+              this.foundStudent = student;
+              this.foundStudentWalletTrackingId = studentDetail.walletTrackingId;
+              this.loadStudentCards(student.trackingId);
+              this.createCardForm.reset(); // Reset card form for new student
+              this.createCardForm.get('status')?.setValue(CardStatus.ACTIVE);
+              this.successMessage = `Étudiant "${student.firstName} ${student.lastName}" trouvé.`;
+              this.isLoadingStudent = false;
+            },
+            error: (err: any) => {
+              this.errorMessage = "Erreur lors du chargement des détails du portefeuille étudiant: " + (err.error?.message || err.message);
+              this.isLoadingStudent = false;
+            }
+          });
         } else {
           this.errorMessage = 'Aucun étudiant trouvé avec cet identifiant.';
+          this.isLoadingStudent = false;
         }
-        this.isLoadingStudent = false;
       },
       error: (err: any) => {
         this.errorMessage = "Erreur lors de la recherche de l'étudiant: " + (err.error?.message || err.message);
@@ -100,9 +112,9 @@ export class CreateCardComponent implements OnInit {
   }
 
   createCard(): void {
-    if (this.createCardForm.invalid || !this.foundStudent) {
+    if (this.createCardForm.invalid || !this.foundStudent || !this.foundStudentWalletTrackingId) {
       this.createCardForm.markAllAsTouched();
-      this.errorMessage = 'Veuillez corriger les erreurs du formulaire et sélectionner un étudiant.';
+      this.errorMessage = 'Veuillez corriger les erreurs du formulaire, sélectionner un étudiant et récupérer son portefeuille.';
       return;
     }
 
@@ -110,11 +122,11 @@ export class CreateCardComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    const walletTrackingId = 'some-wallet-tracking-id'; // TODO: Fetch actual wallet ID
-
     const request: CardRequest = { // Explicit type
-      ...this.createCardForm.value,
-      walletTrackingId: walletTrackingId, 
+      cardNumber: this.createCardForm.get('cardNumber')?.value,
+      qrCodeData: this.createCardForm.get('qrCodeData')?.value,
+      status: this.createCardForm.get('status')?.value,
+      walletTrackingId: this.foundStudentWalletTrackingId, 
     };
 
     this.cardService.createCard(this.foundStudent!.trackingId, request).subscribe({ // Non-null assertion

@@ -14,7 +14,7 @@
       <div class="flex items-center space-x-2 bg-slate-100/50 dark:bg-slate-800/50 p-1 rounded-xl">
         <button (click)="setFilterStatus('ALL')" [ngClass]="filterStatus === 'ALL' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm font-bold' : 'text-slate-600 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white'" class="px-4 py-2 text-sm rounded-lg transition-all">Toutes</button>
         <button (click)="setFilterStatus('EN_ATTENTE')" [ngClass]="filterStatus === 'EN_ATTENTE' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 shadow-sm font-bold' : 'text-slate-600 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white'" class="px-4 py-2 text-sm rounded-lg transition-all">En Attente</button>
-        <button (click)="setFilterStatus('IMPRIMEE')" [ngClass]="filterStatus === 'IMPRIMEE' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 shadow-sm font-bold' : 'text-slate-600 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white'" class="px-4 py-2 text-sm rounded-lg transition-all">Imprimées</button>
+        <button (click)="setFilterStatus('PRETE')" [ngClass]="filterStatus === 'PRETE' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 shadow-sm font-bold' : 'text-slate-600 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white'" class="px-4 py-2 text-sm rounded-lg transition-all">Prêtes</button>
       </div>
 
       <div class="relative w-full md:w-80">
@@ -64,16 +64,17 @@
             <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full"
                   [ngClass]="{
                     'bg-amber-100/80 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 border border-amber-200 dark:border-amber-800': card.statutCarte === 'EN_ATTENTE',
-                    'bg-emerald-100/80 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800': card.statutCarte === 'IMPRIMEE' || card.statutCarte === 'ACTIVE',
+                    'bg-emerald-100/80 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800': card.statutCarte === 'PRETE' || card.statutCarte === 'ACTIVE',
                     'bg-rose-100/80 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400 border border-rose-200 dark:border-rose-800': card.statutCarte === 'BLOQUEE' || card.statutCarte === 'PERDUE'
                   }">
               {{ card.statutCarte }}
             </span>
           </td>
           <td class="px-4 py-3 whitespace-nowrap text-right space-x-2">
-            <button *ngIf="card.statutCarte === 'EN_ATTENTE'" (click)="updateCardStatus(card.trackingId, 'IMPRIMEE')" class="text-blue-600 hover:text-blue-900 font-bold text-sm">Imprimer</button>
-            <button *ngIf="card.statutCarte === 'IMPRIMEE'" (click)="updateCardStatus(card.trackingId, 'ACTIVE')" class="text-emerald-600 hover:text-emerald-900 font-bold text-sm">Activer</button>
+            <button *ngIf="card.statutCarte === 'EN_ATTENTE'" (click)="updateCardStatus(card.trackingId, 'PRETE')" class="text-blue-600 hover:text-blue-900 font-bold text-sm">Imprimer / Valider</button>
+            <button *ngIf="card.statutCarte === 'PRETE'" (click)="updateCardStatus(card.trackingId, 'ACTIVE')" class="text-emerald-600 hover:text-emerald-900 font-bold text-sm">Activer</button>
             <button *ngIf="card.statutCarte === 'ACTIVE'" (click)="updateCardStatus(card.trackingId, 'BLOQUEE')" class="text-rose-600 hover:text-rose-900 font-bold text-sm">Bloquer</button>
+            <button *ngIf="card.statutCarte === 'PRETE' || card.statutCarte === 'ACTIVE'" (click)="printCard(card)" class="text-indigo-600 hover:text-indigo-900 font-bold text-sm">Imprimer</button>
           </td>
         </tr>
         <tr *ngIf="filteredCards.length === 0">

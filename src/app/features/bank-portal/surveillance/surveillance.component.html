@@ -1,6 +1,6 @@
 <div class="mb-10 animate-fade-in-up">
-  <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Surveillance & Sécurité Interbancaire</h1>
-  <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Gérez le gel de conformité, bloquez les wallets suspects, et auditez les fonds restants en temps réel.</p>
+  <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Surveillance & Liquidations</h1>
+  <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Gérez le gel de conformité et générez les liquidations (remise à zéro des soldes).</p>
 </div>
 
 <!-- Messages -->
@@ -11,70 +11,57 @@
   <span class="text-sm font-semibold">{{ actionMessage }}</span>
 </div>
 
-<!-- Tabs to separate Student and Boutique Surveillance -->
-<div class="glass-panel rounded-2xl p-1 border border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40 shadow-sm flex space-x-1 max-w-md mb-6 animate-fade-in-up" style="animation-delay: 50ms;">
+<!-- Tabs -->
+<div class="glass-panel rounded-2xl p-1 border border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40 shadow-sm flex space-x-1 max-w-md mb-6 animate-fade-in-up">
   <button 
     (click)="switchTab('Etudiant')"
-    [ngClass]="{
-      'bg-indigo-600 text-white shadow-md': activeTab === 'Etudiant',
-      'text-slate-600 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-800/50': activeTab !== 'Etudiant'
-    }"
+    [ngClass]="activeTab === 'Etudiant' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-800/50'"
     class="flex-1 py-2.5 px-4 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center space-x-2">
-    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-    </svg>
-    <span>Portefeuilles Étudiants</span>
+    <span>Étudiants (Bourses)</span>
   </button>
   <button 
     (click)="switchTab('Boutique')"
-    [ngClass]="{
-      'bg-indigo-600 text-white shadow-md': activeTab === 'Boutique',
-      'text-slate-600 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-800/50': activeTab !== 'Boutique'
-    }"
+    [ngClass]="activeTab === 'Boutique' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-800/50'"
     class="flex-1 py-2.5 px-4 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center space-x-2">
-    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-    </svg>
-    <span>Portefeuilles Boutiques</span>
+    <span>Boutiques (Sécurité)</span>
   </button>
 </div>
 
-<div class="glass-panel rounded-2xl overflow-hidden animate-fade-in-up border border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40 shadow-sm" style="animation-delay: 100ms;">
+<div class="glass-panel rounded-2xl overflow-hidden animate-fade-in-up border border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40 shadow-sm">
   
-  <div class="px-8 py-6 border-b border-slate-200/50 dark:border-slate-700/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white/30 dark:bg-slate-900/30">
-    <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center">
-      <div class="p-2 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg mr-3 shadow-lg shadow-indigo-500/20">
-        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-        </svg>
-      </div>
-      <span>Comptes sous surveillance ({{ activeTab === 'Etudiant' ? 'Étudiants' : 'Boutiques' }})</span>
-    </h3>
+  <div class="px-8 py-6 border-b border-slate-200/50 dark:border-slate-700/50 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-white/30 dark:bg-slate-900/30">
+    <div class="flex items-center gap-4">
+      <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center">
+        Comptes {{ activeTab === 'Etudiant' ? 'Étudiants' : 'Boutiques' }}
+      </h3>
+      
+      <!-- BOUTON GEL EN MASSE (SEULEMENT POUR ETUDIANTS) -->
+      <button *ngIf="activeTab === 'Etudiant'" 
+              (click)="massFreezeStudents()"
+              [disabled]="isActionLoading"
+              class="flex items-center gap-2 px-4 py-2 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 hover:bg-amber-200 border border-amber-200 dark:border-amber-800/50 rounded-xl text-xs font-bold transition-colors disabled:opacity-50">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8V7a4 4 0 00-8 0v4h8z"></path></svg>
+        Geler la sélection ({{ filteredWallets.length }})
+      </button>
+    </div>
     
-    <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+    <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
       <select 
         [(ngModel)]="statusFilter" 
         (change)="applyFilters()" 
-        class="shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-none block w-full sm:text-sm border-none rounded-xl py-2.5 px-3 bg-white dark:bg-slate-800 text-slate-900 dark:text-white transition-all font-semibold">
+        class="shadow-sm focus:ring-2 focus:ring-indigo-500 border-none rounded-xl py-2.5 px-3 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold">
         <option value="ALL">Tous les statuts</option>
-        <option value="suspect">Suspects uniquement</option>
         <option value="ACTIF">Actifs</option>
         <option value="GELE">Gelés</option>
-        <option value="BLOQUE">Bloqués</option>
       </select>
       
       <div class="relative w-full sm:w-64">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </div>
         <input 
           [(ngModel)]="searchTerm" 
           (input)="applyFilters()" 
           type="text" 
-          placeholder="Rechercher nom, matricule..." 
-          class="block w-full pl-10 pr-3 py-2.5 border-none rounded-xl bg-white dark:bg-slate-800 shadow-sm text-sm placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 dark:text-white transition-all font-semibold"
+          placeholder="Recherche..." 
+          class="block w-full pl-4 pr-3 py-2.5 border-none rounded-xl bg-white dark:bg-slate-800 shadow-sm text-sm focus:ring-2 focus:ring-indigo-500 dark:text-white font-semibold"
         />
       </div>
     </div>
@@ -82,63 +69,53 @@
 
   <!-- Loading State -->
   <div *ngIf="isLoading" class="flex justify-center items-center py-20">
-    <div class="relative w-12 h-12">
-      <div class="absolute inset-0 rounded-full border-4 border-indigo-100 dark:border-slate-800"></div>
-      <div class="absolute inset-0 rounded-full border-4 border-indigo-600 dark:border-indigo-400 border-t-transparent animate-spin"></div>
-    </div>
+    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
   </div>
 
   <!-- Empty State -->
-  <div *ngIf="!isLoading && filteredWallets.length === 0" class="flex flex-col items-center justify-center py-16 text-center text-slate-500">
-    <svg class="h-12 w-12 text-slate-450 dark:text-slate-600 mb-2 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-    </svg>
-    <p class="font-bold text-slate-700 dark:text-slate-300">Aucun portefeuille ne correspond</p>
-    <p class="text-xs text-slate-400 dark:text-slate-500 mt-1 font-medium">Modifiez vos critères de filtrage ou de recherche.</p>
+  <div *ngIf="!isLoading && filteredWallets.length === 0" class="py-16 text-center text-slate-500 font-medium">
+    Aucun portefeuille ne correspond.
   </div>
 
   <!-- TABLE FOR STUDENTS -->
   <div *ngIf="!isLoading && filteredWallets.length > 0 && activeTab === 'Etudiant'" class="overflow-x-auto">
     <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
-      <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
+      <thead class="bg-slate-50/50 dark:bg-slate-800/30">
         <tr>
-          <th scope="col" class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Matricule</th>
-          <th scope="col" class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Étudiant</th>
-          <th scope="col" class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Type Bourse</th>
-          <th scope="col" class="px-8 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Montant Bourse</th>
-          <th scope="col" class="px-8 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Dépenses GNS</th>
-          <th scope="col" class="px-8 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Reste à payer</th>
-          <th scope="col" class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statut Wallet</th>
-          <th scope="col" class="px-8 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Actions Sécurité</th>
+          <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Matricule</th>
+          <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Étudiant</th>
+          <th class="px-6 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Dépenses GNS</th>
+          <th class="px-6 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Solde Virtuel (À virer)</th>
+          <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statut</th>
+          <th class="px-6 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Actions</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50 text-sm text-slate-700 dark:text-slate-300 animate-fade-in">
+      <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50 text-sm">
         <tr *ngFor="let wallet of filteredWallets" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
-          <td class="px-8 py-5 whitespace-nowrap font-mono text-xs font-bold">{{ wallet.numEtudiant }}</td>
-          <td class="px-8 py-5 whitespace-nowrap">
-            <div class="flex flex-col">
-              <span class="font-bold text-slate-900 dark:text-white">{{ wallet.name }}</span>
-              <span class="text-[10px] text-slate-450 dark:text-slate-550 font-mono mt-0.5 font-bold">Compte : {{ wallet.numeroCompte }}</span>
-            </div>
+          <td class="px-6 py-4 whitespace-nowrap font-mono text-xs font-bold">{{ wallet.numEtudiant }}</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="font-bold text-slate-900 dark:text-white">{{ wallet.name }}</div>
+            <div class="text-[10px] text-slate-500 font-mono mt-0.5">{{ wallet.numeroCompte }}</div>
           </td>
-          <td class="px-8 py-5 whitespace-nowrap">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800/50">
-              {{ wallet.typeBourse || 'AUCUNE' }}
-            </span>
+          <td class="px-6 py-4 whitespace-nowrap text-right font-semibold text-amber-600 dark:text-amber-400">{{ wallet.spentAmount | number }} F</td>
+          <td class="px-6 py-4 whitespace-nowrap text-right font-extrabold text-indigo-600 dark:text-indigo-400">{{ wallet.balance | number }} F</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span *ngIf="wallet.status === 'ACTIF'" class="px-3 py-1 text-xs font-bold rounded-full bg-emerald-50 text-emerald-700">Actif</span>
+            <span *ngIf="wallet.status === 'GELE'" class="px-3 py-1 text-xs font-bold rounded-full bg-amber-50 text-amber-700">Gelé</span>
           </td>
-          <td class="px-8 py-5 whitespace-nowrap text-right font-semibold">{{ wallet.scholarshipAmount | number }} FCFA</td>
-          <td class="px-8 py-5 whitespace-nowrap text-right font-semibold text-amber-600 dark:text-amber-400">{{ wallet.spentAmount | number }} FCFA</td>
-          <td class="px-8 py-5 whitespace-nowrap text-right font-extrabold text-indigo-600 dark:text-indigo-400">{{ wallet.balance | number }} FCFA</td>
-          <td class="px-8 py-5 whitespace-nowrap">
-            <span *ngIf="wallet.status === 'ACTIF'" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800/50">Actif</span>
-            <span *ngIf="wallet.status === 'GELE'" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800/50 animate-pulse">Gelé</span>
-            <span *ngIf="wallet.status === 'BLOQUE'" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-900/20 dark:text-rose-400 dark:border-rose-800/50">Bloqué</span>
-          </td>
-          <td class="px-8 py-5 whitespace-nowrap text-right text-xs font-bold space-x-2">
-            <button 
-              (click)="viewDetails(wallet)" 
-              class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 rounded-lg transition-all shadow-sm">
-              Documents KYC
+          <td class="px-6 py-4 whitespace-nowrap text-right space-x-2 flex justify-end items-center">
+            <button (click)="viewDetails(wallet)" class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition-colors" title="Voir les documents KYC">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+            </button>
+            <button *ngIf="wallet.status === 'ACTIF'" (click)="gelerWallet(wallet)" class="p-2 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-lg transition-colors" title="Geler le portefeuille">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </button>
+            <button *ngIf="wallet.status === 'GELE' || wallet.status === 'BLOQUE'" (click)="debloquerWallet(wallet)" class="p-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-lg transition-colors" title="Dégeler le portefeuille (Réactiver)">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
+            </button>
+            <button *ngIf="wallet.status === 'GELE'" (click)="openLiquidationModal(wallet)" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-sm transition-colors text-xs flex items-center gap-1 ml-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+              Liquider
             </button>
           </td>
         </tr>
@@ -148,43 +125,35 @@
 
   <!-- TABLE FOR BOUTIQUES -->
   <div *ngIf="!isLoading && filteredWallets.length > 0 && activeTab === 'Boutique'" class="overflow-x-auto">
-    <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
-      <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
+    <!-- Similar table just for Boutiques KYC (kept minimal here) -->
+    <table class="min-w-full divide-y divide-slate-200/50">
+       <thead class="bg-slate-50/50 dark:bg-slate-800/30">
         <tr>
-          <th scope="col" class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Boutique</th>
-          <th scope="col" class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Propriétaire</th>
-          <th scope="col" class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Compte Bancaire</th>
-          <th scope="col" class="px-8 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Solde Virtuel</th>
-          <th scope="col" class="px-8 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statut Wallet</th>
-          <th scope="col" class="px-8 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Actions Sécurité</th>
+          <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">Boutique</th>
+          <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">Propriétaire</th>
+          <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">Statut</th>
+          <th class="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-widest">Actions KYC</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50 text-sm text-slate-700 dark:text-slate-300 animate-fade-in">
-        <tr *ngFor="let wallet of filteredWallets" [ngClass]="{'bg-rose-500/5 dark:bg-rose-500/10': wallet.suspiciousActivity && wallet.status === 'ACTIF'}" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
-          <td class="px-8 py-5 whitespace-nowrap">
-            <div class="flex items-center">
-              <span class="font-bold text-slate-900 dark:text-white">{{ wallet.name }}</span>
-              <div *ngIf="wallet.suspiciousActivity && wallet.status === 'ACTIF'" class="ml-3 inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400 border border-rose-200 dark:border-rose-800 animate-pulse">
-                SUSPECT (Solde Élevé)
-              </div>
-            </div>
+      <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50 text-sm">
+        <tr *ngFor="let wallet of filteredWallets" class="hover:bg-slate-50/80">
+          <td class="px-6 py-4 whitespace-nowrap font-bold text-slate-900">{{ wallet.name }}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-slate-600 font-medium">{{ wallet.ownerName }}</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span *ngIf="wallet.status === 'ACTIF'" class="px-3 py-1 text-xs font-bold rounded-full bg-emerald-50 text-emerald-700">Actif</span>
+            <span *ngIf="wallet.status === 'GELE'" class="px-3 py-1 text-xs font-bold rounded-full bg-amber-50 text-amber-700">Gelé</span>
+            <span *ngIf="wallet.status === 'BLOQUE'" class="px-3 py-1 text-xs font-bold rounded-full bg-rose-50 text-rose-700">Bloqué</span>
           </td>
-          <td class="px-8 py-5 whitespace-nowrap text-slate-650 dark:text-slate-400 font-semibold">{{ wallet.ownerName }}</td>
-          <td class="px-8 py-5 whitespace-nowrap font-mono text-xs font-bold text-slate-700 dark:text-slate-400">{{ wallet.numeroCompte || 'Non renseigné' }}</td>
-          <td class="px-8 py-5 whitespace-nowrap text-right font-extrabold text-slate-900 dark:text-white text-base">
-            {{ wallet.balance | number }} <span class="text-xs text-slate-400 dark:text-slate-500 font-bold">FCFA</span>
-          </td>
-          <td class="px-8 py-5 whitespace-nowrap">
-            <span *ngIf="wallet.status === 'ACTIF'" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800/50">Actif</span>
-            <span *ngIf="wallet.status === 'GELE'" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-900/20 dark:text-emerald-400 dark:border-emerald-800/50 animate-pulse">Gelé</span>
-            <span *ngIf="wallet.status === 'BLOQUE'" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-900/20 dark:text-emerald-400 dark:border-emerald-800/50">Bloqué</span>
-          </td>
-          <td class="px-8 py-5 whitespace-nowrap text-right text-xs font-bold space-x-2">
-            <button 
-              (click)="viewDetails(wallet)" 
-              class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 rounded-lg transition-all shadow-sm">
-              Documents KYC
-            </button>
+          <td class="px-6 py-4 whitespace-nowrap text-right space-x-2 flex justify-end items-center">
+             <button (click)="viewDetails(wallet)" class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition-colors" title="Vérifier KYC">
+               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+             </button>
+             <button *ngIf="wallet.status === 'ACTIF'" (click)="gelerWallet(wallet)" class="p-2 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-lg transition-colors" title="Geler le portefeuille">
+               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8V7a4 4 0 00-8 0v4h8z"></path></svg>
+             </button>
+             <button *ngIf="wallet.status === 'GELE' || wallet.status === 'BLOQUE'" (click)="debloquerWallet(wallet)" class="p-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-lg transition-colors" title="Dégeler le portefeuille (Réactiver)">
+               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
+             </button>
           </td>
         </tr>
       </tbody>
@@ -192,7 +161,70 @@
   </div>
 </div>
 
-<!-- Modal Détails & Documents -->
+<!-- ============================================== -->
+<!-- MODAL DE LIQUIDATION ETUDIANT (REMISE A ZERO) -->
+<!-- ============================================== -->
+<div *ngIf="selectedStudentForLiquidation" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+  <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col">
+    
+    <div class="p-6 bg-gradient-to-r from-indigo-900 to-blue-900 text-white flex justify-between items-start relative overflow-hidden">
+      <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+      <div class="relative z-10">
+        <h2 class="text-xl font-black mb-1">Liquider & Clôturer</h2>
+        <p class="text-sm text-indigo-200">{{ selectedStudentForLiquidation.name }} ({{ selectedStudentForLiquidation.numEtudiant }})</p>
+      </div>
+      <button *ngIf="!liquidationSuccess" (click)="closeLiquidationModal()" class="relative z-10 text-white/50 hover:text-white transition-colors">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+      </button>
+    </div>
+
+    <div class="p-6">
+      <div *ngIf="!liquidationSuccess">
+        <div class="mb-4 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-xl flex items-start gap-3">
+          <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+          <div>
+            <p class="text-sm font-bold text-amber-800 dark:text-amber-400 mb-1">Le portefeuille est gelé.</p>
+            <p class="text-xs text-amber-700/80 dark:text-amber-500">Cette action enregistrera les dépenses de l'étudiant et remettra son solde virtuel à 0 FCFA pour le préparer à la prochaine bourse.</p>
+          </div>
+        </div>
+
+        <div class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-5 border border-slate-100 dark:border-slate-700/50 space-y-4 mb-6">
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-medium text-slate-500">Dépenses effectuées (StudCash)</span>
+            <span class="text-sm font-bold text-rose-600">{{ selectedStudentForLiquidation.spentAmount | number }} F</span>
+          </div>
+          <div class="border-t border-slate-200 dark:border-slate-700"></div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-medium text-slate-500">Solde non dépensé</span>
+            <span class="text-lg font-black text-indigo-600">{{ selectedStudentForLiquidation.balance | number }} F</span>
+          </div>
+          <div class="text-xs text-slate-400 bg-white dark:bg-slate-900 p-2 rounded-lg border border-slate-100 dark:border-slate-800">
+            <strong>N° Compte étudiant :</strong> {{ selectedStudentForLiquidation.numeroCompte || 'À demander' }}<br>
+            (Ce montant doit être viré sur le compte bancaire physique de l'étudiant).
+          </div>
+        </div>
+
+        <button (click)="confirmStudentLiquidation()" 
+                [disabled]="isLiquidationLoading"
+                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-indigo-500/30 disabled:opacity-50 transition-all flex justify-center items-center">
+          <svg *ngIf="isLiquidationLoading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+          <span *ngIf="!isLiquidationLoading">Générer la Liquidation (Remise à 0)</span>
+        </button>
+      </div>
+
+      <!-- Success View -->
+      <div *ngIf="liquidationSuccess" class="py-6 flex flex-col items-center text-center animate-fade-in-up">
+        <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+          <svg class="w-8 h-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+        </div>
+        <h4 class="text-xl font-black text-slate-900 dark:text-white mb-2">Liquidation Terminée</h4>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Le solde virtuel de l'étudiant a été remis à zéro avec succès. Le portefeuille est prêt pour le prochain dépôt.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Détails & Documents KYC -->
 <div *ngIf="selectedWallet" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
   <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-6xl h-[85vh] flex flex-col overflow-hidden border border-slate-200 dark:border-slate-800">
     <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/30 shrink-0">
@@ -222,9 +254,9 @@
               
               <!-- Icon -->
               <div class="w-12 h-12 rounded-lg flex items-center justify-center mr-3 shrink-0"
-                   [ngClass]="doc.documentType === 'MANDAT_BANCAIRE' || doc.fileUrl?.endsWith('.pdf') ? 'bg-red-50 text-red-500 dark:bg-red-900/30' : 'bg-blue-50 text-blue-500 dark:bg-blue-900/30'">
-                  <svg *ngIf="doc.documentType === 'MANDAT_BANCAIRE' || doc.fileUrl?.endsWith('.pdf')" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
-                  <svg *ngIf="doc.documentType !== 'MANDAT_BANCAIRE' && !doc.fileUrl?.endsWith('.pdf')" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                   [ngClass]="doc.documentType === 'MANDAT' || doc.documentType === 'MANDAT_BANCAIRE' || doc.fileUrl?.endsWith('.pdf') ? 'bg-red-50 text-red-500 dark:bg-red-900/30' : 'bg-blue-50 text-blue-500 dark:bg-blue-900/30'">
+                  <svg *ngIf="doc.documentType === 'MANDAT' || doc.documentType === 'MANDAT_BANCAIRE' || doc.fileUrl?.endsWith('.pdf')" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
+                  <svg *ngIf="doc.documentType !== 'MANDAT' && doc.documentType !== 'MANDAT_BANCAIRE' && !doc.fileUrl?.endsWith('.pdf')" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
               </div>
               
               <div class="flex-1 min-w-0 flex justify-between items-center">
@@ -337,6 +369,37 @@
         [disabled]="!rejectionReasonInput.trim()"
         class="px-4 py-2 rounded-xl text-sm font-bold text-white bg-rose-600 hover:bg-rose-700 disabled:opacity-50 transition-colors shadow-lg shadow-rose-600/20">
         Confirmer le rejet
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Action Confirm Modal (Geler / Dégeler) -->
+<div *ngIf="showConfirmModal" class="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+  <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-sm p-6 border border-slate-200 dark:border-slate-800 text-center">
+    
+    <div class="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
+         [ngClass]="confirmActionType === 'ACTIF' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600' : 'bg-amber-100 dark:bg-amber-900/30 text-amber-600'">
+      <svg *ngIf="confirmActionType === 'ACTIF'" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
+      <svg *ngIf="confirmActionType !== 'ACTIF'" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8V7a4 4 0 00-8 0v4h8z"></path></svg>
+    </div>
+    
+    <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2">{{ confirmTitle }}</h3>
+    <p class="text-sm text-slate-500 dark:text-slate-400 mb-6 px-2">
+      {{ confirmMessage }}
+    </p>
+
+    <div class="flex space-x-3">
+      <button 
+        (click)="closeConfirmModal()"
+        class="flex-1 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+        Annuler
+      </button>
+      <button 
+        (click)="executeConfirmAction()"
+        [ngClass]="confirmActionType === 'ACTIF' ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20' : 'bg-amber-500 hover:bg-amber-600 shadow-amber-500/20'"
+        class="flex-1 px-4 py-3 rounded-xl text-sm font-bold text-white transition-colors shadow-lg">
+        Confirmer
       </button>
     </div>
   </div>

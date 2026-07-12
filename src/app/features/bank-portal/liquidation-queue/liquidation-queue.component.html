@@ -1,144 +1,158 @@
-<div class="space-y-6 animate-fade-in-up">
-  <!-- Header -->
-  <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800/60 pb-4">
-    <div>
-      <h1 class="text-xl font-bold text-slate-900 dark:text-white">File de Liquidation</h1>
-      <p class="text-slate-500 dark:text-slate-400 text-[11px] mt-0.5">Boutiques en attente de virement bancaire</p>
-    </div>
+<div class="mb-8 flex justify-between items-center animate-fade-in-up">
+  <div>
+    <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Liquidations Marchands</h1>
+    <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Validez les demandes de retraits des commerçants.</p>
   </div>
+</div>
 
-  <div *ngIf="isLoading" class="flex justify-center py-12">
-    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-  </div>
-
-  <!-- Main Grid Layout -->
-  <div class="flex flex-col lg:flex-row gap-6" *ngIf="!isLoading">
-    
-    <!-- Liste des boutiques -->
-    <div class="w-full lg:w-2/3 glass-panel rounded-2xl overflow-hidden shadow-sm border border-slate-200/50 dark:border-slate-700/50">
-      <div class="bg-slate-50 dark:bg-slate-800/50 px-4 py-2.5 border-b border-slate-200 dark:border-slate-700/50 font-semibold text-slate-700 dark:text-slate-300 text-xs flex justify-between">
-        <span>Boutiques</span>
-        <span>A Payer</span>
-      </div>
-      <div class="overflow-y-auto custom-scrollbar flex-1 p-2 space-y-1" style="max-height: calc(100vh - 250px);">
-        <div *ngIf="boutiques.length === 0" class="text-center text-slate-500 py-8 text-xs">
-          Aucune liquidation en attente.
-        </div>
-        <div *ngFor="let boutique of boutiques" 
-             (click)="selectBoutique(boutique)"
-             class="p-2.5 rounded-lg cursor-pointer transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
-             [ngClass]="{'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800': selectedBoutique?.boutiqueTrackingId === boutique.boutiqueTrackingId}">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-3 truncate">
-              <div class="h-8 w-8 rounded-full bg-gradient-to-br from-blue-100 to-sky-100 dark:from-blue-900 dark:to-sky-900 flex items-center justify-center text-blue-700 dark:text-blue-400 font-bold text-xs shadow-inner shrink-0">
-                {{ boutique.nomBoutique.charAt(0) }}
-              </div>
-              <div class="truncate">
-                <p class="text-xs font-semibold text-slate-900 dark:text-white truncate">
-                  {{ boutique.nomBoutique }}
-                </p>
-                <p class="text-[10px] text-slate-500 truncate">
-                  Cpt: <span class="font-mono text-slate-600 dark:text-slate-300">{{ boutique.numeroCompte || 'Non Renseigné' }}</span>
-                </p>
-              </div>
-            </div>
-            <div class="text-right shrink-0 ml-2">
-              <p class="text-xs font-bold text-slate-900 dark:text-white">{{ boutique.soldeWallet | number }} <span class="text-[9px] text-slate-400">FCFA</span></p>
-            </div>
-          </div>
-        </div>
-      </div>
+<div class="glass-panel rounded-2xl overflow-hidden mb-6 p-6 animate-fade-in-up">
+  <div class="flex flex-col md:flex-row md:items-center gap-4 justify-between">
+    <div class="flex items-center space-x-2 bg-slate-100/50 dark:bg-slate-800/50 p-1 rounded-xl">
+      <button class="bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm font-bold px-4 py-2 text-sm rounded-lg transition-all">En Attente</button>
     </div>
 
-    <!-- Volet de détails (Preuves de ventes & Validation) -->
-    <div class="w-full lg:w-1/3">
-      <div *ngIf="!selectedBoutique" class="glass-panel rounded-2xl border border-slate-200/50 dark:border-slate-700/50 h-[calc(100vh-250px)] flex flex-col items-center justify-center p-8 text-center text-slate-500">
-        <svg class="w-12 h-12 mb-3 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+    <div class="relative w-full md:w-96">
+      <input type="text" [(ngModel)]="searchQuery" placeholder="Rechercher par boutique, nom ou N° de compte..." class="w-full pl-10 pr-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white transition-colors text-sm">
+      <span class="absolute left-3 top-2.5 text-slate-400">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
         </svg>
-        <p class="text-sm font-medium text-slate-600 dark:text-slate-400">Sélectionnez une boutique à liquider</p>
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class="glass-panel rounded-2xl overflow-hidden animate-fade-in-up" style="animation-delay: 100ms;">
+  <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+    <div class="relative w-10 h-10">
+      <div class="absolute inset-0 rounded-full border-4 border-indigo-100 dark:border-slate-800"></div>
+      <div class="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin"></div>
+    </div>
+  </div>
+
+  <table *ngIf="!isLoading" class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
+    <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
+      <tr>
+        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">ID Boutique</th>
+        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Boutique & Marchand</th>
+        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">N° Compte Bancaire</th>
+        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Net à Payer</th>
+        <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
+      <tr *ngFor="let boutique of filteredBoutiques" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-indigo-600 dark:text-indigo-400">
+          #{{ boutique.boutiqueTrackingId | slice:0:8 | uppercase }}
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class="text-sm font-bold text-slate-900 dark:text-white">{{ boutique.nomBoutique }}</div>
+          <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">{{ boutique.proprietaireNom }}</div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class="text-sm font-mono text-slate-700 dark:text-slate-300">{{ boutique.numeroCompte || 'Non renseigné' }}</div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class="text-base font-black text-emerald-600 dark:text-emerald-400">{{ boutique.soldeWallet | number:'1.0-0' }} FCFA</div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap text-right">
+          <button (click)="selectBoutique(boutique)" class="inline-flex items-center px-4 py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 rounded-lg text-sm font-bold transition-colors">
+            Liquider
+          </button>
+        </td>
+      </tr>
+      <tr *ngIf="filteredBoutiques.length === 0">
+        <td colspan="5" class="px-6 py-12 text-center text-sm font-medium text-slate-500 dark:text-slate-400">
+          Aucune liquidation en attente trouvée.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Modal Détails Liquidation -->
+<div *ngIf="selectedBoutique" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
+  <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    
+    <!-- Modal Header -->
+    <div class="p-6 bg-gradient-to-r from-indigo-900 to-blue-900 text-white flex justify-between items-start relative overflow-hidden shrink-0">
+      <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+      <div class="relative z-10">
+        <h2 class="text-2xl font-black mb-1">{{ selectedBoutique.nomBoutique }}</h2>
+        <p class="text-sm text-indigo-200">Titulaire : {{ selectedBoutique.proprietaireNom }}</p>
+      </div>
+      <button (click)="closeDetails()" class="relative z-10 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+      </button>
+    </div>
+
+    <!-- Modal Content -->
+    <div class="p-6 flex-1 overflow-y-auto custom-scrollbar">
+      
+      <!-- Infos Bancaires -->
+      <div class="mb-6 bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-100 dark:border-slate-700/50">
+        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Coordonnées Bancaires</h3>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-600">
+            <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+          </div>
+          <div>
+            <p class="text-sm font-bold text-slate-900 dark:text-white">{{ selectedBoutique.numeroCompte || 'Compte non configuré' }}</p>
+            <p class="text-xs text-slate-500">Compte Récepteur</p>
+          </div>
+        </div>
       </div>
 
-      <!-- Détail Liquidation -->
-      <div *ngIf="selectedBoutique" class="glass-panel rounded-2xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden flex flex-col h-[calc(100vh-250px)] animate-fade-in">
-        <!-- Info Carte -->
-        <div class="p-4 bg-gradient-to-r from-blue-900 via-sky-900 to-blue-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-white flex justify-between items-end relative overflow-hidden shrink-0">
-          <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-white/5 rounded-full blur-2xl"></div>
-          <div class="relative z-10">
-            <h2 class="text-lg font-bold">{{ selectedBoutique.nomBoutique }}</h2>
-            <p class="text-xs text-blue-200 mt-1">Titulaire : {{ selectedBoutique.proprietaireNom }}</p>
+      <div *ngIf="isLoadingDetails" class="py-12 flex justify-center">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+      </div>
+
+      <div *ngIf="!isLoadingDetails">
+        <!-- Recapitulatif -->
+        <div class="bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl p-5 mb-6 border border-indigo-100 dark:border-indigo-800/50">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-sm font-semibold text-slate-600 dark:text-slate-400">Ventes Brutes</span>
+            <span class="text-sm font-bold text-slate-900 dark:text-white">{{ totalVentesBrutes | number:'1.0-0' }} FCFA</span>
           </div>
-          <div class="relative z-10 text-right">
-            <div class="text-[10px] text-blue-300 mb-0.5 uppercase font-semibold">Net à Payer</div>
-            <div class="text-2xl font-black">{{ selectedBoutique.soldeWallet | number }} <span class="text-xs font-medium text-blue-200">FCFA</span></div>
+          <div class="flex justify-between items-center mb-4">
+            <span class="text-sm font-semibold text-slate-600 dark:text-slate-400">Commissions (GNS & Banque)</span>
+            <span class="text-sm font-bold text-rose-600 dark:text-rose-400">- {{ commissions | number:'1.0-0' }} FCFA</span>
           </div>
-        </div>
-
-        <div class="flex-1 overflow-y-auto p-4 flex flex-col">
-          <div *ngIf="isLoadingDetails" class="py-6 flex justify-center flex-1">
-            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-          </div>
-
-          <div *ngIf="!isLoadingDetails" class="flex flex-col h-full">
-            <!-- Recap Calcul -->
-            <div class="bg-blue-50 dark:bg-blue-900/10 rounded-xl p-3 mb-4 border border-blue-100 dark:border-blue-800/30 shrink-0">
-              <div class="flex justify-between text-xs mb-1">
-                <span class="text-slate-600 dark:text-slate-400">Ventes Brutes :</span>
-                <span class="font-semibold text-slate-900 dark:text-white">{{ totalVentesBrutes | number }} FCFA</span>
-              </div>
-              <div class="flex justify-between text-xs mb-1 text-slate-500">
-                <span>Commissions (GNS + Banque) :</span>
-                <span>- {{ commissions | number }} FCFA</span>
-              </div>
-              <div class="border-t border-blue-200 dark:border-blue-800/50 my-2"></div>
-              <div class="flex justify-between font-bold text-sm text-blue-600 dark:text-blue-400">
-                <span>Net à Payer :</span>
-                <span>{{ selectedBoutique.soldeWallet | number }} FCFA</span>
-              </div>
-            </div>
-
-            <!-- Liste des transactions étudiantes -->
-            <h4 class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2 shrink-0">Preuves de ventes ({{ventesDetails.length}})</h4>
-            <div class="flex-1 overflow-y-auto pr-1 space-y-2 mb-4 custom-scrollbar min-h-0">
-              <div *ngFor="let vente of ventesDetails" class="flex justify-between items-center text-xs p-2.5 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700/50">
-                <div>
-                  <div class="font-medium text-slate-800 dark:text-slate-200">{{ vente.etudiantPrenom }} {{ vente.etudiantNom }}</div>
-                  <div class="text-[10px] text-slate-500 mt-0.5">{{ vente.date | date:'dd/MM/yyyy HH:mm' }}</div>
-                </div>
-                <div class="font-bold text-slate-900 dark:text-white">{{ vente.montant | number }} F</div>
-              </div>
-              <div *ngIf="ventesDetails.length === 0" class="text-center text-slate-500 text-xs py-2">
-                Aucune vente trouvée.
-              </div>
-            </div>
-
-            <!-- Formulaire de validation -->
-            <div *ngIf="!validationSuccess" class="shrink-0 space-y-3 pt-3 border-t border-slate-200 dark:border-slate-700/50 mt-auto">
-              <div>
-                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Réf. Virement Bancaire</label>
-                <input type="text" [(ngModel)]="referenceVirement" placeholder="Ex: VIR-2026..." 
-                       class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none text-slate-900 dark:text-white transition-shadow">
-              </div>
-              
-              <button (click)="validerVirement()" 
-                      [disabled]="isValidating || !referenceVirement.trim() || !selectedBoutique.numeroCompte"
-                      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all flex justify-center items-center text-sm">
-                <svg *ngIf="isValidating" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Valider le paiement
-              </button>
-            </div>
-
-            <!-- Message de succès -->
-            <div *ngIf="validationSuccess" class="shrink-0 bg-emerald-50 text-emerald-600 p-3 rounded-lg border border-emerald-100 flex items-center space-x-2 mt-3">
-              <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-              <span class="font-semibold text-xs">Virement validé avec succès !</span>
-            </div>
-
+          <div class="border-t border-indigo-200 dark:border-indigo-800/50 pt-4 flex justify-between items-center">
+            <span class="text-base font-black text-indigo-900 dark:text-indigo-100">Montant Net à Virer</span>
+            <span class="text-2xl font-black text-indigo-600 dark:text-indigo-400">{{ selectedBoutique.soldeWallet | number:'1.0-0' }} FCFA</span>
           </div>
         </div>
+
+        <!-- Formulaire Validation -->
+        <div *ngIf="!validationSuccess" class="space-y-4">
+          <div>
+            <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Référence du Virement Bancaire</label>
+            <input type="text" [(ngModel)]="referenceVirement" placeholder="Ex: VIR-2026-X89..." 
+                   class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl px-4 py-3 text-base font-medium focus:ring-2 focus:ring-indigo-500 outline-none text-slate-900 dark:text-white transition-all">
+            <p class="text-xs text-slate-500 mt-2">Veuillez saisir la référence exacte générée par votre système bancaire (Core Banking) après avoir effectué le virement.</p>
+          </div>
+          
+          <button (click)="validerVirement()" 
+                  [disabled]="isValidating || !referenceVirement.trim() || !selectedBoutique.numeroCompte"
+                  class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 px-4 rounded-xl shadow-lg shadow-indigo-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex justify-center items-center text-lg">
+            <svg *ngIf="isValidating" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Confirmer la Liquidation
+          </button>
+        </div>
+
+        <!-- Success Message -->
+        <div *ngIf="validationSuccess" class="bg-emerald-50 text-emerald-700 p-5 rounded-2xl border border-emerald-200 flex flex-col items-center text-center animate-fade-in-up">
+          <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-3">
+            <svg class="w-8 h-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+          </div>
+          <h4 class="text-lg font-black mb-1">Liquidation Validée</h4>
+          <p class="text-sm font-medium">Le virement a été enregistré et le solde du marchand a été réinitialisé.</p>
+        </div>
+
       </div>
     </div>
   </div>
