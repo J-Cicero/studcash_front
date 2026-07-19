@@ -252,9 +252,6 @@ export class UtilisateursComponent implements OnInit {
   }
 
   viewDetails(user: UserResponse) {
-    if (user.role !== 'ETUDIANT' && user.role !== 'COMMERCANT') {
-      return; 
-    }
     
     this.selectedUser = user;
     this.userDocuments = [];
