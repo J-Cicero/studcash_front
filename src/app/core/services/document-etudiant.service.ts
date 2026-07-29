@@ -24,6 +24,13 @@ export class DocumentEtudiantService {
   }
 
   findByStudentId(studentId: string): Observable<any> {
-    return this.http.get<any>(`${environment.apiUrl}/students/${studentId}/documents`);
+    return this.http.get<any>(`${this.apiUrl}/student/${studentId}`);
+  }
+
+  updateDocumentStatus(trackingId: string, status: 'VALIDE' | 'REJETE', rejectionReason?: string): Observable<any> {
+    return this.http.put<any>(`${environment.apiUrl}/api/admin-banque/documents/students/${trackingId}/status`, {
+      status,
+      rejectionReason
+    });
   }
 }

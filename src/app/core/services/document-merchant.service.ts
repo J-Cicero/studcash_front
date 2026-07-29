@@ -18,4 +18,11 @@ export class DocumentMerchantService {
   findByMerchantId(merchantId: any): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/merchant/${merchantId}`);
   }
+
+  updateDocumentStatus(trackingId: string, status: 'VALIDE' | 'REJETE', rejectionReason?: string): Observable<any> {
+    return this.http.put<any>(`${environment.apiUrl}/api/admin-banque/documents/merchants/${trackingId}/status`, {
+      status,
+      rejectionReason
+    });
+  }
 }

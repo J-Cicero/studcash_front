@@ -10,6 +10,8 @@ export interface UserResponse {
   registrationDate?: string; // LocalDateTime from backend -> string
   kycStatus?: string;
   isActive: boolean;
+  walletStatus?: string;
+  walletTrackingId?: string;
 }
 
 export interface AdminBanqueRequest {

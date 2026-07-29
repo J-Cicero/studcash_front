@@ -75,7 +75,18 @@ export class WalletService {
     return this.http.get<any>(`${this.apiUrl}/filter`);
   }
 
-  gelerTousLesWallets(data: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/freeze-all`, data);
+  gelerTousLesWallets(geler: boolean): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/freeze-all?geler=${geler}`, {});
+  }
+
+  freezeWallet(walletTrackingId: string, geler: boolean): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${walletTrackingId}/freeze?geler=${geler}`, {});
+  }
+
+  freezeWalletsBulk(walletTrackingIds: string[], geler: boolean): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/freeze-bulk`, {
+      walletTrackingIds,
+      geler
+    });
   }
 }

@@ -4,13 +4,48 @@
       <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Utilisateurs</h1>
       <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Gestion et supervision de tous les utilisateurs du réseau GNS.</p>
     </div>
-    <button (click)="openCreateModal()" class="inline-flex items-center justify-center px-4 py-2.5 text-sm font-bold text-white transition-all bg-indigo-600 border border-transparent rounded-xl shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-      <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-      </svg>
-      Ajouter un utilisateur
-    </button>
+    <div class="flex items-center gap-3">
+      <button (click)="freezeAllStudents(true)" [disabled]="isFreezeLoading" class="inline-flex items-center justify-center px-4 py-2.5 text-sm font-bold text-cyan-700 bg-cyan-50 border border-cyan-200 dark:bg-cyan-900/30 dark:text-cyan-400 dark:border-cyan-800 rounded-xl hover:bg-cyan-100 transition-all shadow-sm">
+        <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+        Geler Tous les Étudiants
+      </button>
+      
+      <button (click)="freezeAllStudents(false)" [disabled]="isFreezeLoading" class="inline-flex items-center justify-center px-4 py-2.5 text-sm font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800 rounded-xl hover:bg-emerald-100 transition-all shadow-sm">
+        <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+        </svg>
+        Dégeler Tous
+      </button>
+
+      <button (click)="openCreateModal()" class="inline-flex items-center justify-center px-4 py-2.5 text-sm font-bold text-white transition-all bg-indigo-600 border border-transparent rounded-xl shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        Ajouter un utilisateur
+      </button>
+    </div>
   </div>
+</div>
+
+<!-- Floating Action Bar for Bulk Selection -->
+<div *ngIf="selectedUserIds.size > 0" class="fixed bottom-6 right-6 z-50 bg-slate-900/90 dark:bg-indigo-950/90 backdrop-blur-md text-white px-6 py-4 rounded-2xl shadow-2xl border border-indigo-500/30 flex items-center gap-4 animate-fade-in-up">
+  <span class="text-sm font-bold bg-indigo-600 px-3 py-1 rounded-lg">{{ selectedUserIds.size }} sélectionné(s)</span>
+  
+  <button (click)="freezeSelectedUsers(true)" [disabled]="isFreezeLoading" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center">
+    <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+    </svg>
+    Geler la sélection
+  </button>
+  
+  <button (click)="freezeSelectedUsers(false)" [disabled]="isFreezeLoading" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center">
+    <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+    </svg>
+    Dégeler la sélection
+  </button>
 </div>
 
 <div class="glass-panel rounded-2xl overflow-hidden animate-fade-in-up border border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40">
@@ -70,6 +105,9 @@
     <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
       <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
         <tr>
+          <th scope="col" class="px-4 py-2 text-center w-10">
+            <input type="checkbox" [checked]="isAllSelected" (change)="toggleSelectAll()" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+          </th>
           <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest whitespace-nowrap">Utilisateur</th>
           <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Contact</th>
           <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Rôle</th>
@@ -80,13 +118,20 @@
       <tbody class="divide-y divide-slate-200/50 dark:divide-slate-700/50 bg-white/20 dark:bg-slate-900/20">
         <tr *ngFor="let u of filteredUsers" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group" [class.opacity-50]="!u.isActive">
           
+          <td class="px-4 py-3 text-center">
+            <input type="checkbox" [checked]="isUserSelected(u.trackingId)" (change)="toggleSelectUser(u.trackingId)" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+          </td>
+
           <td class="px-4 py-3 whitespace-nowrap">
             <div class="flex items-center">
               <div class="flex-shrink-0 h-10 w-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-black text-slate-500 dark:text-slate-400 uppercase">
                 {{ (u.firstName ? u.firstName.charAt(0) : '') + (u.lastName ? u.lastName.charAt(0) : '') || 'U' }}
               </div>
               <div class="ml-4">
-                <div class="text-sm font-bold text-slate-900 dark:text-white">{{ u.firstName }} {{ u.lastName }}</div>
+                <div class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  {{ u.firstName }} {{ u.lastName }}
+                  <span *ngIf="u.walletStatus === 'GELE'" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-100 text-cyan-700 border border-cyan-300">GELÉ</span>
+                </div>
                 <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">
                   Inscrit le: {{ u.registrationDate | date:'dd MMM yyyy' }}
                 </div>
@@ -133,6 +178,16 @@
               </svg>
               {{ u.kycStatus === 'VALIDE' ? 'Dossier Validé' : (u.kycStatus === 'REJETE' ? 'Dossier Rejeté' : 'Dossier En Attente') }}
             </div>
+            <button *ngIf="u.role === 'ETUDIANT' || u.role === 'COMMERCANT'" 
+                    (click)="freezeUser(u, u.walletStatus !== 'GELE')" 
+                    class="text-xs font-bold px-3 py-1.5 rounded-lg transition-colors inline-flex items-center mr-2 shadow-sm"
+                    [ngClass]="u.walletStatus === 'GELE' ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-cyan-50 hover:bg-cyan-100 text-cyan-700 border border-cyan-200'">
+              <svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="u.walletStatus === 'GELE' ? 'M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z' : 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z'" />
+              </svg>
+              {{ u.walletStatus === 'GELE' ? 'Dégeler Wallet' : 'Geler Wallet' }}
+            </button>
+
             <button (click)="viewDetails(u)" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 font-bold text-sm bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/50 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center mr-2">
               <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -304,50 +359,121 @@
 
 <!-- Modal Détails & Documents -->
 <div *ngIf="selectedUser" class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
-  <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
-    <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/30">
-      <h3 class="text-lg font-bold text-slate-900 dark:text-white">Documents de {{selectedUser.firstName}} {{selectedUser.lastName}}</h3>
-      <button (click)="closeDetails()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+  <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-6xl h-[85vh] flex flex-col overflow-hidden border border-slate-200 dark:border-slate-800">
+    
+    <!-- Modal Header -->
+    <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/30 shrink-0">
+      <div>
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          Documents de {{selectedUser.firstName}} {{selectedUser.lastName}}
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-400">
+            {{ selectedUser.role.replace('ADMIN_', '').replace('UNIVERSITY_ADMIN', 'UNIVERSITÉ') }}
+          </span>
+        </h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ selectedUser.email }}</p>
+      </div>
+      <button (click)="closeDetails()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
       </button>
     </div>
 
-    <div class="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
-      <div *ngIf="isLoadingDocs" class="text-center py-10 text-slate-500">Chargement des documents...</div>
+    <!-- Contenu Split-View -->
+    <div class="flex-1 flex overflow-hidden">
       
-      <div *ngIf="!isLoadingDocs && userDocuments.length === 0" class="text-center py-10 text-slate-500 font-bold">Aucun document uploader.</div>
+      <!-- Panneau de gauche: Liste des documents -->
+      <div class="w-1/3 border-r border-slate-100 dark:border-slate-800 overflow-y-auto bg-slate-50/30 dark:bg-slate-900 p-4 custom-scrollbar">
+        <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Documents Associés ({{userDocuments.length}})</h4>
+        
+        <div *ngIf="isLoadingDocs" class="flex flex-col items-center justify-center py-16 text-slate-500 gap-3">
+          <div class="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+          <span class="text-xs font-bold">Chargement des documents...</span>
+        </div>
+        
+        <div *ngIf="!isLoadingDocs && userDocuments.length === 0" class="text-center py-16 text-slate-400 text-sm font-medium">
+          <svg class="w-12 h-12 mx-auto mb-3 text-slate-300 dark:text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          Aucun document disponible pour cet utilisateur.
+        </div>
 
-      <div *ngIf="!isLoadingDocs && userDocuments.length > 0" class="grid grid-cols-2 gap-4">
-        <div *ngFor="let doc of userDocuments" class="border border-slate-200 dark:border-slate-700 rounded-xl p-3 flex flex-col items-center justify-between bg-white dark:bg-slate-800/50">
-            
-            <!-- PDF Document (e.g., MANDAT_BANCAIRE) -->
-            <ng-container *ngIf="doc.documentType === 'MANDAT_BANCAIRE' || doc.fileUrl.endsWith('.pdf')">
-                <div class="w-full h-24 bg-red-50/50 dark:bg-red-900/20 rounded-lg flex items-center justify-center mb-3">
-                    <svg class="w-10 h-10 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
+        <div *ngIf="!isLoadingDocs && userDocuments.length > 0" class="space-y-3">
+          <div *ngFor="let doc of userDocuments" 
+               (click)="selectDocument(doc)"
+               [class.ring-2]="selectedDocumentForPreview?.fileUrl === doc.fileUrl"
+               [class.ring-indigo-500]="selectedDocumentForPreview?.fileUrl === doc.fileUrl"
+               class="border border-slate-200 dark:border-slate-700 rounded-xl p-3 flex items-center bg-white dark:bg-slate-800 cursor-pointer hover:shadow-md transition-all">
+              
+              <!-- Icon -->
+              <div class="w-11 h-11 rounded-xl flex items-center justify-center mr-3 shrink-0"
+                   [ngClass]="doc.documentType === 'MANDAT_BANCAIRE' || doc.fileUrl.endsWith('.pdf') ? 'bg-red-50 text-red-500 dark:bg-red-900/30' : 'bg-indigo-50 text-indigo-500 dark:bg-indigo-900/30'">
+                  <svg *ngIf="doc.documentType === 'MANDAT_BANCAIRE' || doc.fileUrl.endsWith('.pdf')" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
+                  <svg *ngIf="doc.documentType !== 'MANDAT_BANCAIRE' && !doc.fileUrl.endsWith('.pdf')" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+              </div>
+              
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                  <p class="text-xs font-bold text-slate-900 dark:text-white truncate" [title]="doc.documentType">{{doc.documentType}}</p>
+                  <span *ngIf="doc.status === 'VALIDE'" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700">Validé</span>
+                  <span *ngIf="doc.status === 'REJETE'" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-700">Rejeté</span>
+                  <span *ngIf="!doc.status || doc.status === 'EN_ATTENTE'" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700">En attente</span>
                 </div>
-                <p class="text-xs font-bold text-center text-slate-700 dark:text-slate-300 truncate w-full mb-2" [title]="doc.documentType">{{doc.documentType}}</p>
-                <a [href]="doc.fileUrl" target="_blank" class="w-full text-center px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-xs font-bold text-slate-700 dark:text-slate-300 rounded-lg transition-colors">
-                    Télécharger
-                </a>
+                <p class="text-[11px] text-slate-400 truncate mt-0.5">{{ doc.uploadedAt | date:'dd MMM yyyy à HH:mm' }}</p>
+              </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panneau de droite: Aperçu du document -->
+      <div class="w-2/3 bg-slate-100 dark:bg-slate-950 flex flex-col p-4">
+        <div *ngIf="!selectedDocumentForPreview" class="flex-1 flex flex-col items-center justify-center text-slate-400">
+          <svg class="w-16 h-16 mb-4 stroke-slate-300 dark:stroke-slate-700" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          <p class="font-medium text-sm">Sélectionnez un document à prévisualiser</p>
+        </div>
+
+        <div *ngIf="selectedDocumentForPreview" class="flex-1 flex flex-col h-full overflow-hidden">
+          
+          <!-- Header de prévisualisation -->
+          <div class="bg-white dark:bg-slate-800 px-4 py-3 rounded-xl mb-4 border border-slate-200 dark:border-slate-700 flex justify-between items-center shadow-sm shrink-0">
+            <div>
+              <span class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider block">{{selectedDocumentForPreview.documentType}}</span>
+              <span class="text-[11px] text-slate-500 dark:text-slate-400">Fichier: {{selectedDocumentForPreview.fileUrl}}</span>
+            </div>
+            
+            <a [href]="selectedDocumentForPreview.fileUrl" target="_blank" class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg text-xs font-bold transition-colors inline-flex items-center">
+              <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              Ouvrir en grand
+            </a>
+          </div>
+
+          <!-- Zone de visualisation -->
+          <div class="flex-1 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-white dark:bg-slate-900 flex items-center justify-center shadow-inner relative">
+            
+            <!-- Visionneuse PDF -->
+            <ng-container *ngIf="sanitizedPdfUrl">
+              <iframe [src]="sanitizedPdfUrl" class="w-full h-full border-none"></iframe>
             </ng-container>
 
-            <!-- Image Document (e.g., PHOTO_IDENTITE, RIB) -->
-            <ng-container *ngIf="doc.documentType !== 'MANDAT_BANCAIRE' && !doc.fileUrl.endsWith('.pdf')">
-                <img [src]="doc.fileUrl" class="w-full h-24 object-cover rounded-lg mb-3 shadow-sm border border-slate-100 dark:border-slate-700">
-                <p class="text-xs font-bold text-center text-slate-700 dark:text-slate-300 truncate w-full mb-2" [title]="doc.documentType">{{doc.documentType}}</p>
-                <a [href]="doc.fileUrl" target="_blank" class="w-full text-center px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-xs font-bold text-slate-700 dark:text-slate-300 rounded-lg transition-colors mt-auto">
-                    Agrandir
-                </a>
+            <!-- Visionneuse Image -->
+            <ng-container *ngIf="!sanitizedPdfUrl">
+              <img [src]="selectedDocumentForPreview.fileUrl" class="max-h-full max-w-full object-contain p-4 rounded-lg shadow-sm">
             </ng-container>
-            
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-end bg-slate-50/50 dark:bg-slate-800/30">
-      <button (click)="closeDetails()" class="px-4 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-600 transition-all">
+    <!-- Footer Modal -->
+    <div class="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-end bg-slate-50/50 dark:bg-slate-800/30 shrink-0">
+      <button (click)="closeDetails()" class="px-5 py-2.5 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-600 transition-all shadow-sm">
         Fermer
       </button>
     </div>
+
   </div>
 </div>
+

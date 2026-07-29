@@ -1,6 +1,43 @@
-<div class="mb-8 animate-fade-in-up">
-  <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Inscriptions & Étudiants</h1>
-  <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Gestion des inscriptions pour l'année : {{ activeYear }}</p>
+<div class="mb-8 animate-fade-in-up flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+  <div>
+    <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Inscriptions & Étudiants</h1>
+    <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Gestion des inscriptions pour l'année : {{ activeYear }}</p>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <button (click)="freezeAllStudents(true)" [disabled]="isFreezeLoading" class="inline-flex items-center justify-center px-4 py-2.5 text-sm font-bold text-cyan-700 bg-cyan-50 border border-cyan-200 dark:bg-cyan-900/30 dark:text-cyan-400 dark:border-cyan-800 rounded-xl hover:bg-cyan-100 transition-all shadow-sm">
+      <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+      </svg>
+      Geler Tous les Étudiants
+    </button>
+    
+    <button (click)="freezeAllStudents(false)" [disabled]="isFreezeLoading" class="inline-flex items-center justify-center px-4 py-2.5 text-sm font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800 rounded-xl hover:bg-emerald-100 transition-all shadow-sm">
+      <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+      </svg>
+      Dégeler Tous
+    </button>
+  </div>
+</div>
+
+<!-- Floating Bulk Action Bar -->
+<div *ngIf="selectedInscriptionIds.size > 0" class="fixed bottom-6 right-6 z-50 bg-slate-900/90 dark:bg-indigo-950/90 backdrop-blur-md text-white px-6 py-4 rounded-2xl shadow-2xl border border-indigo-500/30 flex items-center gap-4 animate-fade-in-up">
+  <span class="text-sm font-bold bg-indigo-600 px-3 py-1 rounded-lg">{{ selectedInscriptionIds.size }} sélectionné(s)</span>
+  
+  <button (click)="freezeSelectedInscriptions(true)" [disabled]="isFreezeLoading" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center">
+    <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+    </svg>
+    Geler la sélection
+  </button>
+  
+  <button (click)="freezeSelectedInscriptions(false)" [disabled]="isFreezeLoading" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center">
+    <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+    </svg>
+    Dégeler la sélection
+  </button>
 </div>
 
 <div class="glass-panel rounded-2xl overflow-hidden animate-fade-in-up" style="animation-delay: 100ms;">
@@ -29,6 +66,9 @@
     <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
       <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
         <tr>
+          <th class="px-4 py-2 text-center w-10">
+            <input type="checkbox" [checked]="isAllSelected" (change)="toggleSelectAll()" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+          </th>
           <th class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Étudiant</th>
           <th class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Matricule</th>
           <th class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Niveau</th>
@@ -38,8 +78,12 @@
       </thead>
       <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
         <tr *ngFor="let ins of filteredInscriptions" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
-          <td class="px-4 py-3 whitespace-nowrap text-sm font-bold text-slate-900 dark:text-white">
+          <td class="px-4 py-3 text-center">
+            <input type="checkbox" [checked]="isInscriptionSelected(ins.trackingId)" (change)="toggleSelectInscription(ins.trackingId)" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+          </td>
+          <td class="px-4 py-3 whitespace-nowrap text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
             {{ins.studentFirstName}} {{ins.studentLastName}}
+            <span *ngIf="ins.walletStatus === 'GELE'" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-100 text-cyan-700 border border-cyan-300">GELÉ</span>
           </td>
           <td class="px-4 py-3 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
             {{ins.studentIdNumber || 'N/A'}}
@@ -58,7 +102,16 @@
               REJETÉE
             </span>
           </td>
-          <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
+          <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium space-x-2">
+            <button (click)="freezeInscriptionWallet(ins, ins.walletStatus !== 'GELE')" 
+                    class="text-xs font-bold px-3 py-1.5 rounded-lg transition-colors inline-flex items-center shadow-sm"
+                    [ngClass]="ins.walletStatus === 'GELE' ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-cyan-50 hover:bg-cyan-100 text-cyan-700 border border-cyan-200'">
+              <svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="ins.walletStatus === 'GELE' ? 'M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z' : 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z'" />
+              </svg>
+              {{ ins.walletStatus === 'GELE' ? 'Dégeler Wallet' : 'Geler Wallet' }}
+            </button>
+
             <button (click)="viewDetails(ins)" class="inline-flex items-center px-4 py-2 border border-slate-200 dark:border-slate-700 text-xs font-bold rounded-lg text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">
               Détails & Documents
             </button>
@@ -110,7 +163,12 @@
               </div>
               
               <div class="flex-1 min-w-0">
-                <p class="text-sm font-bold text-slate-900 dark:text-white truncate" [title]="doc.documentType">{{doc.documentType}}</p>
+                <div class="flex items-center justify-between">
+                  <p class="text-sm font-bold text-slate-900 dark:text-white truncate" [title]="doc.documentType">{{doc.documentType}}</p>
+                  <span *ngIf="doc.status === 'VALIDE'" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700">Validé</span>
+                  <span *ngIf="doc.status === 'REJETE'" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-700">Rejeté</span>
+                  <span *ngIf="!doc.status || doc.status === 'EN_ATTENTE'" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700">En attente</span>
+                </div>
                 <p class="text-xs text-slate-500 truncate">{{doc.uploadedAt | date:'mediumDate'}}</p>
               </div>
           </div>
@@ -128,11 +186,37 @@
           
           <!-- Header for preview -->
           <div class="px-4 py-3 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/80">
-            <h4 class="font-bold text-slate-700 dark:text-slate-200">{{selectedDocumentForPreview.documentType}}</h4>
-            <a [href]="selectedDocumentForPreview.fileUrl" target="_blank" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 flex items-center bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1.5 rounded-lg transition-colors">
-              <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-              Ouvrir dans un nouvel onglet
-            </a>
+            <div class="flex items-center space-x-3">
+              <h4 class="font-bold text-slate-700 dark:text-slate-200">{{selectedDocumentForPreview.documentType}}</h4>
+              <span *ngIf="selectedDocumentForPreview.status === 'VALIDE'" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700">Validé</span>
+              <span *ngIf="selectedDocumentForPreview.status === 'REJETE'" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-700" [title]="selectedDocumentForPreview.rejectionReason || ''">Rejeté</span>
+              <span *ngIf="!selectedDocumentForPreview.status || selectedDocumentForPreview.status === 'EN_ATTENTE'" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700">En attente</span>
+            </div>
+
+            <div class="flex items-center space-x-2">
+              <button 
+                *ngIf="selectedDocumentForPreview.status !== 'VALIDE'" 
+                (click)="updateSingleDocStatus('VALIDE')"
+                [disabled]="isDocActionLoading"
+                class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition-colors flex items-center shadow-sm">
+                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                Valider
+              </button>
+              
+              <button 
+                *ngIf="selectedDocumentForPreview.status !== 'REJETE'" 
+                (click)="updateSingleDocStatus('REJETE')"
+                [disabled]="isDocActionLoading"
+                class="px-3 py-1 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg transition-colors flex items-center shadow-sm">
+                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                Rejeter
+              </button>
+
+              <a [href]="selectedDocumentForPreview.fileUrl" target="_blank" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 flex items-center bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1.5 rounded-lg transition-colors">
+                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                Ouvrir
+              </a>
+            </div>
           </div>
 
           <!-- Document Content -->
@@ -204,6 +288,45 @@
         (click)="confirmReject()"
         [disabled]="!rejectionReasonInput.trim()"
         class="px-4 py-2 rounded-xl text-sm font-bold text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 transition-colors shadow-lg shadow-red-600/20">
+        Confirmer le rejet
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Reject Modal for Individual Documents -->
+<div *ngIf="showDocRejectModal" class="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+  <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md p-6 border border-slate-200 dark:border-slate-800">
+    <div class="flex items-center space-x-3 mb-4">
+      <div class="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center shrink-0">
+        <svg class="w-5 h-5 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+        </svg>
+      </div>
+      <h3 class="text-lg font-bold text-slate-900 dark:text-white">Rejeter le document</h3>
+    </div>
+    
+    <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
+      Veuillez expliquer pourquoi le document <strong>{{selectedDocumentForPreview?.documentType}}</strong> est rejeté.
+    </p>
+
+    <textarea 
+      [(ngModel)]="docRejectionReasonInput" 
+      rows="3"
+      placeholder="Motif du rejet (ex: Image illisible, RIB au mauvais nom...)"
+      class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all text-sm mb-6 resize-none">
+    </textarea>
+
+    <div class="flex justify-end space-x-3">
+      <button 
+        (click)="closeDocRejectModal()"
+        class="px-4 py-2 rounded-xl text-sm font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+        Annuler
+      </button>
+      <button 
+        (click)="confirmDocReject()"
+        [disabled]="!docRejectionReasonInput.trim()"
+        class="px-4 py-2 rounded-xl text-sm font-bold text-white bg-rose-600 hover:bg-rose-700 disabled:opacity-50 transition-colors shadow-lg shadow-rose-600/20">
         Confirmer le rejet
       </button>
     </div>

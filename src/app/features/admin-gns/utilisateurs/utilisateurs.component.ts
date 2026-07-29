@@ -1,16 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { UserService } from '../../../core/services/user.service';
 import { UniversiteService } from '../../../core/services/universite.service';
 import { BanqueService } from '../../../core/services/banque.service';
 import { StudentService } from '../../../core/services/student.service';
-import { DocumentService } from '../../../core/services/document.service'; 
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { DocumentService } from '../../../core/services/document.service';
+import { DocumentEtudiantService } from '../../../core/services/document-etudiant.service';
+import { DocumentMerchantService } from '../../../core/services/document-merchant.service';
+import { WalletService } from '../../../core/services/wallet.service';
 import { Page } from '../../../core/models/page.model';
 import { UserResponse } from '../../../core/models/user.model';
-import { DocumentResponse } from '../../../core/models/document.model'; 
+import { DocumentResponse } from '../../../core/models/document.model';
 
 @Component({
   selector: 'app-utilisateurs',
@@ -31,6 +35,11 @@ export class UtilisateursComponent implements OnInit {
     if (this.filterRole === 'ALL') return this.users;
     return this.users.filter(u => u.role === this.filterRole);
   }
+
+  // Selection state
+  selectedUserIds: Set<string> = new Set<string>();
+  isAllSelected = false;
+  isFreezeLoading = false;
 
   // Pagination
   currentPage = 0;
@@ -59,6 +68,8 @@ export class UtilisateursComponent implements OnInit {
   userDocuments: DocumentResponse[] = [];
   isLoadingDocs = false;
   hasMandatoryDocs = false;
+  selectedDocumentForPreview: any = null;
+  sanitizedPdfUrl: SafeResourceUrl | null = null;
   
   universites: any[] = [];
   banques: any[] = [];
@@ -68,7 +79,11 @@ export class UtilisateursComponent implements OnInit {
     private universiteService: UniversiteService,
     private banqueService: BanqueService,
     private studentService: StudentService,
-    private documentService: DocumentService
+    private documentService: DocumentService,
+    private documentEtudiantService: DocumentEtudiantService,
+    private documentMerchantService: DocumentMerchantService,
+    private walletService: WalletService,
+    private sanitizer: DomSanitizer
   ) {
     this.searchSubject.pipe(
       debounceTime(300),
@@ -251,74 +266,201 @@ export class UtilisateursComponent implements OnInit {
     }
   }
 
+  selectDocument(doc: any) {
+    this.selectedDocumentForPreview = doc;
+    if (doc && doc.fileUrl && (doc.documentType === 'MANDAT_BANCAIRE' || doc.fileUrl.endsWith('.pdf'))) {
+      this.sanitizedPdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(doc.fileUrl);
+    } else {
+      this.sanitizedPdfUrl = null;
+    }
+  }
+
   viewDetails(user: UserResponse) {
-    
     this.selectedUser = user;
     this.userDocuments = [];
+    this.selectedDocumentForPreview = null;
+    this.sanitizedPdfUrl = null;
     this.isLoadingDocs = true;
     this.hasMandatoryDocs = false;
-    
-    this.documentService.getDocumentsByOwner(user.trackingId).subscribe({
-      next: (res: DocumentResponse[]) => { 
-        this.userDocuments = res || [];
-        
-        // Also fetch CompteBancaire (RIB)
-        let ownerId = user.trackingId;
-        // Si c'est un commerçant, l'ID du compte bancaire est peut-être lié à sa boutique
-        // mais pour l'instant essayons avec son propre ID, ou ajoutons-le si trouvé
-        this.banqueService.getCompteBancaireByOwner(ownerId).subscribe({
-          next: (compte) => {
-             if (compte && compte.ribUrl) {
-                this.userDocuments.push({
-                   trackingId: compte.trackingId,
-                   documentType: 'RIB_COMPTE_BANCAIRE',
-                   fileUrl: compte.ribUrl,
-                   ownerTrackingId: ownerId,
-                   createdAt: new Date().toISOString()
-                } as any);
-             }
-             this.hasMandatoryDocs = this.userDocuments.some(doc => doc.documentType === 'MANDAT_BANCAIRE' || doc.documentType === 'RIB' || doc.documentType === 'MANDAT' || doc.documentType === 'RIB_COMPTE_BANCAIRE');
-             this.isLoadingDocs = false;
-          },
-          error: () => {
-             this.hasMandatoryDocs = this.userDocuments.some(doc => doc.documentType === 'MANDAT_BANCAIRE' || doc.documentType === 'RIB' || doc.documentType === 'MANDAT');
-             this.isLoadingDocs = false;
-          }
-        });
-      },
-      error: (err: any) => { 
-        console.error('Erreur lors du chargement des documents', err);
-        this.userDocuments = [];
-        this.hasMandatoryDocs = false;
-        
-        // Try fetching only CompteBancaire if DocumentEtudiant fails
-        let ownerId = user.trackingId;
-        this.banqueService.getCompteBancaireByOwner(ownerId).subscribe({
-          next: (compte) => {
-             if (compte && compte.ribUrl) {
-                this.userDocuments.push({
-                   trackingId: compte.trackingId,
-                   documentType: 'RIB_COMPTE_BANCAIRE',
-                   fileUrl: compte.ribUrl,
-                   ownerTrackingId: ownerId,
-                   createdAt: new Date().toISOString()
-                } as any);
-                this.hasMandatoryDocs = true;
-             }
-             this.isLoadingDocs = false;
-             this.errorMessage = "";
-          },
-          error: () => {
-             this.isLoadingDocs = false;
-             this.errorMessage = "Impossible de charger les documents.";
+
+    const docMap = new Map<string, any>();
+
+    const addDocs = (docs: any[]) => {
+      if (Array.isArray(docs)) {
+        docs.forEach(doc => {
+          if (doc && doc.fileUrl && !docMap.has(doc.fileUrl)) {
+            docMap.set(doc.fileUrl, doc);
           }
         });
       }
+    };
+
+    // 1. Generic owner documents
+    this.documentService.getDocumentsByOwner(user.trackingId).subscribe({
+      next: (res: any) => addDocs(res),
+      error: () => {},
+      complete: () => this.finalizeDocumentLoading(user, docMap)
     });
+  }
+
+  private finalizeDocumentLoading(user: UserResponse, docMap: Map<string, any>) {
+    let pendingCalls = 0;
+
+    const checkComplete = () => {
+      pendingCalls--;
+      if (pendingCalls <= 0) {
+        this.userDocuments = Array.from(docMap.values());
+        this.hasMandatoryDocs = this.userDocuments.some(doc => doc.documentType === 'MANDAT_BANCAIRE' || doc.documentType === 'RIB' || doc.documentType === 'MANDAT' || doc.documentType === 'RIB_COMPTE_BANCAIRE');
+        this.isLoadingDocs = false;
+        if (this.userDocuments.length > 0) {
+          this.selectDocument(this.userDocuments[0]);
+        }
+      }
+    };
+
+    // 2. Role-specific documents (Student)
+    if (user.role === 'ETUDIANT') {
+      pendingCalls++;
+      this.documentEtudiantService.findByStudentId(user.trackingId).subscribe({
+        next: (res: any) => {
+          if (Array.isArray(res)) res.forEach((d: any) => { if (d && d.fileUrl) docMap.set(d.fileUrl, d); });
+        },
+        error: () => {},
+        complete: () => checkComplete()
+      });
+    }
+
+    // 3. Role-specific documents (Merchant)
+    if (user.role === 'COMMERCANT') {
+      pendingCalls++;
+      this.documentMerchantService.findByMerchantId(user.trackingId).subscribe({
+        next: (res: any) => {
+          if (Array.isArray(res)) res.forEach((d: any) => { if (d && d.fileUrl) docMap.set(d.fileUrl, d); });
+        },
+        error: () => {},
+        complete: () => checkComplete()
+      });
+    }
+
+    // 4. RIB / Compte bancaire
+    pendingCalls++;
+    this.banqueService.getCompteBancaireByOwner(user.trackingId).subscribe({
+      next: (compte: any) => {
+        if (compte && compte.ribUrl && !docMap.has(compte.ribUrl)) {
+          docMap.set(compte.ribUrl, {
+            trackingId: compte.trackingId || 'RIB-' + user.trackingId,
+            documentType: 'RIB_COMPTE_BANCAIRE',
+            fileUrl: compte.ribUrl,
+            ownerTrackingId: user.trackingId,
+            status: 'VALIDE',
+            uploadedAt: new Date().toISOString()
+          });
+        }
+      },
+      error: () => {},
+      complete: () => checkComplete()
+    });
+
+    if (pendingCalls === 0) {
+      checkComplete();
+    }
   }
 
   closeDetails() {
     this.selectedUser = null;
     this.userDocuments = [];
+    this.selectedDocumentForPreview = null;
+    this.sanitizedPdfUrl = null;
+  }
+
+  toggleSelectAll() {
+    this.isAllSelected = !this.isAllSelected;
+    if (this.isAllSelected) {
+      this.filteredUsers.forEach(u => this.selectedUserIds.add(u.trackingId));
+    } else {
+      this.selectedUserIds.clear();
+    }
+  }
+
+  toggleSelectUser(userId: string) {
+    if (this.selectedUserIds.has(userId)) {
+      this.selectedUserIds.delete(userId);
+    } else {
+      this.selectedUserIds.add(userId);
+    }
+    this.isAllSelected = this.filteredUsers.length > 0 && this.selectedUserIds.size === this.filteredUsers.length;
+  }
+
+  isUserSelected(userId: string): boolean {
+    return this.selectedUserIds.has(userId);
+  }
+
+  getSelectedWalletIds(): string[] {
+    return this.filteredUsers
+      .filter(u => this.selectedUserIds.has(u.trackingId) && (u as any).walletTrackingId)
+      .map(u => (u as any).walletTrackingId);
+  }
+
+  freezeUser(user: any, geler: boolean) {
+    if (!user.walletTrackingId) {
+      alert("Cet utilisateur n'a pas de portefeuille associé.");
+      return;
+    }
+    const actionName = geler ? "geler" : "dégeler";
+    if (!confirm(`Voulez-vous vraiment ${actionName} le portefeuille de ${user.firstName} ${user.lastName} ?`)) return;
+
+    this.isFreezeLoading = true;
+    this.walletService.freezeWallet(user.walletTrackingId, geler).subscribe({
+      next: () => {
+        this.isFreezeLoading = false;
+        user.walletStatus = geler ? 'GELE' : 'ACTIF';
+        this.loadUsers();
+      },
+      error: (err) => {
+        this.isFreezeLoading = false;
+        alert(`Erreur lors de l'opération de ${actionName} du compte.`);
+      }
+    });
+  }
+
+  freezeSelectedUsers(geler: boolean) {
+    const walletIds = this.getSelectedWalletIds();
+    if (walletIds.length === 0) {
+      alert("Aucun portefeuille valide trouvé dans la sélection.");
+      return;
+    }
+    const actionName = geler ? "geler" : "dégeler";
+    if (!confirm(`Voulez-vous vraiment ${actionName} les portefeuilles des ${walletIds.length} utilisateurs sélectionnés ?`)) return;
+
+    this.isFreezeLoading = true;
+    this.walletService.freezeWalletsBulk(walletIds, geler).subscribe({
+      next: () => {
+        this.isFreezeLoading = false;
+        this.selectedUserIds.clear();
+        this.isAllSelected = false;
+        this.loadUsers();
+      },
+      error: (err) => {
+        this.isFreezeLoading = false;
+        alert(`Erreur lors du ${actionName} en masse des comptes.`);
+      }
+    });
+  }
+
+  freezeAllStudents(geler: boolean) {
+    const actionName = geler ? "geler TOUS les" : "dégeler TOUS les";
+    if (!confirm(`ATTENTION: Voulez-vous vraiment ${actionName} portefeuilles étudiants du système ?`)) return;
+
+    this.isFreezeLoading = true;
+    this.walletService.gelerTousLesWallets(geler).subscribe({
+      next: () => {
+        this.isFreezeLoading = false;
+        this.loadUsers();
+      },
+      error: (err) => {
+        this.isFreezeLoading = false;
+        alert(`Erreur lors du ${actionName} portefeuilles étudiants.`);
+      }
+    });
   }
 }

@@ -51,7 +51,7 @@ export class ParametresGnsComponent implements OnInit {
   docToDeleteId: string | null = null;
 
   niveaux = ['L1_ANNEE', 'L2_ANNEE', 'L3_ANNEE', 'L4_ANNEE', 'L5_ANNEE'];
-  typesDocument = ['RELEVE_BAC', 'SOUCHE_TAMPONNEE', 'RELEVE_NOTES', 'FICHE_UE', 'PIECE_IDENTITE', 'RIB', 'MANDAT'];
+  typesDocument = ['PIECE_IDENTITE', 'RIB', 'MANDAT'];
 
   // Scolarite Year
   activeYear: ScolariteYear | null = null;
@@ -91,7 +91,7 @@ export class ParametresGnsComponent implements OnInit {
     this.docCreateForm = this.fb.group({
       niveau: ['L1_ANNEE', Validators.required],
       targetType: ['STUDENT', Validators.required],
-      typeDocument: ['RELEVE_BAC', Validators.required],
+      typeDocument: ['PIECE_IDENTITE', Validators.required],
       obligatoire: [true],
       estActif: [true],
       description: ['']

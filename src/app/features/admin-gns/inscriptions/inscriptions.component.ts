@@ -7,6 +7,8 @@ import { DocumentEtudiantService } from '../../../core/services/document-etudian
 import { ScolariteYearService } from '../../../core/services/scolarite-year.service';
 import { FormsModule } from '@angular/forms';
 
+import { WalletService } from '../../../core/services/wallet.service';
+
 @Component({
   selector: 'app-inscriptions',
   standalone: true,
@@ -24,6 +26,11 @@ export class InscriptionsComponent implements OnInit {
   filterKyc: string = 'ALL';
   activeYear: string | null = null;
 
+  // Selection state
+  selectedInscriptionIds: Set<string> = new Set<string>();
+  isAllSelected = false;
+  isFreezeLoading = false;
+
   selectedInscription: any | null = null;
   studentDocuments: any[] = [];
   isLoadingDocs = false;
@@ -40,7 +47,8 @@ export class InscriptionsComponent implements OnInit {
     private studentService: StudentService,
     private documentEtudiantService: DocumentEtudiantService,
     private scolariteYearService: ScolariteYearService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private walletService: WalletService
   ) {}
 
   ngOnInit(): void {
@@ -133,6 +141,52 @@ export class InscriptionsComponent implements OnInit {
     }
   }
 
+  // Document-level action state
+  showDocRejectModal = false;
+  docRejectionReasonInput = '';
+  isDocActionLoading = false;
+
+  openDocRejectModal() {
+    this.docRejectionReasonInput = '';
+    this.showDocRejectModal = true;
+  }
+
+  closeDocRejectModal() {
+    this.showDocRejectModal = false;
+    this.docRejectionReasonInput = '';
+  }
+
+  confirmDocReject() {
+    if (!this.docRejectionReasonInput.trim()) return;
+    this.showDocRejectModal = false;
+    this.updateSingleDocStatus('REJETE', this.docRejectionReasonInput.trim());
+  }
+
+  updateSingleDocStatus(status: 'VALIDE' | 'REJETE', rejectionReason?: string) {
+    if (!this.selectedDocumentForPreview) return;
+    if (status === 'REJETE' && !rejectionReason) {
+      this.openDocRejectModal();
+      return;
+    }
+
+    this.isDocActionLoading = true;
+    const docId = this.selectedDocumentForPreview.trackingId;
+
+    this.documentEtudiantService.updateDocumentStatus(docId, status, rejectionReason).subscribe({
+      next: (res) => {
+        this.isDocActionLoading = false;
+        if (this.selectedDocumentForPreview) {
+          this.selectedDocumentForPreview.status = status;
+          this.selectedDocumentForPreview.rejectionReason = rejectionReason;
+        }
+      },
+      error: (err) => {
+        this.isDocActionLoading = false;
+        console.error("Erreur lors de la mise à jour du statut du document", err);
+      }
+    });
+  }
+
   openRejectModal() {
     this.rejectionReasonInput = '';
     this.showRejectModal = true;
@@ -192,5 +246,97 @@ export class InscriptionsComponent implements OnInit {
   closeDetails() {
     this.selectedInscription = null;
     this.studentDocuments = [];
+    this.selectedDocumentForPreview = null;
+  }
+
+  toggleSelectAll() {
+    this.isAllSelected = !this.isAllSelected;
+    if (this.isAllSelected) {
+      this.filteredInscriptions.forEach(i => this.selectedInscriptionIds.add(i.trackingId));
+    } else {
+      this.selectedInscriptionIds.clear();
+    }
+  }
+
+  toggleSelectInscription(id: string) {
+    if (this.selectedInscriptionIds.has(id)) {
+      this.selectedInscriptionIds.delete(id);
+    } else {
+      this.selectedInscriptionIds.add(id);
+    }
+    this.isAllSelected = this.filteredInscriptions.length > 0 && this.selectedInscriptionIds.size === this.filteredInscriptions.length;
+  }
+
+  isInscriptionSelected(id: string): boolean {
+    return this.selectedInscriptionIds.has(id);
+  }
+
+  getSelectedWalletIds(): string[] {
+    return this.filteredInscriptions
+      .filter(i => this.selectedInscriptionIds.has(i.trackingId) && i.walletTrackingId)
+      .map(i => i.walletTrackingId);
+  }
+
+  freezeInscriptionWallet(ins: any, geler: boolean) {
+    if (!ins.walletTrackingId) {
+      alert("Cet étudiant n'a pas de portefeuille associé.");
+      return;
+    }
+    const actionName = geler ? "geler" : "dégeler";
+    if (!confirm(`Voulez-vous vraiment ${actionName} le portefeuille de l'étudiant ?`)) return;
+
+    this.isFreezeLoading = true;
+    this.walletService.freezeWallet(ins.walletTrackingId, geler).subscribe({
+      next: () => {
+        this.isFreezeLoading = false;
+        ins.walletStatus = geler ? 'GELE' : 'ACTIF';
+        this.loadInscriptions();
+      },
+      error: (err) => {
+        this.isFreezeLoading = false;
+        alert(`Erreur lors de l'opération de ${actionName} du compte.`);
+      }
+    });
+  }
+
+  freezeSelectedInscriptions(geler: boolean) {
+    const walletIds = this.getSelectedWalletIds();
+    if (walletIds.length === 0) {
+      alert("Aucun portefeuille valide trouvé dans la sélection.");
+      return;
+    }
+    const actionName = geler ? "geler" : "dégeler";
+    if (!confirm(`Voulez-vous vraiment ${actionName} les portefeuilles des ${walletIds.length} étudiants sélectionnés ?`)) return;
+
+    this.isFreezeLoading = true;
+    this.walletService.freezeWalletsBulk(walletIds, geler).subscribe({
+      next: () => {
+        this.isFreezeLoading = false;
+        this.selectedInscriptionIds.clear();
+        this.isAllSelected = false;
+        this.loadInscriptions();
+      },
+      error: (err) => {
+        this.isFreezeLoading = false;
+        alert(`Erreur lors du ${actionName} en masse des comptes.`);
+      }
+    });
+  }
+
+  freezeAllStudents(geler: boolean) {
+    const actionName = geler ? "geler TOUS les" : "dégeler TOUS les";
+    if (!confirm(`ATTENTION: Voulez-vous vraiment ${actionName} portefeuilles étudiants du système ?`)) return;
+
+    this.isFreezeLoading = true;
+    this.walletService.gelerTousLesWallets(geler).subscribe({
+      next: () => {
+        this.isFreezeLoading = false;
+        this.loadInscriptions();
+      },
+      error: (err) => {
+        this.isFreezeLoading = false;
+        alert(`Erreur lors du ${actionName} portefeuilles étudiants.`);
+      }
+    });
   }
 }
