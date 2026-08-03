@@ -56,8 +56,9 @@
           </td>
           <td class="px-4 py-3 whitespace-nowrap text-sm font-bold text-indigo-600 dark:text-indigo-400">{{ card.trackingId | slice:0:8 }}...</td>
           <td class="px-4 py-3 whitespace-nowrap">
-            <div class="text-sm font-bold text-slate-900 dark:text-white">{{ card.studentNom }} {{ card.studentPrenom }}</div>
-            <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">{{ card.trackingId }}</div>
+            <div class="text-sm font-bold text-slate-900 dark:text-white">
+              {{ (card.studentPrenom || card.studentNom) ? (card.studentPrenom + ' ' + card.studentNom) : 'Étudiant Non Renseigné' }}
+            </div>
           </td>
           <td class="px-4 py-3 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400 font-medium">{{ card.dateExpiration | date:'dd/MM/yyyy' }}</td>
           <td class="px-4 py-3 whitespace-nowrap">

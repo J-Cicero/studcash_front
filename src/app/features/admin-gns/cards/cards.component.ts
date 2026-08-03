@@ -73,11 +73,12 @@ export class CardsComponent implements OnInit {
 
   updateCardStatus(trackingId: string, nouveauStatut: string): void {
     if(confirm(`Voulez-vous vraiment changer le statut de cette carte en ${nouveauStatut} ?`)) {
-      this.cardService.update(trackingId, { statutCarte: nouveauStatut }).subscribe({
+      this.cardService.update(trackingId, { status: nouveauStatut, statutCarte: nouveauStatut }).subscribe({
         next: () => {
           this.loadCards();
         },
-        error: () => {
+        error: (err) => {
+          console.error('Update error:', err);
           alert("Erreur lors de la mise à jour du statut.");
         }
       });
@@ -85,78 +86,110 @@ export class CardsComponent implements OnInit {
   }
 
   printCard(card: any): void {
-    const printWindow = window.open('', '_blank', 'width=600,height=400');
+    const printWindow = window.open('', '_blank', 'width=650,height=450');
     if (!printWindow) {
       alert("Veuillez autoriser les popups pour pouvoir imprimer la carte.");
       return;
     }
 
-    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(card.qrCodeData)}`;
-    
+    const qrData = card.qrCodeData || card.trackingId;
+    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrData)}`;
+    const studentFullName = (card.studentPrenom || card.studentNom) 
+      ? `${card.studentPrenom || ''} ${card.studentNom || ''}`.trim() 
+      : 'Étudiant GNS';
+
     printWindow.document.write(`
+      <!DOCTYPE html>
       <html>
         <head>
-          <title>Impression Carte - ${card.studentNom} ${card.studentPrenom}</title>
+          <title>Carte Étudiante GNS - ${studentFullName}</title>
           <style>
+            @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap');
             body {
-              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              font-family: 'Plus Jakarta Sans', sans-serif;
               display: flex;
               justify-content: center;
               align-items: center;
               height: 100vh;
               margin: 0;
-              background-color: #f1f5f9;
+              background-color: #0f172a;
+            }
+            .card-wrapper {
+              perspective: 1000px;
             }
             .card {
-              width: 337px; /* 85.6mm */
-              height: 212px; /* 53.98mm */
-              background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-              border-radius: 12px;
-              padding: 16px;
+              width: 380px;
+              height: 240px;
+              background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4338ca 100%);
+              border-radius: 16px;
+              padding: 20px;
               box-sizing: border-box;
               color: white;
               display: flex;
               flex-direction: column;
               justify-content: space-between;
-              box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+              box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
               position: relative;
               overflow: hidden;
             }
             .card::before {
               content: '';
               position: absolute;
-              top: -50px;
-              right: -50px;
-              width: 150px;
-              height: 150px;
-              background: rgba(99, 102, 241, 0.15);
+              top: -80px;
+              right: -80px;
+              width: 220px;
+              height: 220px;
+              background: radial-gradient(circle, rgba(129, 140, 248, 0.25) 0%, rgba(99, 102, 241, 0) 70%);
               border-radius: 50%;
-              filter: blur(20px);
+            }
+            .chip {
+              width: 40px;
+              height: 30px;
+              background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+              border-radius: 6px;
+              position: relative;
+              overflow: hidden;
+            }
+            .chip::after {
+              content: '';
+              position: absolute;
+              inset: 3px;
+              border: 1px solid rgba(0,0,0,0.2);
+              border-radius: 3px;
             }
             .header {
               display: flex;
               justify-content: space-between;
-              align-items: flex-start;
+              align-items: center;
             }
-            .logo {
-              font-size: 10px;
+            .brand {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+            }
+            .logo-text {
+              font-size: 14px;
               font-weight: 800;
-              letter-spacing: 2px;
-              text-transform: uppercase;
-              color: #94a3b8;
+              letter-spacing: 1.5px;
+              background: linear-gradient(to right, #ffffff, #a5b4fc);
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
             }
-            .card-title {
-              font-size: 11px;
-              font-weight: 500;
-              color: #cbd5e1;
-              margin-top: 2px;
+            .sub-title {
+              font-size: 8px;
+              font-weight: 700;
+              color: #818cf8;
+              letter-spacing: 1px;
+              text-transform: uppercase;
             }
             .card-number {
-              font-family: 'Courier New', Courier, monospace;
-              font-size: 16px;
+              font-family: 'Courier New', monospace;
+              font-size: 17px;
+              font-weight: 700;
               letter-spacing: 3px;
-              color: #f8fafc;
-              margin: 12px 0;
+              color: #ffffff;
+              text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+              margin: 10px 0;
             }
             .footer {
               display: flex;
@@ -165,28 +198,32 @@ export class CardsComponent implements OnInit {
             }
             .info-label {
               font-size: 7px;
+              font-weight: 700;
               text-transform: uppercase;
               color: #94a3b8;
               letter-spacing: 1px;
+              margin-bottom: 2px;
             }
             .info-value {
-              font-size: 11px;
+              font-size: 12px;
               font-weight: 700;
-              color: #f8fafc;
+              color: #ffffff;
+              text-transform: uppercase;
             }
             .qr-container {
               position: absolute;
-              right: 16px;
+              right: 20px;
               top: 50%;
-              transform: translateY(-50%);
-              background: white;
-              padding: 4px;
-              border-radius: 6px;
-              display: flex;
+              transform: translateY(-40%);
+              background: #ffffff;
+              padding: 6px;
+              border-radius: 10px;
+              box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
             }
             .qr-container img {
-              width: 65px;
-              height: 65px;
+              width: 75px;
+              height: 75px;
+              display: block;
             }
             @media print {
               body {
@@ -200,29 +237,34 @@ export class CardsComponent implements OnInit {
             }
           </style>
         </head>
-        <body onload="window.print(); window.close();">
-          <div class="card">
-            <div class="header">
-              <div>
-                <div class="logo">Global Network System</div>
-                <div class="card-title">CARTE ÉTUDIANTE</div>
+        <body onload="setTimeout(function(){ window.print(); window.close(); }, 500);">
+          <div class="card-wrapper">
+            <div class="card">
+              <div class="header">
+                <div class="brand">
+                  <div class="chip"></div>
+                  <div>
+                    <div class="logo-text">studCASH</div>
+                    <div class="sub-title">Carte Étudiante GNS</div>
+                  </div>
+                </div>
               </div>
-            </div>
-            
-            <div class="card-number">${card.cardNumber}</div>
-            
-            <div class="qr-container">
-              <img src="${qrCodeUrl}" alt="QR Code">
-            </div>
-            
-            <div class="footer">
-              <div>
-                <div class="info-label">Titulaire</div>
-                <div class="info-value">${card.studentPrenom} ${card.studentNom}</div>
+              
+              <div class="card-number">${card.cardNumber || 'STC-CARD'}</div>
+              
+              <div class="qr-container">
+                <img src="${qrCodeUrl}" alt="QR Code">
               </div>
-              <div style="text-align: right; margin-right: 80px;">
-                <div class="info-label">Expire fin</div>
-                <div class="info-value">${new Date(card.dateExpiration).toLocaleDateString('fr-FR', {month: '2-digit', year: 'numeric'})}</div>
+              
+              <div class="footer">
+                <div>
+                  <div class="info-label">Titulaire</div>
+                  <div class="info-value">${studentFullName}</div>
+                </div>
+                <div style="margin-right: 95px;">
+                  <div class="info-label">Expire Fin</div>
+                  <div class="info-value">${card.dateExpiration ? new Date(card.dateExpiration).toLocaleDateString('fr-FR', {month: '2-digit', year: 'numeric'}) : '12/2028'}</div>
+                </div>
               </div>
             </div>
           </div>
