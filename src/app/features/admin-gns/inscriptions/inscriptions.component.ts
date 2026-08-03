@@ -8,6 +8,7 @@ import { ScolariteYearService } from '../../../core/services/scolarite-year.serv
 import { FormsModule } from '@angular/forms';
 
 import { WalletService } from '../../../core/services/wallet.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-inscriptions',
@@ -42,16 +43,20 @@ export class InscriptionsComponent implements OnInit {
   showRejectModal = false;
   rejectionReasonInput = '';
 
+  canValidate = false;
+
   constructor(
     private inscriptionService: InscriptionAnnuelleService,
     private studentService: StudentService,
     private documentEtudiantService: DocumentEtudiantService,
     private scolariteYearService: ScolariteYearService,
     private sanitizer: DomSanitizer,
-    private walletService: WalletService
+    private walletService: WalletService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.canValidate = this.authService.hasRole('ADMIN_BANQUE');
     this.loadActiveYear();
   }
 

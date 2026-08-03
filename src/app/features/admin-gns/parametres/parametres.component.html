@@ -1,7 +1,6 @@
 <div class="mb-10 animate-fade-in-up">
   <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Paramètres du Système</h1>
-  <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Gérez la configuration globale GNS, les années
-    scolaires et les documents (KYC).</p>
+  <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Gérez la configuration globale GNS et les années scolaires.</p>
 </div>
 
 <!-- Profile Header -->
@@ -48,11 +47,7 @@
       class="whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm transition-colors">
       Banques
     </button>
-    <button (click)="setTab('kyc')"
-      [class]="activeTab === 'kyc' ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:hover:text-slate-300'"
-      class="whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm transition-colors">
-      Documents Requis
-    </button>
+
   </nav>
 </div>
 
@@ -530,196 +525,6 @@
 
 
 
-<!-- TAB KYC DOCUMENTS -->
-<div *ngIf="activeTab === 'kyc'" class="animate-fade-in-up" style="animation-delay: 200ms;">
-  <div class="glass-panel rounded-2xl overflow-hidden">
-    <div
-      class="px-6 py-5 border-b border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40 flex justify-between items-center">
-      <h3 class="text-lg font-bold text-slate-900 dark:text-white">Documents Requis (KYC)</h3>
-      <div class="flex space-x-3">
-        <button (click)="loadDocumentsRequis()"
-          class="px-4 py-2 text-sm font-bold text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 rounded-xl transition-colors">Rafraîchir</button>
-        <button (click)="openDocModal()"
-          class="px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 rounded-xl shadow-lg shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
-          + Nouvelle Exigence
-        </button>
-      </div>
-    </div>
-
-    <div *ngIf="isLoadingDocs" class="flex justify-center items-center py-12">
-      <div class="relative w-10 h-10">
-        <div class="absolute inset-0 rounded-full border-4 border-indigo-100 dark:border-slate-800"></div>
-        <div
-          class="absolute inset-0 rounded-full border-4 border-indigo-600 dark:border-indigo-400 border-t-transparent animate-spin">
-        </div>
-      </div>
-    </div>
-
-    <div *ngIf="!isLoadingDocs" class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
-        <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
-          <tr>
-            <th scope="col"
-              class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
-              Niveau</th>
-            <th scope="col"
-              class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
-              Document</th>
-            <th scope="col"
-              class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
-              Obligatoire</th>
-            <th scope="col"
-              class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
-              Description</th>
-            <th scope="col"
-              class="px-4 py-2 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
-              Action</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
-          <tr *ngFor="let doc of documentsRequis"
-            class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
-            <td class="px-4 py-3 whitespace-nowrap">
-              <span
-                class="px-3 py-1 inline-flex text-sm font-bold rounded-full bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300">
-                {{ doc.studentNiveau }}
-              </span>
-            </td>
-            <td class="px-4 py-3 whitespace-nowrap">
-              <div class="text-sm font-bold text-slate-900 dark:text-white">{{ doc.typeDocument }}</div>
-            </td>
-            <td class="px-4 py-3 whitespace-nowrap">
-              <span *ngIf="doc.required"
-                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-400">Oui</span>
-              <span *ngIf="!doc.required"
-                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-400">Optionnel</span>
-            </td>
-            <td class="px-4 py-3 whitespace-nowrap">
-              <div class="text-sm text-slate-500 dark:text-slate-400 truncate max-w-xs">{{ doc.description || '-' }}
-              </div>
-            </td>
-            <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
-              <button (click)="deleteDoc(doc.trackingId)"
-                class="text-rose-600 hover:text-rose-900 dark:text-rose-400 hover:underline">Supprimer</button>
-            </td>
-          </tr>
-          <tr *ngIf="documentsRequis.length === 0">
-            <td colspan="5" class="px-4 py-8 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">
-              Aucun document requis configuré.
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<div *ngIf="isParamModalOpen" class="fixed inset-0 z-50 overflow-y-auto">
-  <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-    <div class="fixed inset-0 transition-opacity bg-slate-900/60 backdrop-blur-sm" (click)="closeParamModal()"></div>
-    <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
-    <div
-      class="relative z-10 inline-block align-bottom bg-white dark:bg-slate-900 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-200 dark:border-slate-800">
-      <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
-        <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ editingParam ? 'Modifier le Paramètre' :
-          'Ajouter un Paramètre' }}</h3>
-      </div>
-      <div class="p-6">
-        <form [formGroup]="paramForm" (ngSubmit)="saveParam()" class="space-y-5">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Nom du paramètre</label>
-            <select formControlName="nomParametre"
-              class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white">
-              <option *ngFor="let opt of paramOptions" [value]="opt">{{opt}}</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Valeur</label>
-            <input type="text" formControlName="valeurParametre"
-              class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white">
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Description
-              (Optionnelle)</label>
-            <textarea formControlName="description" rows="2"
-              class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white"></textarea>
-          </div>
-          <div class="pt-4 flex justify-end space-x-3">
-            <button type="button" (click)="closeParamModal()"
-              class="px-4 py-2 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 rounded-xl transition-colors">Annuler</button>
-            <button type="submit" [disabled]="paramForm.invalid || isLoading"
-              class="px-4 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-colors disabled:opacity-50">Valider</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- DocModal -->
-<div *ngIf="isDocModalOpen" class="fixed inset-0 z-50 overflow-y-auto">
-  <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-    <div class="fixed inset-0 transition-opacity bg-slate-900/60 backdrop-blur-sm" (click)="closeDocModal()"></div>
-    <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
-    <div
-      class="relative z-10 inline-block align-bottom bg-white dark:bg-slate-900 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full border border-slate-200 dark:border-slate-800">
-      <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
-        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Nouvelle Exigence Documentaire</h3>
-      </div>
-      <div class="p-6">
-        <form [formGroup]="docCreateForm" (ngSubmit)="onSubmitDoc()" class="space-y-5">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Cible</label>
-            <select formControlName="targetType"
-              class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white">
-              <option value="STUDENT">Étudiant</option>
-              <option value="MERCHANT">Boutique</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Niveau d'Études</label>
-            <select formControlName="niveau"
-              class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white">
-              <option *ngFor="let niv of niveaux" [value]="niv">{{niv}}</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Type de Document</label>
-            <select formControlName="typeDocument"
-              class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white">
-              <option *ngFor="let doc of typesDocument" [value]="doc">{{doc}}</option>
-            </select>
-          </div>
-          <div class="flex items-center mt-4">
-            <input id="obligatoire" type="checkbox" formControlName="obligatoire"
-              class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 rounded">
-            <label for="obligatoire" class="ml-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Document
-              Obligatoire</label>
-          </div>
-          <div class="flex items-center mt-2 mb-4">
-            <input id="docActif" type="checkbox" formControlName="estActif"
-              class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 rounded">
-            <label for="docActif" class="ml-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Règle
-              Active</label>
-          </div>
-          <div class="mt-4">
-            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Description <span
-                class="text-slate-400 font-normal">(Optionnel)</span></label>
-            <textarea formControlName="description" rows="2" placeholder="Ex: Relevé de baccalauréat original..."
-              class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white resize-none"></textarea>
-          </div>
-          <div class="pt-4 flex justify-end space-x-3">
-            <button type="button" (click)="closeDocModal()"
-              class="px-4 py-2 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 rounded-xl transition-colors">Annuler</button>
-            <button type="submit" [disabled]="docCreateForm.invalid || isCreatingDoc"
-              class="px-4 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-colors disabled:opacity-50">Ajouter</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- Modal Prévisualisation RIB -->
 <div *ngIf="isPreviewModalOpen" class="fixed inset-0 z-50 overflow-y-auto">
   <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
@@ -753,41 +558,6 @@
         <button (click)="closePreviewModal()"
           class="px-6 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-all">Fermer</button>
       </div>
-    </div>
-  </div>
-</div>
-<!-- Modal Confirmation Suppression Document -->
-<div *ngIf="isDeleteDocModalOpen" class="fixed inset-0 z-[60] flex items-center justify-center">
-  <div class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm" (click)="cancelDeleteDoc()"></div>
-  <div
-    class="relative z-10 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 w-full max-w-sm mx-4 overflow-hidden">
-    <!-- Header rouge -->
-    <div class="px-6 py-5 bg-gradient-to-r from-rose-600 to-red-600 flex items-center gap-3">
-      <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-        </svg>
-      </div>
-      <h3 class="text-lg font-extrabold text-white">Confirmer la suppression</h3>
-    </div>
-    <!-- Body -->
-    <div class="px-6 py-6">
-      <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-        Êtes-vous sûr de vouloir supprimer cette règle documentaire&nbsp;?
-        <span class="font-bold text-rose-600 dark:text-rose-400">Cette action est irréversible.</span>
-      </p>
-    </div>
-    <!-- Actions -->
-    <div class="px-6 pb-6 flex justify-end gap-3">
-      <button (click)="cancelDeleteDoc()"
-        class="px-5 py-2 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 rounded-xl transition-colors">
-        Annuler
-      </button>
-      <button (click)="confirmDeleteDoc()"
-        class="px-5 py-2 text-sm font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-xl transition-colors shadow-lg shadow-rose-500/30">
-        Oui, Supprimer
-      </button>
     </div>
   </div>
 </div>

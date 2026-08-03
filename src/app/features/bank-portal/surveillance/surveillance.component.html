@@ -20,10 +20,10 @@
     <span>Étudiants (Bourses)</span>
   </button>
   <button 
-    (click)="switchTab('Boutique')"
-    [ngClass]="activeTab === 'Boutique' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-800/50'"
+    (click)="switchTab('Marchand')"
+    [ngClass]="activeTab === 'Marchand' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-800/50'"
     class="flex-1 py-2.5 px-4 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center space-x-2">
-    <span>Boutiques (Sécurité)</span>
+    <span>Marchands (KYC)</span>
   </button>
 </div>
 
@@ -32,7 +32,7 @@
   <div class="px-8 py-6 border-b border-slate-200/50 dark:border-slate-700/50 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-white/30 dark:bg-slate-900/30">
     <div class="flex items-center gap-4">
       <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center">
-        Comptes {{ activeTab === 'Etudiant' ? 'Étudiants' : 'Boutiques' }}
+        Comptes {{ activeTab === 'Etudiant' ? 'Étudiants' : 'Marchands' }}
       </h3>
       
       <!-- BOUTON GEL EN MASSE (SEULEMENT POUR ETUDIANTS) -->
@@ -123,37 +123,51 @@
     </table>
   </div>
 
-  <!-- TABLE FOR BOUTIQUES -->
-  <div *ngIf="!isLoading && filteredWallets.length > 0 && activeTab === 'Boutique'" class="overflow-x-auto">
-    <!-- Similar table just for Boutiques KYC (kept minimal here) -->
+  <!-- TABLE FOR MARCHANDS -->
+  <div *ngIf="!isLoading && filteredWallets.length > 0 && activeTab === 'Marchand'" class="overflow-x-auto">
     <table class="min-w-full divide-y divide-slate-200/50">
-       <thead class="bg-slate-50/50 dark:bg-slate-800/30">
+      <thead class="bg-slate-50/50 dark:bg-slate-800/30">
         <tr>
-          <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">Boutique</th>
-          <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">Propriétaire</th>
-          <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">Statut</th>
-          <th class="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-widest">Actions KYC</th>
+          <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">Marchand</th>
+          <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">Boutiques</th>
+          <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">KYC</th>
+          <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">Wallet</th>
+          <th class="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-widest">Actions</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50 text-sm">
-        <tr *ngFor="let wallet of filteredWallets" class="hover:bg-slate-50/80">
-          <td class="px-6 py-4 whitespace-nowrap font-bold text-slate-900">{{ wallet.name }}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-slate-600 font-medium">{{ wallet.ownerName }}</td>
-          <td class="px-6 py-4 whitespace-nowrap">
-            <span *ngIf="wallet.status === 'ACTIF'" class="px-3 py-1 text-xs font-bold rounded-full bg-emerald-50 text-emerald-700">Actif</span>
-            <span *ngIf="wallet.status === 'GELE'" class="px-3 py-1 text-xs font-bold rounded-full bg-amber-50 text-amber-700">Gelé</span>
-            <span *ngIf="wallet.status === 'BLOQUE'" class="px-3 py-1 text-xs font-bold rounded-full bg-rose-50 text-rose-700">Bloqué</span>
+        <tr *ngFor="let wallet of filteredWallets" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+          <td class="px-6 py-4">
+            <div class="font-bold text-slate-900 dark:text-white">{{ wallet.name }}</div>
+            <div class="text-xs text-slate-500">{{ wallet.email }}</div>
+            <div class="text-xs text-slate-400 font-mono">{{ wallet.numeroCompte || 'Pas de compte' }}</div>
           </td>
-          <td class="px-6 py-4 whitespace-nowrap text-right space-x-2 flex justify-end items-center">
-             <button (click)="viewDetails(wallet)" class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition-colors" title="Vérifier KYC">
-               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-             </button>
-             <button *ngIf="wallet.status === 'ACTIF'" (click)="gelerWallet(wallet)" class="p-2 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-lg transition-colors" title="Geler le portefeuille">
-               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8V7a4 4 0 00-8 0v4h8z"></path></svg>
-             </button>
-             <button *ngIf="wallet.status === 'GELE' || wallet.status === 'BLOQUE'" (click)="debloquerWallet(wallet)" class="p-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-lg transition-colors" title="Dégeler le portefeuille (Réactiver)">
-               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
-             </button>
+          <td class="px-6 py-4">
+            <div *ngFor="let b of wallet.nomsBoutiques" class="text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded px-2 py-0.5 inline-block mr-1 mb-1">{{ b }}</div>
+            <div *ngIf="!wallet.nomsBoutiques?.length" class="text-xs text-slate-400">Aucune boutique</div>
+          </td>
+          <td class="px-6 py-4">
+            <span *ngIf="wallet.kycStatus === 'VALIDE'" class="px-2 py-1 text-xs font-bold rounded-full bg-emerald-50 text-emerald-700">✓ Validé</span>
+            <span *ngIf="wallet.kycStatus === 'EN_ATTENTE'" class="px-2 py-1 text-xs font-bold rounded-full bg-amber-50 text-amber-700">En attente</span>
+            <span *ngIf="wallet.kycStatus === 'REJETE'" class="px-2 py-1 text-xs font-bold rounded-full bg-rose-50 text-rose-700">Rejeté</span>
+          </td>
+          <td class="px-6 py-4">
+            <span *ngIf="wallet.status === 'ACTIF'" class="px-2 py-1 text-xs font-bold rounded-full bg-emerald-50 text-emerald-700">Actif</span>
+            <span *ngIf="wallet.status === 'GELE'" class="px-2 py-1 text-xs font-bold rounded-full bg-amber-50 text-amber-700">Gelé</span>
+            <span *ngIf="wallet.status === 'EN_ATTENTE' || wallet.status === 'BLOQUE'" class="px-2 py-1 text-xs font-bold rounded-full bg-slate-100 text-slate-600">Inactif</span>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <div class="flex justify-end items-center gap-2">
+              <button (click)="viewDetails(wallet)" class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition-colors" title="Dossier KYC">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+              </button>
+              <button *ngIf="wallet.status !== 'ACTIF' && wallet.walletId" (click)="activateWallet(wallet)" [disabled]="isActionLoading" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition-colors disabled:opacity-50" title="Activer le wallet">
+                ✓ Activer
+              </button>
+              <button *ngIf="wallet.status === 'ACTIF'" (click)="gelerWallet(wallet)" class="p-2 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-lg transition-colors" title="Geler">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -240,7 +254,20 @@
     <div class="flex-1 flex overflow-hidden">
       <!-- Panneau de gauche: Liste des documents -->
       <div class="w-1/3 border-r border-slate-100 dark:border-slate-800 overflow-y-auto bg-slate-50/30 dark:bg-slate-900 p-4 custom-scrollbar">
-        <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Documents ({{entityDocuments.length}})</h4>
+        <div class="flex items-center justify-between mb-4">
+          <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest">Documents ({{entityDocuments.length}})</h4>
+          <button *ngIf="selectedWallet && selectedWallet.status !== 'ACTIF'"
+                  (click)="activateWallet(selectedWallet)"
+                  [disabled]="isActionLoading"
+                  class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg disabled:opacity-50 transition-colors flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+            Activer Wallet
+          </button>
+          <span *ngIf="selectedWallet && selectedWallet.status === 'ACTIF'" class="text-xs font-bold text-emerald-600 flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+            Wallet Actif
+          </span>
+        </div>
         
         <div *ngIf="isLoadingDocs" class="text-center py-10 text-slate-500">Chargement...</div>
         <div *ngIf="!isLoadingDocs && entityDocuments.length === 0" class="text-center py-10 text-slate-500 text-sm">Aucun document trouvé pour ce compte.</div>
@@ -261,10 +288,13 @@
               
               <div class="flex-1 min-w-0 flex justify-between items-center">
                 <div>
-                  <p class="text-sm font-bold text-slate-900 dark:text-white truncate" [title]="doc.documentType">{{doc.documentType}}</p>
-                  <p class="text-xs text-slate-500 truncate">{{doc.uploadedAt | date:'mediumDate'}}</p>
+                  <div class="flex items-center gap-1.5">
+                    <p class="text-sm font-bold text-slate-900 dark:text-white truncate" [title]="doc.documentType">{{doc.documentType}}</p>
+                    <span *ngIf="doc.isDuplicate" class="text-[9px] font-bold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded shrink-0">Doublon</span>
+                  </div>
+                  <p class="text-xs text-slate-500 truncate">{{doc.uploadedAt | date:'dd/MM/yy HH:mm'}}</p>
                 </div>
-                <div>
+                <div class="ml-2">
                   <span *ngIf="doc.status === 'EN_ATTENTE'" class="w-2 h-2 rounded-full bg-amber-500 inline-block" title="En attente"></span>
                   <span *ngIf="doc.status === 'VALIDE'" class="w-2 h-2 rounded-full bg-emerald-500 inline-block" title="Validé"></span>
                   <span *ngIf="doc.status === 'REJETE'" class="w-2 h-2 rounded-full bg-rose-500 inline-block" title="Rejeté"></span>

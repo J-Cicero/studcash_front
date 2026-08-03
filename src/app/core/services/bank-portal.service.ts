@@ -49,6 +49,21 @@ export interface BoutiqueLiquidationInfo {
   merchantTrackingId?: string;
 }
 
+export interface MerchantKycInfo {
+  merchantTrackingId: string;
+  nom: string;
+  prenom: string;
+  email: string;
+  phoneNumber?: string;
+  kycStatus: string;
+  numeroCompte: string;
+  walletTrackingId?: string;
+  walletStatus?: string;
+  soldeWallet: number;
+  nomsBoutiques: string[];
+  nombreBoutiques: number;
+}
+
 export interface BankFinancialSummary {
   totalScolariteUniversites: number;
   totalDepensesAchats: number;
@@ -119,6 +134,11 @@ export class BankPortalService {
   getBoutiques(bankOperatorTrackingId: string): Observable<BoutiqueLiquidationInfo[]> {
     const params = new HttpParams().set('bankOperatorTrackingId', bankOperatorTrackingId);
     return this.http.get<BoutiqueLiquidationInfo[]>(`${this.apiUrl}/boutiques`, { params });
+  }
+
+  getMerchants(bankOperatorTrackingId: string): Observable<MerchantKycInfo[]> {
+    const params = new HttpParams().set('bankOperatorTrackingId', bankOperatorTrackingId);
+    return this.http.get<MerchantKycInfo[]>(`${this.apiUrl}/merchants`, { params });
   }
 
   liquidateBoutique(boutiqueTrackingId: string): Observable<any> {

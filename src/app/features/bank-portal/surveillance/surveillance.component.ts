@@ -3,29 +3,34 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
-import { BankPortalService } from '../../../core/services/bank-portal.service';
+import { BankPortalService, MerchantKycInfo } from '../../../core/services/bank-portal.service';
 import { WalletService } from '../../../core/services/wallet.service';
 import { DocumentEtudiantService } from '../../../core/services/document-etudiant.service';
 import { DocumentMerchantService } from '../../../core/services/document-merchant.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-
 import { DocumentAdminService } from '../../../core/services/document-admin.service';
 
 interface WalletAlert {
   id: string;
   walletId?: string;
-  type: 'Etudiant' | 'Boutique';
+  type: 'Etudiant' | 'Marchand';
   name: string;
   numEtudiant?: string;
   typeBourse?: string;
   scholarshipAmount?: number;
   spentAmount?: number;
   balance: number;
-  status: 'ACTIF' | 'GELE' | 'BLOQUE';
+  status: 'ACTIF' | 'GELE' | 'BLOQUE' | 'EN_ATTENTE';
   suspiciousActivity: boolean;
   lastTransactionDate: Date;
   numeroCompte?: string;
   ownerName?: string;
+  // Merchant-specific
+  email?: string;
+  phoneNumber?: string;
+  kycStatus?: string;
+  nomsBoutiques?: string[];
+  nombreBoutiques?: number;
 }
 
 @Component({
@@ -42,7 +47,7 @@ export class SurveillanceComponent implements OnInit {
   isActionLoading = false;
   actionMessage = '';
 
-  activeTab: 'Etudiant' | 'Boutique' = 'Etudiant';
+  activeTab: 'Etudiant' | 'Marchand' = 'Etudiant';
 
   // Filters
   statusFilter = 'ALL';
@@ -54,6 +59,16 @@ export class SurveillanceComponent implements OnInit {
   hasMandatoryDocs = false;
   selectedDocumentForPreview: any = null;
   sanitizedPdfUrl: SafeResourceUrl | null = null;
+
+  // Check if all docs are validated (for wallet activation)
+  get allDocsValidated(): boolean {
+    return this.entityDocuments.length > 0 &&
+      this.entityDocuments.every(d => d.status === 'VALIDE');
+  }
+
+  get hasAnyPendingDoc(): boolean {
+    return this.entityDocuments.some(d => d.status === 'EN_ATTENTE');
+  }
 
   // Custom Reject Modal State
   showRejectModal = false;
@@ -96,7 +111,7 @@ export class SurveillanceComponent implements OnInit {
     this.isLoading = true;
     forkJoin({
       students: this.bankPortalService.getStudents(operatorId),
-      boutiques: this.bankPortalService.getBoutiques(operatorId)
+      merchants: this.bankPortalService.getMerchants(operatorId)
     }).subscribe({
       next: (res) => {
         const studentWallets: WalletAlert[] = res.students.map(s => {
@@ -118,24 +133,27 @@ export class SurveillanceComponent implements OnInit {
           };
         });
 
-        const boutiqueWallets: WalletAlert[] = res.boutiques.map(b => {
-          const status = (b.walletStatus as 'ACTIF' | 'GELE' | 'BLOQUE') || 'ACTIF';
-          const isSuspicious = b.soldeWallet > 50000 && status === 'ACTIF';
+        const merchantWallets: WalletAlert[] = res.merchants.map((m: MerchantKycInfo) => {
+          const status = (m.walletStatus as 'ACTIF' | 'GELE' | 'BLOQUE' | 'EN_ATTENTE') || 'EN_ATTENTE';
           return {
-            id: b.merchantTrackingId || b.boutiqueTrackingId,
-            walletId: b.walletTrackingId,
-            type: 'Boutique' as const,
-            name: b.nomBoutique,
-            ownerName: b.proprietaireNom,
-            numeroCompte: b.numeroCompte,
-            balance: b.soldeWallet,
+            id: m.merchantTrackingId,
+            walletId: m.walletTrackingId,
+            type: 'Marchand' as const,
+            name: `${m.nom} ${m.prenom}`,
+            email: m.email,
+            phoneNumber: m.phoneNumber,
+            kycStatus: m.kycStatus,
+            numeroCompte: m.numeroCompte,
+            balance: m.soldeWallet || 0,
             status: status,
-            suspiciousActivity: isSuspicious,
+            suspiciousActivity: false,
             lastTransactionDate: new Date(),
+            nomsBoutiques: m.nomsBoutiques || [],
+            nombreBoutiques: m.nombreBoutiques || 0,
           };
         });
 
-        this.wallets = [...studentWallets, ...boutiqueWallets];
+        this.wallets = [...studentWallets, ...merchantWallets];
         this.applyFilters();
         this.isLoading = false;
       },
@@ -147,7 +165,7 @@ export class SurveillanceComponent implements OnInit {
     });
   }
 
-  switchTab(tab: 'Etudiant' | 'Boutique'): void {
+  switchTab(tab: 'Etudiant' | 'Marchand'): void {
     this.activeTab = tab;
     this.applyFilters();
   }
@@ -155,21 +173,20 @@ export class SurveillanceComponent implements OnInit {
   applyFilters(): void {
     let temp = this.wallets.filter(w => w.type === this.activeTab);
 
-    // Status filter
     if (this.statusFilter === 'suspect') {
       temp = temp.filter(w => w.suspiciousActivity);
     } else if (this.statusFilter !== 'ALL') {
       temp = temp.filter(w => w.status === this.statusFilter);
     }
 
-    // Search term
     if (this.searchTerm.trim()) {
       const term = this.searchTerm.toLowerCase();
       temp = temp.filter(w =>
         w.name.toLowerCase().includes(term) ||
         (w.numEtudiant && w.numEtudiant.toLowerCase().includes(term)) ||
-        (w.typeBourse && w.typeBourse.toLowerCase().includes(term)) ||
-        (w.ownerName && w.ownerName.toLowerCase().includes(term)) ||
+        (w.email && w.email.toLowerCase().includes(term)) ||
+        (w.phoneNumber && w.phoneNumber.toLowerCase().includes(term)) ||
+        (w.nomsBoutiques && w.nomsBoutiques.some(b => b.toLowerCase().includes(term))) ||
         (w.numeroCompte && w.numeroCompte.toLowerCase().includes(term))
       );
     }
@@ -194,20 +211,11 @@ export class SurveillanceComponent implements OnInit {
   executeMassFreeze() {
     const studentsToFreeze = this.filteredWallets.filter(w => w.status !== 'GELE' && w.walletId);
     this.isActionLoading = true;
-    
-    // Create an array of observables for updating each wallet
-    const requests = studentsToFreeze.map(w => {
-      // Pour une vraie implémentation, on devrait avoir un endpoint /bulk-freeze
-      // Ici on simule l'appel séquentiel via l'observable ou on met à jour localement si pas d'API bulk
-      return new Promise((resolve) => {
-        // Simulation d'une mise à jour de masse (idéalement à remplacer par un appel API Bulk)
-        setTimeout(() => {
-           w.status = 'GELE';
-           resolve(true);
-        }, 100);
-      });
-    });
-
+    const requests = studentsToFreeze.map(w =>
+      new Promise((resolve) => {
+        setTimeout(() => { w.status = 'GELE'; resolve(true); }, 100);
+      })
+    );
     Promise.all(requests).then(() => {
       this.isActionLoading = false;
       this.actionMessage = `${studentsToFreeze.length} portefeuilles ont été gelés avec succès.`;
@@ -226,25 +234,20 @@ export class SurveillanceComponent implements OnInit {
 
     this.walletService.getByTrackingId(wallet.walletId).subscribe({
       next: (currentWallet) => {
-        const req = {
-          ...currentWallet,
-          statutWallet: newStatus
-        };
-
+        const req = { ...currentWallet, statutWallet: newStatus };
         this.walletService.updateWallet(wallet.walletId!, req).subscribe({
           next: () => {
-            this.actionMessage = `Portefeuille de "${wallet.name}" mis à jour avec le statut ${newStatus}.`;
-            wallet.status = newStatus; // update local instantly
+            this.actionMessage = `Portefeuille de "${wallet.name}" mis à jour : ${newStatus}.`;
+            wallet.status = newStatus;
             this.isActionLoading = false;
           },
-          error: (err) => {
+          error: () => {
             this.actionMessage = `Erreur lors de la mise à jour du portefeuille.`;
             this.isActionLoading = false;
-            console.error(err);
           }
         });
       },
-      error: (err) => {
+      error: () => {
         this.actionMessage = `Impossible de récupérer les informations.`;
         this.isActionLoading = false;
       }
@@ -263,7 +266,7 @@ export class SurveillanceComponent implements OnInit {
     this.confirmActionType = 'ACTIF';
     this.confirmWalletTarget = wallet;
     this.confirmTitle = 'Confirmer le dégel';
-    this.confirmMessage = `Voulez-vous vraiment dégeler (réactiver) le portefeuille de ${wallet.name} ?`;
+    this.confirmMessage = `Voulez-vous vraiment activer le portefeuille de ${wallet.name} ?`;
     this.showConfirmModal = true;
   }
 
@@ -298,19 +301,12 @@ export class SurveillanceComponent implements OnInit {
 
   confirmStudentLiquidation() {
     if (!this.selectedStudentForLiquidation) return;
-    
     this.isLiquidationLoading = true;
-
-    // Simulation de l'appel backend pour StudentLiquidationRequest
     setTimeout(() => {
       this.isLiquidationLoading = false;
       this.liquidationSuccess = true;
-      // Remise à zéro du solde virtuel après liquidation
       this.selectedStudentForLiquidation!.balance = 0;
-      
-      setTimeout(() => {
-        this.closeLiquidationModal();
-      }, 2500);
+      setTimeout(() => { this.closeLiquidationModal(); }, 2500);
     }, 1500);
   }
 
@@ -326,21 +322,32 @@ export class SurveillanceComponent implements OnInit {
     if (wallet.type === 'Etudiant') {
       this.documentEtudiantService.findByStudentId(wallet.id).subscribe({
         next: (res) => {
-          let docs = res.content || res || [];
-          this.entityDocuments = docs.filter((d: any) => 
-            ['RIB', 'MANDAT', 'MANDAT_BANCAIRE', 'PIECE_IDENTITE', 'RECIPISSE'].includes(d.documentType)
-          );
+          const docs = res.content || res || [];
+          // Show all docs — group by type and sort newest first so duplicates are visible
+          this.entityDocuments = docs
+            .filter((d: any) => ['RIB', 'MANDAT', 'MANDAT_BANCAIRE', 'PIECE_IDENTITE', 'RECIPISSE', 'COTE'].includes(d.documentType))
+            .sort((a: any, b: any) => new Date(b.uploadedAt || 0).getTime() - new Date(a.uploadedAt || 0).getTime());
+
+          // Mark duplicates for UI display
+          const typeSeen = new Set<string>();
+          this.entityDocuments = this.entityDocuments.map((d: any) => {
+            const isDuplicate = typeSeen.has(d.documentType);
+            typeSeen.add(d.documentType);
+            return { ...d, isDuplicate };
+          });
+
           if (this.entityDocuments.length > 0) this.selectDocument(this.entityDocuments[0]);
           this.isLoadingDocs = false;
         },
         error: () => { this.isLoadingDocs = false; }
       });
     } else {
+      // Marchand: use merchantTrackingId = wallet.id
       this.documentMerchantService.findByMerchantId(wallet.id).subscribe({
         next: (res) => {
-          let docs = res.content || res || [];
-          this.entityDocuments = docs.filter((d: any) => 
-            ['RIB_BOUTIQUE', 'RIB', 'PIECE_IDENTITE', 'RECIPISSE'].includes(d.documentType)
+          const docs = res.content || res || [];
+          this.entityDocuments = docs.filter((d: any) =>
+            ['RIB_BOUTIQUE', 'RIB', 'PIECE_IDENTITE', 'RECIPISSE', 'MANDAT', 'MANDAT_BANCAIRE'].includes(d.documentType)
           );
           if (this.entityDocuments.length > 0) this.selectDocument(this.entityDocuments[0]);
           this.isLoadingDocs = false;
@@ -389,20 +396,47 @@ export class SurveillanceComponent implements OnInit {
 
     this.isActionLoading = true;
     const docId = this.selectedDocumentForPreview.trackingId;
-    const request$ = this.selectedWallet.type === 'Etudiant' 
+    const request$ = this.selectedWallet.type === 'Etudiant'
       ? this.documentAdminService.updateStudentDocumentStatus(docId, status, rejectionReason)
       : this.documentAdminService.updateMerchantDocumentStatus(docId, status, rejectionReason);
 
     request$.subscribe({
       next: () => {
         this.isActionLoading = false;
-        this.actionMessage = `Document ${status} avec succès.`;
+        this.actionMessage = `Document ${status === 'VALIDE' ? 'validé' : 'rejeté'} avec succès.`;
         if (this.selectedDocumentForPreview) {
           this.selectedDocumentForPreview.status = status;
           this.selectedDocumentForPreview.rejectionReason = rejectionReason;
         }
+
+        // Auto-activate wallet if all docs are now validated
+        if (status === 'VALIDE' && this.allDocsValidated && this.selectedWallet?.walletId) {
+          this.activateWallet(this.selectedWallet);
+        }
       },
       error: () => { this.isActionLoading = false; }
+    });
+  }
+
+  // ---- WALLET ACTIVATION ----
+  activateWallet(wallet: WalletAlert) {
+    if (!wallet.walletId) {
+      this.actionMessage = `⚠️ Wallet introuvable pour ${wallet.name}. Vérifiez les boutiques associées.`;
+      return;
+    }
+    this.isActionLoading = true;
+    // geler=false → dégèle / active le wallet
+    this.walletService.freezeWallet(wallet.walletId, false).subscribe({
+      next: () => {
+        wallet.status = 'ACTIF';
+        if (this.selectedWallet?.id === wallet.id) this.selectedWallet!.status = 'ACTIF';
+        this.isActionLoading = false;
+        this.actionMessage = `✅ Wallet de "${wallet.name}" activé avec succès ! Les transactions sont maintenant autorisées.`;
+      },
+      error: (err) => {
+        this.isActionLoading = false;
+        this.actionMessage = `❌ Erreur lors de l'activation du wallet : ${err.error?.message || err.message}`;
+      }
     });
   }
 }
