@@ -28,7 +28,7 @@ export class UniversityPortalService {
     private authService: AuthService,
     private walletService: WalletService
   ) {
-    console.log('UniversityPortalService apiUrl:', this.apiUrl);
+    console.log('UniversityPortalService baseUrl:', this.baseUrl);
   }
 
   /** Get the university admin profile (gives universiteTrackingId + walletTrackingId) */

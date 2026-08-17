@@ -68,12 +68,13 @@ export class LiquidationQueueComponent implements OnInit {
 
   loadBoutiques(): void {
     this.isLoading = true;
-    this.bankPortalService.getBoutiquesPendingLiquidation().subscribe({
-      next: (data) => {
+    const userId = this.authService.getCurrentUserId() || '';
+    this.bankPortalService.getBoutiques(userId).subscribe({
+      next: (data: BoutiqueLiquidationInfo[]) => {
         this.boutiques = data;
         this.isLoading = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error(err);
         this.isLoading = false;
       }
@@ -94,9 +95,9 @@ export class LiquidationQueueComponent implements OnInit {
   get filteredBoutiques(): BoutiqueLiquidationInfo[] {
     if (!this.searchQuery) return this.boutiques;
     const q = this.searchQuery.toLowerCase();
-    return this.boutiques.filter(b => 
-      b.boutiqueName.toLowerCase().includes(q) || 
-      (b.merchantName && b.merchantName.toLowerCase().includes(q))
+    return this.boutiques.filter((b: BoutiqueLiquidationInfo) =>
+      b.nomBoutique.toLowerCase().includes(q) ||
+      (b.proprietaireNom && b.proprietaireNom.toLowerCase().includes(q))
     );
   }
 
@@ -109,7 +110,7 @@ export class LiquidationQueueComponent implements OnInit {
   }
 
   get totalPendingBoutiques(): number {
-    return this.boutiques.reduce((sum, b) => sum + b.totalAmount, 0);
+    return this.boutiques.reduce((sum: number, b: BoutiqueLiquidationInfo) => sum + (b.soldeWallet || 0), 0);
   }
 
   get totalPendingStudents(): number {
@@ -123,12 +124,12 @@ export class LiquidationQueueComponent implements OnInit {
     this.referenceVirement = '';
     this.validationSuccess = false;
 
-    this.bankPortalService.getVentesNonLiquidees(boutique.boutiqueId).subscribe({
-      next: (ventes) => {
+    this.bankPortalService.getVentesNonLiquidees(boutique.boutiqueTrackingId).subscribe({
+      next: (ventes: VenteNonLiquidee[]) => {
         this.ventesDetails = ventes;
         this.isLoadingDetails = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error(err);
         this.isLoadingDetails = false;
       }
@@ -176,7 +177,7 @@ export class LiquidationQueueComponent implements OnInit {
     this.isValidating = true;
 
     if (this.selectedBoutique) {
-      this.bankPortalService.validerLiquidation(this.selectedBoutique.boutiqueId, this.referenceVirement).subscribe({
+      this.bankPortalService.validerLiquidation(this.selectedBoutique.boutiqueTrackingId, this.referenceVirement).subscribe({
         next: () => {
           this.isValidating = false;
           this.validationSuccess = true;
