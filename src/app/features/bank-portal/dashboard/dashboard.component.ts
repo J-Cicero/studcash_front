@@ -128,6 +128,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         scales: {
           y: {
             beginAtZero: true,
+            min: 0,
             suggestedMax: 1000,
             ticks: {
               color: 'rgba(148, 163, 184, 0.8)',
