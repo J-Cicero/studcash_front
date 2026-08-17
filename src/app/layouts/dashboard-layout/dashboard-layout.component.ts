@@ -33,7 +33,9 @@ export class DashboardLayoutComponent implements OnInit {
 
   loadYears(): void {
     this.scolariteYearService.getAll().subscribe({
-      next: (years: any[]) => {
+      next: (res: any) => {
+        // API returns a paginated Page object: { content: [], totalElements: N }
+        const years: ScolariteYear[] = res?.content || res || [];
         this.allYears = years;
         const active = years.find((y: any) => y.isOpen);
         if (active) {

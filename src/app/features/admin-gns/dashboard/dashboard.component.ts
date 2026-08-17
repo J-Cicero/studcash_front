@@ -167,6 +167,16 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         maintainAspectRatio: false,
         plugins: {
           legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            min: 0,
+            suggestedMax: 10,
+            ticks: {
+              precision: 0
+            }
+          }
         }
       }
     });

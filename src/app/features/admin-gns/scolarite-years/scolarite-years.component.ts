@@ -123,7 +123,8 @@ export class ScolariteYearsComponent implements OnInit {
       },
       error: (err) => {
         this.isCreating = false;
-        this.errorMessage = "Erreur lors de la création de l'année scolaire.";
+        const msg = err.error?.message || err.message || "Erreur lors de la création de l'année scolaire.";
+        this.errorMessage = msg;
       }
     });
   }
