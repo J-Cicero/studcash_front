@@ -569,6 +569,26 @@ p-floatLabel input:not(:placeholder-shown) ~ label {
     linear-gradient(180deg, #090d16 0%, #0f172a 100%);
 }
 
+/* Glass & Nav styles pour le portail banque en mode sombre */
+.bank-portal-shell.dark .glass-panel {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.3);
+}
+
+.bank-portal-shell.dark .glass-sidebar {
+  background: rgba(2, 6, 23, 0.75);
+  border-right: 1px solid rgba(51, 65, 85, 0.4);
+}
+
+.bank-portal-shell.dark .icon-gradient {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+}
+
+.bank-portal-shell.dark .hover-lift:hover {
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+}
+
 .bank-portal-shell.dark main,
 .bank-portal-shell.dark aside,
 .bank-portal-shell.dark header,
