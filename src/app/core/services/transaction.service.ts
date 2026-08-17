@@ -15,9 +15,10 @@ export interface TransactionResponse {
   totalCommission: number;
   gnsCommission: number;
   bankCommission: number;
-  isCommissionPaid: boolean;
-  status: string; 
-  createdAt: string; 
+  retrievedByBoutique: boolean;
+  deductedFromStudentBourse: boolean;
+  status: string;
+  createdAt: string;
 }
 
 @Injectable({

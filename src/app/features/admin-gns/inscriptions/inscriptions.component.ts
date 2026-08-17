@@ -10,6 +10,8 @@ import { FormsModule } from '@angular/forms';
 import { WalletService } from '../../../core/services/wallet.service';
 import { AuthService } from '../../../core/services/auth.service';
 
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
+
 @Component({
   selector: 'app-inscriptions',
   standalone: true,
@@ -52,7 +54,8 @@ export class InscriptionsComponent implements OnInit {
     private scolariteYearService: ScolariteYearService,
     private sanitizer: DomSanitizer,
     private walletService: WalletService,
-    private authService: AuthService
+    private authService: AuthService,
+    private confirmService: ConfirmDialogService
   ) {}
 
   ngOnInit(): void {
@@ -204,7 +207,7 @@ export class InscriptionsComponent implements OnInit {
 
   confirmReject() {
     if (!this.rejectionReasonInput.trim()) {
-      alert('Veuillez saisir le motif du rejet.');
+      this.confirmService.alert('Veuillez saisir le motif du rejet.', 'Motif obligatoire', 'warning');
       return;
     }
     this.showRejectModal = false;
@@ -282,13 +285,20 @@ export class InscriptionsComponent implements OnInit {
       .map(i => i.walletTrackingId);
   }
 
-  freezeInscriptionWallet(ins: any, geler: boolean) {
+  async freezeInscriptionWallet(ins: any, geler: boolean) {
     if (!ins.walletTrackingId) {
-      alert("Cet étudiant n'a pas de portefeuille associé.");
+      this.confirmService.alert("Cet étudiant n'a pas de portefeuille associé.", "Portefeuille introuvable", "warning");
       return;
     }
     const actionName = geler ? "geler" : "dégeler";
-    if (!confirm(`Voulez-vous vraiment ${actionName} le portefeuille de l'étudiant ?`)) return;
+    const confirmed = await this.confirmService.confirm({
+      title: `${geler ? 'Gel' : 'Dégel'} de portefeuille`,
+      message: `Voulez-vous vraiment ${actionName} le portefeuille de l'étudiant ?`,
+      confirmText: geler ? 'Geler' : 'Dégeler',
+      type: geler ? 'warning' : 'info'
+    });
+
+    if (!confirmed) return;
 
     this.isFreezeLoading = true;
     this.walletService.freezeWallet(ins.walletTrackingId, geler).subscribe({
@@ -299,19 +309,26 @@ export class InscriptionsComponent implements OnInit {
       },
       error: (err) => {
         this.isFreezeLoading = false;
-        alert(`Erreur lors de l'opération de ${actionName} du compte.`);
+        this.confirmService.alert(`Erreur lors de l'opération de ${actionName} du compte.`, "Erreur", "danger");
       }
     });
   }
 
-  freezeSelectedInscriptions(geler: boolean) {
+  async freezeSelectedInscriptions(geler: boolean) {
     const walletIds = this.getSelectedWalletIds();
     if (walletIds.length === 0) {
-      alert("Aucun portefeuille valide trouvé dans la sélection.");
+      this.confirmService.alert("Aucun portefeuille valide trouvé dans la sélection.", "Portefeuilles introuvables", "warning");
       return;
     }
     const actionName = geler ? "geler" : "dégeler";
-    if (!confirm(`Voulez-vous vraiment ${actionName} les portefeuilles des ${walletIds.length} étudiants sélectionnés ?`)) return;
+    const confirmed = await this.confirmService.confirm({
+      title: `${geler ? 'Gel' : 'Dégel'} en masse`,
+      message: `Voulez-vous vraiment ${actionName} les portefeuilles des ${walletIds.length} étudiants sélectionnés ?`,
+      confirmText: geler ? 'Geler' : 'Dégeler',
+      type: geler ? 'warning' : 'info'
+    });
+
+    if (!confirmed) return;
 
     this.isFreezeLoading = true;
     this.walletService.freezeWalletsBulk(walletIds, geler).subscribe({
@@ -323,14 +340,21 @@ export class InscriptionsComponent implements OnInit {
       },
       error: (err) => {
         this.isFreezeLoading = false;
-        alert(`Erreur lors du ${actionName} en masse des comptes.`);
+        this.confirmService.alert(`Erreur lors du ${actionName} en masse des comptes.`, "Erreur", "danger");
       }
     });
   }
 
-  freezeAllStudents(geler: boolean) {
+  async freezeAllStudents(geler: boolean) {
     const actionName = geler ? "geler TOUS les" : "dégeler TOUS les";
-    if (!confirm(`ATTENTION: Voulez-vous vraiment ${actionName} portefeuilles étudiants du système ?`)) return;
+    const confirmed = await this.confirmService.confirm({
+      title: `ATTENTION: ${geler ? 'Gel' : 'Dégel'} global`,
+      message: `Voulez-vous vraiment ${actionName} portefeuilles étudiants du système ?`,
+      confirmText: geler ? 'Geler tout' : 'Dégeler tout',
+      type: 'danger'
+    });
+
+    if (!confirmed) return;
 
     this.isFreezeLoading = true;
     this.walletService.gelerTousLesWallets(geler).subscribe({
@@ -340,7 +364,7 @@ export class InscriptionsComponent implements OnInit {
       },
       error: (err) => {
         this.isFreezeLoading = false;
-        alert(`Erreur lors du ${actionName} portefeuilles étudiants.`);
+        this.confirmService.alert(`Erreur lors du ${actionName} portefeuilles étudiants.`, "Erreur", "danger");
       }
     });
   }

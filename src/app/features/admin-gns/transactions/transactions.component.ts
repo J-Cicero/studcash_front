@@ -2,6 +2,24 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TransactionService, TransactionResponse } from '../../../core/services/transaction.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
+
+export interface StudentUnliquidatedAggregate {
+  studentTrackingId: string;
+  studentName: string;
+  totalExpenses: number;
+  transactionCount: number;
+}
+
+export interface StudentLiquidationItem {
+  trackingId: string;
+  studentName: string;
+  amountDeducted: number;
+  createdAt: string;
+  status: string;
+}
 
 @Component({
   selector: 'app-transactions',
@@ -12,59 +30,79 @@ import { TransactionService, TransactionResponse } from '../../../core/services/
 })
 export class TransactionsComponent implements OnInit {
   transactions: TransactionResponse[] = [];
+  unliquidatedStudents: StudentUnliquidatedAggregate[] = [];
+  studentLiquidations: StudentLiquidationItem[] = [];
   
-  // KPIs
   volumeValide: number = 0;
-  // commissionsTotales: number = 0; // Removed as no longer available from backend
   
   isLoading = false;
   isLoadingStats = false;
   errorMessage = '';
 
-  filterType: string = 'ALL';
   filterStatut: string = 'ALL';
 
-  constructor(private transactionService: TransactionService) {}
+  // Details modal state
+  selectedStudent: StudentUnliquidatedAggregate | null = null;
+  studentTransactions: TransactionResponse[] = [];
+  isLoadingStudentDetails = false;
+  isCreatingLiquidation = false;
+  liquidationSuccessMessage = '';
+
+  constructor(
+    private transactionService: TransactionService,
+    private http: HttpClient,
+    private confirmService: ConfirmDialogService
+  ) {}
 
   ngOnInit(): void {
     this.loadStats();
     this.loadTransactions();
+    this.loadStudentLiquidations();
   }
 
   loadStats() {
     this.isLoadingStats = true;
-    
     this.transactionService.getVolumeValide().subscribe({
       next: (val: number) => {
         this.volumeValide = val || 0;
-        // this.commissionsTotales = val?.totalGnsCommission || 0; // Removed
         this.isLoadingStats = false;
       },
       error: () => {
         this.volumeValide = 0;
-        // this.commissionsTotales = 0; // Removed
         this.isLoadingStats = false;
       }
     });
-    // Set commissionsTotales to 0 or handle as not applicable
-    // this.commissionsTotales = 0; // No longer needed as property removed
   }
 
   loadTransactions() {
     this.isLoading = true;
     this.errorMessage = '';
 
-    // The backend might not have findByType/Statut yet, so we fallback to findAll and filter locally if needed
-    this.transactionService.findAll(0, 100).subscribe({
+    this.transactionService.findAll(0, 500).subscribe({
       next: (res) => {
-        let list = res.content || res || [];
-
-        // Simple local filtering if backend endpoints are not ready yet
-        if (this.filterStatut !== 'ALL') {
-          list = list.filter((t: any) => t.status === this.filterStatut); // Changed 'statut' to 'status' as per new TransactionResponse
-        }
-        
+        let list: TransactionResponse[] = res.content || res || [];
         this.transactions = list;
+
+        // Group unliquidated student expenses (deductedFromStudentBourse == false or null)
+        const unliquidatedMap = new Map<string, { name: string; sum: number; count: number }>();
+
+        list.forEach((t: any) => {
+          if (t.status === 'VALIDEE' && !t.deductedFromStudentBourse && t.senderTrackingId) {
+            const studentId = t.senderTrackingId;
+            const current = unliquidatedMap.get(studentId) || { name: t.senderName || 'Étudiant', sum: 0, count: 0 };
+            current.sum += (t.amount || 0);
+            current.count += 1;
+            unliquidatedMap.set(studentId, current);
+          }
+        });
+
+        this.unliquidatedStudents = Array.from(unliquidatedMap.entries()).map(([id, data]) => ({
+          studentTrackingId: id,
+          studentName: data.name,
+          totalExpenses: data.sum,
+          transactionCount: data.count
+        }));
+
         this.isLoading = false;
       },
       error: (err) => {
@@ -75,22 +113,73 @@ export class TransactionsComponent implements OnInit {
     });
   }
 
-  setFilterType(type: string) {
-    this.filterType = type;
-    this.filterStatut = 'ALL';
-    this.loadTransactions();
+  loadStudentLiquidations() {
+    this.http.get<any[]>(`${environment.apiUrl}/student-liquidations/all`).subscribe({
+      next: (res) => {
+        this.studentLiquidations = res || [];
+      },
+      error: () => {
+        // Mock / Fallback safe if endpoint not yet available
+        this.studentLiquidations = [];
+      }
+    });
+  }
+
+  openStudentDetails(student: StudentUnliquidatedAggregate) {
+    this.selectedStudent = student;
+    this.isLoadingStudentDetails = true;
+    this.liquidationSuccessMessage = '';
+
+    this.studentTransactions = this.transactions.filter(t => 
+      t.senderTrackingId === student.studentTrackingId && 
+      t.status === 'VALIDEE' && 
+      !(t as any).deductedFromStudentBourse
+    );
+    this.isLoadingStudentDetails = false;
+  }
+
+  closeStudentDetails() {
+    this.selectedStudent = null;
+    this.studentTransactions = [];
+    this.liquidationSuccessMessage = '';
+  }
+
+  createStudentLiquidation() {
+    if (!this.selectedStudent) return;
+
+    this.isCreatingLiquidation = true;
+    const body = {
+      studentTrackingId: this.selectedStudent.studentTrackingId,
+      amountToDeduct: this.selectedStudent.totalExpenses
+    };
+
+    this.http.post<any>(`${environment.apiUrl}/student-liquidations`, body).subscribe({
+      next: (res) => {
+        this.isCreatingLiquidation = false;
+        this.liquidationSuccessMessage = 'Liquidation Étudiant créée avec succès (statut EN_ATTENTE).';
+        
+        // Refresh list
+        this.loadTransactions();
+        this.loadStudentLiquidations();
+
+        setTimeout(() => {
+          this.closeStudentDetails();
+        }, 1800);
+      },
+      error: (err) => {
+        this.isCreatingLiquidation = false;
+        this.confirmService.alert(err.error?.message || 'Erreur lors de la création de la liquidation étudiant', 'Erreur', 'danger');
+      }
+    });
+  }
+
+  get filteredTransactions(): TransactionResponse[] {
+    if (this.filterStatut === 'ALL') return this.transactions;
+    return this.transactions.filter(t => t.status === this.filterStatut);
   }
 
   setFilterStatut(statut: string) {
     this.filterStatut = statut;
-    this.filterType = 'ALL';
-    this.loadTransactions();
-  }
-
-  resetFilters() {
-    this.filterType = 'ALL';
-    this.filterStatut = 'ALL';
-    this.loadTransactions();
   }
 
   getShortId(id: string): string {

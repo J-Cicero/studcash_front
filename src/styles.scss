@@ -10,25 +10,25 @@
 /* PrimeNG Core */
 @import "primeicons/primeicons.css";
 
-/* Variables Centralisées */
+/* Variables Centralisées - Charte Violet / Bleu / Gris Slate (pas de blanc pur) */
 :root {
-  --color-primary: #1e3a8a;
+  --color-primary: #6366f1; /* Indigo / Violet vibrant */
   --font-main: 'Inter', sans-serif;
-  --primary-light: #3b82f6;
-  --bg-main: #f8fafc;
+  --primary-light: #3b82f6; /* Bleu vibrant */
+  --bg-main: #f1f5f9; /* Gris Slate doux (pas de blanc pur) */
   --text-main: #0f172a;
   --text-muted: #64748b;
-  --border-color: #e2e8f0;
-  --card-bg: rgba(255, 255, 255, 0.95);
+  --border-color: #cbd5e1;
+  --card-bg: rgba(248, 250, 252, 0.95); /* Fond carte légèrement grisé */
 }
 
 .gns-admin-shell.dark {
-  --bg-main: #020617;
-  --text-main: #e2e8f0;
+  --bg-main: #090d16;
+  --text-main: #f1f5f9;
   --text-muted: #94a3b8;
   --border-color: #334155;
   --card-bg: rgba(15, 23, 42, 0.92);
-  --color-primary: #93c5fd;
+  --color-primary: #818cf8;
   --primary-light: #60a5fa;
 }
 
@@ -550,18 +550,18 @@ p-floatLabel input:not(:placeholder-shown) ~ label {
    ========================================= */
 
 .bank-portal-shell.dark {
-  --bg-main: #020617;
-  --text-main: #e2e8f0;
+  --bg-main: #090d16;
+  --text-main: #f1f5f9;
   --text-muted: #94a3b8;
   --border-color: #334155;
   --card-bg: rgba(15, 23, 42, 0.92);
-  --color-primary: #10b981; /* emerald-500 */
-  --primary-light: #34d399; /* emerald-400 */
+  --color-primary: #818cf8;
+  --primary-light: #60a5fa;
   
   background:
-    radial-gradient(circle at top left, rgba(16, 185, 129, 0.12), transparent 28%),
-    radial-gradient(circle at top right, rgba(52, 211, 153, 0.1), transparent 22%),
-    linear-gradient(180deg, #020617 0%, #0f172a 100%);
+    radial-gradient(circle at top left, rgba(99, 102, 241, 0.14), transparent 28%),
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.12), transparent 22%),
+    linear-gradient(180deg, #090d16 0%, #0f172a 100%);
 }
 
 .bank-portal-shell.dark main,
@@ -643,7 +643,7 @@ p-floatLabel input:not(:placeholder-shown) ~ label {
 }
 
 .nav-item-active-bank {
-  background: linear-gradient(90deg, rgba(16, 185, 129, 0.1) 0%, transparent 100%);
-  border-left: 3px solid #10b981;
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0.12) 0%, transparent 100%);
+  border-left: 3px solid #6366f1;
 }
 

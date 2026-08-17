@@ -16,6 +16,8 @@ import { Page } from '../../../core/models/page.model';
 import { UserResponse } from '../../../core/models/user.model';
 import { DocumentResponse } from '../../../core/models/document.model';
 
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
+
 @Component({
   selector: 'app-utilisateurs',
   standalone: true,
@@ -83,6 +85,7 @@ export class UtilisateursComponent implements OnInit {
     private documentEtudiantService: DocumentEtudiantService,
     private documentMerchantService: DocumentMerchantService,
     private walletService: WalletService,
+    private confirmService: ConfirmDialogService,
     private sanitizer: DomSanitizer
   ) {
     this.searchSubject.pipe(
@@ -139,7 +142,7 @@ export class UtilisateursComponent implements OnInit {
     this.newUserForm.role = 'ADMIN_BANQUE';
     
     if (!this.newUserForm.banqueTrackingId) {
-      alert("Veuillez sélectionner une banque pour l'administrateur de banque.");
+      this.confirmService.alert("Veuillez sélectionner une banque pour l'administrateur de banque.", "Sélection requise", "warning");
       this.isProcessingCreate = false;
       return;
     }
@@ -163,7 +166,7 @@ export class UtilisateursComponent implements OnInit {
       error: (err: any) => { 
         this.isProcessingCreate = false;
         const msg = err.error?.message || "Erreur lors de la création de l'utilisateur.";
-        alert(msg);
+        this.confirmService.alert(msg, "Erreur", "danger");
       }
     });
   }
@@ -215,7 +218,7 @@ export class UtilisateursComponent implements OnInit {
       },
       error: (err: any) => { 
         this.isProcessingDelete = false;
-        alert("Erreur lors de la suppression de l'utilisateur.");
+        this.confirmService.alert("Erreur lors de la suppression de l'utilisateur.", "Erreur", "danger");
       }
     });
   }
@@ -246,7 +249,7 @@ export class UtilisateursComponent implements OnInit {
       },
       error: (err: any) => { 
         this.isProcessingRestore = false;
-        alert("Erreur lors de la réactivation de l'utilisateur.");
+        this.confirmService.alert("Erreur lors de la réactivation de l'utilisateur.", "Erreur", "danger");
       }
     });
   }
@@ -401,13 +404,20 @@ export class UtilisateursComponent implements OnInit {
       .map(u => (u as any).walletTrackingId);
   }
 
-  freezeUser(user: any, geler: boolean) {
+  async freezeUser(user: any, geler: boolean) {
     if (!user.walletTrackingId) {
-      alert("Cet utilisateur n'a pas de portefeuille associé.");
+      this.confirmService.alert("Cet utilisateur n'a pas de portefeuille associé.", "Portefeuille introuvable", "warning");
       return;
     }
     const actionName = geler ? "geler" : "dégeler";
-    if (!confirm(`Voulez-vous vraiment ${actionName} le portefeuille de ${user.firstName} ${user.lastName} ?`)) return;
+    const confirmed = await this.confirmService.confirm({
+      title: `${geler ? 'Gel' : 'Dégel'} de portefeuille`,
+      message: `Voulez-vous vraiment ${actionName} le portefeuille de ${user.firstName} ${user.lastName} ?`,
+      confirmText: geler ? 'Geler' : 'Dégeler',
+      type: geler ? 'warning' : 'info'
+    });
+
+    if (!confirmed) return;
 
     this.isFreezeLoading = true;
     this.walletService.freezeWallet(user.walletTrackingId, geler).subscribe({
@@ -418,19 +428,26 @@ export class UtilisateursComponent implements OnInit {
       },
       error: (err) => {
         this.isFreezeLoading = false;
-        alert(`Erreur lors de l'opération de ${actionName} du compte.`);
+        this.confirmService.alert(`Erreur lors de l'opération de ${actionName} du compte.`, "Erreur", "danger");
       }
     });
   }
 
-  freezeSelectedUsers(geler: boolean) {
+  async freezeSelectedUsers(geler: boolean) {
     const walletIds = this.getSelectedWalletIds();
     if (walletIds.length === 0) {
-      alert("Aucun portefeuille valide trouvé dans la sélection.");
+      this.confirmService.alert("Aucun portefeuille valide trouvé dans la sélection.", "Portefeuilles introuvables", "warning");
       return;
     }
     const actionName = geler ? "geler" : "dégeler";
-    if (!confirm(`Voulez-vous vraiment ${actionName} les portefeuilles des ${walletIds.length} utilisateurs sélectionnés ?`)) return;
+    const confirmed = await this.confirmService.confirm({
+      title: `${geler ? 'Gel' : 'Dégel'} en masse`,
+      message: `Voulez-vous vraiment ${actionName} les portefeuilles des ${walletIds.length} utilisateurs sélectionnés ?`,
+      confirmText: geler ? 'Geler' : 'Dégeler',
+      type: geler ? 'warning' : 'info'
+    });
+
+    if (!confirmed) return;
 
     this.isFreezeLoading = true;
     this.walletService.freezeWalletsBulk(walletIds, geler).subscribe({
@@ -442,14 +459,21 @@ export class UtilisateursComponent implements OnInit {
       },
       error: (err) => {
         this.isFreezeLoading = false;
-        alert(`Erreur lors du ${actionName} en masse des comptes.`);
+        this.confirmService.alert(`Erreur lors du ${actionName} en masse des comptes.`, "Erreur", "danger");
       }
     });
   }
 
-  freezeAllStudents(geler: boolean) {
+  async freezeAllStudents(geler: boolean) {
     const actionName = geler ? "geler TOUS les" : "dégeler TOUS les";
-    if (!confirm(`ATTENTION: Voulez-vous vraiment ${actionName} portefeuilles étudiants du système ?`)) return;
+    const confirmed = await this.confirmService.confirm({
+      title: `ATTENTION: ${geler ? 'Gel' : 'Dégel'} global`,
+      message: `Voulez-vous vraiment ${actionName} portefeuilles étudiants du système ?`,
+      confirmText: geler ? 'Geler tout' : 'Dégeler tout',
+      type: 'danger'
+    });
+
+    if (!confirmed) return;
 
     this.isFreezeLoading = true;
     this.walletService.gelerTousLesWallets(geler).subscribe({
@@ -459,7 +483,7 @@ export class UtilisateursComponent implements OnInit {
       },
       error: (err) => {
         this.isFreezeLoading = false;
-        alert(`Erreur lors du ${actionName} portefeuilles étudiants.`);
+        this.confirmService.alert(`Erreur lors du ${actionName} portefeuilles étudiants.`, "Erreur", "danger");
       }
     });
   }

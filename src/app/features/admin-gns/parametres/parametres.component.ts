@@ -11,6 +11,8 @@ import { BanqueService, CompteBancaire } from '../../../core/services/banque.ser
 import { Banque } from '../../../core/models/banque.model';
 import { StudentService } from '../../../core/services/student.service';
 
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
+
 @Component({
   selector: 'app-parametres-gns',
   standalone: true,
@@ -86,6 +88,7 @@ export class ParametresGnsComponent implements OnInit {
     private studentService: StudentService,
     private authService: AuthService,
     private systemStatusService: SystemStatusService,
+    private confirmService: ConfirmDialogService,
     private fb: FormBuilder
   ) {
     this.docCreateForm = this.fb.group({
@@ -421,15 +424,22 @@ export class ParametresGnsComponent implements OnInit {
     });
   }
 
-  deleteCompteBancaire(trackingId: string) {
-    if (confirm('Supprimer ce compte ?')) {
+  async deleteCompteBancaire(trackingId: string) {
+    const confirmed = await this.confirmService.confirm({
+      title: 'Suppression du compte bancaire',
+      message: 'Voulez-vous vraiment supprimer ce compte bancaire ?',
+      confirmText: 'Supprimer',
+      type: 'danger'
+    });
+
+    if (confirmed) {
       this.banqueService.deleteCompteGns(trackingId).subscribe({
         next: () => {
-          this.successMessage = 'Supprimé.';
+          this.successMessage = 'Compte bancaire supprimé.';
           this.loadComptesBancaires();
         },
         error: () => {
-          this.errorMessage = 'Erreur suppression.';
+          this.errorMessage = 'Erreur lors de la suppression.';
         }
       });
     }
@@ -437,7 +447,7 @@ export class ParametresGnsComponent implements OnInit {
 
   viewRib(compte: CompteBancaire) {
     if (!compte.ribDocumentTrackingId) {
-      alert("Aucun document RIB.");
+      this.confirmService.alert("Aucun document RIB n'est associé à ce compte.", "Document RIB", "info");
       return;
     }
     this.studentService.getDocumentById(compte.ribDocumentTrackingId).subscribe({
@@ -446,7 +456,7 @@ export class ParametresGnsComponent implements OnInit {
         this.isPreviewModalOpen = true;
       },
       error: () => {
-        alert("Erreur récupération document.");
+        this.confirmService.alert("Erreur lors de la récupération du document RIB.", "Erreur", "danger");
       }
     });
   }

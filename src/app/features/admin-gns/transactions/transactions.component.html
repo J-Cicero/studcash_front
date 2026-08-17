@@ -1,11 +1,10 @@
 <div class="mb-8 animate-fade-in-up">
-  <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Transactions & Répartition</h1>
-  <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Suivi détaillé des flux financiers, commissions et reversements nets.</p>
+  <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Transactions & Prélèvements Étudiants</h1>
+  <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Suivi des flux financiers et génération des liquidations de bourse étudiants.</p>
 </div>
 
 <!-- Cartes de Statistiques -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 animate-fade-in-up" style="animation-delay: 50ms;">
-  <!-- Total Volume -->
   <div class="glass-panel rounded-2xl p-6 relative overflow-hidden group hover:shadow-lg transition-all border border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40">
     <div class="absolute -right-6 -top-6 w-24 h-24 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
     <div class="flex justify-between items-start mb-4 relative z-10">
@@ -24,100 +23,171 @@
     </div>
   </div>
 
-
-</div>
-
-<div class="glass-panel rounded-2xl overflow-hidden animate-fade-in-up border border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40" style="animation-delay: 100ms;">
-  <!-- Header & Filters -->
-  <div class="p-6 border-b border-slate-200/50 dark:border-slate-700/50 bg-white/60 dark:bg-slate-900/60">
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-      <h3 class="text-lg font-bold text-slate-900 dark:text-white">Répartition des Transactions</h3>
-      
-      <div class="flex flex-wrap gap-2">
-        <select [ngModel]="filterStatut" (ngModelChange)="setFilterStatut($event)" 
-                class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 font-medium shadow-sm transition-all">
-          <option value="ALL">Tous les statuts</option>
-          <option value="VALIDEE">Validé</option>
-          <option value="EN_ATTENTE">En attente</option>
-          <option value="ANNULEE">Annulé</option>
-          <option value="ECHOUEE">Échoué</option>
-        </select>
+  <div class="glass-panel rounded-2xl p-6 relative overflow-hidden group hover:shadow-lg transition-all border border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40">
+    <div class="flex justify-between items-start mb-4 relative z-10">
+      <div>
+        <p class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">Étudiants à Prélever</p>
+        <h3 class="text-3xl font-black text-indigo-600 dark:text-indigo-400 tracking-tight">
+          {{ unliquidatedStudents.length }}
+        </h3>
+      </div>
+      <div class="p-3 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl">
+        <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Loading State -->
-  <div *ngIf="isLoading" class="flex justify-center items-center py-20 bg-white/20 dark:bg-slate-900/20">
-    <div class="relative w-12 h-12">
-      <div class="absolute inset-0 rounded-full border-4 border-indigo-100 dark:border-slate-800"></div>
-      <div class="absolute inset-0 rounded-full border-4 border-indigo-600 dark:border-indigo-400 border-t-transparent animate-spin"></div>
+<!-- Section 1: Dépenses Étudiants À Prélever (Création Liquidation) -->
+<div class="glass-panel rounded-2xl overflow-hidden mb-8 border border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40">
+  <div class="p-6 border-b border-slate-200/50 dark:border-slate-700/50 bg-white/60 dark:bg-slate-900/60 flex items-center justify-between">
+    <div>
+      <h3 class="text-lg font-bold text-slate-900 dark:text-white">Dépenses Étudiants à Prélever sur Bourse</h3>
+      <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Sélectionnez un étudiant pour consulter ses détails et créer sa demande de liquidation.</p>
     </div>
   </div>
 
-  <!-- Error State -->
-  <div *ngIf="errorMessage && !isLoading" class="p-8 text-center bg-white/20 dark:bg-slate-900/20">
-    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 mb-4">
-      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-      </svg>
-    </div>
-    <p class="text-slate-600 dark:text-slate-400 font-medium">{{ errorMessage }}</p>
-  </div>
-
-  <!-- Empty State -->
-  <div *ngIf="!isLoading && !errorMessage && transactions.length === 0" class="p-12 text-center bg-white/20 dark:bg-slate-900/20">
-    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 mb-4">
-      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-      </svg>
-    </div>
-    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Aucune transaction trouvée</h3>
-  </div>
-
-  <!-- Table -->
-  <div class="overflow-x-auto" *ngIf="!isLoading && !errorMessage && transactions.length > 0">
+  <div class="overflow-x-auto" *ngIf="unliquidatedStudents.length > 0">
     <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
-      <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
+      <thead class="bg-slate-50/50 dark:bg-slate-800/30">
         <tr>
-          <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest whitespace-nowrap">Transaction</th>
-          <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Acteurs</th>
-          <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest whitespace-nowrap">Montant</th>
-          <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statut</th>
+          <th class="px-6 py-3.5 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Étudiant</th>
+          <th class="px-6 py-3.5 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Nb Transactions</th>
+          <th class="px-6 py-3.5 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Total Dépenses</th>
+          <th class="px-6 py-3.5 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Action</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-slate-200/50 dark:divide-slate-700/50 bg-white/20 dark:bg-slate-900/20">
-        <tr *ngFor="let t of transactions" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group">
-          
-          <td class="px-4 py-3 whitespace-nowrap">
-            <div class="text-sm font-bold text-slate-900 dark:text-white font-mono uppercase tracking-wider">{{ getShortId(t.trackingId) }}</div>
-            <div class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">{{ t.createdAt | date:'dd MMM yyyy, HH:mm' }}</div>
+      <tbody class="divide-y divide-slate-200/50 dark:divide-slate-700/50">
+        <tr *ngFor="let s of unliquidatedStudents" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="font-bold text-slate-900 dark:text-white">{{ s.studentName }}</span>
           </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
+            {{ s.transactionCount }} achat(s)
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap font-black text-indigo-600 dark:text-indigo-400">
+            {{ formatNumber(s.totalExpenses) }} FCFA
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-right">
+            <button (click)="openStudentDetails(s)" 
+                    class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-95">
+              Voir Détails
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
+  <div *ngIf="unliquidatedStudents.length === 0" class="p-8 text-center text-slate-500 dark:text-slate-400 font-medium">
+    Aucune dépense étudiant en attente de prélevement.
+  </div>
+</div>
+
+<!-- Modal Détails & Création Liquidation Étudiant -->
+<div *ngIf="selectedStudent" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+  <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-6">
+    <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-4">
+      <div>
+        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Détails Dépenses - {{ selectedStudent.studentName }}</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400">Montant total cumulé : <strong class="text-indigo-600 dark:text-indigo-400">{{ formatNumber(selectedStudent.totalExpenses) }} FCFA</strong></p>
+      </div>
+      <button (click)="closeStudentDetails()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Alert Success -->
+    <div *ngIf="liquidationSuccessMessage" class="p-4 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 text-sm font-bold rounded-xl">
+      {{ liquidationSuccessMessage }}
+    </div>
+
+    <!-- Table of Student Transactions -->
+    <div class="max-h-60 overflow-y-auto custom-scrollbar border border-slate-200 dark:border-slate-800 rounded-xl">
+      <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
+        <thead class="bg-slate-50 dark:bg-slate-800">
+          <tr>
+            <th class="px-4 py-2 text-left text-xs font-bold text-slate-500 uppercase">Réf</th>
+            <th class="px-4 py-2 text-left text-xs font-bold text-slate-500 uppercase">Marchand</th>
+            <th class="px-4 py-2 text-right text-xs font-bold text-slate-500 uppercase">Montant</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+          <tr *ngFor="let t of studentTransactions">
+            <td class="px-4 py-2 text-xs font-mono text-slate-700 dark:text-slate-300">{{ getShortId(t.trackingId) }}</td>
+            <td class="px-4 py-2 text-xs text-slate-900 dark:text-white font-medium">{{ t.receiverName || 'Boutique' }}</td>
+            <td class="px-4 py-2 text-xs text-right font-bold text-slate-900 dark:text-white">{{ formatNumber(t.amount || 0) }} FCFA</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="flex justify-end space-x-3 pt-2">
+      <button (click)="closeStudentDetails()" class="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl">
+        Fermer
+      </button>
+      <button (click)="createStudentLiquidation()" [disabled]="isCreatingLiquidation" 
+              class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-lg shadow-indigo-500/30 transition-all active:scale-95 disabled:opacity-50">
+        <span *ngIf="!isCreatingLiquidation">Créer Liquidation ({{ formatNumber(selectedStudent.totalExpenses) }} FCFA)</span>
+        <span *ngIf="isCreatingLiquidation">Création...</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Section 2: Historique Général des Transactions -->
+<div class="glass-panel rounded-2xl overflow-hidden animate-fade-in-up border border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40">
+  <div class="p-6 border-b border-slate-200/50 dark:border-slate-700/50 bg-white/60 dark:bg-slate-900/60 flex items-center justify-between">
+    <h3 class="text-lg font-bold text-slate-900 dark:text-white">Toutes les Transactions</h3>
+    <select [ngModel]="filterStatut" (ngModelChange)="setFilterStatut($event)" 
+            class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-xl p-2.5 font-medium">
+      <option value="ALL">Tous les statuts</option>
+      <option value="VALIDEE">Validé</option>
+      <option value="EN_ATTENTE">En attente</option>
+      <option value="ANNULEE">Annulé</option>
+    </select>
+  </div>
+
+  <div class="overflow-x-auto" *ngIf="!isLoading && filteredTransactions.length > 0">
+    <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
+      <thead class="bg-slate-50/50 dark:bg-slate-800/30">
+        <tr>
+          <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Transaction</th>
+          <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Acteurs</th>
+          <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Montant</th>
+          <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Prélevé Bourse</th>
+          <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Statut</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-200/50 dark:divide-slate-700/50">
+        <tr *ngFor="let t of filteredTransactions" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
           <td class="px-4 py-3 whitespace-nowrap">
-            <div class="flex flex-col gap-1 text-sm">
+            <div class="text-sm font-bold text-slate-900 dark:text-white font-mono uppercase">{{ getShortId(t.trackingId) }}</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">{{ t.createdAt | date:'dd MMM yyyy, HH:mm' }}</div>
+          </td>
+          <td class="px-4 py-3 whitespace-nowrap">
+            <div class="flex flex-col text-sm">
               <span class="font-bold text-slate-700 dark:text-slate-300">De: {{ t.senderName || 'Étudiant' }}</span>
               <span class="font-bold text-indigo-600 dark:text-indigo-400">À: {{ t.receiverName || 'Boutique' }}</span>
             </div>
           </td>
-
-          <td class="px-4 py-3 whitespace-nowrap">
-            <div class="text-sm font-black text-slate-900 dark:text-white">
-              {{ formatNumber(t.amount || 0) }} <span class="text-xs font-bold text-slate-500">FCFA</span>
-            </div>
+          <td class="px-4 py-3 whitespace-nowrap text-sm font-black text-slate-900 dark:text-white">
+            {{ formatNumber(t.amount || 0) }} FCFA
           </td>
-
           <td class="px-4 py-3 whitespace-nowrap">
-            <span *ngIf="t.status === 'VALIDEE'" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100/80 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-              Validée
+            <span *ngIf="t.deductedFromStudentBourse" class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">
+              Oui
             </span>
-            <span *ngIf="t.status === 'EN_ATTENTE'" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100/80 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
-              En attente
-            </span>
-            <span *ngIf="t.status === 'ANNULEE' || t.status === 'ECHOUEE'" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100/80 text-red-700 dark:bg-red-900/40 dark:text-red-400 border border-red-200 dark:border-red-800">
-              {{ t.status === 'ANNULEE' ? 'Annulée' : 'Échouée' }}
+            <span *ngIf="!t.deductedFromStudentBourse" class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">
+              Non
             </span>
           </td>
-          
+          <td class="px-4 py-3 whitespace-nowrap">
+            <span *ngIf="t.status === 'VALIDEE'" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">Validée</span>
+            <span *ngIf="t.status === 'EN_ATTENTE'" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">En attente</span>
+          </td>
         </tr>
       </tbody>
     </table>

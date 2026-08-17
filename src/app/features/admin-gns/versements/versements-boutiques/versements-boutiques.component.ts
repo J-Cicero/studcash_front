@@ -5,6 +5,8 @@ import { VersementService } from '../../../../core/services/versement.service';
 import { BoutiqueService, BoutiqueResponse } from '../../../../core/services/boutique.service';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
+import { ConfirmDialogService } from '../../../../core/services/confirm-dialog.service';
+
 @Component({
   selector: 'app-versements-boutiques',
   standalone: true,
@@ -38,7 +40,8 @@ export class VersementsBoutiquesComponent implements OnInit {
   constructor(
     private fb: FormBuilder, 
     private versementService: VersementService,
-    private boutiqueService: BoutiqueService
+    private boutiqueService: BoutiqueService,
+    private confirmService: ConfirmDialogService
   ) {
     this.manualVersementForm = this.fb.group({
       montant: [null, [Validators.required, Validators.min(1)]]
@@ -122,7 +125,7 @@ export class VersementsBoutiquesComponent implements OnInit {
       },
       error: () => {
         this.isProcessingManual = false;
-        alert("Erreur lors de la recharge individuelle.");
+        this.confirmService.alert("Erreur lors de la recharge individuelle.", "Erreur", "danger");
       }
     });
   }
@@ -153,7 +156,7 @@ export class VersementsBoutiquesComponent implements OnInit {
       },
       error: () => {
         this.isProcessingMass = false;
-        alert("Erreur lors de la prévisualisation.");
+        this.confirmService.alert("Erreur lors de la prévisualisation.", "Erreur", "danger");
       }
     });
   }
@@ -176,7 +179,7 @@ export class VersementsBoutiquesComponent implements OnInit {
       },
       error: () => {
         this.isProcessingMass = false;
-        alert("Erreur lors de la recharge en masse des boutiques.");
+        this.confirmService.alert("Erreur lors de la recharge en masse des boutiques.", "Erreur", "danger");
       }
     });
   }

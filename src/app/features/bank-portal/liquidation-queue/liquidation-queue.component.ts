@@ -7,6 +7,18 @@ import {
   BoutiqueLiquidationInfo,
   VenteNonLiquidee
 } from '../../../core/services/bank-portal.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
+
+export interface PendingStudentLiquidation {
+  trackingId: string;
+  studentName: string;
+  studentTrackingId: string;
+  amountDeducted: number;
+  createdAt: string;
+  status: string;
+}
 
 @Component({
   selector: 'app-liquidation-queue',
@@ -16,41 +28,65 @@ import {
   styleUrls: ['./liquidation-queue.component.scss']
 })
 export class LiquidationQueueComponent implements OnInit {
+  activeTab: 'BOUTIQUE' | 'ETUDIANT' = 'BOUTIQUE';
+
   boutiques: BoutiqueLiquidationInfo[] = [];
+  studentLiquidations: PendingStudentLiquidation[] = [];
+
   isLoading = false;
-  
   searchQuery = '';
   
+  // Boutique Modal Details
   selectedBoutique: BoutiqueLiquidationInfo | null = null;
   ventesDetails: VenteNonLiquidee[] = [];
   isLoadingDetails = false;
   
+  // Student Modal Details
+  selectedStudentLiquidation: PendingStudentLiquidation | null = null;
+  studentTransactions: any[] = [];
+
   referenceVirement = '';
   isValidating = false;
   validationSuccess = false;
 
   constructor(
     private bankPortalService: BankPortalService,
-    private authService: AuthService
+    private authService: AuthService,
+    private http: HttpClient,
+    private confirmService: ConfirmDialogService
   ) {}
 
   ngOnInit(): void {
     this.loadBoutiques();
+    this.loadStudentLiquidations();
+  }
+
+  setTab(tab: 'BOUTIQUE' | 'ETUDIANT') {
+    this.activeTab = tab;
+    this.searchQuery = '';
   }
 
   loadBoutiques(): void {
-    const operatorId = this.authService.currentUserValue?.trackingId;
-    if (!operatorId) return;
-
     this.isLoading = true;
-    this.bankPortalService.getBoutiques(operatorId).subscribe({
-      next: (data: any) => {
-        this.boutiques = data.filter((b: any) => b.soldeWallet > 0);
+    this.bankPortalService.getBoutiquesPendingLiquidation().subscribe({
+      next: (data) => {
+        this.boutiques = data;
         this.isLoading = false;
       },
-      error: (err: any) => {
+      error: (err) => {
         console.error(err);
         this.isLoading = false;
+      }
+    });
+  }
+
+  loadStudentLiquidations(): void {
+    this.http.get<PendingStudentLiquidation[]>(`${environment.apiUrl}/student-liquidations/pending`).subscribe({
+      next: (data) => {
+        this.studentLiquidations = data || [];
+      },
+      error: (err) => {
+        console.error('Erreur chargement liquidations étudiants:', err);
       }
     });
   }
@@ -59,74 +95,115 @@ export class LiquidationQueueComponent implements OnInit {
     if (!this.searchQuery) return this.boutiques;
     const q = this.searchQuery.toLowerCase();
     return this.boutiques.filter(b => 
-      b.nomBoutique.toLowerCase().includes(q) || 
-      b.proprietaireNom.toLowerCase().includes(q) ||
-      (b.numeroCompte && b.numeroCompte.toLowerCase().includes(q)) ||
-      (b.boutiqueTrackingId && b.boutiqueTrackingId.toLowerCase().includes(q))
+      b.boutiqueName.toLowerCase().includes(q) || 
+      (b.merchantName && b.merchantName.toLowerCase().includes(q))
     );
   }
 
-  selectBoutique(boutique: BoutiqueLiquidationInfo): void {
+  get filteredStudentLiquidations(): PendingStudentLiquidation[] {
+    if (!this.searchQuery) return this.studentLiquidations;
+    const q = this.searchQuery.toLowerCase();
+    return this.studentLiquidations.filter(s => 
+      s.studentName.toLowerCase().includes(q)
+    );
+  }
+
+  get totalPendingBoutiques(): number {
+    return this.boutiques.reduce((sum, b) => sum + b.totalAmount, 0);
+  }
+
+  get totalPendingStudents(): number {
+    return this.studentLiquidations.reduce((sum, s) => sum + s.amountDeducted, 0);
+  }
+
+  openBoutiqueDetails(boutique: BoutiqueLiquidationInfo): void {
     this.selectedBoutique = boutique;
-    this.validationSuccess = false;
+    this.selectedStudentLiquidation = null;
+    this.isLoadingDetails = true;
     this.referenceVirement = '';
-    this.loadVentesDetails(boutique.boutiqueTrackingId);
+    this.validationSuccess = false;
+
+    this.bankPortalService.getVentesNonLiquidees(boutique.boutiqueId).subscribe({
+      next: (ventes) => {
+        this.ventesDetails = ventes;
+        this.isLoadingDetails = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.isLoadingDetails = false;
+      }
+    });
+  }
+
+  openStudentDetails(studentLiq: PendingStudentLiquidation): void {
+    this.selectedStudentLiquidation = studentLiq;
+    this.selectedBoutique = null;
+    this.isLoadingDetails = true;
+    this.referenceVirement = '';
+    this.validationSuccess = false;
+
+    if (studentLiq.studentTrackingId) {
+      this.http.get<any>(`${environment.apiUrl}/transactions/student/${studentLiq.studentTrackingId}?page=0&size=50`).subscribe({
+        next: (res) => {
+          const content = res.content || res || [];
+          this.studentTransactions = content.filter((t: any) => t.status === 'VALIDE');
+          this.isLoadingDetails = false;
+        },
+        error: (err) => {
+          console.error(err);
+          this.studentTransactions = [];
+          this.isLoadingDetails = false;
+        }
+      });
+    } else {
+      this.studentTransactions = [];
+      this.isLoadingDetails = false;
+    }
   }
 
   closeDetails(): void {
     this.selectedBoutique = null;
+    this.selectedStudentLiquidation = null;
     this.ventesDetails = [];
+    this.studentTransactions = [];
+    this.referenceVirement = '';
+    this.validationSuccess = false;
   }
 
-  loadVentesDetails(boutiqueTrackingId: string): void {
-    this.isLoadingDetails = true;
-    this.bankPortalService.getVentesNonLiquidees(boutiqueTrackingId).subscribe({
-      next: (data: any) => {
-        this.ventesDetails = data;
-        this.isLoadingDetails = false;
-      },
-      error: (err: any) => {
-        console.error(err);
-        this.isLoadingDetails = false;
-      }
-    });
-  }
-
-  get totalVentesBrutes(): number {
-    const total = this.ventesDetails.reduce((acc, curr) => acc + curr.montant, 0);
-    if (total === 0 && this.selectedBoutique && this.selectedBoutique.soldeWallet > 0) {
-      return this.selectedBoutique.soldeWallet;
-    }
-    return total;
-  }
-
-  get commissions(): number {
-    if (!this.selectedBoutique) return 0;
-    const diff = this.totalVentesBrutes - this.selectedBoutique.soldeWallet;
-    return diff > 0 ? diff : 0;
-  }
-
-  validerVirement(): void {
-    if (!this.selectedBoutique || !this.referenceVirement.trim()) return;
+  validerLiquidation(): void {
+    if (!this.referenceVirement || !this.referenceVirement.trim()) return;
 
     this.isValidating = true;
-    this.bankPortalService.validerLiquidation(this.selectedBoutique.boutiqueTrackingId, this.referenceVirement).subscribe({
-      next: () => {
-        this.isValidating = false;
-        this.validationSuccess = true;
-        
-        // Remove from list
-        this.boutiques = this.boutiques.filter(b => b.boutiqueTrackingId !== this.selectedBoutique?.boutiqueTrackingId);
-        
-        setTimeout(() => {
-          this.closeDetails();
-        }, 2000);
-      },
-      error: (err: any) => {
-        console.error(err);
-        this.isValidating = false;
-        alert("Erreur lors de la validation du virement.");
-      }
-    });
+
+    if (this.selectedBoutique) {
+      this.bankPortalService.validerLiquidation(this.selectedBoutique.boutiqueId, this.referenceVirement).subscribe({
+        next: () => {
+          this.isValidating = false;
+          this.validationSuccess = true;
+          this.loadBoutiques();
+          setTimeout(() => this.closeDetails(), 1800);
+        },
+        error: (err: any) => {
+          console.error(err);
+          this.isValidating = false;
+          this.confirmService.alert("Erreur lors de la validation de la liquidation marchand.", "Erreur", "danger");
+        }
+      });
+    } else if (this.selectedStudentLiquidation) {
+      const trackingId = this.selectedStudentLiquidation.trackingId;
+      this.http.patch(`${environment.apiUrl}/student-liquidations/${trackingId}/valider?referenceVirement=${this.referenceVirement}`, {}).subscribe({
+        next: () => {
+          this.isValidating = false;
+          this.validationSuccess = true;
+          this.studentLiquidations = this.studentLiquidations.filter(s => s.trackingId !== trackingId);
+          setTimeout(() => this.closeDetails(), 1800);
+        },
+        error: (err: any) => {
+          console.error(err);
+          this.isValidating = false;
+          this.confirmService.alert("Erreur lors de la validation du prélèvement étudiant.", "Erreur", "danger");
+        }
+      });
+    }
   }
 }

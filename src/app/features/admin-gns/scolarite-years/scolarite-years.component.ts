@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ScolariteYearService } from '../../../core/services/scolarite-year.service';
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
 
 @Component({
   selector: 'app-scolarite-years',
@@ -23,7 +24,8 @@ export class ScolariteYearsComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private scolariteYearService: ScolariteYearService
+    private scolariteYearService: ScolariteYearService,
+    private confirmService: ConfirmDialogService
   ) {
     this.createForm = this.fb.group({
       libelle: ['', Validators.required],
@@ -59,8 +61,15 @@ export class ScolariteYearsComponent implements OnInit {
     return year.isOpen === true;
   }
 
-  cloturerYear(year: any) {
-    if (confirm(`Êtes-vous sûr de vouloir clôturer l'année ${year.label} ?`)) {
+  async cloturerYear(year: any) {
+    const confirmed = await this.confirmService.confirm({
+      title: 'Clôture de l\'année scolaire',
+      message: `Êtes-vous sûr de vouloir clôturer l'année ${year.label} ?`,
+      confirmText: 'Clôturer',
+      type: 'warning'
+    });
+
+    if (confirmed) {
       this.scolariteYearService.cloturer(year.trackingId).subscribe({
         next: () => {
           this.successMessage = "Année clôturée avec succès.";
@@ -71,8 +80,15 @@ export class ScolariteYearsComponent implements OnInit {
     }
   }
 
-  deleteYear(year: any) {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer l'année ${year.label} ? Cette action est irréversible.`)) {
+  async deleteYear(year: any) {
+    const confirmed = await this.confirmService.confirm({
+      title: 'Suppression d\'année scolaire',
+      message: `Êtes-vous sûr de vouloir supprimer l'année ${year.label} ? Cette action est irréversible.`,
+      confirmText: 'Supprimer',
+      type: 'danger'
+    });
+
+    if (confirmed) {
       this.scolariteYearService.delete(year.trackingId).subscribe({
         next: () => {
           this.successMessage = "Année scolaire supprimée avec succès.";

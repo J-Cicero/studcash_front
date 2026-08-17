@@ -165,7 +165,32 @@
             class="font-normal text-slate-400 text-xs">Bank</span></span>
       </div>
 
+      <!-- Year Selector (Historical Consultation) -->
+      <div class="hidden md:flex items-center space-x-2 flex-1 justify-center">
+        <div class="flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 shadow-sm">
+          <svg class="w-4 h-4 text-violet-600 dark:text-violet-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          <select
+            id="year-selector-bank"
+            [(ngModel)]="selectedYearTrackingId"
+            (ngModelChange)="onYearChange()"
+            class="bg-transparent text-sm font-semibold text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer pr-1 max-w-[150px]">
+            <option *ngFor="let year of allYears" [value]="year.trackingId">
+              {{ year.label }} {{ year.isOpen ? '🟢' : '📁' }}
+            </option>
+          </select>
+        </div>
+        <span *ngIf="isReadOnly"
+          class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-700/50">
+          📖 Lecture seule
+        </span>
+      </div>
+
       <div class="flex items-center space-x-3 ml-auto">
+        <!-- Notifications -->
+        <app-notification-bell></app-notification-bell>
+
         <!-- Theme Toggle Mobile -->
         <button (click)="themeService.toggleTheme()"
           class="md:hidden p-2 text-slate-400 hover:text-blue-600 transition-colors">

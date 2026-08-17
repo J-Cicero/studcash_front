@@ -230,6 +230,32 @@
         </div>
       </div>
 
+      <!-- Year Selector (Historical Consultation) -->
+      <div class="hidden md:flex items-center space-x-2 ml-4">
+        <div class="flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-1.5 shadow-sm hover:shadow-md transition-shadow">
+          <svg class="w-4 h-4 text-violet-600 dark:text-violet-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          <select
+            id="year-selector-gns"
+            [(ngModel)]="selectedYearTrackingId"
+            (ngModelChange)="onYearChange()"
+            class="bg-transparent text-sm font-semibold text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer pr-1 max-w-[160px]">
+            <option *ngFor="let year of allYears" [value]="year.trackingId">
+              {{ year.label }} {{ year.isOpen ? '🟢' : '📁' }}
+            </option>
+          </select>
+        </div>
+        <!-- Read-only badge -->
+        <span *ngIf="isReadOnly"
+          class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-700/50 animate-pulse">
+          <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+          </svg>
+          Lecture seule
+        </span>
+      </div>
+
       <div class="flex items-center space-x-4 ml-auto">
 
         <!-- Theme Toggle Mobile -->
@@ -248,14 +274,7 @@
         </button>
 
         <!-- Notifications -->
-        <button class="relative p-2 text-slate-400 hover:text-blue-600 transition-colors hover-lift">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-          </svg>
-          <span
-            class="absolute top-1.5 right-1.5 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white dark:ring-slate-950"></span>
-        </button>
+        <app-notification-bell></app-notification-bell>
 
         <!-- Mobile Menu Toggle -->
         <button class="md:hidden p-2 text-slate-400 hover:text-slate-600 transition-colors">
