@@ -9,7 +9,10 @@ import { AuthService } from '../../../core/services/auth.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss']
+  styleUrls: ['./register.component.scss'],
+  host: {
+    class: 'block w-full min-h-screen bg-slate-50'
+  }
 })
 export class RegisterComponent {
   registerForm: FormGroup;

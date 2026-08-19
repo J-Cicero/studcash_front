@@ -1,0 +1,266 @@
+<div class="space-y-6 animate-fade-in-up">
+  <!-- Page Header -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Liquidations & Prélèvements Étudiants</h1>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">
+        Gestion et validation des prélèvements boursiers créés par l'Admin GNS. Transferts vers le compte central GNS.
+      </p>
+    </div>
+
+    <!-- Quick Refresh Button -->
+    <button (click)="loadLiquidations()" 
+            class="inline-flex items-center px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+      <svg class="w-4 h-4 mr-2 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      </svg>
+      Actualiser
+    </button>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="glass-panel p-5 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 bg-white/60 dark:bg-slate-900/60 shadow-sm">
+      <div class="text-xs font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">Liquidations Totales</div>
+      <div class="text-2xl font-black text-slate-900 dark:text-white">{{ liquidations.length }}</div>
+      <div class="text-xs text-slate-500 mt-1">Demandes enregistrées</div>
+    </div>
+
+    <div class="glass-panel p-5 rounded-2xl border border-amber-200/60 dark:border-amber-900/40 bg-amber-50/40 dark:bg-amber-950/20 shadow-sm">
+      <div class="text-xs font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-1">En Attente de Virement</div>
+      <div class="text-2xl font-black text-amber-700 dark:text-amber-300">{{ pendingCount }}</div>
+      <div class="text-xs text-amber-600/80 dark:text-amber-400/80 mt-1 font-bold">{{ formatNumber(pendingAmount) }} FCFA</div>
+    </div>
+
+    <div class="glass-panel p-5 rounded-2xl border border-emerald-200/60 dark:border-emerald-900/40 bg-emerald-50/40 dark:bg-emerald-950/20 shadow-sm">
+      <div class="text-xs font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1">Virements Validés</div>
+      <div class="text-2xl font-black text-emerald-700 dark:text-emerald-300">{{ paidCount }}</div>
+      <div class="text-xs text-emerald-600/80 dark:text-emerald-400/80 mt-1 font-bold">Règlements effectués</div>
+    </div>
+
+    <div class="glass-panel p-5 rounded-2xl border border-blue-200/60 dark:border-blue-900/40 bg-blue-50/40 dark:bg-blue-950/20 shadow-sm">
+      <div class="text-xs font-extrabold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-1">Montant Cumulé Prélevé</div>
+      <div class="text-2xl font-black text-blue-700 dark:text-blue-300">{{ formatNumber(totalAmount) }} <span class="text-xs">FCFA</span></div>
+      <div class="text-xs text-blue-600/80 dark:text-blue-400/80 mt-1">Volume global</div>
+    </div>
+  </div>
+
+  <!-- Filters & Search Bar -->
+  <div class="flex flex-col md:flex-row items-center justify-between gap-4 bg-white/60 dark:bg-slate-900/60 p-4 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 backdrop-blur-md">
+    <!-- Filter Tabs -->
+    <div class="flex items-center space-x-1 bg-slate-100 dark:bg-slate-800/60 p-1 rounded-xl w-full md:w-auto">
+      <button (click)="setTab('ALL')" 
+              [class.bg-white]="activeTab === 'ALL'" 
+              [class.dark:bg-slate-700]="activeTab === 'ALL'" 
+              [class.shadow-sm]="activeTab === 'ALL'"
+              class="flex-1 md:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-700 dark:text-slate-300">
+        Toutes ({{ liquidations.length }})
+      </button>
+      <button (click)="setTab('EN_ATTENTE')" 
+              [class.bg-amber-500]="activeTab === 'EN_ATTENTE'" 
+              [class.text-white]="activeTab === 'EN_ATTENTE'" 
+              class="flex-1 md:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-700 dark:text-slate-300">
+        En Attente ({{ pendingCount }})
+      </button>
+      <button (click)="setTab('PAYE')" 
+              [class.bg-emerald-600]="activeTab === 'PAYE'" 
+              [class.text-white]="activeTab === 'PAYE'" 
+              class="flex-1 md:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-700 dark:text-slate-300">
+        Validées / Payées ({{ paidCount }})
+      </button>
+    </div>
+
+    <!-- Search Input -->
+    <div class="relative w-full md:w-72">
+      <svg class="w-4 h-4 absolute left-3.5 top-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+      <input type="text" 
+             [(ngModel)]="searchQuery" 
+             placeholder="Rechercher étudiant, n° carte, réf..." 
+             class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+  </div>
+
+  <!-- Table List -->
+  <div class="glass-panel rounded-2xl overflow-hidden border border-slate-200/50 dark:border-slate-800/50 bg-white/50 dark:bg-slate-900/50 shadow-sm">
+    <div *ngIf="isLoading" class="p-12 text-center text-slate-500 dark:text-slate-400 font-medium">
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent mb-3"></div>
+      <p>Chargement des liquidations étudiants...</p>
+    </div>
+
+    <div *ngIf="!isLoading && filteredLiquidations.length === 0" class="p-12 text-center text-slate-500 dark:text-slate-400 font-medium">
+      Aucune liquidation étudiant trouvée.
+    </div>
+
+    <div class="overflow-x-auto" *ngIf="!isLoading && filteredLiquidations.length > 0">
+      <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
+        <thead class="bg-slate-100/70 dark:bg-slate-800/50">
+          <tr>
+            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Réf / Date</th>
+            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Étudiant</th>
+            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">N° Compte Bancaire</th>
+            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Montant Prélevé</th>
+            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statut</th>
+            <th class="px-6 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Action</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+          <tr *ngFor="let item of filteredLiquidations" class="hover:bg-blue-50/40 dark:hover:bg-slate-800/40 transition-colors">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="font-mono text-xs font-bold text-blue-600 dark:text-blue-400 uppercase">{{ getShortId(item.trackingId) }}</div>
+              <div class="text-[11px] text-slate-400 mt-0.5">{{ item.createdAt | date:'dd/MM/yyyy HH:mm' }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="font-bold text-sm text-slate-900 dark:text-white">{{ item.studentName || 'Étudiant' }}</div>
+              <div class="text-xs text-slate-500 dark:text-slate-400 font-mono" *ngIf="item.studentNumber">N°: {{ item.studentNumber }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-xs font-mono text-slate-700 dark:text-slate-300">
+              {{ item.accountNumber || 'Non renseigné' }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-black text-blue-700 dark:text-blue-400">
+              {{ formatNumber(item.amountDeducted) }} FCFA
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span *ngIf="item.status === 'EN_ATTENTE'" 
+                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-extrabold bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300 border border-amber-300/50">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-2 animate-pulse"></span> En Attente
+              </span>
+              <span *ngIf="item.status === 'PAYE'" 
+                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 border border-emerald-300/50">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2"></span> Validé / Payé
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-right">
+              <button (click)="openDetails(item)" 
+                      class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-95">
+                Détails & Validation
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Détails & Validation Student Liquidation -->
+<div *ngIf="selectedLiquidation" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in">
+  <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-3xl w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-6 max-h-[90vh] overflow-y-auto custom-scrollbar">
+    
+    <!-- Header Modal -->
+    <div class="flex justify-between items-start border-b border-slate-200 dark:border-slate-800 pb-4">
+      <div>
+        <span class="text-[10px] font-extrabold uppercase tracking-widest text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full">
+          Liquidation Étudiant GNS
+        </span>
+        <h2 class="text-2xl font-black text-slate-900 dark:text-white mt-2">
+          {{ selectedLiquidation.studentName }}
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          Compte bancaire : <span class="font-mono font-bold text-slate-800 dark:text-slate-200">{{ selectedLiquidation.accountNumber || 'Non renseigné' }}</span>
+        </p>
+      </div>
+      <button (click)="closeDetails()" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Alert Status -->
+    <div *ngIf="validationSuccess" class="p-4 bg-emerald-50 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300 font-bold text-sm rounded-2xl flex items-center">
+      <svg class="w-5 h-5 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+      Virement bancaire validé avec succès !
+    </div>
+
+    <!-- Summary Notice -->
+    <div class="p-4 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/60 flex items-start space-x-3">
+      <div class="p-2 bg-blue-500 text-white rounded-xl flex-shrink-0">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <div class="text-xs text-blue-900 dark:text-blue-200 leading-relaxed font-medium">
+        <strong>Information Bancaire :</strong> Le virement bancaire s'effectue depuis le compte bancaire de l'étudiant vers le compte central de GNS. L'action d'exécution du virement entre comptes bancaires s'effectue sur le système bancaire externe. Une fois exécuté, enregistrez ici la référence de virement.
+      </div>
+    </div>
+
+    <!-- Details Box -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800">
+      <div>
+        <span class="text-[11px] font-bold text-slate-400 uppercase">Montant Total Prélevé</span>
+        <div class="text-2xl font-black text-blue-600 dark:text-blue-400 mt-1">{{ formatNumber(selectedLiquidation.amountDeducted) }} FCFA</div>
+      </div>
+      <div>
+        <span class="text-[11px] font-bold text-slate-400 uppercase">Statut Actuel</span>
+        <div class="mt-1">
+          <span *ngIf="selectedLiquidation.status === 'EN_ATTENTE'" class="px-3 py-1 bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-300 font-extrabold text-xs rounded-full inline-block">
+            En Attente de Règlement
+          </span>
+          <span *ngIf="selectedLiquidation.status === 'PAYE'" class="px-3 py-1 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 font-extrabold text-xs rounded-full inline-block">
+            Validé le {{ selectedLiquidation.validatedAt | date:'dd/MM/yyyy HH:mm' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bundled Transactions -->
+    <div>
+      <h3 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3">
+        Transactions Regroupées ({{ bundledTransactions.length }})
+      </h3>
+
+      <div *ngIf="isLoadingDetails" class="p-6 text-center text-slate-400">
+        Chargement des transactions...
+      </div>
+
+      <div *ngIf="!isLoadingDetails && bundledTransactions.length === 0" class="p-6 text-center text-slate-400 text-xs bg-slate-50 dark:bg-slate-800/30 rounded-2xl">
+        Aucune transaction individuelle détaillée disponible.
+      </div>
+
+      <div *ngIf="!isLoadingDetails && bundledTransactions.length > 0" class="max-h-48 overflow-y-auto custom-scrollbar border border-slate-200 dark:border-slate-800 rounded-2xl">
+        <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-800 text-xs">
+          <thead class="bg-slate-100 dark:bg-slate-800 text-slate-500 font-bold">
+            <tr>
+              <th class="px-4 py-2.5 text-left uppercase">Réf</th>
+              <th class="px-4 py-2.5 text-left uppercase">Boutique</th>
+              <th class="px-4 py-2.5 text-left uppercase">Date</th>
+              <th class="px-4 py-2.5 text-right uppercase">Montant Achat</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+            <tr *ngFor="let t of bundledTransactions" class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+              <td class="px-4 py-2.5 font-mono text-blue-600 dark:text-blue-400 font-bold">{{ getShortId(t.trackingId) }}</td>
+              <td class="px-4 py-2.5 font-medium text-slate-900 dark:text-white">{{ t.receiverName || 'Boutique' }}</td>
+              <td class="px-4 py-2.5 text-slate-500">{{ t.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td class="px-4 py-2.5 text-right font-black text-slate-900 dark:text-white">{{ formatNumber(t.amount || 0) }} FCFA</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Reference Virement Input & Action -->
+    <div *ngIf="selectedLiquidation.status === 'EN_ATTENTE'" class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-4">
+      <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+        Référence du Virement Bancaire <span class="text-rose-500">*</span>
+      </label>
+      <input type="text" 
+             [(ngModel)]="referenceVirement" 
+             placeholder="Ex: VIR-GNS-2026-08992" 
+             class="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
+    </div>
+
+    <!-- Actions Footer -->
+    <div class="flex justify-end space-x-3 pt-2">
+      <button (click)="closeDetails()" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl">
+        Fermer
+      </button>
+      <button *ngIf="selectedLiquidation.status === 'EN_ATTENTE'" 
+              (click)="validerVirement()" 
+              [disabled]="isValidating || !referenceVirement"
+              class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-lg shadow-emerald-600/30 transition-all active:scale-95 disabled:opacity-50">
+        <span *ngIf="!isValidating">Valider le Virement</span>
+        <span *ngIf="isValidating">Validation...</span>
+      </button>
+    </div>
+
+  </div>
+</div>

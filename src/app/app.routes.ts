@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
   {
@@ -16,6 +17,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin-gns',
+    canActivate: [roleGuard('ADMIN_GNS')],
     loadComponent: () => import('./layouts/dashboard-layout/dashboard-layout.component').then(m => m.DashboardLayoutComponent),
     children: [
       {
@@ -90,6 +92,7 @@ export const routes: Routes = [
   },
   {
     path: 'bank-portal',
+    canActivate: [roleGuard('ADMIN_BANQUE')],
     loadComponent: () => import('./layouts/bank-layout/bank-layout.component').then(m => m.BankLayoutComponent),
     children: [
       {
@@ -103,7 +106,15 @@ export const routes: Routes = [
       },
       {
         path: 'liquidations',
-        loadComponent: () => import('./features/bank-portal/liquidation-queue/liquidation-queue.component').then(m => m.LiquidationQueueComponent)
+        loadComponent: () => import('./features/bank-portal/merchant-liquidations-bank/merchant-liquidations-bank.component').then(m => m.MerchantLiquidationsBankComponent)
+      },
+      {
+        path: 'liquidations-etudiants',
+        loadComponent: () => import('./features/bank-portal/student-liquidations-bank/student-liquidations-bank.component').then(m => m.StudentLiquidationsBankComponent)
+      },
+      {
+        path: 'liquidations-marchands',
+        loadComponent: () => import('./features/bank-portal/merchant-liquidations-bank/merchant-liquidations-bank.component').then(m => m.MerchantLiquidationsBankComponent)
       },
       {
         path: 'surveillance',
@@ -124,3 +135,4 @@ export const routes: Routes = [
     ]
   }
 ];
+

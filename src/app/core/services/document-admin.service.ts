@@ -7,7 +7,7 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class DocumentAdminService {
-  private apiUrl = `${environment.apiUrl}/api/admin/students`;
+  private apiUrl = `${environment.apiUrl}/admin/students`;
 
   constructor(private http: HttpClient) {}
 
@@ -17,14 +17,14 @@ export class DocumentAdminService {
 
   // Bank Admin endpoints
   updateStudentDocumentStatus(documentTrackingId: string, status: 'VALIDE' | 'REJETE', rejectionReason?: string): Observable<any> {
-    return this.http.put<any>(`${environment.apiUrl}/api/admin-banque/documents/students/${documentTrackingId}/status`, {
+    return this.http.put<any>(`${environment.apiUrl}/admin-banque/documents/students/${documentTrackingId}/status`, {
       status,
       rejectionReason
     });
   }
 
   updateMerchantDocumentStatus(documentTrackingId: string, status: 'VALIDE' | 'REJETE', rejectionReason?: string): Observable<any> {
-    return this.http.put<any>(`${environment.apiUrl}/api/admin-banque/documents/merchants/${documentTrackingId}/status`, {
+    return this.http.put<any>(`${environment.apiUrl}/admin-banque/documents/merchants/${documentTrackingId}/status`, {
       status,
       rejectionReason
     });

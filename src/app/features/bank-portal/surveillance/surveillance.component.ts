@@ -81,11 +81,6 @@ export class SurveillanceComponent implements OnInit {
   confirmMessage = '';
   confirmTitle = '';
 
-  // Liquidation Student State
-  selectedStudentForLiquidation: WalletAlert | null = null;
-  isLiquidationLoading = false;
-  liquidationSuccess = false;
-
   constructor(
     private authService: AuthService,
     private bankPortalService: BankPortalService,
@@ -285,29 +280,6 @@ export class SurveillanceComponent implements OnInit {
       this.executeMassFreeze();
     }
     this.closeConfirmModal();
-  }
-
-  // ---- STUDENT LIQUIDATION MODAL ----
-  openLiquidationModal(student: WalletAlert) {
-    this.selectedStudentForLiquidation = student;
-    this.liquidationSuccess = false;
-  }
-
-  closeLiquidationModal() {
-    this.selectedStudentForLiquidation = null;
-    this.liquidationSuccess = false;
-    this.isLiquidationLoading = false;
-  }
-
-  confirmStudentLiquidation() {
-    if (!this.selectedStudentForLiquidation) return;
-    this.isLiquidationLoading = true;
-    setTimeout(() => {
-      this.isLiquidationLoading = false;
-      this.liquidationSuccess = true;
-      this.selectedStudentForLiquidation!.balance = 0;
-      setTimeout(() => { this.closeLiquidationModal(); }, 2500);
-    }, 1500);
   }
 
   // ---- KYC DOCUMENTS LOGIC ----

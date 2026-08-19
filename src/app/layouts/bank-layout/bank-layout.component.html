@@ -6,8 +6,15 @@
   <aside class="w-64 my-4 ml-4 rounded-2xl glass-sidebar flex-col hidden md:flex overflow-hidden shadow-xl z-20">
     <!-- Logo Area -->
     <div class="h-32 flex flex-col items-center justify-center px-4 py-4 border-b border-slate-200/60 dark:border-slate-800/60 gap-2">
-      <div class="bg-white rounded-2xl px-4 py-2 shadow-md border border-slate-200/80 flex items-center justify-center w-full">
-        <img src="/assets/logos/logo-studcash-1.png" alt="studCASH Logo" class="h-12 w-auto max-w-full object-contain">
+      <div class="bg-white rounded-2xl px-4 py-2 shadow-md border border-slate-200/80 flex items-center justify-center w-full min-h-[56px]">
+        <img
+          src="/assets/logos/logo-studcash-1.png"
+          alt="studCASH Logo"
+          class="h-12 w-auto max-w-full object-contain"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <span class="hidden items-center font-extrabold text-lg tracking-tight text-indigo-700">
+          stud<span class="text-blue-500">CASH</span>
+        </span>
       </div>
       <span class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-3 py-0.5 rounded-full border border-blue-200 dark:border-blue-800">Portail Bancaire</span>
     </div>
@@ -40,7 +47,7 @@
         Dossiers KYC & Sécurité
       </a>
 
-      <a routerLink="/bank-portal/surveillance/student-audit"
+      <a routerLink="/bank-portal/liquidations-etudiants"
         routerLinkActive="nav-item-active text-blue-700 dark:text-blue-400 font-semibold"
         class="text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800/50 hover:text-blue-700 dark:hover:text-blue-400 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200">
         <div class="icon-gradient p-2 mr-3 group-hover:scale-110 transition-transform">
@@ -48,10 +55,10 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
           </svg>
         </div>
-        Guichet Étudiants
+        Liquidations Étudiants
       </a>
 
-      <a routerLink="/bank-portal/surveillance/boutique-audit"
+      <a routerLink="/bank-portal/liquidations-marchands"
         routerLinkActive="nav-item-active text-blue-700 dark:text-blue-400 font-semibold"
         class="text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800/50 hover:text-blue-700 dark:hover:text-blue-400 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200">
         <div class="icon-gradient p-2 mr-3 group-hover:scale-110 transition-transform">
@@ -59,18 +66,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
           </svg>
         </div>
-        Guichet Marchands
-      </a>
-
-      <a routerLink="/bank-portal/liquidations"
-        routerLinkActive="nav-item-active text-blue-700 dark:text-blue-400 font-semibold"
-        class="text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800/50 hover:text-blue-700 dark:hover:text-blue-400 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200">
-        <div class="icon-gradient p-2 mr-3 group-hover:scale-110 transition-transform">
-          <svg class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-          </svg>
-        </div>
-        Paiements Commerçants
+        Liquidations Marchands
       </a>
 
       <a routerLink="/bank-portal/profile"
@@ -150,7 +146,7 @@
       </div>
 
       <!-- Year Selector (Historical Consultation) -->
-      <div class="hidden md:flex items-center space-x-2 flex-1 justify-center">
+      <div *ngIf="allYears.length > 0" class="hidden md:flex items-center space-x-2 flex-1 justify-center">
         <div class="flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 shadow-sm">
           <svg class="w-4 h-4 text-violet-600 dark:text-violet-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>

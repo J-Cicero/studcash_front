@@ -7,7 +7,7 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class CompteBancaireService {
-  private apiUrl = `${environment.apiUrl}/api/comptes-bancaires`;
+  private apiUrl = `${environment.apiUrl}/comptes-bancaires`;
 
   constructor(private http: HttpClient) {}
 
