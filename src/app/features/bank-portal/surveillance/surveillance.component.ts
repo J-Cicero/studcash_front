@@ -294,10 +294,8 @@ export class SurveillanceComponent implements OnInit {
     if (wallet.type === 'Etudiant') {
       this.documentEtudiantService.findByStudentId(wallet.id).subscribe({
         next: (res) => {
-          const docs = res.content || res || [];
-          // Show all docs — group by type and sort newest first so duplicates are visible
+          const docs = Array.isArray(res) ? res : (res?.content || []);
           this.entityDocuments = docs
-            .filter((d: any) => ['RIB', 'MANDAT', 'MANDAT_BANCAIRE', 'PIECE_IDENTITE', 'RECIPISSE', 'COTE'].includes(d.documentType))
             .sort((a: any, b: any) => new Date(b.uploadedAt || 0).getTime() - new Date(a.uploadedAt || 0).getTime());
 
           // Mark duplicates for UI display
@@ -311,20 +309,26 @@ export class SurveillanceComponent implements OnInit {
           if (this.entityDocuments.length > 0) this.selectDocument(this.entityDocuments[0]);
           this.isLoadingDocs = false;
         },
-        error: () => { this.isLoadingDocs = false; }
+        error: (err) => {
+          console.error('Erreur chargement docs étudiant:', err);
+          this.isLoadingDocs = false;
+        }
       });
     } else {
       // Marchand: use merchantTrackingId = wallet.id
       this.documentMerchantService.findByMerchantId(wallet.id).subscribe({
         next: (res) => {
-          const docs = res.content || res || [];
-          this.entityDocuments = docs.filter((d: any) =>
-            ['RIB_BOUTIQUE', 'RIB', 'PIECE_IDENTITE', 'RECIPISSE', 'MANDAT', 'MANDAT_BANCAIRE'].includes(d.documentType)
-          );
+          const docs = Array.isArray(res) ? res : (res?.content || []);
+          this.entityDocuments = docs
+            .sort((a: any, b: any) => new Date(b.uploadedAt || 0).getTime() - new Date(a.uploadedAt || 0).getTime());
+
           if (this.entityDocuments.length > 0) this.selectDocument(this.entityDocuments[0]);
           this.isLoadingDocs = false;
         },
-        error: () => { this.isLoadingDocs = false; }
+        error: (err) => {
+          console.error('Erreur chargement docs marchand:', err);
+          this.isLoadingDocs = false;
+        }
       });
     }
   }
