@@ -5,8 +5,18 @@
   <!-- Floating Glass Sidebar -->
   <aside class="w-64 my-4 ml-4 rounded-2xl glass-sidebar flex-col hidden md:flex overflow-hidden shadow-xl z-20">
     <!-- Logo Area -->
-    <div class="h-28 flex items-center justify-center px-4 py-4 border-b border-slate-200/60 dark:border-slate-800/60 bg-white/60 dark:bg-slate-900/60">
-      <img src="/assets/logos/logo-studcash-1.png" alt="studCASH Logo" class="h-20 w-auto max-w-full object-contain filter drop-shadow-md transition-transform hover:scale-105 duration-300">
+    <div class="h-32 flex flex-col items-center justify-center px-4 py-4 border-b border-slate-200/60 dark:border-slate-800/60 gap-2">
+      <div class="bg-white rounded-2xl px-4 py-2 shadow-md border border-slate-200/80 flex items-center justify-center w-full min-h-[56px]">
+        <img
+          src="/assets/logos/logo-studcash-1.png"
+          alt="studCASH Logo"
+          class="h-12 w-auto max-w-full object-contain"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <span class="hidden items-center font-extrabold text-lg tracking-tight text-indigo-700">
+          stud<span class="text-blue-500">CASH</span>
+        </span>
+      </div>
+      <span class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-3 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800">Super Admin GNS</span>
     </div>
 
     <!-- Navigation -->
