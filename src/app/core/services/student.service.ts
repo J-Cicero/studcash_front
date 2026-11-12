@@ -56,7 +56,7 @@ export class StudentService {
   }
 
   getStudentDocuments(trackingId: string): Observable<any> {
-    return this.http.get<any>(`${environment.apiUrl}/api/admin/students/${trackingId}/documents`);
+    return this.http.get<any>(`${environment.apiUrl}/admin/students/${trackingId}/documents`);
   }
 
   verifyPin(trackingId: string, pinCode: string): Observable<any> {

@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { InscriptionAnnuelleService } from '../../../core/services/inscription-annuelle.service';
-import { StudentService, DocumentResponse } from '../../../core/services/student.service';
+import { StudentService } from '../../../core/services/student.service';
 import { DocumentEtudiantService } from '../../../core/services/document-etudiant.service';
 import { ScolariteYearService } from '../../../core/services/scolarite-year.service';
+import { AcademicYearContextService } from '../../../core/services/academic-year-context.service';
 import { FormsModule } from '@angular/forms';
 
 import { WalletService } from '../../../core/services/wallet.service';
@@ -30,6 +31,10 @@ export class InscriptionsComponent implements OnInit {
   filterKyc: string = 'ALL';
   activeYear: string | null = null;
 
+  // Menus 3 points (Global & par ligne)
+  showGlobalActionsMenu = false;
+  openRowMenuId: string | null = null;
+
   // Selection state
   selectedInscriptionIds: Set<string> = new Set<string>();
   isAllSelected = false;
@@ -53,6 +58,7 @@ export class InscriptionsComponent implements OnInit {
     private studentService: StudentService,
     private documentEtudiantService: DocumentEtudiantService,
     private scolariteYearService: ScolariteYearService,
+    private yearContext: AcademicYearContextService,
     private sanitizer: DomSanitizer,
     private walletService: WalletService,
     private authService: AuthService,
@@ -60,14 +66,41 @@ export class InscriptionsComponent implements OnInit {
     private route: ActivatedRoute
   ) {}
 
+  @HostListener('document:click')
+  closeMenus(): void {
+    this.showGlobalActionsMenu = false;
+    this.openRowMenuId = null;
+  }
+
+  toggleGlobalMenu(event: Event): void {
+    event.stopPropagation();
+    this.openRowMenuId = null;
+    this.showGlobalActionsMenu = !this.showGlobalActionsMenu;
+  }
+
+  toggleRowMenu(trackingId: string, event: Event): void {
+    event.stopPropagation();
+    this.showGlobalActionsMenu = false;
+    this.openRowMenuId = this.openRowMenuId === trackingId ? null : trackingId;
+  }
+
   ngOnInit(): void {
-    this.canValidate = this.authService.hasRole('ADMIN_BANQUE');
+    this.canValidate = this.authService.hasRole('ADMIN_BANQUE') || this.authService.hasRole('ADMIN_GNS');
     this.route.queryParams.subscribe(params => {
       if (params['search']) {
         this.searchQuery = params['search'];
       }
     });
-    this.loadActiveYear();
+
+    // Synchroniser avec le sélecteur d'année scolaire du header
+    this.yearContext.selectedYear$.subscribe(year => {
+      if (year) {
+        this.activeYear = year.label;
+        this.loadInscriptions();
+      } else {
+        this.loadActiveYear();
+      }
+    });
   }
 
   loadActiveYear() {
@@ -76,30 +109,35 @@ export class InscriptionsComponent implements OnInit {
         this.activeYear = year ? year.label : null;
         this.loadInscriptions();
       },
-      error: (err) => {
-        console.log("Aucune année scolaire active trouvée.");
+      error: () => {
         this.activeYear = null;
-        this.loadInscriptions(); // On continue même sans année active
+        this.loadInscriptions();
       }
     });
   }
 
   loadInscriptions() {
     this.isLoading = true;
+    this.errorMessage = '';
     this.inscriptionService.findAll().subscribe({
       next: (res) => {
-        const all = res.content || [];
-        // Si pas d'année active, on peut soit tout afficher, soit rien
+        const all = res?.content || (Array.isArray(res) ? res : []);
         if (this.activeYear) {
-          this.inscriptions = all.filter((i: any) => i.academicYearLabel === this.activeYear);
+          const matching = all.filter((i: any) => !i.academicYearLabel || i.academicYearLabel === this.activeYear);
+          this.inscriptions = matching.length > 0 ? matching : all;
         } else {
-          this.inscriptions = all; // Option: Afficher tout s'il n'y a pas d'année active
+          this.inscriptions = all;
         }
         this.applyFilter();
         this.isLoading = false;
       },
-      error: () => {
-        this.errorMessage = 'Erreur lors du chargement des inscriptions';
+      error: (err) => {
+        // Le backend renvoie 404 quand la page d'inscriptions est vide
+        this.inscriptions = [];
+        this.filteredInscriptions = [];
+        if (err?.status !== 404) {
+          this.errorMessage = 'Erreur lors du chargement des inscriptions';
+        }
         this.isLoading = false;
       }
     });
@@ -145,19 +183,46 @@ export class InscriptionsComponent implements OnInit {
   }
 
   viewDetails(ins: any) {
+    this.openRowMenuId = null;
     this.selectedInscription = ins;
     this.studentDocuments = [];
     this.isLoadingDocs = true;
     this.hasMandatoryDocs = false;
     
-    // Fetch documents attached to this specific inscription
     const inscriptionTrackingId = ins.trackingId;
     
     this.documentEtudiantService.findByInscriptionId(inscriptionTrackingId).subscribe({
       next: (res) => {
-        let docs = res.content || res || [];
+        const docs = res?.content || (Array.isArray(res) ? res : []);
+        if (docs.length > 0) {
+          this.studentDocuments = docs;
+          this.hasMandatoryDocs = true;
+          this.selectDocument(this.studentDocuments[0]);
+          this.isLoadingDocs = false;
+        } else if (ins.studentTrackingId) {
+          this.loadStudentDocsFallback(ins.studentTrackingId);
+        } else {
+          this.isLoadingDocs = false;
+        }
+      },
+      error: () => {
+        if (ins.studentTrackingId) {
+          this.loadStudentDocsFallback(ins.studentTrackingId);
+        } else {
+          this.studentDocuments = [];
+          this.hasMandatoryDocs = false;
+          this.isLoadingDocs = false;
+        }
+      }
+    });
+  }
+
+  private loadStudentDocsFallback(studentTrackingId: string) {
+    this.documentEtudiantService.findByStudentId(studentTrackingId).subscribe({
+      next: (res) => {
+        const docs = res?.content || (Array.isArray(res) ? res : []);
         this.studentDocuments = docs;
-        this.hasMandatoryDocs = true;
+        this.hasMandatoryDocs = docs.length > 0;
         if (this.studentDocuments.length > 0) this.selectDocument(this.studentDocuments[0]);
         this.isLoadingDocs = false;
       },
@@ -266,13 +331,17 @@ export class InscriptionsComponent implements OnInit {
     });
   }
 
-  synchronizeInscription() {
-    if (!this.selectedInscription) return;
+  synchronizeInscription(ins?: any) {
+    this.openRowMenuId = null;
+    const target = ins || this.selectedInscription;
+    if (!target) return;
 
-    this.inscriptionService.synchroniser(this.selectedInscription.trackingId).subscribe({
+    this.inscriptionService.synchroniser(target.trackingId).subscribe({
       next: () => {
         this.loadInscriptions();
-        this.closeDetails();
+        if (this.selectedInscription) {
+          this.closeDetails();
+        }
       },
       error: (err) => {
         console.error("Erreur synchronisation", err);

@@ -4,19 +4,30 @@
 
   <!-- Floating Glass Sidebar -->
   <aside class="w-64 my-4 ml-4 rounded-2xl glass-sidebar flex-col hidden md:flex overflow-hidden shadow-xl z-20">
-    <!-- Logo Area -->
-    <div class="h-32 flex flex-col items-center justify-center px-4 py-4 border-b border-slate-200/60 dark:border-slate-800/60 gap-2">
-      <div class="bg-white rounded-2xl px-4 py-2 shadow-md border border-slate-200/80 flex items-center justify-center w-full min-h-[56px]">
-        <img
-          src="/assets/logos/logo-studcash-1.png"
-          alt="studCASH Logo"
-          class="h-12 w-auto max-w-full object-contain"
-          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-        <span class="hidden items-center font-extrabold text-lg tracking-tight text-indigo-700">
-          stud<span class="text-blue-500">CASH</span>
-        </span>
-      </div>
+    <!-- Clean Brand Header (No cramped logo box) -->
+    <div class="py-5 flex flex-col items-center justify-center px-4 border-b border-slate-200/60 dark:border-slate-800/60 gap-2">
+      <span class="font-black text-2xl tracking-tight text-slate-900 dark:text-white">
+        Stud<span class="text-blue-600 dark:text-blue-400">Cash</span>
+      </span>
       <span class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-3 py-0.5 rounded-full border border-blue-200 dark:border-blue-800">Portail Bancaire</span>
+
+      <!-- Sélecteur d'année scolaire intégré à la barre latérale -->
+      <div *ngIf="allYears.length > 0" class="w-full mt-1">
+        <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5">
+          <svg class="w-3.5 h-3.5 text-violet-600 dark:text-violet-400 mr-1.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          <select
+            id="year-selector-bank"
+            [(ngModel)]="selectedYearTrackingId"
+            (ngModelChange)="onYearChange()"
+            class="bg-transparent text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer flex-1 truncate">
+            <option *ngFor="let year of allYears" [value]="year.trackingId">
+              {{ year.label }} {{ year.isOpen ? '🟢' : '📁' }}
+            </option>
+          </select>
+        </div>
+      </div>
     </div>
 
     <!-- Navigation -->
@@ -135,110 +146,8 @@
 
   <!-- Main Content -->
   <main class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-    <!-- Top Header -->
-    <header
-      class="h-20 flex items-center justify-between px-8 sticky top-0 z-10 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50 md:mx-4 md:mt-4 md:rounded-2xl shadow-sm">
-      <div class="flex items-center md:hidden">
-        <div class="bg-white rounded-xl px-2.5 py-1 shadow-sm border border-slate-200/80 flex items-center justify-center mr-2">
-          <img src="/assets/logos/logo-studcash-1.png" alt="studCASH Logo" class="h-8 w-auto object-contain">
-        </div>
-        <span class="font-extrabold text-base tracking-tight text-slate-900 dark:text-white">studCASH <span class="text-blue-500 text-xs font-bold">Bank</span></span>
-      </div>
-
-      <!-- Interactive Bank Search Bar -->
-      <div class="hidden md:flex flex-1 max-w-md mx-6 relative">
-        <div class="relative w-full">
-          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-            <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-          <input type="text"
-            [(ngModel)]="bankSearch"
-            (focus)="onSearchFocus()"
-            (keydown.enter)="onSearchSubmit()"
-            (keydown.escape)="closeSearch()"
-            class="block w-full pl-10 pr-9 py-2 border border-slate-200/80 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900 shadow-sm text-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white transition-all hover:shadow-md"
-            placeholder="Rechercher dossiers KYC, liquidations...">
-          <button *ngIf="bankSearch" (click)="clearSearch()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-          </button>
-        </div>
-
-        <!-- Bank Search Dropdown -->
-        <div *ngIf="isSearchOpen && (filteredBankModules.length > 0 || bankSearch)"
-          class="absolute left-0 right-0 top-full mt-2 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/80 dark:border-slate-800 p-2 z-50 animate-fade-in custom-scrollbar">
-          <p class="px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">Modules Bancaires</p>
-          <div class="space-y-1">
-            <button *ngFor="let mod of filteredBankModules" (click)="selectModule(mod)"
-              class="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/70 transition-colors flex items-center justify-between group">
-              <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xs font-bold">
-                  {{ mod.category.substring(0, 2).toUpperCase() }}
-                </div>
-                <div>
-                  <p class="text-sm font-bold text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ mod.title }}</p>
-                  <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1">{{ mod.description }}</p>
-                </div>
-              </div>
-              <span class="text-[10px] font-semibold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">{{ mod.category }}</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Year Selector (Historical Consultation) -->
-      <div *ngIf="allYears.length > 0" class="hidden md:flex items-center space-x-2 flex-1 justify-center">
-        <div class="flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 shadow-sm">
-          <svg class="w-4 h-4 text-violet-600 dark:text-violet-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-          </svg>
-          <select
-            id="year-selector-bank"
-            [(ngModel)]="selectedYearTrackingId"
-            (ngModelChange)="onYearChange()"
-            class="bg-transparent text-sm font-semibold text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer pr-1 max-w-[150px]">
-            <option *ngFor="let year of allYears" [value]="year.trackingId">
-              {{ year.label }} {{ year.isOpen ? '🟢' : '📁' }}
-            </option>
-          </select>
-        </div>
-        <span *ngIf="isReadOnly"
-          class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-700/50">
-          📖 Lecture seule
-        </span>
-      </div>
-
-      <div class="flex items-center space-x-3 ml-auto">
-        <!-- Notifications -->
-        <app-notification-bell></app-notification-bell>
-
-        <!-- Theme Toggle Mobile -->
-        <button (click)="themeService.toggleTheme()"
-          class="md:hidden p-2 text-slate-400 hover:text-blue-600 transition-colors">
-          <svg *ngIf="themeService.isDarkTheme$ | async" class="w-5 h-5" fill="none" stroke="currentColor"
-            viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-          </svg>
-          <svg *ngIf="!(themeService.isDarkTheme$ | async)" class="w-5 h-5" fill="none" stroke="currentColor"
-            viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-          </svg>
-        </button>
-
-        <button class="md:hidden p-2 text-slate-400 hover:text-slate-600 transition-colors">
-          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-      </div>
-    </header>
-
     <!-- Content Area -->
-    <div class="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-6">
+    <div class="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-8">
       <router-outlet></router-outlet>
     </div>
   </main>

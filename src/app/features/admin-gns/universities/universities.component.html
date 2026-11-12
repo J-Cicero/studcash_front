@@ -28,7 +28,7 @@
   <span class="text-sm font-bold">{{ errorMessage }}</span>
 </div>
 
-<div class="glass-panel rounded-2xl overflow-hidden animate-fade-in-up" style="animation-delay: 100ms;">
+<div class="glass-panel relative z-10 rounded-2xl overflow-visible animate-fade-in-up" style="animation-delay: 100ms;">
   <div class="px-6 py-5 border-b border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
     <h3 class="text-lg font-bold text-slate-900 dark:text-white">Réseau Universitaire ({{ filteredUniversities.length }})</h3>
     
@@ -56,11 +56,11 @@
     <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
       <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
         <tr>
-          <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Code</th>
-          <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Université</th>
-          <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Stats StudCash</th>
-          <th scope="col" class="px-4 py-2 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statut</th>
-          <th scope="col" class="px-4 py-2 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Actions</th>
+          <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Code</th>
+          <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Université</th>
+          <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Stats StudCash</th>
+          <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statut</th>
+          <th scope="col" class="px-4 py-3 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest w-20">Actions</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
@@ -70,31 +70,66 @@
           </td>
           <td class="px-4 py-3 whitespace-nowrap">
             <div class="text-sm font-bold text-slate-900 dark:text-white">{{u.fullName}}</div>
-            <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">{{u.city || 'Non spécifié'}}</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{u.city || 'Non spécifié'}}</div>
           </td>
           <td class="px-4 py-3 whitespace-nowrap">
-            <div class="text-sm font-medium">
-              <span class="text-indigo-600 font-bold">
-                {{ u.stats?.nbEtudiants || 0 }}
+            <div class="text-sm font-medium text-slate-700 dark:text-slate-200">
+              <span class="text-indigo-600 dark:text-indigo-400 font-bold">
+                {{ u.stats?.nbEtudiants ?? 0 }}
               </span> étudiants
+              <span *ngIf="u.stats?.nbEligibles > 0" class="text-xs text-slate-400 ml-1">
+                ({{ u.stats.nbEligibles }} KYC validés)
+              </span>
             </div>
           </td>
           <td class="px-4 py-3 whitespace-nowrap">
-            <span *ngIf="u.isActive" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-emerald-100/80 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">Active</span>
-            <span *ngIf="!u.isActive" class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-slate-100/80 text-slate-700 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700">Inactive</span>
+            <span *ngIf="u.isActive" class="px-2.5 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-emerald-100/80 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">Active</span>
+            <span *ngIf="!u.isActive" class="px-2.5 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-slate-100/80 text-slate-700 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700">Inactive</span>
           </td>
-          <td class="px-4 py-3 whitespace-nowrap text-right space-x-2">
-            <button (click)="openEditModal(u)" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 font-bold text-sm bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center">
-              Modifier
+          <td class="px-4 py-3 whitespace-nowrap text-right relative">
+            <button
+              (click)="toggleRowMenu(u.trackingId, $event)"
+              class="p-2 rounded-lg text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              title="Actions">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+              </svg>
             </button>
-            <button (click)="toggleUniversiteStatus(u)" 
-                    [ngClass]="u.isActive ? 'text-amber-600 hover:text-amber-900 bg-amber-50 hover:bg-amber-100 dark:text-amber-400 dark:bg-amber-900/30 dark:hover:bg-amber-900/50' : 'text-emerald-600 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/50'"
-                    class="font-bold text-sm px-3 py-1.5 rounded-lg transition-colors inline-flex items-center">
-              {{ u.isActive ? 'Désactiver' : 'Activer' }}
-            </button>
-            <button (click)="deleteUniversite(u)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 font-bold text-sm bg-red-50 hover:bg-red-100 dark:bg-red-900/30 dark:hover:bg-red-900/50 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center">
-              Supprimer
-            </button>
+
+            <!-- Menu contextuel 3 points -->
+            <div
+              *ngIf="openRowMenuId === u.trackingId"
+              (click)="$event.stopPropagation()"
+              class="absolute right-4 mt-1 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 py-1.5 z-50 text-left animate-fade-in">
+              <button
+                (click)="openEditModal(u)"
+                class="w-full text-left px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-indigo-50/70 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-300 flex items-center gap-2.5 transition-colors">
+                <svg class="w-4 h-4 text-indigo-500 dark:text-indigo-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Modifier
+              </button>
+
+              <button
+                (click)="toggleUniversiteStatus(u)"
+                class="w-full text-left px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-indigo-50/70 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-300 flex items-center gap-2.5 transition-colors">
+                <svg class="w-4 h-4 text-indigo-500 dark:text-indigo-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+                {{ u.isActive ? 'Désactiver' : 'Activer' }}
+              </button>
+
+              <div class="my-1 border-t border-slate-100 dark:border-slate-800"></div>
+
+              <button
+                (click)="deleteUniversite(u)"
+                class="w-full text-left px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-rose-50/70 dark:hover:bg-slate-800 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-2.5 transition-colors">
+                <svg class="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Supprimer
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -168,16 +203,6 @@
     </form>
   </div>
 </div>
-
-<app-confirm-dialog
-  [isOpen]="showConfirmModal"
-  [title]="confirmTitle"
-  [message]="confirmMessage"
-  confirmText="Oui"
-  cancelText="Non"
-  (confirm)="onModalConfirm()"
-  (cancel)="onModalCancel()"
-></app-confirm-dialog>
 
 <app-confirm-dialog
   [isOpen]="showConfirmModal"

@@ -28,7 +28,7 @@ export class DocumentEtudiantService {
   }
 
   updateDocumentStatus(trackingId: string, status: 'VALIDE' | 'REJETE', rejectionReason?: string): Observable<any> {
-    return this.http.put<any>(`${environment.apiUrl}/api/admin-banque/documents/students/${trackingId}/status`, {
+    return this.http.put<any>(`${environment.apiUrl}/admin-banque/documents/students/${trackingId}/status`, {
       status,
       rejectionReason
     });

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
 import { UniversiteService } from '../../../core/services/universite.service';
@@ -18,6 +18,7 @@ export class UniversitiesComponent implements OnInit {
   isCreating = false;
   showForm = false;
   editingUniv: any | null = null;
+  openRowMenuId: string | null = null;
   
   successMessage = '';
   errorMessage = '';
@@ -45,7 +46,16 @@ export class UniversitiesComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUniversities();
-    this.loadSummaryStats();
+  }
+
+  @HostListener('document:click')
+  closeRowMenu(): void {
+    this.openRowMenuId = null;
+  }
+
+  toggleRowMenu(trackingId: string, event: Event): void {
+    event.stopPropagation();
+    this.openRowMenuId = this.openRowMenuId === trackingId ? null : trackingId;
   }
 
   confirmAction(title: string, message: string, callback: () => void) {
@@ -148,6 +158,7 @@ export class UniversitiesComponent implements OnInit {
   }
 
   openEditModal(u: any) {
+    this.openRowMenuId = null;
     this.editingUniv = u;
     this.createForm.patchValue({
       code: u.code,
@@ -203,6 +214,7 @@ export class UniversitiesComponent implements OnInit {
   }
 
   toggleUniversiteStatus(univ: any) {
+    this.openRowMenuId = null;
     this.universiteService.updateEtat(univ.trackingId, !univ.isActive).subscribe({
       next: (res) => {
         this.loadUniversities();
@@ -217,6 +229,7 @@ export class UniversitiesComponent implements OnInit {
   }
 
   deleteUniversite(univ: any) {
+    this.openRowMenuId = null;
     this.confirmAction(
       'Suppression d\'université',
       `Êtes-vous sûr de vouloir supprimer l'université ${univ.fullName} ?`,

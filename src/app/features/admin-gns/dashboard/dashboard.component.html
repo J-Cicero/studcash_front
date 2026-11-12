@@ -1,8 +1,8 @@
-<div class="mb-5 animate-fade-in-up">
+<div class="mb-6 animate-fade-in-up">
   <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
     <div>
-      <h1 class="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">Dashboard Admin</h1>
-      <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Vue d'ensemble du réseau GNS</p>
+      <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Dashboard</h1>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-1.5 font-medium">Vue d'ensemble du réseau GNS</p>
     </div>
   </div>
 </div>
@@ -41,6 +41,7 @@
   <app-kpi-card
     title="Liquidations Attente"
     [value]="pendingLiquidations"
+    suffix="FCFA"
     [isLoading]="isPendingLiquidationsLoading"
     [hasError]="pendingLiquidationsError"
     iconSvgPath="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"

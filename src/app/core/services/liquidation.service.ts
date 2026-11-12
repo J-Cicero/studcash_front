@@ -23,7 +23,7 @@ export class LiquidationService {
   }
 
   findAll(): Observable<Liquidation[]> {
-    return this.http.get<Liquidation[]>(this.apiUrl);
+    return this.http.get<Liquidation[]>(`${this.apiUrl}/all`);
   }
 
   validerLiquidation(trackingId: string, referenceVirement: string): Observable<Liquidation> {

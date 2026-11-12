@@ -143,17 +143,20 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   initLineChart(data: any[]) {
     if (!this.lineChartCanvas || !data || data.length === 0) return;
+    if (this.lineChart) {
+      this.lineChart.destroy();
+    }
 
     const ctx = this.lineChartCanvas.nativeElement.getContext('2d');
     const labels = data.map(d => d.date || d.label || d.mois || '');
-    const volumes = data.map(d => d.volume || d.value || d.montant || 0);
+    const volumes = data.map(d => d.volume ?? d.value ?? d.montant ?? 0);
 
     this.lineChart = new Chart(ctx, {
       type: 'line',
       data: {
         labels: labels,
         datasets: [{
-          label: 'Évolution Transactions',
+          label: 'Évolution Transactions (FCFA)',
           data: volumes,
           borderColor: '#4f46e5',
           backgroundColor: 'rgba(79, 70, 229, 0.1)',
@@ -184,10 +187,13 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   initPieChart(data: any[]) {
     if (!this.pieChartCanvas || !data || data.length === 0) return;
+    if (this.pieChart) {
+      this.pieChart.destroy();
+    }
 
     const ctx = this.pieChartCanvas.nativeElement.getContext('2d');
     const labels = data.map(d => d.type || d.label || d.statut || 'Inconnu');
-    const counts = data.map(d => d.count || d.value || d.total || 0);
+    const counts = data.map(d => d.volume ?? d.count ?? d.value ?? d.total ?? 0);
 
     this.pieChart = new Chart(ctx, {
       type: 'doughnut',
