@@ -225,18 +225,89 @@
 
 
 
-      <!-- Search Bar -->
-      <div class="hidden md:flex flex-1 max-w-md">
+      <!-- Interactive Global Search Bar -->
+      <div class="hidden md:flex flex-1 max-w-lg relative">
         <div class="relative w-full">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+            <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
           <input type="text"
-            class="block w-full pl-10 pr-3 py-2.5 border-none rounded-xl bg-white dark:bg-slate-900 shadow-sm text-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white transition-shadow hover:shadow-md"
-            placeholder="Rechercher des étudiants, versements...">
+            [(ngModel)]="globalSearch"
+            (focus)="onSearchFocus()"
+            (input)="onSearchInput()"
+            (keydown.enter)="onSearchSubmit()"
+            (keydown.escape)="closeSearch()"
+            class="block w-full pl-10 pr-9 py-2.5 border border-slate-200/80 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900 shadow-sm text-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white transition-all hover:shadow-md"
+            placeholder="Rechercher des étudiants, versements, pages...">
+          <button *ngIf="globalSearch" (click)="clearSearch()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <!-- Global Search Dropdown Results -->
+        <div *ngIf="isSearchOpen && (filteredModules.length > 0 || userSearchResults.length > 0 || isSearchingUsers || globalSearch)"
+          class="absolute left-0 right-0 top-full mt-2 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/80 dark:border-slate-800 p-2 z-50 max-h-[480px] overflow-y-auto animate-fade-in custom-scrollbar">
+
+          <!-- Section 1: Modules / Pages -->
+          <div *ngIf="filteredModules.length > 0" class="mb-2">
+            <p class="px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">Pages & Modules</p>
+            <div class="space-y-1">
+              <button *ngFor="let mod of filteredModules" (click)="selectModule(mod)"
+                class="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/70 transition-colors flex items-center justify-between group">
+                <div class="flex items-center space-x-3">
+                  <div class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xs font-bold">
+                    {{ mod.category.substring(0, 2).toUpperCase() }}
+                  </div>
+                  <div>
+                    <p class="text-sm font-bold text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{{ mod.title }}</p>
+                    <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1">{{ mod.description }}</p>
+                  </div>
+                </div>
+                <span class="text-[10px] font-semibold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">{{ mod.category }}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Section 2: Utilisateurs / Étudiants trouvés en direct -->
+          <div *ngIf="userSearchResults.length > 0 || isSearchingUsers" class="border-t border-slate-100 dark:border-slate-800/80 pt-2">
+            <div class="flex items-center justify-between px-3 py-1.5">
+              <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">Utilisateurs trouvés</p>
+              <span *ngIf="isSearchingUsers" class="text-[10px] text-indigo-500 font-medium animate-pulse">Recherche...</span>
+            </div>
+            <div class="space-y-1">
+              <button *ngFor="let user of userSearchResults" (click)="selectUser(user)"
+                class="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/70 transition-colors flex items-center justify-between group">
+                <div class="flex items-center space-x-3">
+                  <div class="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">
+                    {{ (user.firstName ? user.firstName[0] : 'U').toUpperCase() }}
+                  </div>
+                  <div>
+                    <p class="text-sm font-bold text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                      {{ user.firstName }} {{ user.lastName }}
+                    </p>
+                    <p class="text-[11px] text-slate-400 dark:text-slate-500">{{ user.email }} â€¢ {{ user.phoneNumber || 'N/A' }}</p>
+                  </div>
+                </div>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                  [ngClass]="{
+                    'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300': user.role === 'ETUDIANT',
+                    'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300': user.role === 'COMMERCANT',
+                    'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300': user.role === 'ADMIN_BANQUE' || user.role === 'ADMIN_GNS'
+                  }">
+                  {{ user.role }}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Footer Prompt -->
+          <div *ngIf="globalSearch" class="border-t border-slate-100 dark:border-slate-800/80 mt-2 pt-2 px-3 py-1 flex items-center justify-between text-[11px] text-slate-400">
+            <span>Appuyez sur <kbd class="px-1.5 py-0.5 text-[10px] bg-slate-100 dark:bg-slate-800 border rounded font-mono">EntrÃ©e</kbd> pour valider</span>
+            <button (click)="closeSearch()" class="hover:text-slate-600 dark:hover:text-slate-200 font-semibold">Fermer</button>
+          </div>
         </div>
       </div>
 

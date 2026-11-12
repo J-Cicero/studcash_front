@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { InscriptionAnnuelleService } from '../../../core/services/inscription-annuelle.service';
 import { StudentService, DocumentResponse } from '../../../core/services/student.service';
@@ -55,11 +56,17 @@ export class InscriptionsComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private walletService: WalletService,
     private authService: AuthService,
-    private confirmService: ConfirmDialogService
+    private confirmService: ConfirmDialogService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.canValidate = this.authService.hasRole('ADMIN_BANQUE');
+    this.route.queryParams.subscribe(params => {
+      if (params['search']) {
+        this.searchQuery = params['search'];
+      }
+    });
     this.loadActiveYear();
   }
 
@@ -99,20 +106,42 @@ export class InscriptionsComponent implements OnInit {
   }
 
   applyFilter() {
-    if (!this.searchQuery) {
-      this.filteredInscriptions = this.inscriptions;
+    let list = this.inscriptions || [];
+
+    if (this.filterKyc && this.filterKyc !== 'ALL') {
+      list = list.filter((i: any) => i.status === this.filterKyc);
+    }
+
+    if (!this.searchQuery || !this.searchQuery.trim()) {
+      this.filteredInscriptions = list;
       return;
     }
-    const q = this.searchQuery.toLowerCase();
-    this.filteredInscriptions = this.inscriptions.filter(i => 
-      (i.studentLastName && i.studentLastName.toLowerCase().includes(q)) || 
-      (i.studentFirstName && i.studentFirstName.toLowerCase().includes(q))
-    );
+
+    const q = this.searchQuery.trim().toLowerCase();
+    this.filteredInscriptions = list.filter((i: any) => {
+      const nom = (i.studentLastName || '').toLowerCase();
+      const prenom = (i.studentFirstName || '').toLowerCase();
+      const fullName = `${prenom} ${nom}`.trim();
+      const reverseName = `${nom} ${prenom}`.trim();
+      const matricule = (i.studentIdNumber || i.matricule || '').toLowerCase();
+      const level = (i.studyLevel || '').toLowerCase();
+      const status = (i.status || '').toLowerCase();
+      const univ = (i.universiteNom || i.universityName || '').toLowerCase();
+
+      return nom.includes(q) ||
+             prenom.includes(q) ||
+             fullName.includes(q) ||
+             reverseName.includes(q) ||
+             matricule.includes(q) ||
+             level.includes(q) ||
+             status.includes(q) ||
+             univ.includes(q);
+    });
   }
 
   setKycFilter(statut: string) {
     this.filterKyc = statut;
-    this.loadInscriptions(); 
+    this.applyFilter();
   }
 
   viewDetails(ins: any) {

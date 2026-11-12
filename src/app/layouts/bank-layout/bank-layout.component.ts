@@ -1,12 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { NotificationBellComponent } from '../../shared/components/notification-bell/notification-bell.component';
 import { ScolariteYearService } from '../../core/services/scolarite-year.service';
 import { AcademicYearContextService, ScolariteYear } from '../../core/services/academic-year-context.service';
+
+export interface BankSearchModuleItem {
+  title: string;
+  category: string;
+  description: string;
+  route: string;
+  keywords: string[];
+}
 
 @Component({
   selector: 'app-bank-layout',
@@ -18,16 +26,80 @@ import { AcademicYearContextService, ScolariteYear } from '../../core/services/a
 export class BankLayoutComponent implements OnInit {
   allYears: ScolariteYear[] = [];
   selectedYearTrackingId: string = '';
+
+  // Bank Header Search
+  bankSearch: string = '';
+  isSearchOpen: boolean = false;
+
+  bankModules: BankSearchModuleItem[] = [
+    { title: 'Dossiers KYC & Sécurité', category: 'Conformité', description: 'Surveillance des portefeuilles étudiants et marchands', route: '/bank-portal/surveillance', keywords: ['surveillance', 'kyc', 'etudiant', 'marchand', 'securite', 'gel'] },
+    { title: 'Liquidations Marchands', category: 'Règlements', description: 'Validation des demandes de liquidation des commerçants', route: '/bank-portal/liquidations-marchands', keywords: ['liquidation', 'marchand', 'commercant', 'reglement', 'virement'] },
+    { title: 'Liquidations Étudiants', category: 'Règlements', description: 'Prélèvements sur bourses et régularisation', route: '/bank-portal/liquidations-etudiants', keywords: ['liquidation', 'etudiant', 'bourse', 'prelevement'] },
+    { title: 'Tableau de Bord Bancaire', category: 'Supervision', description: 'Vue globale des indicateurs financiers', route: '/bank-portal/dashboard', keywords: ['dashboard', 'tableau', 'bord', 'statistiques', 'kpi'] },
+    { title: 'Mon Profil Bancaire', category: 'Compte', description: 'Informations de l\'opérateur bancaire', route: '/bank-portal/profile', keywords: ['profil', 'compte', 'banque'] }
+  ];
   
   constructor(
     public authService: AuthService,
     public themeService: ThemeService,
     private scolariteYearService: ScolariteYearService,
-    public yearContext: AcademicYearContextService
+    public yearContext: AcademicYearContextService,
+    private router: Router,
+    private elementRef: ElementRef
   ) {}
 
   ngOnInit(): void {
     this.loadYears();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.isSearchOpen = false;
+    }
+  }
+
+  get filteredBankModules(): BankSearchModuleItem[] {
+    if (!this.bankSearch || !this.bankSearch.trim()) {
+      return this.bankModules.slice(0, 4);
+    }
+    const q = this.bankSearch.trim().toLowerCase();
+    return this.bankModules.filter(m => 
+      m.title.toLowerCase().includes(q) ||
+      m.category.toLowerCase().includes(q) ||
+      m.description.toLowerCase().includes(q) ||
+      m.keywords.some(k => k.toLowerCase().includes(q))
+    );
+  }
+
+  onSearchFocus(): void {
+    this.isSearchOpen = true;
+  }
+
+  onSearchSubmit(): void {
+    const q = this.bankSearch.trim();
+    if (!q) return;
+
+    if (this.filteredBankModules.length === 1) {
+      this.selectModule(this.filteredBankModules[0]);
+    } else {
+      this.router.navigate(['/bank-portal/surveillance'], { queryParams: { search: q } });
+      this.closeSearch();
+    }
+  }
+
+  selectModule(mod: BankSearchModuleItem): void {
+    this.router.navigate([mod.route]);
+    this.closeSearch();
+  }
+
+  clearSearch(): void {
+    this.bankSearch = '';
+    this.isSearchOpen = false;
+  }
+
+  closeSearch(): void {
+    this.isSearchOpen = false;
   }
 
   loadYears(): void {

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
 
@@ -42,10 +43,16 @@ export class StudentLiquidationsBankComponent implements OnInit {
 
   constructor(
     private http: HttpClient,
-    private confirmService: ConfirmDialogService
+    private confirmService: ConfirmDialogService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['search']) {
+        this.searchQuery = params['search'];
+      }
+    });
     this.loadLiquidations();
   }
 

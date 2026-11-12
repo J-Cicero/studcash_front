@@ -19,6 +19,19 @@ export class VersementsBoutiquesComponent implements OnInit {
   isLoading = false;
   errorMessage = '';
   successMessage = '';
+  searchQuery = '';
+
+  get filteredWallets(): any[] {
+    if (!this.searchQuery || !this.searchQuery.trim()) {
+      return this.wallets;
+    }
+    const q = this.searchQuery.trim().toLowerCase();
+    return this.wallets.filter((w: any) => {
+      const name = (w.proprietaireTrackingId || '').toLowerCase();
+      const id = (w.trackingId || '').toLowerCase();
+      return name.includes(q) || id.includes(q);
+    });
+  }
   
   showManualVersementModal = false;
   selectedWalletForManual: any | null = null;

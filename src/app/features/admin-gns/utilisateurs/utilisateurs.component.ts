@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -34,8 +35,23 @@ export class UtilisateursComponent implements OnInit {
   roles = ['ALL', 'ADMIN_GNS', 'ADMIN_DBS', 'ADMIN_BANQUE', 'COMMERCANT', 'ETUDIANT'];
 
   get filteredUsers() {
-    if (this.filterRole === 'ALL') return this.users;
-    return this.users.filter(u => u.role === this.filterRole);
+    let list = this.users || [];
+    if (this.filterRole !== 'ALL') {
+      list = list.filter(u => u.role === this.filterRole);
+    }
+    if (this.searchQuery && this.searchQuery.trim()) {
+      const q = this.searchQuery.trim().toLowerCase();
+      list = list.filter(u => {
+        const nom = (u.lastName || '').toLowerCase();
+        const prenom = (u.firstName || '').toLowerCase();
+        const email = (u.email || '').toLowerCase();
+        const phone = (u.phoneNumber || '').toLowerCase();
+        const fullName = `${prenom} ${nom}`.trim();
+        const reverseName = `${nom} ${prenom}`.trim();
+        return nom.includes(q) || prenom.includes(q) || fullName.includes(q) || reverseName.includes(q) || email.includes(q) || phone.includes(q);
+      });
+    }
+    return list;
   }
 
   // Selection state
@@ -86,7 +102,8 @@ export class UtilisateursComponent implements OnInit {
     private documentMerchantService: DocumentMerchantService,
     private walletService: WalletService,
     private confirmService: ConfirmDialogService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private route: ActivatedRoute
   ) {
     this.searchSubject.pipe(
       debounceTime(300),
@@ -101,6 +118,12 @@ export class UtilisateursComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['search']) {
+        this.searchQuery = params['search'];
+        this.onSearchChange(this.searchQuery);
+      }
+    });
     this.loadUsers();
     this.loadEntities();
   }

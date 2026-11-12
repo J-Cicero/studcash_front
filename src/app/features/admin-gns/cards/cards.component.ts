@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { CardService } from '../../../core/services/card.service';
 import { FormsModule } from '@angular/forms';
 import { QRCodeModule } from 'angularx-qrcode';
@@ -22,10 +23,16 @@ export class CardsComponent implements OnInit {
 
   constructor(
     private cardService: CardService,
-    private confirmService: ConfirmDialogService
+    private confirmService: ConfirmDialogService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['search']) {
+        this.searchQuery = params['search'];
+      }
+    });
     this.loadCards();
   }
 
@@ -52,19 +59,30 @@ export class CardsComponent implements OnInit {
   }
 
   applyFilter(): void {
-    let temp = this.cards;
+    let temp = this.cards || [];
     
     if (this.filterStatus !== 'ALL') {
       temp = temp.filter(c => c.statutCarte === this.filterStatus);
     }
     
-    if (this.searchQuery) {
-      const q = this.searchQuery.toLowerCase();
-      temp = temp.filter(c => 
-        (c.studentNom && c.studentNom.toLowerCase().includes(q)) || 
-        (c.studentPrenom && c.studentPrenom.toLowerCase().includes(q)) ||
-        (c.trackingId && c.trackingId.toLowerCase().includes(q))
-      );
+    if (this.searchQuery && this.searchQuery.trim()) {
+      const q = this.searchQuery.trim().toLowerCase();
+      temp = temp.filter(c => {
+        const nom = (c.studentNom || '').toLowerCase();
+        const prenom = (c.studentPrenom || '').toLowerCase();
+        const fullName = `${prenom} ${nom}`.trim();
+        const reverseName = `${nom} ${prenom}`.trim();
+        const tracking = (c.trackingId || '').toLowerCase();
+        const cardNum = (c.cardNumber || '').toLowerCase();
+        const qr = (c.qrCodeData || '').toLowerCase();
+        return nom.includes(q) ||
+               prenom.includes(q) ||
+               fullName.includes(q) ||
+               reverseName.includes(q) ||
+               tracking.includes(q) ||
+               cardNum.includes(q) ||
+               qr.includes(q);
+      });
     }
     
     this.filteredCards = temp;

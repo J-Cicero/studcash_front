@@ -48,6 +48,18 @@ export class TransactionsComponent implements OnInit {
   isCreatingLiquidation = false;
   liquidationSuccessMessage = '';
 
+  searchStudentQuery: string = '';
+
+  get filteredUnliquidatedStudents(): StudentUnliquidatedAggregate[] {
+    if (!this.searchStudentQuery || !this.searchStudentQuery.trim()) {
+      return this.unliquidatedStudents;
+    }
+    const q = this.searchStudentQuery.trim().toLowerCase();
+    return this.unliquidatedStudents.filter(s => 
+      s.studentName && s.studentName.toLowerCase().includes(q)
+    );
+  }
+
   constructor(
     private transactionService: TransactionService,
     private http: HttpClient,

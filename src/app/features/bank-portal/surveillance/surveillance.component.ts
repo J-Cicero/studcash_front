@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { BankPortalService, MerchantKycInfo } from '../../../core/services/bank-portal.service';
@@ -88,10 +89,16 @@ export class SurveillanceComponent implements OnInit {
     private documentEtudiantService: DocumentEtudiantService,
     private documentMerchantService: DocumentMerchantService,
     private documentAdminService: DocumentAdminService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['search']) {
+        this.searchTerm = params['search'];
+      }
+    });
     this.loadWallets();
   }
 
@@ -174,14 +181,15 @@ export class SurveillanceComponent implements OnInit {
       temp = temp.filter(w => w.status === this.statusFilter);
     }
 
-    if (this.searchTerm.trim()) {
-      const term = this.searchTerm.toLowerCase();
+    if (this.searchTerm && this.searchTerm.trim()) {
+      const term = this.searchTerm.trim().toLowerCase();
       temp = temp.filter(w =>
-        w.name.toLowerCase().includes(term) ||
+        (w.name && w.name.toLowerCase().includes(term)) ||
+        (w.ownerName && w.ownerName.toLowerCase().includes(term)) ||
         (w.numEtudiant && w.numEtudiant.toLowerCase().includes(term)) ||
         (w.email && w.email.toLowerCase().includes(term)) ||
         (w.phoneNumber && w.phoneNumber.toLowerCase().includes(term)) ||
-        (w.nomsBoutiques && w.nomsBoutiques.some(b => b.toLowerCase().includes(term))) ||
+        (w.nomsBoutiques && Array.isArray(w.nomsBoutiques) && w.nomsBoutiques.some(b => b && b.toLowerCase().includes(term))) ||
         (w.numeroCompte && w.numeroCompte.toLowerCase().includes(term))
       );
     }

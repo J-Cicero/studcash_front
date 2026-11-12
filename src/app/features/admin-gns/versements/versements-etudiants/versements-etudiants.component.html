@@ -19,7 +19,7 @@
 
 <div class="glass-panel rounded-2xl overflow-hidden animate-fade-in-up" style="animation-delay: 100ms;">
   <!-- Filters -->
-  <div class="px-6 py-4 border-b border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40 flex flex-wrap gap-2 items-center justify-between">
+  <div class="px-6 py-4 border-b border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40 flex flex-wrap gap-3 items-center justify-between">
     <div class="flex space-x-2 overflow-x-auto custom-scrollbar">
       <button (click)="setFilterNiveau('ALL')" [class.bg-blue-600]="filterNiveau === 'ALL'" [class.text-white]="filterNiveau === 'ALL'" [class.bg-slate-100]="filterNiveau !== 'ALL'" [class.text-slate-600]="filterNiveau !== 'ALL'" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors whitespace-nowrap dark:bg-slate-800 dark:text-slate-300">Tous les niveaux</button>
       <button (click)="setFilterNiveau('L1_ANNEE')" [class.bg-blue-600]="filterNiveau === 'L1_ANNEE'" [class.text-white]="filterNiveau === 'L1_ANNEE'" [class.bg-slate-100]="filterNiveau !== 'L1_ANNEE'" [class.text-slate-600]="filterNiveau !== 'L1_ANNEE'" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors whitespace-nowrap hidden sm:block">Licence 1</button>
@@ -27,10 +27,24 @@
       <button (click)="setFilterNiveau('L3_ANNEE')" [class.bg-blue-600]="filterNiveau === 'L3_ANNEE'" [class.text-white]="filterNiveau === 'L3_ANNEE'" [class.bg-slate-100]="filterNiveau !== 'L3_ANNEE'" [class.text-slate-600]="filterNiveau !== 'L3_ANNEE'" class="px-4 py-2 rounded-lg text-sm font-bold transition-colors whitespace-nowrap hidden sm:block">Licence 3</button>
     </div>
     
-    <button *ngIf="hasSelectedWallets" (click)="openSpecificMassVersement()" class="inline-flex items-center justify-center py-2 px-4 text-sm font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-lg shadow-lg transition-all animate-fade-in whitespace-nowrap">
-      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-      Verser à la sélection ({{ getSelectedWalletIds().length }})
-    </button>
+    <div class="flex items-center gap-3">
+      <div class="relative w-full sm:w-64">
+        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+          <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <input type="text" [(ngModel)]="searchQuery" placeholder="Rechercher étudiant, ID..." class="block w-full pl-10 pr-9 py-2 border-none rounded-xl bg-white dark:bg-slate-800 shadow-sm text-xs placeholder-slate-400 focus:ring-2 focus:ring-indigo-500 transition-shadow dark:text-white">
+        <button *ngIf="searchQuery" (click)="searchQuery=''" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <button *ngIf="hasSelectedWallets" (click)="openSpecificMassVersement()" class="inline-flex items-center justify-center py-2 px-4 text-sm font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-lg shadow-lg transition-all animate-fade-in whitespace-nowrap">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        Verser à la sélection ({{ getSelectedWalletIds().length }})
+      </button>
+    </div>
   </div>
 
   <div *ngIf="isLoading" class="flex justify-center items-center py-20">
@@ -60,7 +74,7 @@
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
-        <tr *ngFor="let wallet of wallets" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors" [ngClass]="{'bg-indigo-50 dark:bg-indigo-900 bg-opacity-20': wallet.selected}">
+        <tr *ngFor="let wallet of filteredWallets" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors" [ngClass]="{'bg-indigo-50 dark:bg-indigo-900 bg-opacity-20': wallet.selected}">
           <td class="px-4 py-3 whitespace-nowrap">
             <input type="checkbox" [checked]="wallet.selected" (change)="toggleSelection(wallet)" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-slate-900 dark:border-slate-700 cursor-pointer">
           </td>

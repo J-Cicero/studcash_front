@@ -42,14 +42,25 @@
 
 <!-- Section 1: Dépenses Étudiants À Prélever (Création Liquidation) -->
 <div class="glass-panel rounded-2xl overflow-hidden mb-8 border border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40">
-  <div class="p-6 border-b border-slate-200/50 dark:border-slate-700/50 bg-white/60 dark:bg-slate-900/60 flex items-center justify-between">
+  <div class="p-6 border-b border-slate-200/50 dark:border-slate-700/50 bg-white/60 dark:bg-slate-900/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
     <div>
       <h3 class="text-lg font-bold text-slate-900 dark:text-white">Dépenses Étudiants à Prélever sur Bourse</h3>
       <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Sélectionnez un étudiant pour consulter ses détails et créer sa demande de liquidation.</p>
     </div>
+    <div class="relative w-full sm:w-72">
+      <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+        <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+      <input type="text" [(ngModel)]="searchStudentQuery" placeholder="Rechercher un étudiant..." class="block w-full pl-10 pr-9 py-2 border-none rounded-xl bg-white dark:bg-slate-800 shadow-sm text-xs placeholder-slate-400 focus:ring-2 focus:ring-indigo-500 transition-shadow dark:text-white">
+      <button *ngIf="searchStudentQuery" (click)="searchStudentQuery=''" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
   </div>
 
-  <div class="overflow-x-auto" *ngIf="unliquidatedStudents.length > 0">
+  <div class="overflow-x-auto" *ngIf="filteredUnliquidatedStudents.length > 0">
     <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
       <thead class="bg-slate-50/50 dark:bg-slate-800/30">
         <tr>
@@ -60,7 +71,7 @@
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-200/50 dark:divide-slate-700/50">
-        <tr *ngFor="let s of unliquidatedStudents" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+        <tr *ngFor="let s of filteredUnliquidatedStudents" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
           <td class="px-6 py-4 whitespace-nowrap">
             <span class="font-bold text-slate-900 dark:text-white">{{ s.studentName }}</span>
           </td>

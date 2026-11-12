@@ -22,6 +22,19 @@ export class VersementsEtudiantsComponent implements OnInit {
   successMessage = '';
 
   filterNiveau: string = 'ALL';
+  searchQuery: string = '';
+
+  get filteredWallets(): any[] {
+    if (!this.searchQuery || !this.searchQuery.trim()) {
+      return this.wallets;
+    }
+    const q = this.searchQuery.trim().toLowerCase();
+    return this.wallets.filter((w: any) => {
+      const name = (w.ownerName || '').toLowerCase();
+      const id = (w.trackingId || '').toLowerCase();
+      return name.includes(q) || id.includes(q);
+    });
+  }
   
   showManualVersementModal = false;
   selectedWalletForManual: WalletResponse | null = null;
