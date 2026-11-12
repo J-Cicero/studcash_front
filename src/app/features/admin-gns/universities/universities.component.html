@@ -1,10 +1,10 @@
-<div class="mb-8 flex justify-between items-center animate-fade-in-up">
+<div class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-fade-in-up">
   <div>
     <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Universités Partenaires</h1>
     <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Gérez la liste des universités, leurs codes et leur statut dans le réseau.</p>
   </div>
   <div class="flex space-x-3">
-    <button (click)="showForm = true" class="inline-flex items-center justify-center py-2.5 px-5 text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-xl shadow-lg shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
+    <button (click)="openCreateModal()" class="inline-flex items-center justify-center py-2.5 px-5 text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-xl shadow-lg shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
       <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
       </svg>
@@ -13,9 +13,36 @@
   </div>
 </div>
 
+<!-- Global Success / Error Alerts -->
+<div *ngIf="successMessage" class="mb-6 p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-2xl flex items-center gap-3 text-emerald-800 dark:text-emerald-300 animate-fade-in shadow-sm">
+  <svg class="w-5 h-5 text-emerald-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+  </svg>
+  <span class="text-sm font-bold">{{ successMessage }}</span>
+</div>
+
+<div *ngIf="errorMessage && !showForm" class="mb-6 p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-2xl flex items-center gap-3 text-rose-800 dark:text-rose-300 animate-fade-in shadow-sm">
+  <svg class="w-5 h-5 text-rose-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+  </svg>
+  <span class="text-sm font-bold">{{ errorMessage }}</span>
+</div>
+
 <div class="glass-panel rounded-2xl overflow-hidden animate-fade-in-up" style="animation-delay: 100ms;">
-  <div class="px-6 py-5 border-b border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40">
-    <h3 class="text-lg font-bold text-slate-900 dark:text-white">Réseau Universitaire</h3>
+  <div class="px-6 py-5 border-b border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <h3 class="text-lg font-bold text-slate-900 dark:text-white">Réseau Universitaire ({{ filteredUniversities.length }})</h3>
+    
+    <div class="relative w-full sm:w-72">
+      <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+        <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+      <input type="text" [(ngModel)]="searchQuery" placeholder="Rechercher code, nom, ville..." class="block w-full pl-10 pr-9 py-2 border-none rounded-xl bg-white dark:bg-slate-800 shadow-sm text-xs placeholder-slate-400 focus:ring-2 focus:ring-indigo-500 transition-shadow dark:text-white">
+      <button *ngIf="searchQuery" (click)="searchQuery=''" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
   </div>
 
   <div *ngIf="isLoading" class="flex justify-center items-center py-12">
@@ -37,7 +64,7 @@
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
-        <tr *ngFor="let u of universities" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+        <tr *ngFor="let u of filteredUniversities" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
           <td class="px-4 py-3 whitespace-nowrap">
             <div class="text-sm font-bold text-indigo-600 dark:text-indigo-400">{{u.code}}</div>
           </td>
@@ -85,40 +112,48 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
           </svg>
         </div>
-        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Nouvelle Université</h3>
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ editingUniv ? 'Modifier l\'Université' : 'Nouvelle Université' }}</h3>
       </div>
-      <button (click)="showForm = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+      <button (click)="closeModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
     </div>
 
+    <!-- Error inside modal -->
+    <div *ngIf="errorMessage" class="mx-6 mt-4 p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-xl text-xs font-bold text-rose-700 dark:text-rose-300 flex items-center gap-2">
+      <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+      <span>{{ errorMessage }}</span>
+    </div>
+
     <form [formGroup]="createForm" (ngSubmit)="onSubmit()" class="p-6 space-y-5">
       <div>
-        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Code / Sigle</label>
-        <input type="text" formControlName="code" class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white" placeholder="Ex: INPHB">
+        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Code / Sigle (max 10 caractères)</label>
+        <input type="text" formControlName="code" maxlength="10" class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white uppercase font-bold" placeholder="Ex: INPHB, UK, UL">
       </div>
 
       <div>
         <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Nom Complet</label>
-        <input type="text" formControlName="nom" class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white" placeholder="Ex: Institut National Polytechnique">
+        <input type="text" formControlName="nom" class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white font-medium" placeholder="Ex: Université de Kara">
       </div>
 
       <div>
         <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Ville / Localisation</label>
-        <input type="text" formControlName="ville" class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white" placeholder="Ex: Yamoussoukro">
+        <input type="text" formControlName="ville" class="block w-full text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl py-2 px-3 focus:ring-2 focus:ring-indigo-500 transition-colors dark:text-white" placeholder="Ex: Kara, Lomé, Sokodé">
       </div>
 
       <div class="flex items-center mt-4 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
         <input id="isActive" type="checkbox" formControlName="isActive" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 rounded">
-        <label for="isActive" class="ml-3 block text-sm font-medium text-slate-700 dark:text-slate-300">
+        <label for="isActive" class="ml-3 block text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
           Université Active
         </label>
       </div>
 
       <div class="flex space-x-3 pt-2">
-        <button type="button" (click)="showForm = false" class="flex-1 py-2.5 px-4 border border-slate-300 dark:border-slate-700 shadow-sm text-sm font-bold rounded-xl text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all">
+        <button type="button" (click)="closeModal()" class="flex-1 py-2.5 px-4 border border-slate-300 dark:border-slate-700 shadow-sm text-sm font-bold rounded-xl text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all">
           Annuler
         </button>
         <button type="submit" [disabled]="createForm.invalid || isCreating" class="flex-1 inline-flex justify-center items-center py-2.5 px-4 border border-transparent shadow-lg shadow-indigo-500/30 text-sm font-bold rounded-xl text-white bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition-all hover:-translate-y-0.5">
@@ -126,13 +161,23 @@
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          <span *ngIf="!isCreating">Enregistrer</span>
+          <span *ngIf="!isCreating">{{ editingUniv ? 'Enregistrer Modifications' : 'Créer l\'Université' }}</span>
           <span *ngIf="isCreating">Enregistrement...</span>
         </button>
       </div>
     </form>
   </div>
 </div>
+
+<app-confirm-dialog
+  [isOpen]="showConfirmModal"
+  [title]="confirmTitle"
+  [message]="confirmMessage"
+  confirmText="Oui"
+  cancelText="Non"
+  (confirm)="onModalConfirm()"
+  (cancel)="onModalCancel()"
+></app-confirm-dialog>
 
 <app-confirm-dialog
   [isOpen]="showConfirmModal"

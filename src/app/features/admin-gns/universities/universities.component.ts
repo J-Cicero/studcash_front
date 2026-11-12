@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
 import { UniversiteService } from '../../../core/services/universite.service';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-universities',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ConfirmDialogComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, ConfirmDialogComponent],
   templateUrl: './universities.component.html',
   styleUrls: ['./universities.component.scss']
 })
@@ -23,6 +23,7 @@ export class UniversitiesComponent implements OnInit {
   errorMessage = '';
   
   createForm: FormGroup;
+  searchQuery = '';
 
   // Custom Confirmation Dialog state
   showConfirmModal = false;
@@ -114,6 +115,38 @@ export class UniversitiesComponent implements OnInit {
     );
   }
 
+  get filteredUniversities(): any[] {
+    if (!this.searchQuery || !this.searchQuery.trim()) {
+      return this.universities;
+    }
+    const q = this.searchQuery.trim().toLowerCase();
+    return this.universities.filter(u => {
+      const code = (u.code || '').toLowerCase();
+      const nom = (u.fullName || '').toLowerCase();
+      const ville = (u.city || '').toLowerCase();
+      return code.includes(q) || nom.includes(q) || ville.includes(q);
+    });
+  }
+
+  openCreateModal() {
+    this.editingUniv = null;
+    this.createForm.reset({
+      code: '',
+      nom: '',
+      ville: '',
+      isActive: true
+    });
+    this.errorMessage = '';
+    this.showForm = true;
+  }
+
+  closeModal() {
+    this.showForm = false;
+    this.editingUniv = null;
+    this.createForm.reset({ isActive: true });
+    this.errorMessage = '';
+  }
+
   openEditModal(u: any) {
     this.editingUniv = u;
     this.createForm.patchValue({
@@ -122,6 +155,7 @@ export class UniversitiesComponent implements OnInit {
       ville: u.city,
       isActive: u.isActive
     });
+    this.errorMessage = '';
     this.showForm = true;
   }
 
@@ -129,46 +163,40 @@ export class UniversitiesComponent implements OnInit {
     if (this.createForm.invalid) return;
 
     this.isCreating = true;
+    this.errorMessage = '';
     const universityData = {
-      fullName: this.createForm.value.nom,
-      code: this.createForm.value.code,
-      city: this.createForm.value.ville,
-      isActive: this.createForm.value.isActive
+      fullName: (this.createForm.value.nom || '').trim(),
+      code: (this.createForm.value.code || '').trim().toUpperCase(),
+      city: (this.createForm.value.ville || '').trim(),
+      isActive: this.createForm.value.isActive !== false
     };
 
     if (this.editingUniv) {
       this.universiteService.update(this.editingUniv.trackingId, universityData).subscribe({
         next: () => {
           this.loadUniversities();
-          this.loadSummaryStats();
-          this.showForm = false;
-          this.editingUniv = null;
-          this.createForm.reset({ isActive: true });
+          this.closeModal();
           this.successMessage = "Université modifiée avec succès.";
           this.isCreating = false;
-          setTimeout(() => this.successMessage = '', 3000);
+          setTimeout(() => this.successMessage = '', 4000);
         },
         error: (err) => {
-          this.errorMessage = err.error?.message || "Erreur lors de la modification.";
+          this.errorMessage = err.error?.message || err.error?.error || "Erreur lors de la modification.";
           this.isCreating = false;
-          setTimeout(() => this.errorMessage = '', 5000);
         }
       });
     } else {
       this.universiteService.create(universityData).subscribe({
         next: () => {
           this.loadUniversities();
-          this.loadSummaryStats();
-          this.showForm = false;
-          this.createForm.reset({ isActive: true });
+          this.closeModal();
           this.successMessage = "Université ajoutée avec succès.";
           this.isCreating = false;
-          setTimeout(() => this.successMessage = '', 3000);
+          setTimeout(() => this.successMessage = '', 4000);
         },
         error: (err) => {
-          this.errorMessage = err.error?.message || "Erreur lors de la création.";
+          this.errorMessage = err.error?.message || err.error?.error || "Erreur lors de la création de l'université.";
           this.isCreating = false;
-          setTimeout(() => this.errorMessage = '', 5000);
         }
       });
     }
