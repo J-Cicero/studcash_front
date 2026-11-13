@@ -1,12 +1,15 @@
 <div class="space-y-6 animate-fade-in-up">
   <!-- Header -->
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/60 dark:border-slate-800/60">
     <div>
-      <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center">
-        Mon Profil Agent
+      <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
+        Mon Profil d'Agent
+        <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800">
+          Agent Habilité
+        </span>
       </h1>
       <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 font-medium">
-        Gestion de vos informations d'opérateur bancaire et paramètres de l'institution
+        Gestion de vos identifiants d'opérateur bancaire et paramètres de compensation de votre institution.
       </p>
     </div>
   </div>
@@ -14,7 +17,7 @@
   <!-- Loading State -->
   <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-16 space-y-3">
     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-    <p class="text-sm text-slate-500 font-medium">Chargement du profil...</p>
+    <p class="text-sm text-slate-500 font-medium">Chargement des données du profil...</p>
   </div>
 
   <!-- Alert Success -->
@@ -33,128 +36,151 @@
     <span class="text-sm font-semibold">{{ errorMessage }}</span>
   </div>
 
-  <div *ngIf="!isLoading" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <div *ngIf="!isLoading" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-    <!-- Coordonnées Agent Bancaire -->
-    <div class="bg-white dark:bg-slate-900/80 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm">
-      <div class="flex items-center justify-between mb-5">
-        <div>
-          <h2 class="text-base font-bold text-slate-900 dark:text-white">Informations de l'Agent Bancaire</h2>
-          <p class="text-xs text-slate-400 mt-0.5">Identité de l'opérateur habilité</p>
-        </div>
-        <button
-          *ngIf="!isEditMode"
-          type="button"
-          (click)="toggleEditMode()"
-          class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 rounded-xl transition-colors">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-          </svg>
-          <span>Modifier</span>
-        </button>
-        <button
-          *ngIf="isEditMode"
-          type="button"
-          (click)="cancelEditMode()"
-          class="px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 rounded-xl transition-colors">
-          Annuler
-        </button>
-      </div>
-
-      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <!-- Colonne Gauche : Formulaire Coordonnées Agent (7 colonnes) -->
+    <div class="lg:col-span-7 bg-white dark:bg-slate-900/80 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between mb-5">
           <div>
-            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Prénom</label>
-            <input
-              type="text"
-              formControlName="firstName"
-              [ngClass]="{'bg-slate-50 dark:bg-slate-800/50 cursor-not-allowed': !isEditMode, 'bg-white dark:bg-slate-800': isEditMode}"
-              class="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 transition-colors">
+            <h2 class="text-base font-bold text-slate-900 dark:text-white">Informations de l'Agent Bancaire</h2>
+            <p class="text-xs text-slate-400 mt-0.5">Identité de l'opérateur habilité à la validation des liquidations</p>
           </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nom</label>
-            <input
-              type="text"
-              formControlName="lastName"
-              [ngClass]="{'bg-slate-50 dark:bg-slate-800/50 cursor-not-allowed': !isEditMode, 'bg-white dark:bg-slate-800': isEditMode}"
-              class="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 transition-colors">
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-            Adresse Email <span class="text-[10px] text-slate-400 normal-case">(Identifiant unique fixe)</span>
-          </label>
-          <input
-            type="email"
-            formControlName="email"
-            class="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400 text-sm font-mono cursor-not-allowed">
-        </div>
-
-        <div *ngIf="isEditMode" class="animate-fade-in pt-1">
-          <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nouveau Mot de Passe (Optionnel)</label>
-          <input
-            type="password"
-            formControlName="password"
-            placeholder="Laissez vide pour conserver le mot de passe actuel"
-            class="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 transition-colors">
-        </div>
-
-        <div class="pt-3" *ngIf="isEditMode">
           <button
-            type="submit"
-            [disabled]="profileForm.invalid || isUpdating"
-            class="w-full px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm transition-all flex items-center justify-center">
-            <svg *ngIf="isUpdating" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            *ngIf="!isEditMode"
+            type="button"
+            (click)="toggleEditMode()"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 rounded-xl transition-colors">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
             </svg>
-            Enregistrer les modifications
+            <span>Modifier</span>
+          </button>
+          <button
+            *ngIf="isEditMode"
+            type="button"
+            (click)="cancelEditMode()"
+            class="px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 rounded-xl transition-colors">
+            Annuler
           </button>
         </div>
-      </form>
+
+        <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Prénom</label>
+              <input
+                type="text"
+                formControlName="firstName"
+                [ngClass]="{'bg-slate-50 dark:bg-slate-800/50 cursor-not-allowed': !isEditMode, 'bg-white dark:bg-slate-800': isEditMode}"
+                class="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 transition-colors">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nom</label>
+              <input
+                type="text"
+                formControlName="lastName"
+                [ngClass]="{'bg-slate-50 dark:bg-slate-800/50 cursor-not-allowed': !isEditMode, 'bg-white dark:bg-slate-800': isEditMode}"
+                class="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 transition-colors">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+              Adresse Email <span class="text-[10px] text-slate-400 normal-case">(Identifiant unique fixe)</span>
+            </label>
+            <input
+              type="email"
+              formControlName="email"
+              class="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400 text-sm font-mono cursor-not-allowed">
+          </div>
+
+          <div *ngIf="isEditMode" class="animate-fade-in pt-1">
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nouveau Mot de Passe (Optionnel)</label>
+            <input
+              type="password"
+              formControlName="password"
+              placeholder="Laissez vide pour conserver l'actuel"
+              class="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 transition-colors">
+          </div>
+
+          <div class="pt-3" *ngIf="isEditMode">
+            <button
+              type="submit"
+              [disabled]="profileForm.invalid || isUpdating"
+              class="w-full px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm transition-all flex items-center justify-center">
+              <svg *ngIf="isUpdating" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Enregistrer les modifications
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Quick Security Summary Footer -->
+      <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+        <span class="flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          Authentification bancaire active
+        </span>
+        <span class="font-mono text-[11px]">Rôle : ROLE_ADMIN_BANQUE</span>
+      </div>
     </div>
 
-    <!-- Informations Institution Bancaire -->
-    <div class="bg-white dark:bg-slate-900/80 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm">
-      <div class="flex items-center justify-between mb-5">
-        <div>
-          <h2 class="text-base font-bold text-slate-900 dark:text-white">Informations de la Banque</h2>
-          <p class="text-xs text-slate-400 mt-0.5">Établissement bancaire de rattachement</p>
-        </div>
-        <span *ngIf="banqueInfo" class="px-2.5 py-0.5 rounded-full text-xs font-bold font-mono bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800">
-          {{ banqueInfo.code }}
-        </span>
-      </div>
-
-      <div class="space-y-4" *ngIf="banqueInfo">
-        <div class="bg-slate-50 dark:bg-slate-800/40 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Raison Sociale</p>
-          <p class="text-base font-black text-slate-900 dark:text-white">{{ banqueInfo.nom }}</p>
+    <!-- Colonne Droite : Données de la Banque & Compte Central GNS (5 colonnes) -->
+    <div class="lg:col-span-5 space-y-6">
+      
+      <!-- Carte Banque -->
+      <div class="bg-white dark:bg-slate-900/80 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-base font-bold text-slate-900 dark:text-white">Établissement Bancaire</h2>
+          <span *ngIf="banqueInfo" class="px-2.5 py-0.5 rounded-full text-xs font-bold font-mono bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800">
+            {{ banqueInfo.code }}
+          </span>
         </div>
 
-        <div class="bg-slate-50 dark:bg-slate-800/40 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Code Banque National</p>
-          <p class="text-sm font-mono font-bold text-slate-800 dark:text-slate-200">{{ banqueInfo.code }}</p>
-        </div>
-
-        <div class="bg-slate-50 dark:bg-slate-800/40 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Compte Central GNS (Pour vos virements)</p>
-          <div class="mt-1 flex items-center gap-2">
-            <span *ngIf="banqueInfo.compteCentralGns" class="text-sm font-mono font-extrabold text-blue-600 dark:text-blue-400">
-              {{ banqueInfo.compteCentralGns }}
-            </span>
-            <span *ngIf="!banqueInfo.compteCentralGns" class="text-xs text-slate-400 italic">
-              En attente de configuration GNS...
-            </span>
+        <div class="space-y-3.5" *ngIf="banqueInfo">
+          <div class="bg-slate-50 dark:bg-slate-800/40 p-3.5 rounded-xl border border-slate-100 dark:border-slate-800">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Raison Sociale</p>
+            <p class="text-sm font-black text-slate-900 dark:text-white">{{ banqueInfo.nom }}</p>
           </div>
-          <p class="text-[11px] text-slate-400 mt-1">Compte récepteur des prélèvements boursiers liquidés par la banque.</p>
+
+          <div class="bg-slate-50 dark:bg-slate-800/40 p-3.5 rounded-xl border border-slate-100 dark:border-slate-800">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Code Banque National</p>
+            <p class="text-xs font-mono font-bold text-slate-800 dark:text-slate-200">{{ banqueInfo.code }}</p>
+          </div>
+
+          <div class="bg-slate-50 dark:bg-slate-800/40 p-3.5 rounded-xl border border-slate-100 dark:border-slate-800">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Compte Central GNS (Compensations)</p>
+            <div class="mt-1">
+              <span *ngIf="banqueInfo.compteCentralGns" class="text-xs font-mono font-extrabold text-blue-600 dark:text-blue-400 break-all">
+                {{ banqueInfo.compteCentralGns }}
+              </span>
+              <span *ngIf="!banqueInfo.compteCentralGns" class="text-xs text-slate-400 italic">
+                En attente de configuration GNS...
+              </span>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-1">Compte vers lequel la banque exécute le transfert des liquidations étudiants.</p>
+          </div>
+        </div>
+
+        <div *ngIf="!banqueInfo" class="p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 text-xs font-semibold text-amber-700 dark:text-amber-400 border border-amber-200/50">
+          Informations de la banque introuvables. Contactez l'administrateur GNS.
         </div>
       </div>
 
-      <div *ngIf="!banqueInfo" class="p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 text-xs font-semibold text-amber-700 dark:text-amber-400 border border-amber-200/50">
-        Informations de la banque introuvables. Veuillez contacter l'administrateur GNS.
+      <!-- Carte Protocole & Conformité -->
+      <div class="bg-white dark:bg-slate-900/80 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-2">
+        <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Protocole de Liquidation</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Toute validation de liquidation étudiante ou marchande sur ce portail déclenche l'écriture de compensation et notifie les systèmes centraux GNS.
+        </p>
       </div>
+
     </div>
   </div>
 </div>
