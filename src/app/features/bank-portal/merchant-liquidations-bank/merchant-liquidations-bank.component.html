@@ -19,53 +19,53 @@
   </div>
 
   <!-- KPI Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-    <div class="glass-panel p-5 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 bg-white/60 dark:bg-slate-900/60 shadow-sm">
-      <div class="text-xs font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">Demandes Totales</div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="bg-white dark:bg-slate-900/80 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
+      <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">Demandes Totales</div>
       <div class="text-2xl font-black text-slate-900 dark:text-white">{{ liquidations.length }}</div>
-      <div class="text-xs text-slate-500 mt-1">Nombre de liquidations marchands</div>
+      <div class="text-[11px] text-slate-500 mt-1">Liquidations commerçants</div>
     </div>
 
-    <div class="glass-panel p-5 rounded-2xl border border-amber-200/60 dark:border-amber-900/40 bg-amber-50/40 dark:bg-amber-950/20 shadow-sm">
-      <div class="text-xs font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-1">En Attente de Règlement</div>
-      <div class="text-2xl font-black text-amber-700 dark:text-amber-300">{{ pendingCount }}</div>
-      <div class="text-xs text-amber-600/80 dark:text-amber-400/80 mt-1 font-bold">{{ formatNumber(pendingAmount) }} FCFA</div>
+    <div class="bg-white dark:bg-slate-900/80 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
+      <div class="text-[11px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-1">En Attente de Règlement</div>
+      <div class="text-2xl font-black text-slate-900 dark:text-white">{{ pendingCount }}</div>
+      <div class="text-[11px] text-amber-600 dark:text-amber-400 mt-1 font-semibold">{{ formatNumber(pendingAmount) }} FCFA</div>
     </div>
 
-    <div class="glass-panel p-5 rounded-2xl border border-emerald-200/60 dark:border-emerald-900/40 bg-emerald-50/40 dark:bg-emerald-950/20 shadow-sm">
-      <div class="text-xs font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1">Liquidations Règlées</div>
-      <div class="text-2xl font-black text-emerald-700 dark:text-emerald-300">{{ paidCount }}</div>
-      <div class="text-xs text-emerald-600/80 dark:text-emerald-400/80 mt-1 font-bold">Retraits & virements effectués</div>
+    <div class="bg-white dark:bg-slate-900/80 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
+      <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1">Liquidations Règlées</div>
+      <div class="text-2xl font-black text-slate-900 dark:text-white">{{ paidCount }}</div>
+      <div class="text-[11px] text-emerald-600 dark:text-emerald-400 mt-1 font-semibold">Virements bancaires effectués</div>
     </div>
 
-    <div class="glass-panel p-5 rounded-2xl border border-blue-200/60 dark:border-blue-900/40 bg-blue-50/40 dark:bg-blue-950/20 shadow-sm">
-      <div class="text-xs font-extrabold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-1">Volume Global Liquidé</div>
-      <div class="text-2xl font-black text-blue-700 dark:text-blue-300">{{ formatNumber(totalAmount) }} <span class="text-xs">FCFA</span></div>
-      <div class="text-xs text-blue-600/80 dark:text-blue-400/80 mt-1">Part marchands</div>
+    <div class="bg-white dark:bg-slate-900/80 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
+      <div class="text-[11px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-1">Volume Global Liquidé</div>
+      <div class="text-2xl font-black text-slate-900 dark:text-white">{{ formatNumber(totalAmount) }} <span class="text-xs font-bold text-slate-400">FCFA</span></div>
+      <div class="text-[11px] text-slate-400 mt-1">Règlement net commerçants</div>
     </div>
   </div>
 
   <!-- Filters & Search Bar -->
-  <div class="flex flex-col md:flex-row items-center justify-between gap-4 bg-white/60 dark:bg-slate-900/60 p-4 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 backdrop-blur-md">
+  <div class="flex flex-col md:flex-row items-center justify-between gap-4 bg-white dark:bg-slate-900/80 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
     <!-- Filter Tabs -->
-    <div class="flex items-center space-x-1 bg-slate-100 dark:bg-slate-800/60 p-1 rounded-xl w-full md:w-auto">
+    <div class="flex items-center space-x-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl w-full md:w-auto">
       <button (click)="setTab('ALL')" 
               [class.bg-white]="activeTab === 'ALL'" 
               [class.dark:bg-slate-700]="activeTab === 'ALL'" 
               [class.shadow-sm]="activeTab === 'ALL'"
-              class="flex-1 md:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-700 dark:text-slate-300">
+              class="flex-1 md:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-700 dark:text-slate-300">
         Toutes ({{ liquidations.length }})
       </button>
       <button (click)="setTab('EN_ATTENTE')" 
-              [class.bg-amber-500]="activeTab === 'EN_ATTENTE'" 
+              [class.bg-blue-600]="activeTab === 'EN_ATTENTE'" 
               [class.text-white]="activeTab === 'EN_ATTENTE'" 
-              class="flex-1 md:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-700 dark:text-slate-300">
+              class="flex-1 md:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-700 dark:text-slate-300">
         En Attente ({{ pendingCount }})
       </button>
       <button (click)="setTab('PAYE')" 
-              [class.bg-emerald-600]="activeTab === 'PAYE'" 
+              [class.bg-blue-600]="activeTab === 'PAYE'" 
               [class.text-white]="activeTab === 'PAYE'" 
-              class="flex-1 md:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-700 dark:text-slate-300">
+              class="flex-1 md:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-700 dark:text-slate-300">
         Validées / Règlées ({{ paidCount }})
       </button>
     </div>

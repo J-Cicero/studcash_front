@@ -52,18 +52,18 @@
 </div>
 
 <!-- Tabs -->
-<div class="glass-panel rounded-2xl p-1 border border-slate-200/50 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40 shadow-sm flex space-x-1 max-w-md mb-6 animate-fade-in-up">
+<div class="rounded-2xl p-1 border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 shadow-sm flex space-x-1 max-w-md mb-6 animate-fade-in-up">
   <button 
     (click)="switchTab('Etudiant')"
-    [ngClass]="activeTab === 'Etudiant' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-800/50'"
-    class="flex-1 py-2.5 px-4 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center space-x-2">
-    <span>Étudiants (Bourses)</span>
+    [ngClass]="activeTab === 'Etudiant' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:bg-white/60 dark:hover:bg-slate-800/60'"
+    class="flex-1 py-2 px-4 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center space-x-2">
+    <span>Étudiants (Bourses & RIB)</span>
   </button>
   <button 
     (click)="switchTab('Marchand')"
-    [ngClass]="activeTab === 'Marchand' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-800/50'"
-    class="flex-1 py-2.5 px-4 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center space-x-2">
-    <span>Marchands (KYC)</span>
+    [ngClass]="activeTab === 'Marchand' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:bg-white/60 dark:hover:bg-slate-800/60'"
+    class="flex-1 py-2 px-4 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center space-x-2">
+    <span>Marchands (KYC & Boutiques)</span>
   </button>
 </div>
 

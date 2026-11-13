@@ -54,7 +54,7 @@ export class ParametresGnsComponent implements OnInit {
   docToDeleteId: string | null = null;
 
   niveaux = ['L1_ANNEE', 'L2_ANNEE', 'L3_ANNEE', 'L4_ANNEE', 'L5_ANNEE'];
-  typesDocument = ['PIECE_IDENTITE', 'RIB', 'MANDAT'];
+  typesDocument = ['PIECE_IDENTITE', 'RIB', 'MANDAT', 'RELEVE_NOTES'];
 
   // Scolarite Year
   activeYear: ScolariteYear | null = null;
@@ -114,28 +114,23 @@ export class ParametresGnsComponent implements OnInit {
     return Math.max(0, +(100 - this.partGnsPct).toFixed(2));
   }
 
-  get simulatedTotalCommission(): number {
-    return Math.round(10000 * (this.tauxCommissionPct / 100));
-  }
-
-  get simulatedGnsShare(): number {
-    return Math.round(this.simulatedTotalCommission * (this.partGnsPct / 100));
-  }
-
-  get simulatedBankShare(): number {
-    return this.simulatedTotalCommission - this.simulatedGnsShare;
-  }
-
   getParamLabel(name: string): string {
     const labels: Record<string, string> = {
-      'MONTANT_BOURSE_BASE': 'Allocation de Bourse Standard',
-      'MONTANT_BOURSE_MAJORATION': 'Plafond Majoration Bourse',
-      'TAUX_COMMISSION_PAIEMENT': 'Taux de Commission sur Paiement',
-      'PART_COMMISSION_GNS': 'Quote-part Revenu GNS',
-      'FRAIS_CREATION_CARTE': 'Frais d\'Émission Carte NFC/QR',
-      'MAJORATION_MONTANT_BOUTIQUE': 'Seuil / Majoration Quota Boutique'
+      'MONTANT_BOURSE_BASE': 'Montant de base prévisionnel de la bourse étudiante',
+      'MONTANT_BOURSE_MAJORATION': 'Majoration / Bonus prévisionnel sur bourse',
+      'TAUX_COMMISSION_PAIEMENT': 'Pourcentage de commission sur chaque paiement',
+      'PART_COMMISSION_GNS': 'Part de commission revenant à GNS',
+      'FRAIS_CREATION_CARTE': 'Coût d\'émission d\'une carte StudCash',
+      'MAJORATION_MONTANT_BOUTIQUE': 'Plafond journalier d\'achat autorisé en boutique'
     };
     return labels[name] || name;
+  }
+
+  getParamUnit(name: string): string {
+    if (name === 'TAUX_COMMISSION_PAIEMENT' || name === 'PART_COMMISSION_GNS') {
+      return '%';
+    }
+    return 'FCFA';
   }
 
   getParamFormattedValue(param: Parametre): string {
@@ -143,9 +138,63 @@ export class ParametresGnsComponent implements OnInit {
     if (isNaN(val)) return String(param.valeurParametre);
     if (param.nomParametre === 'TAUX_COMMISSION_PAIEMENT' || param.nomParametre === 'PART_COMMISSION_GNS') {
       const pct = val <= 1 ? +(val * 100).toFixed(2) : val;
-      return `${pct} % (brut: ${param.valeurParametre})`;
+      return `${pct} %`;
     }
     return `${new Intl.NumberFormat('fr-FR').format(val)} FCFA`;
+  }
+
+  // Édition inline rapide directe dans le tableau
+  editingInlineParamId: string | null = null;
+  inlineValueInput: string = '';
+  isSavingInline: boolean = false;
+
+  startInlineEdit(param: Parametre) {
+    if (!param.trackingId) return;
+    this.editingInlineParamId = param.trackingId;
+    const val = Number(param.valeurParametre);
+    if ((param.nomParametre === 'TAUX_COMMISSION_PAIEMENT' || param.nomParametre === 'PART_COMMISSION_GNS') && !isNaN(val) && val <= 1) {
+      this.inlineValueInput = String(+(val * 100).toFixed(2));
+    } else {
+      this.inlineValueInput = String(param.valeurParametre);
+    }
+  }
+
+  cancelInlineEdit() {
+    this.editingInlineParamId = null;
+    this.inlineValueInput = '';
+  }
+
+  saveInlineEdit(param: Parametre) {
+    if (!param.trackingId || this.isSavingInline) return;
+    const rawVal = this.inlineValueInput.trim();
+    if (!rawVal) return;
+
+    let backendValue = rawVal;
+    const num = Number(rawVal);
+    if ((param.nomParametre === 'TAUX_COMMISSION_PAIEMENT' || param.nomParametre === 'PART_COMMISSION_GNS') && !isNaN(num) && num > 1) {
+      backendValue = (num / 100).toString();
+    }
+
+    this.isSavingInline = true;
+    const updatedParam: Parametre = {
+      ...param,
+      valeurParametre: backendValue
+    };
+
+    this.parametresService.saveParametreGns(updatedParam).subscribe({
+      next: () => {
+        this.isSavingInline = false;
+        param.valeurParametre = backendValue;
+        this.editingInlineParamId = null;
+        this.successMessage = `Paramètre « ${this.getParamLabel(param.nomParametre)} » mis à jour.`;
+        setTimeout(() => this.successMessage = '', 3500);
+      },
+      error: (err) => {
+        this.isSavingInline = false;
+        this.errorMessage = 'Erreur lors de la mise à jour directe.';
+        setTimeout(() => this.errorMessage = '', 3500);
+      }
+    });
   }
 
   hasGnsAccountForBank(bankNameOrId?: string): boolean {
@@ -224,32 +273,15 @@ export class ParametresGnsComponent implements OnInit {
     this.scolariteYearService.getActiveYear().subscribe({
       next: (res) => {
         this.activeYear = res;
-        // Si une année scolaire est active, on ne peut plus modifier les paramètres
-        if (this.activeYear) {
-          this.paramForm.disable();
-          this.docCreateForm.disable();
-        } else {
-          this.paramForm.enable();
-          this.docCreateForm.enable();
-        }
       },
-      error: (err) => {
-        if(err.status === 404) {
-          this.activeYear = null;
-          this.paramForm.enable();
-          this.docCreateForm.enable();
-        }
+      error: () => {
+        this.activeYear = null;
       }
     });
   }
 
   checkSystemStatus() {
-    this.systemStatusService.getStatus().subscribe(status => {
-      if (status.currentStatus === 'ACTIVE') {
-        this.paramForm.disable();
-        this.docCreateForm.disable();
-      }
-    });
+    // Statut consultatif
   }
 
   setTab(tab: 'global' | 'kyc' | 'bancaire' | 'banques') {
@@ -338,7 +370,7 @@ export class ParametresGnsComponent implements OnInit {
   }
 
   openDocModal() {
-    this.docCreateForm.reset({ niveau: 'L1_ANNEE', targetType: 'STUDENT', typeDocument: 'RELEVE_BAC', obligatoire: true, estActif: true, description: '' });
+    this.docCreateForm.reset({ niveau: 'L1_ANNEE', targetType: 'STUDENT', typeDocument: 'PIECE_IDENTITE', obligatoire: true, estActif: true, description: '' });
     this.isDocModalOpen = true;
   }
 
