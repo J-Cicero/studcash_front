@@ -13,6 +13,8 @@ export interface StudentLiquidationItem {
   studentNumber: string;
   accountNumber: string;
   amountDeducted: number;
+  trancheAmount?: number;
+  reliquatAmount?: number;
   createdAt: string;
   validatedAt: string | null;
   status: 'EN_ATTENTE' | 'PAYE' | string;

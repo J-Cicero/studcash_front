@@ -99,8 +99,10 @@
           <tr>
             <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Réf / Date</th>
             <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Étudiant</th>
-            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">N° Compte Bancaire</th>
-            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Montant Prélevé</th>
+            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Compte Bancaire</th>
+            <th class="px-6 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Tranche Bourse</th>
+            <th class="px-6 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Dette Prélevée (GNS)</th>
+            <th class="px-6 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Reliquat Étudiant</th>
             <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statut</th>
             <th class="px-6 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Action</th>
           </tr>
@@ -118,8 +120,14 @@
             <td class="px-6 py-4 whitespace-nowrap text-xs font-mono text-slate-700 dark:text-slate-300">
               {{ item.accountNumber || 'Non renseigné' }}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-black text-blue-700 dark:text-blue-400">
-              {{ formatNumber(item.amountDeducted) }} FCFA
+            <td class="px-6 py-4 whitespace-nowrap text-right text-xs font-bold text-slate-800 dark:text-slate-200">
+              {{ formatNumber(item.trancheAmount || item.amountDeducted) }} FCFA
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-black text-rose-600 dark:text-rose-400">
+              -{{ formatNumber(item.amountDeducted) }} FCFA
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-black text-emerald-600 dark:text-emerald-400">
+              +{{ formatNumber(item.reliquatAmount !== undefined ? item.reliquatAmount : (item.trancheAmount ? item.trancheAmount - item.amountDeducted : 0)) }} FCFA
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <span *ngIf="item.status === 'EN_ATTENTE'" 
@@ -183,21 +191,29 @@
     </div>
 
     <!-- Details Box -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800">
       <div>
-        <span class="text-[11px] font-bold text-slate-400 uppercase">Montant Total Prélevé</span>
-        <div class="text-2xl font-black text-blue-600 dark:text-blue-400 mt-1">{{ formatNumber(selectedLiquidation.amountDeducted) }} FCFA</div>
-      </div>
-      <div>
-        <span class="text-[11px] font-bold text-slate-400 uppercase">Statut Actuel</span>
-        <div class="mt-1">
-          <span *ngIf="selectedLiquidation.status === 'EN_ATTENTE'" class="px-3 py-1 bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-300 font-extrabold text-xs rounded-full inline-block">
-            En Attente de Règlement
-          </span>
-          <span *ngIf="selectedLiquidation.status === 'PAYE'" class="px-3 py-1 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 font-extrabold text-xs rounded-full inline-block">
-            Validé le {{ selectedLiquidation.validatedAt | date:'dd/MM/yyyy HH:mm' }}
-          </span>
+        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tranche Officielle</span>
+        <div class="text-xl font-black text-slate-900 dark:text-white mt-1">
+          {{ formatNumber(selectedLiquidation.trancheAmount || selectedLiquidation.amountDeducted) }} FCFA
         </div>
+        <p class="text-[10px] text-slate-400 mt-0.5">Montant alloué par l'État/Univ</p>
+      </div>
+
+      <div>
+        <span class="text-[10px] font-bold text-rose-500 uppercase tracking-wider">Dette Prélevée (GNS)</span>
+        <div class="text-xl font-black text-rose-600 dark:text-rose-400 mt-1">
+          -{{ formatNumber(selectedLiquidation.amountDeducted) }} FCFA
+        </div>
+        <p class="text-[10px] text-rose-400/80 mt-0.5">Virement vers compte GNS</p>
+      </div>
+
+      <div>
+        <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Reliquat Net Étudiant</span>
+        <div class="text-xl font-black text-emerald-600 dark:text-emerald-400 mt-1">
+          +{{ formatNumber(selectedLiquidation.reliquatAmount !== undefined ? selectedLiquidation.reliquatAmount : (selectedLiquidation.trancheAmount ? selectedLiquidation.trancheAmount - selectedLiquidation.amountDeducted : 0)) }} FCFA
+        </div>
+        <p class="text-[10px] text-emerald-500/80 mt-0.5">Disponible au GAB en espèces</p>
       </div>
     </div>
 

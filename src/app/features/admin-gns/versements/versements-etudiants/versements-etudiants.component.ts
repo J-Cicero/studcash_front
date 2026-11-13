@@ -71,7 +71,7 @@ export class VersementsEtudiantsComponent implements OnInit {
     private inscriptionAnnuelleService: InscriptionAnnuelleService
   ) {
     this.manualVersementForm = this.fb.group({
-      montant: [null, [Validators.required, Validators.min(1)]]
+      montant: [36000, [Validators.required, Validators.min(1)]]
     });
 
     this.massVersementForm = this.fb.group({
@@ -150,7 +150,7 @@ export class VersementsEtudiantsComponent implements OnInit {
   // Manual
   openManualVersement(wallet: WalletResponse) {
     this.selectedWalletForManual = wallet;
-    this.manualVersementForm.reset();
+    this.manualVersementForm.patchValue({ montant: 36000 });
     this.showManualVersementModal = true;
   }
 
