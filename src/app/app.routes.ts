@@ -63,6 +63,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin-gns/transactions/transactions.component').then(m => m.TransactionsComponent)
       },
       {
+        path: 'revenus',
+        loadComponent: () => import('./features/admin-gns/revenus/revenus.component').then(m => m.RevenusComponent)
+      },
+      {
         path: 'utilisateurs',
         loadComponent: () => import('./features/admin-gns/utilisateurs/utilisateurs.component').then(m => m.UtilisateursComponent)
       },

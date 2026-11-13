@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Subject, forkJoin, of, Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, catchError } from 'rxjs/operators';
 import { UserService } from '../../../core/services/user.service';
 import { UniversiteService } from '../../../core/services/universite.service';
 import { BanqueService } from '../../../core/services/banque.service';
@@ -13,6 +13,7 @@ import { DocumentService } from '../../../core/services/document.service';
 import { DocumentEtudiantService } from '../../../core/services/document-etudiant.service';
 import { DocumentMerchantService } from '../../../core/services/document-merchant.service';
 import { WalletService } from '../../../core/services/wallet.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { Page } from '../../../core/models/page.model';
 import { UserResponse } from '../../../core/models/user.model';
 import { DocumentResponse } from '../../../core/models/document.model';
@@ -54,6 +55,11 @@ export class UtilisateursComponent implements OnInit {
     return list;
   }
 
+  // Menus 3 points (Global & par ligne)
+  showGlobalActionsMenu = false;
+  openRowMenuId: string | null = null;
+  canValidate = false;
+
   // Selection state
   selectedUserIds: Set<string> = new Set<string>();
   isAllSelected = false;
@@ -88,6 +94,9 @@ export class UtilisateursComponent implements OnInit {
   hasMandatoryDocs = false;
   selectedDocumentForPreview: any = null;
   sanitizedPdfUrl: SafeResourceUrl | null = null;
+  showDocRejectModal = false;
+  docRejectionReasonInput = '';
+  isDocActionLoading = false;
   
   universites: any[] = [];
   banques: any[] = [];
@@ -101,6 +110,7 @@ export class UtilisateursComponent implements OnInit {
     private documentEtudiantService: DocumentEtudiantService,
     private documentMerchantService: DocumentMerchantService,
     private walletService: WalletService,
+    private authService: AuthService,
     private confirmService: ConfirmDialogService,
     private sanitizer: DomSanitizer,
     private route: ActivatedRoute
@@ -117,7 +127,26 @@ export class UtilisateursComponent implements OnInit {
     });
   }
 
+  @HostListener('document:click')
+  closeMenus(): void {
+    this.showGlobalActionsMenu = false;
+    this.openRowMenuId = null;
+  }
+
+  toggleGlobalMenu(event: Event): void {
+    event.stopPropagation();
+    this.openRowMenuId = null;
+    this.showGlobalActionsMenu = !this.showGlobalActionsMenu;
+  }
+
+  toggleRowMenu(trackingId: string, event: Event): void {
+    event.stopPropagation();
+    this.showGlobalActionsMenu = false;
+    this.openRowMenuId = this.openRowMenuId === trackingId ? null : trackingId;
+  }
+
   ngOnInit(): void {
+    this.canValidate = this.authService.hasRole('ADMIN_BANQUE') || this.authService.hasRole('ADMIN_GNS');
     this.route.queryParams.subscribe(params => {
       if (params['search']) {
         this.searchQuery = params['search'];
@@ -279,22 +308,25 @@ export class UtilisateursComponent implements OnInit {
 
   getRoleColorClass(role: string): string {
     switch(role) {
-      case 'ADMIN_GNS': return 'bg-indigo-500 text-white border-indigo-500 dark:bg-indigo-700 dark:text-indigo-100 dark:border-indigo-700';
-      case 'ADMIN_DBS': return 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/40 dark:text-blue-400 dark:border-blue-800';
-      case 'UNIVERSITY_ADMIN':
-      case 'ADMINISTRATION_UNIVERSITAIRE':
-      case 'ADMIN_UL': return 'bg-teal-100 text-teal-700 border-teal-200 dark:bg-teal-900/40 dark:text-teal-400 dark:border-teal-800';
+      case 'ADMIN_GNS':
+      case 'ADMIN_DBS':
       case 'ADMIN_BANQUE':
-      case 'BANQUE': return 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/40 dark:text-amber-400 dark:border-amber-800';
-      case 'COMMERCANT': return 'bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/40 dark:text-purple-400 dark:border-purple-800';
-      case 'ETUDIANT': return 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/40 dark:text-orange-400 dark:border-orange-800';
-      default: return 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700';
+      case 'BANQUE':
+        return 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-800';
+      default:
+        return 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700';
     }
+  }
+
+  isPdfDocument(doc: any): boolean {
+    if (!doc || !doc.fileUrl) return false;
+    const cleanUrl = doc.fileUrl.split('?')[0].split('#')[0].toLowerCase();
+    return cleanUrl.endsWith('.pdf') || doc.fileUrl.startsWith('data:application/pdf');
   }
 
   selectDocument(doc: any) {
     this.selectedDocumentForPreview = doc;
-    if (doc && doc.fileUrl && (doc.documentType === 'MANDAT_BANCAIRE' || doc.fileUrl.endsWith('.pdf'))) {
+    if (this.isPdfDocument(doc)) {
       this.sanitizedPdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(doc.fileUrl);
     } else {
       this.sanitizedPdfUrl = null;
@@ -302,6 +334,7 @@ export class UtilisateursComponent implements OnInit {
   }
 
   viewDetails(user: UserResponse) {
+    this.openRowMenuId = null;
     this.selectedUser = user;
     this.userDocuments = [];
     this.selectedDocumentForPreview = null;
@@ -311,85 +344,116 @@ export class UtilisateursComponent implements OnInit {
 
     const docMap = new Map<string, any>();
 
-    const addDocs = (docs: any[]) => {
-      if (Array.isArray(docs)) {
-        docs.forEach(doc => {
-          if (doc && doc.fileUrl && !docMap.has(doc.fileUrl)) {
-            docMap.set(doc.fileUrl, doc);
+    const addDocs = (docs: any) => {
+      const list = Array.isArray(docs) ? docs : (docs?.content || []);
+      if (Array.isArray(list)) {
+        list.forEach(doc => {
+          const url = doc?.fileUrl || doc?.urlDocument;
+          if (doc && url) {
+            const normalized = {
+              ...doc,
+              fileUrl: url,
+              documentType: doc.documentType || doc.typeDocument || 'DOCUMENT'
+            };
+            if (!docMap.has(url)) {
+              docMap.set(url, normalized);
+            }
           }
         });
       }
     };
 
-    // 1. Generic owner documents
-    this.documentService.getDocumentsByOwner(user.trackingId).subscribe({
-      next: (res: any) => addDocs(res),
-      error: () => {},
-      complete: () => this.finalizeDocumentLoading(user, docMap)
-    });
-  }
-
-  private finalizeDocumentLoading(user: UserResponse, docMap: Map<string, any>) {
-    let pendingCalls = 0;
-
-    const checkComplete = () => {
-      pendingCalls--;
-      if (pendingCalls <= 0) {
-        this.userDocuments = Array.from(docMap.values());
-        this.hasMandatoryDocs = this.userDocuments.some(doc => doc.documentType === 'MANDAT_BANCAIRE' || doc.documentType === 'RIB' || doc.documentType === 'MANDAT' || doc.documentType === 'RIB_COMPTE_BANCAIRE');
-        this.isLoadingDocs = false;
-        if (this.userDocuments.length > 0) {
-          this.selectDocument(this.userDocuments[0]);
-        }
-      }
+    const requests: { [key: string]: Observable<any> } = {
+      generic: this.documentService.getDocumentsByOwner(user.trackingId).pipe(catchError(() => of([]))),
+      compte: this.banqueService.getCompteBancaireByOwner(user.trackingId).pipe(catchError(() => of(null)))
     };
 
-    // 2. Role-specific documents (Student)
     if (user.role === 'ETUDIANT') {
-      pendingCalls++;
-      this.documentEtudiantService.findByStudentId(user.trackingId).subscribe({
-        next: (res: any) => {
-          if (Array.isArray(res)) res.forEach((d: any) => { if (d && d.fileUrl) docMap.set(d.fileUrl, d); });
-        },
-        error: () => {},
-        complete: () => checkComplete()
-      });
+      requests['roleDocs'] = this.documentEtudiantService.findByStudentId(user.trackingId).pipe(catchError(() => of([])));
+    } else if (user.role === 'COMMERCANT') {
+      requests['roleDocs'] = this.documentMerchantService.findByMerchantId(user.trackingId).pipe(catchError(() => of([])));
     }
 
-    // 3. Role-specific documents (Merchant)
-    if (user.role === 'COMMERCANT') {
-      pendingCalls++;
-      this.documentMerchantService.findByMerchantId(user.trackingId).subscribe({
-        next: (res: any) => {
-          if (Array.isArray(res)) res.forEach((d: any) => { if (d && d.fileUrl) docMap.set(d.fileUrl, d); });
-        },
-        error: () => {},
-        complete: () => checkComplete()
-      });
-    }
+    forkJoin(requests).subscribe({
+      next: (results) => {
+        if (results['roleDocs']) {
+          addDocs(results['roleDocs']);
+        }
+        addDocs(results['generic']);
 
-    // 4. RIB / Compte bancaire
-    pendingCalls++;
-    this.banqueService.getCompteBancaireByOwner(user.trackingId).subscribe({
-      next: (compte: any) => {
+        const compte = results['compte'];
         if (compte && compte.ribUrl && !docMap.has(compte.ribUrl)) {
           docMap.set(compte.ribUrl, {
-            trackingId: compte.trackingId || 'RIB-' + user.trackingId,
-            documentType: 'RIB_COMPTE_BANCAIRE',
+            trackingId: compte.ribDocumentTrackingId || compte.trackingId || 'RIB-' + user.trackingId,
+            documentType: 'RIB',
             fileUrl: compte.ribUrl,
             ownerTrackingId: user.trackingId,
             status: 'VALIDE',
             uploadedAt: new Date().toISOString()
           });
         }
-      },
-      error: () => {},
-      complete: () => checkComplete()
-    });
 
-    if (pendingCalls === 0) {
-      checkComplete();
+        this.userDocuments = Array.from(docMap.values());
+        this.hasMandatoryDocs = this.userDocuments.some(doc =>
+          doc.documentType === 'MANDAT_BANCAIRE' ||
+          doc.documentType === 'RIB' ||
+          doc.documentType === 'MANDAT' ||
+          doc.documentType === 'RIB_COMPTE_BANCAIRE'
+        );
+        this.isLoadingDocs = false;
+        if (this.userDocuments.length > 0) {
+          this.selectDocument(this.userDocuments[0]);
+        }
+      },
+      error: () => {
+        this.isLoadingDocs = false;
+      }
+    });
+  }
+
+  openDocRejectModal() {
+    this.docRejectionReasonInput = '';
+    this.showDocRejectModal = true;
+  }
+
+  closeDocRejectModal() {
+    this.showDocRejectModal = false;
+    this.docRejectionReasonInput = '';
+  }
+
+  confirmDocReject() {
+    if (!this.docRejectionReasonInput.trim()) return;
+    this.showDocRejectModal = false;
+    this.updateSingleDocStatus('REJETE', this.docRejectionReasonInput.trim());
+  }
+
+  updateSingleDocStatus(status: 'VALIDE' | 'REJETE', rejectionReason?: string) {
+    if (!this.selectedDocumentForPreview || !this.selectedUser) return;
+    if (status === 'REJETE' && !rejectionReason) {
+      this.openDocRejectModal();
+      return;
     }
+
+    this.isDocActionLoading = true;
+    const docId = this.selectedDocumentForPreview.trackingId;
+    const request$ = this.selectedUser.role === 'COMMERCANT'
+      ? this.documentMerchantService.updateDocumentStatus(docId, status, rejectionReason)
+      : this.documentEtudiantService.updateDocumentStatus(docId, status, rejectionReason);
+
+    request$.subscribe({
+      next: () => {
+        this.isDocActionLoading = false;
+        if (this.selectedDocumentForPreview) {
+          this.selectedDocumentForPreview.status = status;
+          this.selectedDocumentForPreview.rejectionReason = rejectionReason;
+        }
+        this.loadUsers();
+      },
+      error: () => {
+        this.isDocActionLoading = false;
+        this.confirmService.alert("Erreur lors de la mise à jour du statut du document.", "Erreur", "danger");
+      }
+    });
   }
 
   closeDetails() {

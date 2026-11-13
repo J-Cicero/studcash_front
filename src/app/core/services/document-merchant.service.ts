@@ -20,7 +20,7 @@ export class DocumentMerchantService {
   }
 
   updateDocumentStatus(trackingId: string, status: 'VALIDE' | 'REJETE', rejectionReason?: string): Observable<any> {
-    return this.http.put<any>(`${environment.apiUrl}/api/admin-banque/documents/merchants/${trackingId}/status`, {
+    return this.http.put<any>(`${environment.apiUrl}/admin-banque/documents/merchants/${trackingId}/status`, {
       status,
       rejectionReason
     });

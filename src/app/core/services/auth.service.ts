@@ -65,4 +65,13 @@ export class AuthService {
   public getCurrentUserId(): string | null {
     return this.currentUserValue?.trackingId || null;
   }
+
+  public updateCurrentUser(partial: Partial<LoginResponse>): void {
+    const current = this.currentUserValue;
+    if (current) {
+      const updated = { ...current, ...partial };
+      localStorage.setItem('currentUser', JSON.stringify(updated));
+      this.currentUserSubject.next(updated);
+    }
+  }
 }

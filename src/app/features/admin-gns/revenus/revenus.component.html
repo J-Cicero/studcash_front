@@ -1,0 +1,282 @@
+<div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-fade-in-up">
+  <div>
+    <h1 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Revenus & Commissions (GNS vs Banques)</h1>
+    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Comptabilité analytique des commissions générées sur les dépenses étudiantes et répartition par banque partenaire.</p>
+  </div>
+  <button (click)="loadRevenusData()"
+    class="inline-flex items-center px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm self-start sm:self-auto">
+    <svg class="w-4 h-4 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+    </svg>
+    Actualiser les comptes
+  </button>
+</div>
+
+<!-- 4 KPI Cards: Global Revenue Accounting -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 animate-fade-in-up" style="animation-delay: 50ms;">
+  <!-- Revenus Nets GNS -->
+  <div class="rounded-2xl p-5 bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white shadow-lg border border-slate-700">
+    <div class="flex items-center justify-between">
+      <span class="text-[11px] font-extrabold uppercase tracking-wider text-indigo-300">Revenus Nets GNS</span>
+      <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Quote-part GNS</span>
+    </div>
+    <div class="mt-3 flex items-baseline">
+      <span class="text-2xl font-black text-white">{{ formatNumber(totalGnsRevenue) }}</span>
+      <span class="text-xs font-bold text-slate-300 ml-1.5">FCFA</span>
+    </div>
+    <p class="text-[11px] text-slate-300 mt-1">Cumul perçu par GNS sur {{ validatedTxCount }} transaction(s)</p>
+  </div>
+
+  <!-- Revenus Banques Partenaires -->
+  <div class="glass-panel rounded-2xl p-5 border border-slate-200/70 dark:border-slate-800">
+    <div class="flex items-center justify-between">
+      <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Revenus Banques Partenaires</span>
+      <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800">Quote-part Banques</span>
+    </div>
+    <div class="mt-3 flex items-baseline">
+      <span class="text-2xl font-black text-slate-900 dark:text-white">{{ formatNumber(totalBankRevenue) }}</span>
+      <span class="text-xs font-bold text-slate-400 ml-1.5">FCFA</span>
+    </div>
+    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Réparti entre {{ bankSummaries.length }} banque(s) partenaire(s)</p>
+  </div>
+
+  <!-- Commissions Totales Générées -->
+  <div class="glass-panel rounded-2xl p-5 border border-slate-200/70 dark:border-slate-800">
+    <div class="flex items-center justify-between">
+      <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Commissions Prélevées</span>
+      <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">100% Réparti</span>
+    </div>
+    <div class="mt-3 flex items-baseline">
+      <span class="text-2xl font-black text-slate-900 dark:text-white">{{ formatNumber(totalCommissionGlobal) }}</span>
+      <span class="text-xs font-bold text-slate-400 ml-1.5">FCFA</span>
+    </div>
+    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">GNS + Banques sur les achats marchands</p>
+  </div>
+
+  <!-- Volume Brut des Achats -->
+  <div class="glass-panel rounded-2xl p-5 border border-slate-200/70 dark:border-slate-800">
+    <div class="flex items-center justify-between">
+      <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Volume Brut des Achats</span>
+      <span class="text-[11px] font-semibold text-slate-500">{{ validatedTxCount }} achats</span>
+    </div>
+    <div class="mt-3 flex items-baseline">
+      <span class="text-2xl font-black text-slate-900 dark:text-white">{{ formatNumber(totalGrossVolume) }}</span>
+      <span class="text-xs font-bold text-slate-400 ml-1.5">FCFA</span>
+    </div>
+    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Assiette totale des dépenses étudiantes</p>
+  </div>
+</div>
+
+<div *ngIf="errorMessage" class="mb-6 p-4 rounded-xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 text-xs font-bold text-rose-700 dark:text-rose-300">
+  {{ errorMessage }}
+</div>
+
+<!-- Per-Bank Revenue Breakdown Table -->
+<div class="glass-panel rounded-2xl overflow-hidden border border-slate-200/70 dark:border-slate-800 animate-fade-in-up" style="animation-delay: 100ms;">
+  <div class="px-6 py-4 border-b border-slate-200/60 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h3 class="text-base font-bold text-slate-900 dark:text-white">Répartition Individuelle des Revenus par Banque</h3>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Consultez pour chaque banque partenaire ses revenus de commissions, la part revenant à GNS et le détail par transaction étudiante.</p>
+    </div>
+
+    <div class="relative w-full sm:w-72">
+      <input type="text" [(ngModel)]="searchBankQuery" placeholder="Filtrer une banque (nom ou code)..."
+        class="w-full pl-9 pr-4 py-2 text-xs rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:text-white">
+      <span class="absolute left-3 top-2.5 text-slate-400">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </span>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+    <div class="relative w-10 h-10">
+      <div class="absolute inset-0 rounded-full border-4 border-slate-100 dark:border-slate-800"></div>
+      <div class="absolute inset-0 rounded-full border-4 border-slate-900 dark:border-slate-300 border-t-transparent animate-spin"></div>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading" class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-slate-200/60 dark:divide-slate-800">
+      <thead class="bg-slate-50/70 dark:bg-slate-800/40">
+        <tr>
+          <th scope="col" class="px-5 py-3 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Banque Partenaire</th>
+          <th scope="col" class="px-5 py-3 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Activité Étudiants</th>
+          <th scope="col" class="px-5 py-3 text-right text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Volume Dépenses</th>
+          <th scope="col" class="px-5 py-3 text-right text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Revenu Banque</th>
+          <th scope="col" class="px-5 py-3 text-right text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Revenu GNS</th>
+          <th scope="col" class="px-5 py-3 text-right text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Commissions</th>
+          <th scope="col" class="px-5 py-3 text-right text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Audit Détail</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">
+        <tr *ngFor="let b of filteredBankSummaries" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors">
+          <!-- Banque -->
+          <td class="px-5 py-4 whitespace-nowrap">
+            <div class="flex items-center space-x-3">
+              <div class="h-9 w-9 rounded-xl bg-slate-900 dark:bg-slate-800 text-white flex items-center justify-center text-xs font-black font-mono">
+                {{ b.bankCode | slice:0:4 }}
+              </div>
+              <div>
+                <div class="text-sm font-bold text-slate-900 dark:text-white">{{ b.bankName }}</div>
+                <div class="text-[11px] font-mono text-slate-400">Code: {{ b.bankCode }}</div>
+              </div>
+            </div>
+          </td>
+
+          <!-- Activité Étudiants -->
+          <td class="px-5 py-4 whitespace-nowrap">
+            <div class="text-xs font-bold text-slate-900 dark:text-white">{{ b.transactionCount }} transaction(s)</div>
+            <div class="text-[11px] text-slate-500 dark:text-slate-400">{{ b.studentCount }} étudiant(s) actif(s)</div>
+          </td>
+
+          <!-- Volume Dépenses -->
+          <td class="px-5 py-4 whitespace-nowrap text-right">
+            <span class="text-xs font-bold text-slate-800 dark:text-slate-200">{{ formatNumber(b.grossVolume) }} FCFA</span>
+          </td>
+
+          <!-- Revenu Banque -->
+          <td class="px-5 py-4 whitespace-nowrap text-right">
+            <span class="px-2.5 py-1 rounded-lg text-xs font-extrabold bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300 border border-blue-200/70 dark:border-blue-800">
+              + {{ formatNumber(b.bankCommission) }} FCFA
+            </span>
+          </td>
+
+          <!-- Revenu GNS -->
+          <td class="px-5 py-4 whitespace-nowrap text-right">
+            <span class="px-2.5 py-1 rounded-lg text-xs font-extrabold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200/70 dark:border-emerald-800">
+              + {{ formatNumber(b.gnsCommission) }} FCFA
+            </span>
+          </td>
+
+          <!-- Total Commissions -->
+          <td class="px-5 py-4 whitespace-nowrap text-right">
+            <span class="text-xs font-black text-slate-900 dark:text-white">{{ formatNumber(b.totalCommission) }} FCFA</span>
+          </td>
+
+          <!-- Action -->
+          <td class="px-5 py-4 whitespace-nowrap text-right">
+            <button (click)="openBankTransactionsModal(b)"
+              class="inline-flex items-center px-3.5 py-1.5 text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-900 hover:text-white dark:bg-slate-800 dark:hover:bg-indigo-600 rounded-xl transition-colors">
+              Transactions ({{ b.transactionCount }})
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredBankSummaries.length === 0">
+          <td colspan="7" class="px-5 py-10 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">
+            Aucune banque partenaire trouvée.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal: Transactions & Revenus détaillés pour une Banque sélectionnée -->
+<div *ngIf="selectedBankSummary" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in" (click)="closeBankTransactionsModal()">
+  <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-5xl w-full overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col max-h-[88vh]" (click)="$event.stopPropagation()">
+    <!-- Modal Header -->
+    <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50/70 dark:bg-slate-800/40">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 text-[10px] font-mono font-bold rounded bg-slate-900 text-white dark:bg-indigo-600">{{ selectedBankSummary.bankCode }}</span>
+          <h3 class="text-base font-bold text-slate-900 dark:text-white">Détail des Transactions & Revenus — {{ selectedBankSummary.bankName }}</h3>
+        </div>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          Transactions effectuées par les étudiants domiciliés chez {{ selectedBankSummary.bankName }} et partage des commissions par opération.
+        </p>
+      </div>
+      <button (click)="closeBankTransactionsModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Summary Strip inside Modal -->
+    <div class="px-6 py-3.5 bg-slate-100/70 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+      <div>
+        <span class="text-slate-400 block text-[10px] uppercase font-bold">Volume des Achats</span>
+        <span class="text-sm font-black text-slate-900 dark:text-white">{{ formatNumber(selectedBankSummary.grossVolume) }} FCFA</span>
+      </div>
+      <div>
+        <span class="text-blue-600 dark:text-blue-400 block text-[10px] uppercase font-bold">Revenu {{ selectedBankSummary.bankName }}</span>
+        <span class="text-sm font-black text-blue-700 dark:text-blue-300">+ {{ formatNumber(selectedBankSummary.bankCommission) }} FCFA</span>
+      </div>
+      <div>
+        <span class="text-emerald-600 dark:text-emerald-400 block text-[10px] uppercase font-bold">Revenu GNS</span>
+        <span class="text-sm font-black text-emerald-700 dark:text-emerald-300">+ {{ formatNumber(selectedBankSummary.gnsCommission) }} FCFA</span>
+      </div>
+      <div>
+        <span class="text-slate-400 block text-[10px] uppercase font-bold">Total Commissions</span>
+        <span class="text-sm font-black text-slate-900 dark:text-white">{{ formatNumber(selectedBankSummary.totalCommission) }} FCFA</span>
+      </div>
+    </div>
+
+    <!-- Search inside Modal -->
+    <div class="px-6 py-3 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+      <span class="text-xs font-semibold text-slate-500">{{ filteredModalTransactions.length }} transaction(s) affichée(s)</span>
+      <input type="text" [(ngModel)]="modalSearchQuery" placeholder="Rechercher étudiant, matricule, boutique..."
+        class="w-64 px-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none dark:text-white">
+    </div>
+
+    <!-- Transactions Table -->
+    <div class="flex-1 overflow-y-auto custom-scrollbar">
+      <table class="min-w-full divide-y divide-slate-200/60 dark:divide-slate-800">
+        <thead class="bg-slate-50 dark:bg-slate-800/60 sticky top-0">
+          <tr>
+            <th class="px-5 py-2.5 text-left text-[11px] font-bold text-slate-500 uppercase">Réf & Date</th>
+            <th class="px-5 py-2.5 text-left text-[11px] font-bold text-slate-500 uppercase">Étudiant ({{ selectedBankSummary.bankCode }})</th>
+            <th class="px-5 py-2.5 text-left text-[11px] font-bold text-slate-500 uppercase">Marchand</th>
+            <th class="px-5 py-2.5 text-right text-[11px] font-bold text-slate-500 uppercase">Montant Achat</th>
+            <th class="px-5 py-2.5 text-right text-[11px] font-bold text-blue-600 dark:text-blue-400 uppercase">Part Banque</th>
+            <th class="px-5 py-2.5 text-right text-[11px] font-bold text-emerald-600 dark:text-emerald-400 uppercase">Part GNS</th>
+            <th class="px-5 py-2.5 text-right text-[11px] font-bold text-slate-500 uppercase">Total Comm.</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs">
+          <tr *ngFor="let t of filteredModalTransactions" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30">
+            <td class="px-5 py-3 whitespace-nowrap">
+              <div class="font-mono font-bold text-slate-900 dark:text-white">{{ getShortId(t.trackingId) }}</div>
+              <div class="text-[11px] text-slate-400">{{ t.createdAt | date:'dd/MM/yyyy HH:mm' }}</div>
+            </td>
+            <td class="px-5 py-3 whitespace-nowrap">
+              <div class="font-bold text-slate-900 dark:text-white">{{ t.senderName || 'Étudiant' }}</div>
+              <div *ngIf="t.studentMatricule" class="text-[11px] font-mono text-slate-400">{{ t.studentMatricule }}</div>
+            </td>
+            <td class="px-5 py-3 whitespace-nowrap font-semibold text-slate-700 dark:text-slate-300">
+              {{ t.receiverName || 'Boutique Partenaire' }}
+            </td>
+            <td class="px-5 py-3 whitespace-nowrap text-right font-bold text-slate-900 dark:text-white">
+              {{ formatNumber(t.amount || 0) }} FCFA
+            </td>
+            <td class="px-5 py-3 whitespace-nowrap text-right font-extrabold text-blue-600 dark:text-blue-400">
+              + {{ formatNumber(t.bankCommission || 0) }} FCFA
+            </td>
+            <td class="px-5 py-3 whitespace-nowrap text-right font-extrabold text-emerald-600 dark:text-emerald-400">
+              + {{ formatNumber(t.gnsCommission || 0) }} FCFA
+            </td>
+            <td class="px-5 py-3 whitespace-nowrap text-right font-bold text-slate-800 dark:text-slate-200">
+              {{ formatNumber(t.totalCommission || ((t.bankCommission || 0) + (t.gnsCommission || 0))) }} FCFA
+            </td>
+          </tr>
+          <tr *ngIf="filteredModalTransactions.length === 0">
+            <td colspan="7" class="px-5 py-8 text-center text-slate-500">
+              Aucune transaction enregistrée pour les étudiants de cette banque.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="px-6 py-3.5 bg-slate-50 dark:bg-slate-800/40 border-t border-slate-200 dark:border-slate-800 flex justify-end">
+      <button (click)="closeBankTransactionsModal()"
+        class="px-5 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl hover:bg-slate-100 transition-colors">
+        Fermer la fenêtre
+      </button>
+    </div>
+  </div>
+</div>
+

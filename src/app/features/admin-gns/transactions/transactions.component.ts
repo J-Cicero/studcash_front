@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { TransactionService, TransactionResponse } from '../../../core/services/transaction.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
@@ -24,7 +25,7 @@ export interface StudentLiquidationItem {
 @Component({
   selector: 'app-transactions',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './transactions.component.html',
   styleUrls: ['./transactions.component.scss']
 })
@@ -49,6 +50,15 @@ export class TransactionsComponent implements OnInit {
   liquidationSuccessMessage = '';
 
   searchStudentQuery: string = '';
+  selectedTx: TransactionResponse | null = null;
+
+  openTxDetails(tx: TransactionResponse): void {
+    this.selectedTx = tx;
+  }
+
+  closeTxDetails(): void {
+    this.selectedTx = null;
+  }
 
   get filteredUnliquidatedStudents(): StudentUnliquidatedAggregate[] {
     if (!this.searchStudentQuery || !this.searchStudentQuery.trim()) {
@@ -69,14 +79,13 @@ export class TransactionsComponent implements OnInit {
   ngOnInit(): void {
     this.loadStats();
     this.loadTransactions();
-    this.loadStudentLiquidations();
   }
 
   loadStats() {
     this.isLoadingStats = true;
-    this.transactionService.getVolumeValide().subscribe({
-      next: (val: number) => {
-        this.volumeValide = val || 0;
+    this.transactionService.getGlobalStats().subscribe({
+      next: (res: any) => {
+        this.volumeValide = res?.totalVolume || 0;
         this.isLoadingStats = false;
       },
       error: () => {
@@ -99,7 +108,7 @@ export class TransactionsComponent implements OnInit {
         const unliquidatedMap = new Map<string, { name: string; sum: number; count: number }>();
 
         list.forEach((t: any) => {
-          if (t.status === 'VALIDEE' && !t.deductedFromStudentBourse && t.senderTrackingId) {
+          if ((t.status === 'VALIDE' || t.status === 'VALIDEE') && !t.deductedFromStudentBourse && t.senderTrackingId) {
             const studentId = t.senderTrackingId;
             const current = unliquidatedMap.get(studentId) || { name: t.senderName || 'Étudiant', sum: 0, count: 0 };
             current.sum += (t.amount || 0);
@@ -144,7 +153,7 @@ export class TransactionsComponent implements OnInit {
 
     this.studentTransactions = this.transactions.filter(t => 
       t.senderTrackingId === student.studentTrackingId && 
-      t.status === 'VALIDEE' && 
+      (t.status === 'VALIDE' || t.status === 'VALIDEE') && 
       !(t as any).deductedFromStudentBourse
     );
     this.isLoadingStudentDetails = false;

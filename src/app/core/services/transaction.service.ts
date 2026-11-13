@@ -19,6 +19,10 @@ export interface TransactionResponse {
   deductedFromStudentBourse: boolean;
   status: string;
   createdAt: string;
+  studentMatricule?: string;
+  bankTrackingId?: string;
+  bankName?: string;
+  bankCode?: string;
 }
 
 @Injectable({

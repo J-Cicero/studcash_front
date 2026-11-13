@@ -57,6 +57,10 @@ export class UserService {
     return this.http.get<any>(`${this.apiUrl}/get/${trackingId}`);
   }
 
+  updateUser(trackingId: string, data: any): Observable<UserResponse> {
+    return this.http.put<UserResponse>(`${this.apiUrl}/update/${trackingId}`, data);
+  }
+
   patchEtatTrackingid(trackingId: any, data: any): Observable<any> {
     return this.http.patch<any>(`${this.apiUrl}/etat/${trackingId}`, data);
   }

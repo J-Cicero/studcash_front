@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ScolariteYearService } from '../../../core/services/scolarite-year.service';
+import { InscriptionAnnuelleService } from '../../../core/services/inscription-annuelle.service';
 import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
 
 @Component({
@@ -13,19 +15,23 @@ import { ConfirmDialogService } from '../../../core/services/confirm-dialog.serv
 })
 export class ScolariteYearsComponent implements OnInit {
   scolariteYears: any[] = [];
+  allInscriptions: any[] = [];
   isLoading = false;
   isCreating = false;
   showForm = false;
   
   successMessage = '';
   errorMessage = '';
+  openRowMenuId: string | null = null;
   
   createForm: FormGroup;
 
   constructor(
     private fb: FormBuilder,
     private scolariteYearService: ScolariteYearService,
-    private confirmService: ConfirmDialogService
+    private inscriptionService: InscriptionAnnuelleService,
+    private confirmService: ConfirmDialogService,
+    private router: Router
   ) {
     this.createForm = this.fb.group({
       libelle: ['', Validators.required],
@@ -34,20 +40,40 @@ export class ScolariteYearsComponent implements OnInit {
     });
   }
 
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    this.openRowMenuId = null;
+  }
+
+  toggleRowMenu(trackingId: string, event: Event): void {
+    event.stopPropagation();
+    this.openRowMenuId = this.openRowMenuId === trackingId ? null : trackingId;
+  }
+
   ngOnInit(): void {
-    this.loadYears();
+    this.loadYearsAndStats();
   }
 
   toggleForm() {
     this.showForm = !this.showForm;
   }
 
-  loadYears() {
+  loadYearsAndStats() {
     this.isLoading = true;
     this.scolariteYearService.getAll().subscribe({
       next: (res) => {
-        this.scolariteYears = res.content || res || [];
-        this.isLoading = false;
+        const years = res.content || res || [];
+        this.inscriptionService.findAll(0, 1000).subscribe({
+          next: (insRes) => {
+            this.allInscriptions = insRes.content || insRes || [];
+            this.scolariteYears = years.map((y: any) => this.enrichYearWithStats(y));
+            this.isLoading = false;
+          },
+          error: () => {
+            this.scolariteYears = years.map((y: any) => this.enrichYearWithStats(y));
+            this.isLoading = false;
+          }
+        });
       },
       error: (err) => {
         console.error(err);
@@ -57,11 +83,82 @@ export class ScolariteYearsComponent implements OnInit {
     });
   }
 
+  loadYears() {
+    this.loadYearsAndStats();
+  }
+
+  private enrichYearWithStats(year: any): any {
+    const label = (year.label || '').trim();
+    const matching = (this.allInscriptions || []).filter((ins: any) =>
+      ins.scolariteYearTrackingId === year.trackingId ||
+      ins.anneeScolaireTrackingId === year.trackingId ||
+      (ins.anneeAcademique && ins.anneeAcademique.trim() === label)
+    );
+
+    const totalInscriptions = matching.length;
+    const activeCount = matching.filter((i: any) => i.statut === 'ACTIF' || i.statut === 'VALIDE').length;
+    const pendingCount = matching.filter((i: any) => i.statut === 'EN_ATTENTE_VALIDATION').length;
+    const scholarshipCount = matching.filter((i: any) => i.droitBourse === true || (i.montantBoursetotal && i.montantBoursetotal > 0)).length;
+    const totalBudget = matching.reduce((acc: number, i: any) => acc + (Number(i.montantBoursetotal) || 0), 0);
+
+    let durationDays = 0;
+    let progressPercent = 0;
+    if (year.startDate && year.endDate) {
+      const start = new Date(year.startDate).getTime();
+      const end = new Date(year.endDate).getTime();
+      const now = Date.now();
+      if (end > start) {
+        durationDays = Math.round((end - start) / (1000 * 60 * 60 * 24));
+        if (now <= start) progressPercent = 0;
+        else if (now >= end) progressPercent = 100;
+        else progressPercent = Math.round(((now - start) / (end - start)) * 100);
+      }
+    }
+
+    return {
+      ...year,
+      totalInscriptions,
+      activeCount,
+      pendingCount,
+      scholarshipCount,
+      totalBudget,
+      durationDays,
+      progressPercent
+    };
+  }
+
+  get activeYearObj(): any | null {
+    return (this.scolariteYears || []).find(y => y.isOpen) || null;
+  }
+
+  get totalInscriptionsGlobal(): number {
+    return (this.allInscriptions || []).length;
+  }
+
+  get totalScholarshipGlobal(): number {
+    return (this.allInscriptions || []).filter((i: any) => i.droitBourse === true || (i.montantBoursetotal && i.montantBoursetotal > 0)).length;
+  }
+
+  get totalBudgetGlobal(): number {
+    return (this.allInscriptions || []).reduce((acc: number, i: any) => acc + (Number(i.montantBoursetotal) || 0), 0);
+  }
+
+  formatNumber(val: number): string {
+    if (!val && val !== 0) return '0';
+    return new Intl.NumberFormat('fr-FR').format(val);
+  }
+
+  goToInscriptions(): void {
+    this.openRowMenuId = null;
+    this.router.navigate(['/admin-gns/inscriptions']);
+  }
+
   isYearEditable(year: any): boolean {
     return year.isOpen === true;
   }
 
   async cloturerYear(year: any) {
+    this.openRowMenuId = null;
     const confirmed = await this.confirmService.confirm({
       title: 'Clôture de l\'année scolaire',
       message: `Êtes-vous sûr de vouloir clôturer l'année ${year.label} ?`,
@@ -81,6 +178,7 @@ export class ScolariteYearsComponent implements OnInit {
   }
 
   async deleteYear(year: any) {
+    this.openRowMenuId = null;
     const confirmed = await this.confirmService.confirm({
       title: 'Suppression d\'année scolaire',
       message: `Êtes-vous sûr de vouloir supprimer l'année ${year.label} ? Cette action est irréversible.`,

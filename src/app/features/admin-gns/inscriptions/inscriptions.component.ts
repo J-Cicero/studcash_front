@@ -2,9 +2,13 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { InscriptionAnnuelleService } from '../../../core/services/inscription-annuelle.service';
 import { StudentService } from '../../../core/services/student.service';
 import { DocumentEtudiantService } from '../../../core/services/document-etudiant.service';
+import { DocumentService } from '../../../core/services/document.service';
+import { BanqueService } from '../../../core/services/banque.service';
 import { ScolariteYearService } from '../../../core/services/scolarite-year.service';
 import { AcademicYearContextService } from '../../../core/services/academic-year-context.service';
 import { FormsModule } from '@angular/forms';
@@ -57,6 +61,8 @@ export class InscriptionsComponent implements OnInit {
     private inscriptionService: InscriptionAnnuelleService,
     private studentService: StudentService,
     private documentEtudiantService: DocumentEtudiantService,
+    private documentService: DocumentService,
+    private banqueService: BanqueService,
     private scolariteYearService: ScolariteYearService,
     private yearContext: AcademicYearContextService,
     private sanitizer: DomSanitizer,
@@ -188,42 +194,62 @@ export class InscriptionsComponent implements OnInit {
     this.studentDocuments = [];
     this.isLoadingDocs = true;
     this.hasMandatoryDocs = false;
-    
-    const inscriptionTrackingId = ins.trackingId;
-    
-    this.documentEtudiantService.findByInscriptionId(inscriptionTrackingId).subscribe({
-      next: (res) => {
-        const docs = res?.content || (Array.isArray(res) ? res : []);
-        if (docs.length > 0) {
-          this.studentDocuments = docs;
-          this.hasMandatoryDocs = true;
-          this.selectDocument(this.studentDocuments[0]);
-          this.isLoadingDocs = false;
-        } else if (ins.studentTrackingId) {
-          this.loadStudentDocsFallback(ins.studentTrackingId);
-        } else {
-          this.isLoadingDocs = false;
-        }
-      },
-      error: () => {
-        if (ins.studentTrackingId) {
-          this.loadStudentDocsFallback(ins.studentTrackingId);
-        } else {
-          this.studentDocuments = [];
-          this.hasMandatoryDocs = false;
-          this.isLoadingDocs = false;
-        }
-      }
-    });
-  }
+    this.selectedDocumentForPreview = null;
+    this.sanitizedPdfUrl = null;
 
-  private loadStudentDocsFallback(studentTrackingId: string) {
-    this.documentEtudiantService.findByStudentId(studentTrackingId).subscribe({
-      next: (res) => {
-        const docs = res?.content || (Array.isArray(res) ? res : []);
-        this.studentDocuments = docs;
-        this.hasMandatoryDocs = docs.length > 0;
-        if (this.studentDocuments.length > 0) this.selectDocument(this.studentDocuments[0]);
+    const inscriptionTrackingId = ins.trackingId;
+    const studentTrackingId = ins.studentTrackingId;
+
+    forkJoin({
+      insDocs: inscriptionTrackingId
+        ? this.documentEtudiantService.findByInscriptionId(inscriptionTrackingId).pipe(catchError(() => of([])))
+        : of([]),
+      stuDocs: studentTrackingId
+        ? this.documentEtudiantService.findByStudentId(studentTrackingId).pipe(catchError(() => of([])))
+        : of([]),
+      ownerDocs: studentTrackingId
+        ? this.documentService.getDocumentsByOwner(studentTrackingId).pipe(catchError(() => of([])))
+        : of([]),
+      compteBancaire: studentTrackingId
+        ? this.banqueService.getCompteBancaireByOwner(studentTrackingId).pipe(catchError(() => of(null)))
+        : of(null)
+    }).subscribe({
+      next: ({ insDocs, stuDocs, ownerDocs, compteBancaire }) => {
+        const list1 = Array.isArray(insDocs) ? insDocs : ((insDocs as any)?.content || []);
+        const list2 = Array.isArray(stuDocs) ? stuDocs : ((stuDocs as any)?.content || []);
+        const list3 = Array.isArray(ownerDocs) ? ownerDocs : ((ownerDocs as any)?.content || []);
+        const list4: any[] = [];
+        if (compteBancaire?.urlRib) {
+          list4.push({
+            trackingId: `${compteBancaire.trackingId}-rib`,
+            documentType: 'RIB',
+            fileUrl: compteBancaire.urlRib,
+            status: 'VALIDE',
+            uploadedAt: compteBancaire.createdAt || new Date().toISOString()
+          });
+        }
+        if (compteBancaire?.urlMandat) {
+          list4.push({
+            trackingId: `${compteBancaire.trackingId}-mandat`,
+            documentType: 'MANDAT',
+            fileUrl: compteBancaire.urlMandat,
+            status: 'VALIDE',
+            uploadedAt: compteBancaire.createdAt || new Date().toISOString()
+          });
+        }
+
+        const mergedMap = new Map<string, any>();
+        [...list1, ...list2, ...list3, ...list4].forEach((doc: any) => {
+          if (doc && doc.fileUrl && !mergedMap.has(doc.fileUrl)) {
+            mergedMap.set(doc.fileUrl, doc);
+          }
+        });
+
+        this.studentDocuments = Array.from(mergedMap.values());
+        this.hasMandatoryDocs = this.studentDocuments.length > 0;
+        if (this.studentDocuments.length > 0) {
+          this.selectDocument(this.studentDocuments[0]);
+        }
         this.isLoadingDocs = false;
       },
       error: () => {
@@ -234,9 +260,15 @@ export class InscriptionsComponent implements OnInit {
     });
   }
 
+  isPdfDocument(doc: any): boolean {
+    if (!doc || !doc.fileUrl) return false;
+    const cleanUrl = doc.fileUrl.split('?')[0].split('#')[0].toLowerCase();
+    return cleanUrl.endsWith('.pdf') || doc.fileUrl.startsWith('data:application/pdf');
+  }
+
   selectDocument(doc: any) {
     this.selectedDocumentForPreview = doc;
-    if (doc.documentType === 'MANDAT_BANCAIRE' || (doc.fileUrl && doc.fileUrl.endsWith('.pdf'))) {
+    if (this.isPdfDocument(doc)) {
       this.sanitizedPdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(doc.fileUrl);
     } else {
       this.sanitizedPdfUrl = null;

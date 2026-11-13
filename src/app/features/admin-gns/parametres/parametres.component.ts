@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ParametresService, Parametre } from '../../../core/services/parametres.service';
 import { DocumentRequisService } from '../../../core/services/document-requis.service';
 import { ScolariteYearService, ScolariteYear } from '../../../core/services/scolarite-year.service';
@@ -76,9 +77,84 @@ export class ParametresGnsComponent implements OnInit {
 
   // RIB Preview Modal
   selectedRibUrl: string | null = null;
+  sanitizedRibPdfUrl: SafeResourceUrl | null = null;
   isPreviewModalOpen = false;
 
   currentUser: LoginResponse | null = null;
+  openRowMenuId: string | null = null;
+
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    this.openRowMenuId = null;
+  }
+
+  toggleRowMenu(id: string, event: Event): void {
+    event.stopPropagation();
+    this.openRowMenuId = this.openRowMenuId === id ? null : id;
+  }
+
+  getParamNumber(name: string, fallback: number): number {
+    const found = (this.parametres || []).find(p => p.nomParametre === name);
+    if (!found || found.valeurParametre === undefined || found.valeurParametre === null) return fallback;
+    const n = Number(found.valeurParametre);
+    return isNaN(n) ? fallback : n;
+  }
+
+  get tauxCommissionPct(): number {
+    const raw = this.getParamNumber('TAUX_COMMISSION_PAIEMENT', 0.02);
+    return raw <= 1 ? +(raw * 100).toFixed(2) : raw;
+  }
+
+  get partGnsPct(): number {
+    const raw = this.getParamNumber('PART_COMMISSION_GNS', 0.6);
+    return raw <= 1 ? +(raw * 100).toFixed(2) : raw;
+  }
+
+  get partBanquePct(): number {
+    return Math.max(0, +(100 - this.partGnsPct).toFixed(2));
+  }
+
+  get simulatedTotalCommission(): number {
+    return Math.round(10000 * (this.tauxCommissionPct / 100));
+  }
+
+  get simulatedGnsShare(): number {
+    return Math.round(this.simulatedTotalCommission * (this.partGnsPct / 100));
+  }
+
+  get simulatedBankShare(): number {
+    return this.simulatedTotalCommission - this.simulatedGnsShare;
+  }
+
+  getParamLabel(name: string): string {
+    const labels: Record<string, string> = {
+      'MONTANT_BOURSE_BASE': 'Allocation de Bourse Standard',
+      'MONTANT_BOURSE_MAJORATION': 'Plafond Majoration Bourse',
+      'TAUX_COMMISSION_PAIEMENT': 'Taux de Commission sur Paiement',
+      'PART_COMMISSION_GNS': 'Quote-part Revenu GNS',
+      'FRAIS_CREATION_CARTE': 'Frais d\'Émission Carte NFC/QR',
+      'MAJORATION_MONTANT_BOUTIQUE': 'Seuil / Majoration Quota Boutique'
+    };
+    return labels[name] || name;
+  }
+
+  getParamFormattedValue(param: Parametre): string {
+    const val = Number(param.valeurParametre);
+    if (isNaN(val)) return String(param.valeurParametre);
+    if (param.nomParametre === 'TAUX_COMMISSION_PAIEMENT' || param.nomParametre === 'PART_COMMISSION_GNS') {
+      const pct = val <= 1 ? +(val * 100).toFixed(2) : val;
+      return `${pct} % (brut: ${param.valeurParametre})`;
+    }
+    return `${new Intl.NumberFormat('fr-FR').format(val)} FCFA`;
+  }
+
+  hasGnsAccountForBank(bankNameOrId?: string): boolean {
+    if (!bankNameOrId) return false;
+    return (this.comptesBancaires || []).some(c =>
+      c.bankTrackingId === bankNameOrId ||
+      (c.bankName && c.bankName.toLowerCase() === bankNameOrId.toLowerCase())
+    );
+  }
 
   constructor(
     private parametresService: ParametresService,
@@ -89,6 +165,7 @@ export class ParametresGnsComponent implements OnInit {
     private authService: AuthService,
     private systemStatusService: SystemStatusService,
     private confirmService: ConfirmDialogService,
+    private sanitizer: DomSanitizer,
     private fb: FormBuilder
   ) {
     this.docCreateForm = this.fb.group({
@@ -131,6 +208,7 @@ export class ParametresGnsComponent implements OnInit {
       this.loadComptesBancaires();
     } else if (tab === 'banques') {
       this.loadBanques();
+      this.loadComptesBancaires();
     } else if (tab === 'kyc') {
       this.loadDocumentsRequis();
     }
@@ -445,14 +523,33 @@ export class ParametresGnsComponent implements OnInit {
     }
   }
 
+  private setRibPreviewUrl(url: string | null) {
+    this.selectedRibUrl = url;
+    if (url) {
+      const cleanUrl = url.split('?')[0].split('#')[0].toLowerCase();
+      if (cleanUrl.endsWith('.pdf') || url.startsWith('data:application/pdf')) {
+        this.sanitizedRibPdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+      } else {
+        this.sanitizedRibPdfUrl = null;
+      }
+    } else {
+      this.sanitizedRibPdfUrl = null;
+    }
+  }
+
   viewRib(compte: CompteBancaire) {
+    if ((compte as any).ribUrl) {
+      this.setRibPreviewUrl((compte as any).ribUrl);
+      this.isPreviewModalOpen = true;
+      return;
+    }
     if (!compte.ribDocumentTrackingId) {
       this.confirmService.alert("Aucun document RIB n'est associé à ce compte.", "Document RIB", "info");
       return;
     }
     this.studentService.getDocumentById(compte.ribDocumentTrackingId).subscribe({
       next: (doc: any) => {
-        this.selectedRibUrl = doc.urlDocument || doc.fileUrl;
+        this.setRibPreviewUrl(doc.urlDocument || doc.fileUrl);
         this.isPreviewModalOpen = true;
       },
       error: () => {
@@ -464,5 +561,6 @@ export class ParametresGnsComponent implements OnInit {
   closePreviewModal() {
     this.isPreviewModalOpen = false;
     this.selectedRibUrl = null;
+    this.sanitizedRibPdfUrl = null;
   }
 }

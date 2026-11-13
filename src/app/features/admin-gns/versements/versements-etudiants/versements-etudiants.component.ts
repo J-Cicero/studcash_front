@@ -17,12 +17,18 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
 })
 export class VersementsEtudiantsComponent implements OnInit {
   wallets: WalletResponse[] = [];
+  private allWallets: any[] = [];
   isLoading = false;
   errorMessage = '';
   successMessage = '';
 
   filterNiveau: string = 'ALL';
   searchQuery: string = '';
+  isSpecificMassMode = false;
+
+  get hasStudyLevels(): boolean {
+    return this.allWallets.some((w: any) => !!w.studyLevel);
+  }
 
   get filteredWallets(): any[] {
     if (!this.searchQuery || !this.searchQuery.trim()) {
@@ -32,7 +38,8 @@ export class VersementsEtudiantsComponent implements OnInit {
     return this.wallets.filter((w: any) => {
       const name = (w.ownerName || '').toLowerCase();
       const id = (w.trackingId || '').toLowerCase();
-      return name.includes(q) || id.includes(q);
+      const matricule = (w.studentIdNumber || '').toLowerCase();
+      return name.includes(q) || id.includes(q) || matricule.includes(q);
     });
   }
   
@@ -89,40 +96,46 @@ export class VersementsEtudiantsComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
     
-    // Instead of wallets, we fetch inscriptions to get student names and filter only fully enrolled students.
+    // Fetch inscriptions to get student names and filter only active enrollments.
     this.inscriptionAnnuelleService.findAll(0, 100).subscribe({
       next: (res) => {
-        // Filter those who are fully enrolled and match the study level
-        const allInscriptions = res.content || [];
-        const filtered = allInscriptions.filter((ins: any) => {
-           const matchLevel = this.filterNiveau === 'ALL' || ins.studyLevel === this.filterNiveau;
-           return matchLevel && ins.status === 'ACTIVE';
-        });
-        
-        // Map to a structure similar to WalletResponse so the HTML doesn't break, 
-        // but with added student names!
-        this.wallets = filtered.map((ins: any) => ({
-          trackingId: ins.walletTrackingId, // Important: use the walletTrackingId we just added to backend!
-          statutWallet: 'VALIDE', // Fake status just for display
-          solde: ins.walletBalance || 0, // Now coming from backend
-          studentTrackingId: ins.studentTrackingId,
-          ownerName: `${ins.studentFirstName || 'Inconnu'} ${ins.studentLastName || ''}`,
-          selected: false // Added for specific mass versement
-        }));
-        
+        const allInscriptions = res?.content || [];
+        this.allWallets = allInscriptions
+          .filter((ins: any) => ins.status === 'ACTIVE')
+          .map((ins: any) => ({
+            trackingId: ins.walletTrackingId,
+            statutWallet: 'VALIDE',
+            solde: ins.walletBalance || 0,
+            studentTrackingId: ins.studentTrackingId,
+            studentIdNumber: ins.studentIdNumber || '',
+            studyLevel: ins.studyLevel || null,
+            ownerName: `${ins.studentFirstName || 'Inconnu'} ${ins.studentLastName || ''}`.trim(),
+            selected: false
+          }));
+
+        this.applyNiveauFilter();
         this.isLoading = false;
       },
       error: (err) => {
         console.error('Erreur chargement inscriptions:', err);
+        this.allWallets = [];
         this.wallets = [];
         this.isLoading = false;
       }
     });
   }
 
+  applyNiveauFilter() {
+    if (this.filterNiveau === 'ALL') {
+      this.wallets = this.allWallets;
+    } else {
+      this.wallets = this.allWallets.filter((w: any) => w.studyLevel === this.filterNiveau);
+    }
+  }
+
   setFilterNiveau(niveau: string) {
     this.filterNiveau = niveau;
-    this.loadWallets();
+    this.applyNiveauFilter();
   }
 
   getShortId(id: string): string {
@@ -177,6 +190,7 @@ export class VersementsEtudiantsComponent implements OnInit {
 
   // Mass
   openMassVersement() {
+    this.isSpecificMassMode = false;
     this.massVersementForm.reset();
     this.massStep = 1;
     this.showMassVersementModal = true;
@@ -238,7 +252,7 @@ export class VersementsEtudiantsComponent implements OnInit {
 
   selectAll(event: Event) {
     const checked = (event.target as HTMLInputElement).checked;
-    this.wallets.forEach((w: any) => w.selected = checked);
+    this.filteredWallets.forEach((w: any) => w.selected = checked);
   }
 
   get hasSelectedWallets(): boolean {
@@ -250,10 +264,9 @@ export class VersementsEtudiantsComponent implements OnInit {
   }
 
   openSpecificMassVersement() {
+    this.isSpecificMassMode = true;
     this.massVersementForm.reset();
-    this.massStep = 1;
     this.showMassVersementModal = true;
-    // We repurpose the mass versement modal, but we tell it we have a specific selection
     this.massPreviewCount = this.getSelectedWalletIds().length;
     this.massPreviewNames = this.wallets.filter((w: any) => w.selected).map((w: any) => w.ownerName);
     this.massStep = 2; // Skip to step 2 since we already have the selection

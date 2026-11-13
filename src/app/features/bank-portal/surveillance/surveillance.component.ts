@@ -1,13 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { AuthService } from '../../../core/services/auth.service';
 import { BankPortalService, MerchantKycInfo } from '../../../core/services/bank-portal.service';
 import { WalletService } from '../../../core/services/wallet.service';
 import { DocumentEtudiantService } from '../../../core/services/document-etudiant.service';
 import { DocumentMerchantService } from '../../../core/services/document-merchant.service';
+import { DocumentService } from '../../../core/services/document.service';
+import { BanqueService } from '../../../core/services/banque.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DocumentAdminService } from '../../../core/services/document-admin.service';
 
@@ -49,6 +52,8 @@ export class SurveillanceComponent implements OnInit {
   actionMessage = '';
 
   activeTab: 'Etudiant' | 'Marchand' = 'Etudiant';
+  openRowMenuId: string | null = null;
+  showGlobalActionsMenu = false;
 
   // Filters
   statusFilter = 'ALL';
@@ -88,10 +93,30 @@ export class SurveillanceComponent implements OnInit {
     private walletService: WalletService,
     private documentEtudiantService: DocumentEtudiantService,
     private documentMerchantService: DocumentMerchantService,
+    private documentService: DocumentService,
+    private banqueService: BanqueService,
     private documentAdminService: DocumentAdminService,
     private sanitizer: DomSanitizer,
     private route: ActivatedRoute
   ) { }
+
+  @HostListener('document:click')
+  closeMenus(): void {
+    this.openRowMenuId = null;
+    this.showGlobalActionsMenu = false;
+  }
+
+  toggleRowMenu(id: string, event: Event): void {
+    event.stopPropagation();
+    this.showGlobalActionsMenu = false;
+    this.openRowMenuId = this.openRowMenuId === id ? null : id;
+  }
+
+  toggleGlobalMenu(event: Event): void {
+    event.stopPropagation();
+    this.openRowMenuId = null;
+    this.showGlobalActionsMenu = !this.showGlobalActionsMenu;
+  }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -292,6 +317,7 @@ export class SurveillanceComponent implements OnInit {
 
   // ---- KYC DOCUMENTS LOGIC ----
   viewDetails(wallet: WalletAlert) {
+    this.openRowMenuId = null;
     this.selectedWallet = wallet;
     this.entityDocuments = [];
     this.isLoadingDocs = true;
@@ -299,51 +325,77 @@ export class SurveillanceComponent implements OnInit {
     this.selectedDocumentForPreview = null;
     this.sanitizedPdfUrl = null;
 
-    if (wallet.type === 'Etudiant') {
-      this.documentEtudiantService.findByStudentId(wallet.id).subscribe({
-        next: (res) => {
-          const docs = Array.isArray(res) ? res : (res?.content || []);
-          this.entityDocuments = docs
-            .sort((a: any, b: any) => new Date(b.uploadedAt || 0).getTime() - new Date(a.uploadedAt || 0).getTime());
+    const specificDocs$ = wallet.type === 'Etudiant'
+      ? this.documentEtudiantService.findByStudentId(wallet.id).pipe(catchError(() => of([])))
+      : this.documentMerchantService.findByMerchantId(wallet.id).pipe(catchError(() => of([])));
 
-          // Mark duplicates for UI display
-          const typeSeen = new Set<string>();
-          this.entityDocuments = this.entityDocuments.map((d: any) => {
-            const isDuplicate = typeSeen.has(d.documentType);
-            typeSeen.add(d.documentType);
-            return { ...d, isDuplicate };
+    forkJoin({
+      specificDocs: specificDocs$,
+      ownerDocs: this.documentService.getDocumentsByOwner(wallet.id).pipe(catchError(() => of([]))),
+      compteBancaire: this.banqueService.getCompteBancaireByOwner(wallet.id).pipe(catchError(() => of(null)))
+    }).subscribe({
+      next: ({ specificDocs, ownerDocs, compteBancaire }) => {
+        const list1 = Array.isArray(specificDocs) ? specificDocs : ((specificDocs as any)?.content || []);
+        const list2 = Array.isArray(ownerDocs) ? ownerDocs : ((ownerDocs as any)?.content || []);
+        const list3: any[] = [];
+        if (compteBancaire?.urlRib) {
+          list3.push({
+            trackingId: `${compteBancaire.trackingId}-rib`,
+            documentType: 'RIB',
+            fileUrl: compteBancaire.urlRib,
+            status: 'VALIDE',
+            uploadedAt: compteBancaire.createdAt || new Date().toISOString()
           });
-
-          if (this.entityDocuments.length > 0) this.selectDocument(this.entityDocuments[0]);
-          this.isLoadingDocs = false;
-        },
-        error: (err) => {
-          console.error('Erreur chargement docs étudiant:', err);
-          this.isLoadingDocs = false;
         }
-      });
-    } else {
-      // Marchand: use merchantTrackingId = wallet.id
-      this.documentMerchantService.findByMerchantId(wallet.id).subscribe({
-        next: (res) => {
-          const docs = Array.isArray(res) ? res : (res?.content || []);
-          this.entityDocuments = docs
-            .sort((a: any, b: any) => new Date(b.uploadedAt || 0).getTime() - new Date(a.uploadedAt || 0).getTime());
-
-          if (this.entityDocuments.length > 0) this.selectDocument(this.entityDocuments[0]);
-          this.isLoadingDocs = false;
-        },
-        error: (err) => {
-          console.error('Erreur chargement docs marchand:', err);
-          this.isLoadingDocs = false;
+        if (compteBancaire?.urlMandat) {
+          list3.push({
+            trackingId: `${compteBancaire.trackingId}-mandat`,
+            documentType: 'MANDAT',
+            fileUrl: compteBancaire.urlMandat,
+            status: 'VALIDE',
+            uploadedAt: compteBancaire.createdAt || new Date().toISOString()
+          });
         }
-      });
-    }
+
+        const mergedMap = new Map<string, any>();
+        [...list1, ...list2, ...list3].forEach((doc: any) => {
+          if (doc && doc.fileUrl && !mergedMap.has(doc.fileUrl)) {
+            mergedMap.set(doc.fileUrl, doc);
+          }
+        });
+
+        const sorted = Array.from(mergedMap.values())
+          .sort((a: any, b: any) => new Date(b.uploadedAt || 0).getTime() - new Date(a.uploadedAt || 0).getTime());
+
+        const typeSeen = new Set<string>();
+        this.entityDocuments = sorted.map((d: any) => {
+          const isDuplicate = typeSeen.has(d.documentType);
+          typeSeen.add(d.documentType);
+          return { ...d, isDuplicate };
+        });
+
+        this.hasMandatoryDocs = this.entityDocuments.length > 0;
+        if (this.entityDocuments.length > 0) {
+          this.selectDocument(this.entityDocuments[0]);
+        }
+        this.isLoadingDocs = false;
+      },
+      error: (err) => {
+        console.error('Erreur chargement docs KYC:', err);
+        this.isLoadingDocs = false;
+      }
+    });
+  }
+
+  isPdfDocument(doc: any): boolean {
+    if (!doc || !doc.fileUrl) return false;
+    const cleanUrl = doc.fileUrl.split('?')[0].split('#')[0].toLowerCase();
+    return cleanUrl.endsWith('.pdf') || doc.fileUrl.startsWith('data:application/pdf');
   }
 
   selectDocument(doc: any) {
     this.selectedDocumentForPreview = doc;
-    if (doc.documentType === 'MANDAT' || doc.documentType === 'MANDAT_BANCAIRE' || (doc.fileUrl && doc.fileUrl.endsWith('.pdf'))) {
+    if (this.isPdfDocument(doc)) {
       this.sanitizedPdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(doc.fileUrl);
     } else {
       this.sanitizedPdfUrl = null;
