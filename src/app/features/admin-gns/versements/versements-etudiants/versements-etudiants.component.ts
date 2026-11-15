@@ -42,7 +42,7 @@ export class VersementsEtudiantsComponent implements OnInit {
       return name.includes(q) || id.includes(q) || matricule.includes(q);
     });
   }
-  
+
   showManualVersementModal = false;
   selectedWalletForManual: WalletResponse | null = null;
   manualVersementForm: FormGroup;
@@ -54,7 +54,7 @@ export class VersementsEtudiantsComponent implements OnInit {
   massPreviewCount = 0;
   massPreviewNames: string[] = [];
   isProcessingMass = false;
-  
+
   scolariteYears: any[] = [];
 
   // Custom Confirmation Dialog state
@@ -64,7 +64,7 @@ export class VersementsEtudiantsComponent implements OnInit {
   onConfirmCallback: (() => void) | null = null;
 
   constructor(
-    private fb: FormBuilder, 
+    private fb: FormBuilder,
     private versementService: VersementService,
     private walletService: WalletService,
     private scolariteYearService: ScolariteYearService,
@@ -95,7 +95,7 @@ export class VersementsEtudiantsComponent implements OnInit {
   loadWallets() {
     this.isLoading = true;
     this.errorMessage = '';
-    
+
     // Fetch inscriptions to get student names and filter only active enrollments.
     this.inscriptionAnnuelleService.findAll(0, 100).subscribe({
       next: (res) => {
@@ -161,7 +161,7 @@ export class VersementsEtudiantsComponent implements OnInit {
 
   submitManualVersement() {
     if (this.manualVersementForm.invalid || !this.selectedWalletForManual) return;
-    
+
     this.isProcessingManual = true;
     const payload = {
       walletTrackingId: this.selectedWalletForManual.trackingId,
@@ -204,7 +204,7 @@ export class VersementsEtudiantsComponent implements OnInit {
   previewMassVersement() {
     if (this.massVersementForm.invalid) return;
     this.isProcessingMass = true;
-    
+
     const val = this.massVersementForm.value;
     this.versementService.previewMasseEtudiants(val.scolariteYearTrackingId).subscribe({
       next: (res) => {
@@ -224,7 +224,7 @@ export class VersementsEtudiantsComponent implements OnInit {
   submitMassVersement() {
     this.isProcessingMass = true;
     const val = this.massVersementForm.value;
-    
+
     this.versementService.masseEtudiants({
       scolariteYearTrackingId: val.scolariteYearTrackingId,
       montantFixe: val.montantFixe || 0
@@ -276,7 +276,7 @@ export class VersementsEtudiantsComponent implements OnInit {
     this.isProcessingMass = true;
     const val = this.massVersementForm.value;
     const selectedIds = this.getSelectedWalletIds();
-    
+
     this.versementService.masseEtudiantsSpecifiques({
       walletTrackingIds: selectedIds,
       montantFixe: val.montantFixe || 0
