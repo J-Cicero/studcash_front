@@ -124,24 +124,24 @@
   </div>
 
   <!-- Data Table -->
-  <div *ngIf="!isLoading" class="overflow-x-auto">
-    <table class="min-w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
+  <div *ngIf="!isLoading" class="overflow-visible">
+    <table class="w-full divide-y divide-slate-200/50 dark:divide-slate-700/50">
       <thead class="bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm">
         <tr>
           <th class="px-4 py-3 text-center w-10">
             <input type="checkbox" [checked]="isAllSelected" (change)="toggleSelectAll()" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
           </th>
-          <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Étudiant</th>
-          <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Matricule</th>
-          <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Année / Niveau</th>
-          <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Bourse & Solde</th>
-          <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statut</th>
-          <th class="px-4 py-3 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest w-20">Actions</th>
+          <th class="w-60 px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Étudiant</th>
+          <th class="w-32 px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Matricule</th>
+          <th class="w-40 px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Année / Niveau</th>
+          <th class="w-48 px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Bourse & Solde</th>
+          <th class="w-32 px-4 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Statut</th>
+          <th class="w-36 px-4 py-3 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Actions</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
-        <tr *ngFor="let ins of filteredInscriptions" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
-          <td class="px-4 py-3 text-center">
+        <tr *ngFor="let ins of filteredInscriptions" (click)="viewDetails(ins)" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors cursor-pointer">
+          <td class="px-4 py-3 text-center" (click)="$event.stopPropagation()">
             <input type="checkbox" [checked]="isInscriptionSelected(ins.trackingId)" (change)="toggleSelectInscription(ins.trackingId)" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
           </td>
           <td class="px-4 py-3 whitespace-nowrap">
@@ -161,12 +161,11 @@
             <div class="font-bold text-slate-800 dark:text-slate-200">
               {{ (ins.walletBalance ?? 0) | number:'1.0-0' }} FCFA
             </div>
-            <div class="text-[11px] text-slate-400">
-              {{ ins.scholarshipType || (ins.isEligibleForScholarship ? 'Éligible' : 'Standard') }}
-              <span *ngIf="ins.allocatedBudget"> • {{ ins.allocatedBudget | number:'1.0-0' }} FCFA</span>
+            <div class="text-[11px] text-slate-400 font-medium">
+              Bourse StudCash • {{ (ins.allocatedBudget || 36000) | number:'1.0-0' }} FCFA
             </div>
           </td>
-          <td class="px-4 py-3 whitespace-nowrap">
+          <td class="px-4 py-3 whitespace-nowrap text-center">
             <span *ngIf="ins.status === 'ACTIVE'" class="px-2.5 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-emerald-100/80 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
               ACTIVE
             </span>
@@ -177,15 +176,28 @@
               REJETÉE
             </span>
           </td>
-          <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium relative">
-            <button
-              (click)="toggleRowMenu(ins.trackingId, $event)"
-              class="p-2 rounded-lg text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-              title="Actions">
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-              </svg>
-            </button>
+          <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium relative" (click)="$event.stopPropagation()">
+            <div class="inline-flex items-center gap-1.5 justify-end">
+              <button
+                (click)="viewDetails(ins)"
+                class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 dark:hover:bg-indigo-900/50 transition-colors flex items-center gap-1 shadow-sm"
+                title="Voir le dossier et les documents">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                <span>Dossier</span>
+              </button>
+
+              <button
+                (click)="toggleRowMenu(ins.trackingId, $event)"
+                class="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                title="Plus d'actions">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                </svg>
+              </button>
+            </div>
 
             <!-- Menu contextuel de la ligne -->
             <div
@@ -321,7 +333,7 @@
                 </button>
               </ng-container>
 
-              <a [href]="selectedDocumentForPreview.fileUrl" target="_blank" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 flex items-center bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1.5 rounded-lg transition-colors">
+              <a [href]="getPdfPreviewUrl(selectedDocumentForPreview.fileUrl)" target="_blank" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 flex items-center bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1.5 rounded-lg transition-colors">
                 <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 Ouvrir
               </a>
@@ -329,10 +341,22 @@
           </div>
 
           <!-- Document Content -->
-          <div class="flex-1 overflow-auto bg-slate-100 dark:bg-slate-900 flex items-center justify-center p-2 relative">
-            <ng-container *ngIf="sanitizedPdfUrl; else imageView">
-              <!-- Viewer pour PDF -->
-              <iframe [src]="sanitizedPdfUrl" class="w-full h-full border-0 rounded-lg"></iframe>
+          <div class="flex-1 overflow-auto bg-slate-100 dark:bg-slate-900 flex flex-col items-center justify-center p-3 relative">
+            <ng-container *ngIf="isPdfDocument(selectedDocumentForPreview); else imageView">
+              <!-- Visualiseur PDF : Image Cloudinary haute résolution ou iframe native -->
+              <div class="w-full h-full flex flex-col items-center justify-center">
+                <div class="w-full flex justify-end mb-2">
+                  <a [href]="getPdfPreviewUrl(selectedDocumentForPreview.fileUrl)" target="_blank" class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+                    Ouvrir le document dans un nouvel onglet ↗
+                  </a>
+                </div>
+                <div class="flex-1 w-full flex items-center justify-center overflow-auto bg-white dark:bg-slate-800 rounded-lg p-2 border border-slate-200 dark:border-slate-700">
+                  <img [src]="getPdfPreviewUrl(selectedDocumentForPreview.fileUrl)" 
+                       alt="Aperçu du document PDF"
+                       class="max-w-full max-h-[60vh] object-contain rounded shadow-sm"
+                       (error)="onPdfError($event)">
+                </div>
+              </div>
             </ng-container>
             
             <ng-template #imageView>

@@ -393,6 +393,20 @@ export class SurveillanceComponent implements OnInit {
     return cleanUrl.endsWith('.pdf') || doc.fileUrl.startsWith('data:application/pdf');
   }
 
+  getPdfPreviewUrl(url: string): string {
+    if (!url) return '';
+    if (url.includes('cloudinary.com') && url.toLowerCase().endsWith('.pdf')) {
+      return url.replace(/\.pdf$/i, '.jpg');
+    }
+    return url;
+  }
+
+  onPdfError(event: any) {
+    if (this.selectedDocumentForPreview?.fileUrl) {
+      event.target.style.display = 'none';
+    }
+  }
+
   selectDocument(doc: any) {
     this.selectedDocumentForPreview = doc;
     if (this.isPdfDocument(doc)) {

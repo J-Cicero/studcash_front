@@ -153,7 +153,19 @@ export class InscriptionsComponent implements OnInit {
     let list = this.inscriptions || [];
 
     if (this.filterKyc && this.filterKyc !== 'ALL') {
-      list = list.filter((i: any) => i.status === this.filterKyc);
+      list = list.filter((i: any) => {
+        const s = i.status || '';
+        if (this.filterKyc === 'EN_ATTENTE') {
+          return s === 'EN_ATTENTE' || s === 'DOCUMENTS_EN_COURS' || s === 'PENDING';
+        }
+        if (this.filterKyc === 'ACTIVE') {
+          return s === 'ACTIVE' || s === 'VERIFIE_UL' || s === 'VALIDATED';
+        }
+        if (this.filterKyc === 'REJETEE') {
+          return s === 'REJETEE' || s === 'REJETEE_UL' || s === 'REJECTED';
+        }
+        return s === this.filterKyc;
+      });
     }
 
     if (!this.searchQuery || !this.searchQuery.trim()) {
@@ -264,6 +276,21 @@ export class InscriptionsComponent implements OnInit {
     if (!doc || !doc.fileUrl) return false;
     const cleanUrl = doc.fileUrl.split('?')[0].split('#')[0].toLowerCase();
     return cleanUrl.endsWith('.pdf') || doc.fileUrl.startsWith('data:application/pdf');
+  }
+
+  getPdfPreviewUrl(url: string): string {
+    if (!url) return '';
+    if (url.includes('cloudinary.com') && url.toLowerCase().endsWith('.pdf')) {
+      return url.replace(/\.pdf$/i, '.jpg');
+    }
+    return url;
+  }
+
+  onPdfError(event: any) {
+    if (this.selectedDocumentForPreview?.fileUrl) {
+      // Fallback: Si la vignette jpeg Cloudinary n'est pas immédiate, cacher l'image d'erreur
+      event.target.style.display = 'none';
+    }
   }
 
   selectDocument(doc: any) {

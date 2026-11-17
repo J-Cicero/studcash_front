@@ -92,14 +92,16 @@ export class ScolariteYearsComponent implements OnInit {
     const matching = (this.allInscriptions || []).filter((ins: any) =>
       ins.scolariteYearTrackingId === year.trackingId ||
       ins.anneeScolaireTrackingId === year.trackingId ||
-      (ins.anneeAcademique && ins.anneeAcademique.trim() === label)
+      (ins.academicYearLabel && ins.academicYearLabel.trim() === label) ||
+      (ins.anneeAcademique && ins.anneeAcademique.trim() === label) ||
+      (!ins.academicYearLabel && !ins.anneeAcademique && year.isOpen)
     );
 
     const totalInscriptions = matching.length;
-    const activeCount = matching.filter((i: any) => i.statut === 'ACTIF' || i.statut === 'VALIDE').length;
-    const pendingCount = matching.filter((i: any) => i.statut === 'EN_ATTENTE_VALIDATION').length;
-    const scholarshipCount = matching.filter((i: any) => i.droitBourse === true || (i.montantBoursetotal && i.montantBoursetotal > 0)).length;
-    const totalBudget = matching.reduce((acc: number, i: any) => acc + (Number(i.montantBoursetotal) || 0), 0);
+    const activeCount = matching.filter((i: any) => i.status === 'ACTIVE' || i.statut === 'ACTIF' || i.statut === 'VALIDE').length;
+    const pendingCount = matching.filter((i: any) => i.status === 'EN_ATTENTE' || i.status === 'DOCUMENTS_EN_COURS' || i.statut === 'EN_ATTENTE_VALIDATION').length;
+    const scholarshipCount = matching.filter((i: any) => i.isEligibleForScholarship === true || i.status === 'ACTIVE' || (i.allocatedBudget && i.allocatedBudget > 0)).length;
+    const totalBudget = matching.reduce((acc: number, i: any) => acc + (Number(i.allocatedBudget) || (i.status === 'ACTIVE' ? 36000 : 0)), 0);
 
     let durationDays = 0;
     let progressPercent = 0;
@@ -136,11 +138,11 @@ export class ScolariteYearsComponent implements OnInit {
   }
 
   get totalScholarshipGlobal(): number {
-    return (this.allInscriptions || []).filter((i: any) => i.droitBourse === true || (i.montantBoursetotal && i.montantBoursetotal > 0)).length;
+    return (this.allInscriptions || []).filter((i: any) => i.isEligibleForScholarship === true || i.status === 'ACTIVE' || (i.allocatedBudget && i.allocatedBudget > 0)).length;
   }
 
   get totalBudgetGlobal(): number {
-    return (this.allInscriptions || []).reduce((acc: number, i: any) => acc + (Number(i.montantBoursetotal) || 0), 0);
+    return (this.allInscriptions || []).reduce((acc: number, i: any) => acc + (Number(i.allocatedBudget) || (i.status === 'ACTIVE' ? 36000 : 0)), 0);
   }
 
   formatNumber(val: number): string {
