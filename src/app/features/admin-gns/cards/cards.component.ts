@@ -23,6 +23,7 @@ export class CardsComponent implements OnInit {
 
   openRowMenuId: string | null = null;
   selectedCard: any | null = null;
+  activeCardFace: 'RECTO' | 'VERSO' = 'RECTO';
 
   constructor(
     private cardService: CardService,
@@ -143,6 +144,7 @@ export class CardsComponent implements OnInit {
   openCardDetails(card: any): void {
     this.openRowMenuId = null;
     this.selectedCard = card;
+    this.activeCardFace = 'RECTO';
   }
 
   closeCardDetails(): void {
@@ -181,9 +183,9 @@ export class CardsComponent implements OnInit {
 
   printCard(card: any): void {
     this.openRowMenuId = null;
-    const printWindow = window.open('', '_blank', 'width=440,height=480');
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
     if (!printWindow) {
-      this.confirmService.alert("Veuillez autoriser les popups pour pouvoir imprimer le QR Code.", "Impression", "warning");
+      this.confirmService.alert("Veuillez autoriser les popups pour pouvoir imprimer la carte.", "Impression", "warning");
       return;
     }
 
@@ -192,80 +194,277 @@ export class CardsComponent implements OnInit {
     const studentFullName = (card.studentPrenom || card.studentNom) 
       ? `${card.studentPrenom || ''} ${card.studentNom || ''}`.trim() 
       : 'Étudiant GNS';
-    const matricule = card.studentMatricule ? `Matricule : ${card.studentMatricule}` : '';
+    const matricule = card.studentMatricule ? `Matricule : ${card.studentMatricule}` : 'N/A';
+    const universite = card.universiteNom || 'Université Partenaire GNS';
+    const dateExp = card.dateExpiration ? new Date(card.dateExpiration).toLocaleDateString('fr-FR', { month: '2-digit', year: 'numeric' }) : 'Exercice en cours';
+    const numCarte = card.cardNumber || ('GNS-' + this.getShortTrackingId(card.trackingId, 10));
 
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
         <head>
-          <title>QR Code StudCash - ${studentFullName}</title>
+          <title>Carte Étudiante StudCash - ${studentFullName}</title>
           <style>
+            @page { size: A4 portrait; margin: 15mm; }
             body {
-              font-family: 'Inter', 'Arial', sans-serif;
+              font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              background: #f1f5f9;
+              margin: 0;
+              padding: 20px;
+              color: #0f172a;
               display: flex;
               flex-direction: column;
-              justify-content: center;
               align-items: center;
-              height: 100vh;
-              margin: 0;
+            }
+            .header-info {
               text-align: center;
-              background: #f8fafc;
+              margin-bottom: 25px;
             }
-            .qr-box {
-              padding: 24px;
-              border: 1px solid #e2e8f0;
-              border-radius: 16px;
-              background: #fff;
-              box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            .header-info h2 { margin: 0; font-size: 18px; font-weight: 800; color: #1e1b4b; }
+            .header-info p { margin: 4px 0 0; font-size: 12px; color: #64748b; }
+
+            .cards-container {
+              display: flex;
+              gap: 30px;
+              flex-wrap: wrap;
+              justify-content: center;
             }
-            .brand {
-              font-size: 14px;
-              font-weight: 800;
-              color: #0f172a;
-              letter-spacing: 0.08em;
+
+            .card-wrapper {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+            }
+            .card-label {
+              font-size: 11px;
+              font-weight: 700;
               text-transform: uppercase;
-              margin-bottom: 12px;
+              letter-spacing: 0.1em;
+              color: #64748b;
+              margin-bottom: 8px;
             }
-            img {
-              width: 240px;
-              height: 240px;
-              display: block;
-              margin: 0 auto 16px auto;
+
+            /* Format Standard ISO CR80 PVC (85.6mm x 53.98mm) -> ~340px x 215px */
+            .pvc-card {
+              width: 340px;
+              height: 215px;
+              border-radius: 14px;
+              position: relative;
+              overflow: hidden;
+              box-sizing: border-box;
+              box-shadow: 0 8px 24px rgba(0,0,0,0.12);
             }
+
+            /* RECTO */
+            .card-recto {
+              background: linear-gradient(135deg, #090d16 0%, #171d33 50%, #2e1065 100%);
+              color: #ffffff;
+              padding: 16px;
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+              border: 1px solid #334155;
+            }
+            .recto-top {
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+            }
+            .brand-name {
+              font-size: 11px;
+              font-weight: 900;
+              letter-spacing: 0.15em;
+              color: #a5b4fc;
+              text-transform: uppercase;
+            }
+            .univ-name {
+              font-size: 9px;
+              color: #94a3b8;
+              margin-top: 2px;
+            }
+            .chip-nfc {
+              display: flex;
+              align-items: center;
+              gap: 6px;
+            }
+            .chip {
+              width: 32px;
+              height: 24px;
+              background: linear-gradient(135deg, #fbbf24, #f59e0b);
+              border-radius: 4px;
+              border: 1px solid #d97706;
+            }
+            .student-info { margin-top: 10px; }
             .student-name {
-              font-size: 17px;
-              font-weight: 800;
-              color: #0f172a;
-              margin-bottom: 4px;
+              font-size: 15px;
+              font-weight: 900;
+              letter-spacing: 0.02em;
+              text-transform: uppercase;
+              color: #f8fafc;
             }
-            .matricule {
-              font-size: 12px;
-              color: #475569;
-              margin-bottom: 6px;
-              font-weight: 600;
+            .student-mat {
+              font-size: 10px;
+              color: #cbd5e1;
+              font-family: monospace;
+              margin-top: 2px;
+            }
+            .recto-bottom {
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-end;
+              border-top: 1px solid rgba(255,255,255,0.15);
+              padding-top: 8px;
             }
             .card-number {
-              font-size: 12px;
-              color: #64748b;
+              font-size: 11px;
               font-family: monospace;
-              background: #f1f5f9;
-              padding: 4px 8px;
-              border-radius: 6px;
-              display: inline-block;
+              font-weight: 700;
+              letter-spacing: 0.1em;
+              color: #f1f5f9;
             }
+            .validity {
+              text-align: right;
+              font-size: 9px;
+              color: #cbd5e1;
+            }
+            .validity strong {
+              color: #fcd34d;
+              font-size: 10px;
+              display: block;
+            }
+
+            /* VERSO */
+            .card-verso {
+              background: linear-gradient(135deg, #090d16 0%, #1e293b 100%);
+              color: #ffffff;
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+              border: 1px solid #334155;
+            }
+            .magnetic-band {
+              width: 100%;
+              height: 38px;
+              background: #020617;
+              margin-top: 14px;
+              border-top: 1px solid #1e293b;
+              border-bottom: 1px solid #1e293b;
+            }
+            .verso-body {
+              padding: 0 16px;
+              display: flex;
+              align-items: center;
+              gap: 12px;
+            }
+            .qr-wrapper {
+              background: #ffffff;
+              padding: 6px;
+              border-radius: 8px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+            }
+            .qr-wrapper img {
+              width: 76px;
+              height: 76px;
+              display: block;
+            }
+            .qr-caption {
+              font-size: 7px;
+              font-weight: 800;
+              color: #0f172a;
+              text-transform: uppercase;
+              margin-top: 2px;
+            }
+            .verso-legal {
+              flex: 1;
+              font-size: 7.5px;
+              line-height: 1.25;
+              color: #94a3b8;
+            }
+            .verso-legal .warning {
+              color: #fca5a5;
+              font-weight: 700;
+              margin-bottom: 3px;
+            }
+            .verso-bottom {
+              padding: 6px 16px 10px;
+              font-size: 8px;
+              color: #64748b;
+              display: flex;
+              justify-content: space-between;
+              border-top: 1px solid rgba(255,255,255,0.08);
+            }
+
             @media print {
-              body { background: #fff; }
-              .qr-box { border: 1px solid #cbd5e1; box-shadow: none; }
+              body { background: #ffffff; padding: 0; }
+              .pvc-card { box-shadow: none; border: 1px solid #94a3b8; page-break-inside: avoid; }
             }
           </style>
         </head>
-        <body onload="setTimeout(function(){ window.print(); window.close(); }, 300);">
-          <div class="qr-box">
-            <div class="brand">StudCash • Carte Étudiante GNS</div>
-            <img src="${qrCodeUrl}" alt="QR Code">
-            <div class="student-name">${studentFullName}</div>
-            ${matricule ? `<div class="matricule">${matricule}</div>` : ''}
-            <div class="card-number">${card.cardNumber || card.trackingId}</div>
+        <body onload="setTimeout(function(){ window.print(); window.close(); }, 400);">
+          <div class="header-info">
+            <h2>StudCash GNS — Spécimen Carte PVC (CR80)</h2>
+            <p>Valide strictement pour l'exercice universitaire actif : <strong>${dateExp}</strong></p>
+          </div>
+
+          <div class="cards-container">
+            <!-- RECTO -->
+            <div class="card-wrapper">
+              <span class="card-label">Face Avant (Recto)</span>
+              <div class="pvc-card card-recto">
+                <div class="recto-top">
+                  <div>
+                    <div class="brand-name">StudCash GNS</div>
+                    <div class="univ-name">${universite}</div>
+                  </div>
+                  <div class="chip-nfc">
+                    <div class="chip"></div>
+                  </div>
+                </div>
+
+                <div class="student-info">
+                  <div class="student-name">${studentFullName}</div>
+                  <div class="student-mat">${matricule}</div>
+                </div>
+
+                <div class="recto-bottom">
+                  <div>
+                    <span style="font-size: 7px; text-transform: uppercase; color: #94a3b8; display: block;">N° Carte</span>
+                    <span class="card-number">${numCarte}</span>
+                  </div>
+                  <div class="validity">
+                    <span>Valide jusqu'à</span>
+                    <strong>${dateExp}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- VERSO -->
+            <div class="card-wrapper">
+              <span class="card-label">Face Arrière (Verso & QR Code)</span>
+              <div class="pvc-card card-verso">
+                <div class="magnetic-band"></div>
+
+                <div class="verso-body">
+                  <div class="qr-wrapper">
+                    <img src="${qrCodeUrl}" alt="QR Paiement">
+                    <span class="qr-caption">Scanner en Caisse</span>
+                  </div>
+                  <div class="verso-legal">
+                    <div class="warning">CARTE STRICTEMENT PERSONNELLE</div>
+                    <p>Cette carte est utilisable exclusivement au sein du réseau fermé StudCash auprès des commerçants et services universitaires agréés.</p>
+                    <p>En cas de perte ou vol, l'étudiant doit immédiatement verrouiller son compte sur l'application mobile StudCash.</p>
+                  </div>
+                </div>
+
+                <div class="verso-bottom">
+                  <span>Support : support@studcash.com</span>
+                  <span>Réseau GNS Sécurisé</span>
+                </div>
+              </div>
+            </div>
           </div>
         </body>
       </html>

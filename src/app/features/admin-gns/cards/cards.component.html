@@ -285,35 +285,86 @@
       </button>
     </div>
 
-    <div class="p-6 space-y-6">
-      <!-- Visual Card Mockup Fintech Bleu Nuit -->
-      <div class="rounded-2xl p-5 bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white shadow-xl relative overflow-hidden border border-slate-700">
+    <div class="p-6 space-y-5">
+      <!-- Sélecteur Face Recto / Face Verso -->
+      <div class="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl">
+        <button (click)="activeCardFace = 'RECTO'"
+          class="flex-1 py-2 text-xs font-extrabold rounded-lg transition-all flex items-center justify-center gap-1.5"
+          [ngClass]="activeCardFace === 'RECTO' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'">
+          <span>Face Recto (Avant)</span>
+        </button>
+        <button (click)="activeCardFace = 'VERSO'"
+          class="flex-1 py-2 text-xs font-extrabold rounded-lg transition-all flex items-center justify-center gap-1.5"
+          [ngClass]="activeCardFace === 'VERSO' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'">
+          <span>Face Verso (Arrière & QR)</span>
+        </button>
+      </div>
+
+      <!-- Face Recto (Avant) -->
+      <div *ngIf="activeCardFace === 'RECTO'" class="rounded-2xl p-5 bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white shadow-xl relative overflow-hidden border border-slate-700 aspect-[1.586/1] flex flex-col justify-between animate-fade-in">
         <div class="flex justify-between items-start">
           <div>
             <span class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-indigo-300">StudCash • Circuit Fermé GNS</span>
-            <h4 class="text-lg font-extrabold mt-1">
-              {{ (selectedCard.studentPrenom || selectedCard.studentNom) ? (selectedCard.studentPrenom + ' ' + selectedCard.studentNom) : 'Étudiant GNS' }}
-            </h4>
-            <p class="text-xs text-slate-300 font-mono mt-0.5">{{ selectedCard.studentMatricule || 'Matricule non renseigné' }}</p>
+            <p class="text-[11px] text-slate-300 font-semibold mt-0.5">{{ selectedCard.universiteNom || 'Campus Partenaire GNS' }}</p>
           </div>
-          <div class="bg-white p-1.5 rounded-xl shadow-md">
-            <qrcode [qrdata]="selectedCard.qrCodeData || selectedCard.trackingId" [width]="68" [errorCorrectionLevel]="'M'"></qrcode>
+          <!-- Puce Contactless / NFC -->
+          <div class="flex items-center space-x-2">
+            <svg class="w-5 h-5 text-indigo-300 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <div class="w-8 h-6 bg-gradient-to-r from-amber-400 to-amber-200 rounded-md border border-amber-500/50 shadow-sm"></div>
           </div>
         </div>
 
-        <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs">
+        <div class="my-auto py-1">
+          <h4 class="text-lg font-black tracking-wide uppercase">
+            {{ (selectedCard.studentPrenom || selectedCard.studentNom) ? (selectedCard.studentPrenom + ' ' + selectedCard.studentNom) : 'Étudiant GNS' }}
+          </h4>
+          <p class="text-xs text-indigo-200 font-mono mt-0.5">{{ selectedCard.studentMatricule ? ('Matricule : ' + selectedCard.studentMatricule) : 'Matricule non renseigné' }}</p>
+        </div>
+
+        <div class="pt-3 border-t border-white/10 flex items-center justify-between text-xs">
           <div>
-            <span class="text-[10px] uppercase text-slate-400 block">N° Carte</span>
-            <span class="font-mono font-bold tracking-wider">{{ selectedCard.cardNumber || ('GNS-' + getShortTrackingId(selectedCard.trackingId, 12)) }}</span>
-          </div>
-          <div>
-            <span class="text-[10px] uppercase text-slate-400 block">Expiration</span>
-            <span class="font-mono font-bold">{{ selectedCard.dateExpiration ? (selectedCard.dateExpiration | date:'MM/yyyy') : '—' }}</span>
+            <span class="text-[9px] uppercase tracking-wider text-slate-400 block">N° Carte</span>
+            <span class="font-mono font-bold tracking-wider text-slate-100">{{ selectedCard.cardNumber || ('GNS-' + getShortTrackingId(selectedCard.trackingId, 12)) }}</span>
           </div>
           <div class="text-right">
-            <span class="text-[10px] uppercase text-slate-400 block">Solde Wallet</span>
-            <span class="font-extrabold text-emerald-400">{{ formatNumber(selectedCard.walletBalance || 0) }} FCFA</span>
+            <span class="text-[9px] uppercase tracking-wider text-slate-400 block">Validité (Année Active)</span>
+            <span class="font-mono font-bold text-amber-300">{{ selectedCard.dateExpiration ? (selectedCard.dateExpiration | date:'MM/yyyy') : 'Année active' }}</span>
           </div>
+        </div>
+      </div>
+
+      <!-- Face Verso (Arrière & QR Code) -->
+      <div *ngIf="activeCardFace === 'VERSO'" class="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-xl relative overflow-hidden border border-slate-700 aspect-[1.586/1] flex flex-col justify-between animate-fade-in">
+        <!-- Bande magnétique -->
+        <div class="w-full h-8 bg-slate-950 mt-3 border-y border-slate-800"></div>
+
+        <div class="px-5 py-2 flex items-center justify-between gap-4">
+          <!-- Zone QR Code officiel -->
+          <div class="bg-white p-2 rounded-xl shadow-md flex flex-col items-center">
+            <qrcode [qrdata]="selectedCard.qrCodeData || selectedCard.trackingId" [width]="76" [errorCorrectionLevel]="'M'"></qrcode>
+            <span class="text-[8px] font-black text-slate-800 uppercase mt-1">Scanner en Caisse</span>
+          </div>
+
+          <!-- Mentions et Sécurité -->
+          <div class="flex-1 space-y-1.5 text-[10px] text-slate-300">
+            <div class="bg-slate-800/80 p-1.5 rounded-lg border border-slate-700 font-mono text-[9px] flex justify-between">
+              <span>AUTH: {{ getShortTrackingId(selectedCard.trackingId, 8) }}</span>
+              <span class="text-indigo-400 font-bold">CIRCUIT FERMÉ</span>
+            </div>
+            <p class="text-[8px] leading-tight text-slate-400">
+              Carte nominative réservée aux paiements au sein du réseau agréé StudCash pour l'année universitaire active.
+            </p>
+            <div class="text-[8px] text-amber-300/90 font-medium">
+              En cas de perte : verrouillage immédiat sur l'application mobile.
+            </div>
+          </div>
+        </div>
+
+        <div class="px-5 py-2 bg-slate-950/60 border-t border-slate-800 flex justify-between items-center text-[9px] text-slate-400">
+          <span>Global Network System • StudCash</span>
+          <span class="font-extrabold text-emerald-400">Solde : {{ formatNumber(selectedCard.walletBalance || 0) }} FCFA</span>
         </div>
       </div>
 
@@ -340,8 +391,9 @@
 
     <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/40 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center">
       <button (click)="printCard(selectedCard)"
-        class="inline-flex items-center px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl hover:bg-slate-100 transition-colors">
-        Imprimer QR Code
+        class="inline-flex items-center px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl hover:bg-slate-100 transition-colors shadow-sm">
+        <svg class="w-4 h-4 mr-1.5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+        Imprimer Spécimen PVC (Recto & Verso)
       </button>
       <div class="flex items-center gap-2">
         <button *ngIf="selectedCard.statutCarte === 'EN_ATTENTE'" (click)="updateCardStatus(selectedCard.trackingId, 'PRETE')"
